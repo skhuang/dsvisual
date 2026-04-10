@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C++ Data Structures Visualizer</title>
+    <title>C++ Data Structures & Algorithms Visualizer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
         <header>
-            <h1>C++ Data Structures Visualizer</h1>
-            <p>Array, Linked List, Queue, Graph, and Tree Visualization.</p>
+            <h1>C++ Algorithms Visualizer</h1>
+            <p>Data Structures (Stack, Queue, Graph, Tree) & Searches (Linear, Binary).</p>
         </header>
 
         <div class="main-content">
@@ -33,6 +33,12 @@
 
                         <input type="radio" id="mode-tree" name="ds-mode" value="tree">
                         <label for="mode-tree">Tree(BST)</label>
+
+                        <input type="radio" id="mode-search-linear" name="ds-mode" value="search-linear">
+                        <label for="mode-search-linear">Search(Linear)</label>
+
+                        <input type="radio" id="mode-search-binary" name="ds-mode" value="search-binary">
+                        <label for="mode-search-binary">Search(Binary)</label>
                     </div>
                     
                     <!-- Standard Actions (Stack/Queue) -->
@@ -54,6 +60,13 @@
                         <input type="number" id="tree-val" placeholder="Node Value" value="50">
                         <button id="btn-tree-add" class="btn primary">Insert()</button>
                     </div>
+
+                    <!-- Search Actions -->
+                    <div class="actions hidden" id="search-actions">
+                        <input type="number" id="search-val" placeholder="Target" value="38">
+                        <button id="btn-search-go" class="btn primary">Find()</button>
+                        <button id="btn-search-reset" class="btn secondary">Reset Data</button>
+                    </div>
                     
                     <div id="status-message" class="status-message">Visualizer initialized.</div>
                 </div>
@@ -62,38 +75,28 @@
                     <!-- Dynamic stack visualization goes here -->
                     <div id="visualizer-container" class="stack-visualizer">
                         
-                        <!-- Stack Array container -->
+                        <!-- Stack/Queue/Graph/Tree containers (hidden/shown by class) -->
                         <div id="array-container" class="array-container">
-                            <div class="slot empty"><span>[4]</span></div>
-                            <div class="slot empty"><span>[3]</span></div>
-                            <div class="slot empty"><span>[2]</span></div>
-                            <div class="slot empty"><span>[1]</span></div>
+                            <div class="slot empty"><span>[4]</span></div> <div class="slot empty"><span>[3]</span></div>
+                            <div class="slot empty"><span>[2]</span></div> <div class="slot empty"><span>[1]</span></div>
                             <div class="slot empty"><span>[0]</span></div>
                         </div>
 
-                        <!-- Stack Linked list container -->
                         <div id="linkedlist-container" class="linkedlist-container hidden">
                             <div class="head-pointer">Head Focus</div>
                             <div id="nodes-container" class="nodes-container"></div>
                             <div class="null-pointer">NULL</div>
                         </div>
 
-                        <!-- Queue container -->
                         <div id="queue-container" class="queue-container hidden">
-                            <div class="q-slot" id="qs-0"><span>[0]</span></div>
-                            <div class="q-slot" id="qs-1"><span>[1]</span></div>
-                            <div class="q-slot" id="qs-2"><span>[2]</span></div>
-                            <div class="q-slot" id="qs-3"><span>[3]</span></div>
+                            <div class="q-slot" id="qs-0"><span>[0]</span></div> <div class="q-slot" id="qs-1"><span>[1]</span></div>
+                            <div class="q-slot" id="qs-2"><span>[2]</span></div> <div class="q-slot" id="qs-3"><span>[3]</span></div>
                             <div class="q-slot" id="qs-4"><span>[4]</span></div>
-                            <!-- Pointers -->
-                            <div id="front-ptr" class="q-ptr">F</div>
-                            <div id="rear-ptr" class="q-ptr">R</div>
+                            <div id="front-ptr" class="q-ptr">F</div> <div id="rear-ptr" class="q-ptr">R</div>
                         </div>
 
-                        <!-- Graph container -->
                         <div id="graph-container" class="graph-container hidden">
                             <svg id="graph-edges" width="100%" height="100%"></svg>
-                            <!-- 5 Fixed Nodes -->
                             <div class="graph-node" id="gn-0" style="top: 10%; left: 50%;">0</div>
                             <div class="graph-node" id="gn-1" style="top: 40%; left: 90%;">1</div>
                             <div class="graph-node" id="gn-2" style="top: 85%; left: 75%;">2</div>
@@ -101,10 +104,19 @@
                             <div class="graph-node" id="gn-4" style="top: 40%; left: 10%;">4</div>
                         </div>
 
-                        <!-- Tree container -->
                         <div id="tree-container" class="tree-container hidden">
                             <svg id="tree-edges"></svg>
                             <div id="tree-nodes-container"></div>
+                        </div>
+
+                        <!-- Search container -->
+                        <div id="search-container" class="search-container hidden">
+                            <div id="search-array" class="search-array">
+                                <!-- JS injected slots -->
+                            </div>
+                            <div id="search-pointers" class="search-pointers">
+                                <!-- JS injected pointers -->
+                            </div>
                         </div>
 
                     </div>
