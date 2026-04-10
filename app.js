@@ -1,19 +1,4 @@
-// C++ Source Code Mappings
-const codeArray = `#include <iostream>\nusing namespace std;\n#define MAX_SIZE 5\n\nclass StackArray {\n// ...\n};`;
-const codeLinkedList = `#include <iostream>\nusing namespace std;\nstruct Node { int data; Node* next; };\n\nclass StackLinkedList {\n// ...\n};`;
-const codeQueue = `#include <iostream>\nusing namespace std;\n// ...\n};`;
-const codeGraph = `#include <iostream>\n#include <vector>\nusing namespace std;\n// ...\n};`;
-const codeTreeBST = `#include <iostream>\nusing namespace std;\nstruct Node { int data; Node *left, *right; };\n// Basic BST Insertion\n`;
-const codeTreeAVL = `#include <iostream>\nusing namespace std;\nstruct Node { int key; Node *left, *right; int height; };\n// AVL Rebalancing (LL, LR, RL, RR)\n`;
-const codeTreeRB = `#include <iostream>\nusing namespace std;\nstruct Node { int data; bool color; Node *left, *right, *parent; };\n// Red-Black Color Flipping & Rotations\n`;
-const codeTreeSplay = `#include <iostream>\nusing namespace std;\nstruct Node { int key; Node *left, *right; };\n// Splay Tree Zig-Zag root lifting\n`;
-const codeListArray = `#include <iostream>\nusing namespace std;\n// ...\n};`;
-const codeListLinked = `#include <iostream>\nusing namespace std;\n// ...\n};`;
-
-const codeSearchLinear = `// Linear Search O(N)`; const codeSearchBinary = `// Binary Search O(Log N)`;
-const codeSortBubble = `// Bubble Sort O(N^2)`; const codeSortSelect = `// Selection Sort O(N^2)`;
-const codeSortInsert = `// Insertion Sort O(N^2)`; const codeSortQuick = `// Quick Sort O(N Log N)`;
-const codeSortMerge = `// Merge Sort O(N Log N)`; const codeSortShell = `// Shell Sort O(N Log N)`;
+// C++ Source Code loaded from code_db.js
 
 
 let animState = 'idle'; 
