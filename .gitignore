@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Compiled C++ binaries
+stack_array
+stack_linkedlist
+queue_test
+graph_test
+tree_test
+
