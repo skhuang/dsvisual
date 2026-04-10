@@ -1,4 +1,5 @@
-// Auto-generated code DB for visualization\nconst codeSearchLinear = `#include <iostream>
+// Auto-generated code DB for visualization
+const codeSearchLinear = `#include <iostream>
 using namespace std;
 
 int linearSearch(int arr[], int size, int target) {
@@ -504,9 +505,309 @@ int main() {
 }
 `;
 
-const codeArray = `#include <iostream>\nusing namespace std;\n#define MAX_SIZE 5\n\nclass StackArray {\n// ...\n};`;
-const codeLinkedList = `#include <iostream>\nusing namespace std;\nstruct Node { int data; Node* next; };\n\nclass StackLinkedList {\n// ...\n};`;
-const codeQueue = `#include <iostream>\nusing namespace std;\n// ...\n};`;
-const codeGraph = `#include <iostream>\n#include <vector>\nusing namespace std;\n// ...\n};`;
-const codeListArray = `#include <iostream>\nusing namespace std;\n// ...\n};`;
-const codeListLinked = `#include <iostream>\nusing namespace std;\n// ...\n};`;
+const codeArray = `#include <iostream>
+using namespace std;
+
+#define MAX_SIZE 5
+
+class StackArray {
+private:
+    int arr[MAX_SIZE];
+    int topIndex;
+
+public:
+    StackArray() {
+        topIndex = -1;
+    }
+
+    bool push(int val) {
+        if (topIndex >= MAX_SIZE - 1) {
+            cout << "Stack Overflow!" << endl;
+            return false;
+        }
+        arr[++topIndex] = val;
+        cout << "Pushed " << val << endl;
+        return true;
+    }
+
+    int pop() {
+        if (topIndex < 0) {
+            cout << "Stack Underflow!" << endl;
+            return -1;
+        }
+        int val = arr[topIndex--];
+        cout << "Popped " << val << endl;
+        return val;
+    }
+
+    bool isEmpty() {
+        return topIndex < 0;
+    }
+};
+
+int main() {
+    StackArray s;
+    s.push(10);
+    s.push(20);
+    s.pop();
+    return 0;
+}
+`;
+
+const codeLinkedList = `#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class StackLinkedList {
+private:
+    Node* topNode;
+
+public:
+    StackLinkedList() {
+        topNode = nullptr;
+    }
+
+    void push(int val) {
+        Node* newNode = new Node(val);
+        newNode->next = topNode;
+        topNode = newNode;
+        cout << "Pushed " << val << endl;
+    }
+
+    int pop() {
+        if (!topNode) {
+            cout << "Stack Underflow!" << endl;
+            return -1;
+        }
+        int val = topNode->data;
+        Node* temp = topNode;
+        topNode = topNode->next;
+        delete temp;
+        cout << "Popped " << val << endl;
+        return val;
+    }
+
+    bool isEmpty() {
+        return topNode == nullptr;
+    }
+};
+
+int main() {
+    StackLinkedList s;
+    s.push(10);
+    s.push(20);
+    s.pop();
+    return 0;
+}
+`;
+
+const codeQueue = `#include <iostream>
+using namespace std;
+
+#define MAX_SIZE 5
+
+class CircularQueue {
+private:
+    int arr[MAX_SIZE];
+    int front, rear, count;
+
+public:
+    CircularQueue() {
+        front = 0;
+        rear = -1;
+        count = 0;
+    }
+
+    bool enqueue(int val) {
+        if (count >= MAX_SIZE) {
+            cout << "Queue Overflow!" << endl;
+            return false;
+        }
+        rear = (rear + 1) % MAX_SIZE;
+        arr[rear] = val;
+        count++;
+        cout << "Enqueued " << val << endl;
+        return true;
+    }
+
+    int dequeue() {
+        if (count == 0) {
+            cout << "Queue Underflow!" << endl;
+            return -1;
+        }
+        int val = arr[front];
+        front = (front + 1) % MAX_SIZE;
+        count--;
+        cout << "Dequeued " << val << endl;
+        return val;
+    }
+
+    bool isEmpty() {
+        return count == 0;
+    }
+};
+
+int main() {
+    CircularQueue q;
+    q.enqueue(10);
+    q.enqueue(20);
+    q.dequeue();
+    return 0;
+}
+`;
+
+const codeGraph = `#include <iostream>
+#include <vector>
+using namespace std;
+
+class Graph {
+private:
+    int V;
+    vector<vector<int> > adjMatrix;
+
+public:
+    Graph(int vertices) {
+        V = vertices;
+        adjMatrix.resize(V, vector<int>(V, 0));
+    }
+
+    void addEdge(int u, int v) {
+        if (u >= 0 && u < V && v >= 0 && v < V) {
+            adjMatrix[u][v] = 1;
+            adjMatrix[v][u] = 1; // Since undirected
+            cout << "Edge added between " << u << " and " << v << endl;
+        }
+    }
+
+    void printGraph() {
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                cout << adjMatrix[i][j] << " ";
+            }
+            cout << endl;
+        }
+    }
+};
+
+int main() {
+    Graph g(5); // 5 nodes (0 to 4)
+    g.addEdge(0, 1);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(1, 4);
+    g.addEdge(2, 3);
+    g.addEdge(3, 4);
+    return 0;
+}
+`;
+
+const codeListArray = `#include <iostream>
+using namespace std;
+
+class ArrayList {
+private:
+    int* arr;
+    int capacity;
+    int size;
+
+public:
+    ArrayList(int cap = 10) {
+        capacity = cap;
+        size = 0;
+        arr = new int[capacity];
+    }
+    ~ArrayList() { delete[] arr; }
+
+    void insert(int index, int val) {
+        if (index < 0 || index > size || size >= capacity) return;
+        for (int i = size; i > index; i--) {
+            arr[i] = arr[i - 1]; // Shift right
+        }
+        arr[index] = val;
+        size++;
+    }
+
+    void remove(int index) {
+        if (index < 0 || index >= size) return;
+        for (int i = index; i < size - 1; i++) {
+            arr[i] = arr[i + 1]; // Shift left
+        }
+        size--;
+    }
+};
+
+int main() {
+    ArrayList list(10);
+    list.insert(0, 10);
+    list.insert(1, 20);
+    list.remove(0);
+    return 0;
+}
+`;
+
+const codeListLinked = `#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) : data(val), next(nullptr) {}
+};
+
+class LinkedList {
+private:
+    Node* head;
+
+public:
+    LinkedList() : head(nullptr) {}
+
+    void insert(int index, int val) {
+        Node* newNode = new Node(val);
+        if (index == 0) {
+            newNode->next = head;
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        for (int i = 0; temp != nullptr && i < index - 1; i++) {
+            temp = temp->next;
+        }
+        if (!temp) return; // Out of bounds
+        newNode->next = temp->next;
+        temp->next = newNode;
+    }
+
+    void remove(int index) {
+        if (!head) return;
+        if (index == 0) {
+            Node* temp = head;
+            head = head->next;
+            delete temp;
+            return;
+        }
+        Node* temp = head;
+        for (int i = 0; temp != nullptr && i < index - 1; i++) {
+            temp = temp->next;
+        }
+        if (!temp || !temp->next) return;
+        Node* delNode = temp->next;
+        temp->next = delNode->next;
+        delete delNode;
+    }
+};
+
+int main() {
+    LinkedList list;
+    list.insert(0, 10);
+    list.insert(1, 20);
+    list.remove(0);
+    return 0;
+}
+`;
+

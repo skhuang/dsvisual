@@ -4,32 +4,27 @@ using namespace std;
 
 class Graph {
 private:
-    int numVertices;
-    vector<vector<int>> adjList;
+    int V;
+    vector<vector<int> > adjMatrix;
 
 public:
     Graph(int vertices) {
-        numVertices = vertices;
-        adjList.resize(vertices);
+        V = vertices;
+        adjMatrix.resize(V, vector<int>(V, 0));
     }
 
-    void addEdge(int src, int dest) {
-        if (src >= numVertices || dest >= numVertices || src < 0 || dest < 0) {
-            cout << "Invalid vertex!" << endl;
-            return;
+    void addEdge(int u, int v) {
+        if (u >= 0 && u < V && v >= 0 && v < V) {
+            adjMatrix[u][v] = 1;
+            adjMatrix[v][u] = 1; // Since undirected
+            cout << "Edge added between " << u << " and " << v << endl;
         }
-        // Add edge from src to dest
-        adjList[src].push_back(dest);
-        // Add edge from dest to src
-        adjList[dest].push_back(src);
-        cout << "Added edge between " << src << " and " << dest << endl;
     }
 
     void printGraph() {
-        for (int i = 0; i < numVertices; ++i) {
-            cout << "Vertex " << i << ":";
-            for (auto node : adjList[i]) {
-                cout << " -> " << node;
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                cout << adjMatrix[i][j] << " ";
             }
             cout << endl;
         }
@@ -37,8 +32,7 @@ public:
 };
 
 int main() {
-    // A graph with 5 vertices
-    Graph g(5);
+    Graph g(5); // 5 nodes (0 to 4)
     g.addEdge(0, 1);
     g.addEdge(0, 4);
     g.addEdge(1, 2);
@@ -46,7 +40,5 @@ int main() {
     g.addEdge(1, 4);
     g.addEdge(2, 3);
     g.addEdge(3, 4);
-
-    g.printGraph();
     return 0;
 }

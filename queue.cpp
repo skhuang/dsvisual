@@ -3,64 +3,51 @@ using namespace std;
 
 #define MAX_SIZE 5
 
-class Queue {
+class CircularQueue {
 private:
     int arr[MAX_SIZE];
-    int frontIndex;
-    int rearIndex;
-    int count;
+    int front, rear, count;
 
 public:
-    Queue() {
-        frontIndex = 0;
-        rearIndex = -1;
+    CircularQueue() {
+        front = 0;
+        rear = -1;
         count = 0;
     }
 
-    bool isFull() {
-        return count == MAX_SIZE;
+    bool enqueue(int val) {
+        if (count >= MAX_SIZE) {
+            cout << "Queue Overflow!" << endl;
+            return false;
+        }
+        rear = (rear + 1) % MAX_SIZE;
+        arr[rear] = val;
+        count++;
+        cout << "Enqueued " << val << endl;
+        return true;
+    }
+
+    int dequeue() {
+        if (count == 0) {
+            cout << "Queue Underflow!" << endl;
+            return -1;
+        }
+        int val = arr[front];
+        front = (front + 1) % MAX_SIZE;
+        count--;
+        cout << "Dequeued " << val << endl;
+        return val;
     }
 
     bool isEmpty() {
         return count == 0;
     }
-
-    void enqueue(int value) {
-        if (isFull()) {
-            cout << "Queue Overflow! Cannot enqueue.\n";
-            return;
-        }
-        rearIndex = (rearIndex + 1) % MAX_SIZE;
-        arr[rearIndex] = value;
-        count++;
-        cout << "Enqueued " << value << " to queue.\n";
-    }
-
-    void dequeue() {
-        if (isEmpty()) {
-            cout << "Queue Underflow! Cannot dequeue.\n";
-            return;
-        }
-        cout << "Dequeued " << arr[frontIndex] << " from queue.\n";
-        frontIndex = (frontIndex + 1) % MAX_SIZE;
-        count--;
-    }
-
-    int peek() {
-        if (isEmpty()) {
-            cout << "Queue is empty." << endl;
-            return -1;
-        }
-        return arr[frontIndex];
-    }
 };
 
 int main() {
-    Queue q;
+    CircularQueue q;
     q.enqueue(10);
     q.enqueue(20);
-    q.enqueue(30);
     q.dequeue();
-    cout << "Front element is: " << q.peek() << endl;
     return 0;
 }

@@ -12,60 +12,47 @@ private:
     Node* head;
 
 public:
-    LinkedList() { head = nullptr; }
+    LinkedList() : head(nullptr) {}
 
-    void insertAt(int index, int value) {
-        if (index < 0) return;
-        Node* newNode = new Node(value);
+    void insert(int index, int val) {
+        Node* newNode = new Node(val);
         if (index == 0) {
             newNode->next = head;
             head = newNode;
             return;
         }
-        Node* curr = head;
-        for (int i = 0; curr != nullptr && i < index - 1; i++) {
-            curr = curr->next;
+        Node* temp = head;
+        for (int i = 0; temp != nullptr && i < index - 1; i++) {
+            temp = temp->next;
         }
-        if (curr == nullptr) return; 
-        newNode->next = curr->next;
-        curr->next = newNode;
+        if (!temp) return; // Out of bounds
+        newNode->next = temp->next;
+        temp->next = newNode;
     }
 
-    void removeAt(int index) {
-        if (head == nullptr || index < 0) return;
+    void remove(int index) {
+        if (!head) return;
         if (index == 0) {
             Node* temp = head;
             head = head->next;
             delete temp;
             return;
         }
-        Node* curr = head;
-        for (int i = 0; curr != nullptr && i < index - 1; i++) {
-            curr = curr->next;
+        Node* temp = head;
+        for (int i = 0; temp != nullptr && i < index - 1; i++) {
+            temp = temp->next;
         }
-        if (curr == nullptr || curr->next == nullptr) return;
-        Node* temp = curr->next;
-        curr->next = temp->next;
-        delete temp;
-    }
-
-    void print() {
-        Node* curr = head;
-        while (curr != nullptr) {
-            cout << curr->data << " -> ";
-            curr = curr->next;
-        }
-        cout << "NULL\n";
+        if (!temp || !temp->next) return;
+        Node* delNode = temp->next;
+        temp->next = delNode->next;
+        delete delNode;
     }
 };
 
 int main() {
     LinkedList list;
-    list.insertAt(0, 10);
-    list.insertAt(1, 30);
-    list.insertAt(1, 20);
-    list.print();
-    list.removeAt(1);
-    list.print();
+    list.insert(0, 10);
+    list.insert(1, 20);
+    list.remove(0);
     return 0;
 }
