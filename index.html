@@ -64,12 +64,15 @@
                     <div class="actions hidden" id="search-actions">
                         <input type="number" id="search-val" placeholder="Target" value="38">
                         <button id="btn-search-go" class="btn primary">Find()</button>
-                        <button id="btn-search-reset" class="btn secondary">Reset</button>
+                        <button id="btn-search-pause" class="btn secondary" disabled>Pause</button>
+                        <button id="btn-search-stop" class="btn exception" disabled>Stop</button>
                     </div>
 
                     <div class="actions hidden" id="sort-actions">
                         <button id="btn-sort-random" class="btn secondary">Randomize</button>
-                        <button id="btn-sort-start" class="btn primary">Sort()</button>
+                        <button id="btn-sort-start" class="btn primary">Start()</button>
+                        <button id="btn-sort-pause" class="btn secondary" disabled>Pause</button>
+                        <button id="btn-sort-stop" class="btn exception" disabled>Stop</button>
                         <div style="display: flex; align-items: center; gap: 10px; margin-left: 10px;">
                             <span style="font-size: 0.8rem; color: #cbd5e1;">Delay</span>
                             <input type="range" id="sort-speed" min="10" max="600" value="100" style="width: 100px;">

@@ -180,11 +180,25 @@ class VizTreeNode {
     constructor(val, x, y, dx) { this.val = val; this.left = null; this.right = null; this.x = x; this.y = y; this.dx = dx; }
 }
 
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+let animState = 'idle'; // 'idle', 'playing', 'paused', 'stopped'
+async function sleep(ms) {
+    let waited = 0;
+    while (waited < ms) {
+        if (animState === 'stopped') throw 'STOPPED';
+        if (animState === 'paused') {
+            await new Promise(r => setTimeout(r, 50));
+        } else {
+            const step = Math.min(20, ms - waited);
+            await new Promise(r => setTimeout(r, step));
+            waited += step;
+        }
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const modeRadios = document.querySelectorAll('input[name="ds-mode"]');
     
+    // Containers
     const arrayContainer = document.getElementById('array-container');
     const linkedListContainer = document.getElementById('linkedlist-container');
     const queueContainer = document.getElementById('queue-container');
@@ -195,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const listLLContainer = document.getElementById('list-ll-container');
     const sortContainer = document.getElementById('sort-container');
     
+    // Action Bars
     const stdActions = document.getElementById('std-actions');
     const graphActions = document.getElementById('graph-actions');
     const treeActions = document.getElementById('tree-actions');
@@ -206,25 +221,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const codeDisplay = document.getElementById('code-display');
     const codeTitle = document.getElementById('code-title');
 
-    // Controls omitted init for space mapping ...
+    // Controls
     const btnStdAdd = document.getElementById('btn-std-add'); const btnStdRemove = document.getElementById('btn-std-remove'); const stdVal = document.getElementById('std-value');
     const btnGraphAdd = document.getElementById('btn-graph-add'); const graphU = document.getElementById('graph-u'); const graphV = document.getElementById('graph-v');
     const btnTreeAdd = document.getElementById('btn-tree-add'); const treeVal = document.getElementById('tree-val');
-    const btnSearchGo = document.getElementById('btn-search-go'); const btnSearchReset = document.getElementById('btn-search-reset'); const searchVal = document.getElementById('search-val');
+    
+    const btnSearchGo = document.getElementById('btn-search-go');
+    const btnSearchPause = document.getElementById('btn-search-pause'); 
+    const btnSearchStop = document.getElementById('btn-search-stop'); 
+    const searchVal = document.getElementById('search-val');
+    
     const btnListAdd = document.getElementById('btn-list-add'); const btnListRemove = document.getElementById('btn-list-remove'); const listIdx = document.getElementById('list-idx'); const listValInput = document.getElementById('list-val');
     
     const btnSortRandom = document.getElementById('btn-sort-random');
     const btnSortStart = document.getElementById('btn-sort-start');
+    const btnSortPause = document.getElementById('btn-sort-pause');
+    const btnSortStop = document.getElementById('btn-sort-stop');
     const sortSpeedInput = document.getElementById('sort-speed');
 
     let currentMode = 'stack-array';
     const MAX_SIZE = 5;
 
-    // Search
+    // Search Vectors
     const arrLinear = [23, 12, 56, 8, 38, 2, 72, 91, 16, 5];
     const arrBinary = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
-    let isBusy = false; // blocks mode switches
-    let currentAnimId = 0; // kill switch for sorting
 
     // Core sets
     let stackData = []; let qArr = new Array(5).fill(null); let qFront = 0; let qRear = -1; let qCount = 0;
@@ -232,34 +252,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sorting Data
     let sortArrData = [];
 
-    // Helper to generate array
     function generateSortArray() {
-        sortArrData = [];
-        for(let i=0; i<15; i++) {
-            sortArrData.push(Math.floor(Math.random() * 95) + 5); 
-        }
-        renderSortBars();
-        showStatus("Generated Random Array.", "#94a3b8");
+        sortArrData = []; for(let i=0; i<15; i++) { sortArrData.push(Math.floor(Math.random() * 95) + 5); }
+        renderSortBars(); showStatus("Generated Random Array.", "#94a3b8");
     }
 
     updateLayout();
 
     modeRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
-            if(isBusy) { e.target.checked = false; document.getElementById("mode-" + currentMode).checked = true; return; }
+            if(animState === 'playing' || animState === 'paused') { 
+                e.target.checked = false; document.getElementById("mode-" + currentMode).checked = true; return; 
+            }
             currentMode = e.target.value;
             // State resets
             stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0; edges = []; bstRoot = null; 
             if(currentMode === 'list-array' || currentMode === 'list-linked') mainListData = [];
             if(currentMode.includes('sort-') && sortArrData.length === 0) generateSortArray();
-            updateLayout();
-            renderAll();
-            statusMsg.textContent = "Switched to " + currentMode;
-            statusMsg.style.color = '#34d399';
+            updateLayout(); renderAll();
+            statusMsg.textContent = "Switched to " + currentMode; statusMsg.style.color = '#34d399';
         });
     });
 
-    // ... Controls Logic (Stack/Queue/List/Graph/Search) ...
+    // Action Controls Hookups
     btnStdAdd.addEventListener('click', () => {
         const val = parseInt(stdVal.value); if(isNaN(val)) return showStatus('Enter a valid number.', '#f87171');
         if(currentMode.includes('stack')) {
@@ -267,8 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             stackData.push(val); showStatus("Pushed " + val, '#60a5fa'); renderStack('push');
         } else if (currentMode === 'queue') {
             if (qCount >= MAX_SIZE) return showStatus('Queue Overflow!', '#f87171');
-            qRear = (qRear + 1) % MAX_SIZE; qArr[qRear] = val; qCount++;
-            showStatus("Enqueued " + val, '#60a5fa'); renderQueue('enqueue');
+            qRear = (qRear + 1) % MAX_SIZE; qArr[qRear] = val; qCount++; showStatus("Enqueued " + val, '#60a5fa'); renderQueue('enqueue');
         }
         stdVal.value = Math.floor(Math.random() * 100);
     });
@@ -279,8 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const popped = stackData.pop(); showStatus("Popped " + popped, '#ec4899'); renderStack('pop');
         } else if (currentMode === 'queue') {
             if(qCount === 0) return showStatus('Queue Underflow!', '#f87171');
-            const deq = qArr[qFront]; qArr[qFront] = null; qFront = (qFront + 1) % MAX_SIZE; qCount--;
-            showStatus("Dequeued " + deq, '#ec4899'); renderQueue('dequeue');
+            const deq = qArr[qFront]; qArr[qFront] = null; qFront = (qFront + 1) % MAX_SIZE; qCount--; showStatus("Dequeued " + deq, '#ec4899'); renderQueue('dequeue');
         }
     });
 
@@ -303,20 +316,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bstRoot = insertBST(bstRoot, val, 200, 30, 90); treeVal.value = Math.floor(Math.random() * 100); renderTree();
     });
 
-    btnSearchGo.addEventListener('click', async () => {
-        if(isBusy) return;
-        const target = parseInt(searchVal.value); if(isNaN(target)) return showStatus('Enter valid target.', '#f87171');
-        isBusy = true; modeRadios.forEach(r => r.disabled = true);
-        if (currentMode === 'search-linear') await runLinearSearch(target);
-        else if (currentMode === 'search-binary') await runBinarySearch(target);
-        isBusy = false; modeRadios.forEach(r => r.disabled = false);
-    });
-
-    btnSearchReset.addEventListener('click', () => {
-        if(isBusy) return;
-        renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear); showStatus("Array reset.", "#94a3b8");
-    });
-
     btnListAdd.addEventListener('click', () => {
         const i = parseInt(listIdx.value); const v = parseInt(listValInput.value);
         if(isNaN(i) || isNaN(v)) return showStatus('Invalid input', '#f87171');
@@ -331,33 +330,78 @@ document.addEventListener('DOMContentLoaded', () => {
         const v = mainListData[i]; mainListData.splice(i, 1); showStatus("Removed " + v + " from index " + i, '#ec4899'); renderLists();
     });
 
-    // SORT ACTIONS
-    btnSortRandom.addEventListener('click', () => {
-        if(isBusy) return; generateSortArray();
+    // -------- ANIMATION CONTROL (PAUSE/RESUME/STOP) LOGIC --------
+    function handlePauseClick() {
+        if (animState === 'playing') {
+            animState = 'paused'; setAnimControls(true); showStatus('Paused', '#fbbf24');
+        } else if (animState === 'paused') {
+            animState = 'playing'; setAnimControls(true); showStatus('Resumed', '#34d399');
+        }
+    }
+    btnSearchPause.addEventListener('click', handlePauseClick);
+    btnSortPause.addEventListener('click', handlePauseClick);
+
+    function handleStopClick() {
+        if(animState === 'playing' || animState === 'paused') {
+            animState = 'stopped';
+            setTimeout(() => { 
+                animState = 'idle'; setAnimControls(false); 
+                if(currentMode.includes('sort')) renderSortBars();
+                else renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
+                showStatus('Stopped & Reset.', '#f87171');
+            }, 100);
+        }
+    }
+    btnSearchStop.addEventListener('click', handleStopClick);
+    btnSortStop.addEventListener('click', handleStopClick);
+
+    function setAnimControls(isPlaying) {
+        if(currentMode.includes('search')) {
+            btnSearchGo.disabled = isPlaying; btnSearchPause.disabled = !isPlaying; btnSearchStop.disabled = !isPlaying;
+            btnSearchPause.textContent = animState === 'paused' ? 'Resume' : 'Pause';
+        } else if (currentMode.includes('sort')) {
+            btnSortStart.disabled = isPlaying; btnSortRandom.disabled = isPlaying; btnSortPause.disabled = !isPlaying; btnSortStop.disabled = !isPlaying;
+            btnSortPause.textContent = animState === 'paused' ? 'Resume' : 'Pause';
+        }
+        modeRadios.forEach(r => r.disabled = isPlaying);
+    }
+
+    async function executeAnimWrapper(fn) {
+        if(animState === 'playing' || animState === 'paused') return;
+        animState = 'playing'; setAnimControls(true);
+        try {
+            await fn();
+            if(animState === 'playing') { animState = 'idle'; setAnimControls(false); showStatus("Execution Complete!", "#34d399"); }
+        } catch (e) {
+            // Check manual stop vs runtime error
+            if (e === 'STOPPED') return; else throw e;
+        }
+    }
+
+    btnSearchGo.addEventListener('click', () => {
+        const target = parseInt(searchVal.value); if(isNaN(target)) return showStatus('Enter valid target.', '#f87171');
+        if (currentMode === 'search-linear') executeAnimWrapper(async () => await runLinearSearch(target));
+        else if (currentMode === 'search-binary') executeAnimWrapper(async () => await runBinarySearch(target));
     });
 
-    btnSortStart.addEventListener('click', async () => {
-        if(isBusy) return;
-        isBusy = true; modeRadios.forEach(r => r.disabled = true);
-        currentAnimId++; const animId = currentAnimId;
-        
-        // Reset colors
-        renderSortBars();
+    btnSortRandom.addEventListener('click', () => {
+        if(animState === 'playing' || animState === 'paused') return;
+        generateSortArray();
+    });
 
-        if (currentMode === 'sort-bubble') await runBubbleSort(animId);
-        else if (currentMode === 'sort-select') await runSelectionSort(animId);
-        else if (currentMode === 'sort-insert') await runInsertionSort(animId);
-        else if (currentMode === 'sort-quick') await runQuickSort(animId);
-        else if (currentMode === 'sort-merge') await runMergeSort(animId);
-        else if (currentMode === 'sort-shell') await runShellSort(animId);
-
-        if(animId === currentAnimId) showStatus("Sorting Complete!", "#34d399");
-        isBusy = false; modeRadios.forEach(r => r.disabled = false);
+    btnSortStart.addEventListener('click', () => {
+        renderSortBars(); // reset colors
+        if (currentMode === 'sort-bubble') executeAnimWrapper(async () => await runBubbleSort());
+        else if (currentMode === 'sort-select') executeAnimWrapper(async () => await runSelectionSort());
+        else if (currentMode === 'sort-insert') executeAnimWrapper(async () => await runInsertionSort());
+        else if (currentMode === 'sort-quick') executeAnimWrapper(async () => { await runQuickSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
+        else if (currentMode === 'sort-merge') executeAnimWrapper(async () => { await runMergeSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
+        else if (currentMode === 'sort-shell') executeAnimWrapper(async () => { await runShellSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
     });
 
     // Utilities
     function showStatus(msg, color) { statusMsg.textContent = msg; statusMsg.style.color = color; }
-    function getDelay() { return 610 - parseInt(sortSpeedInput.value); } // 10 to 600 inversed
+    function getDelay() { return 610 - parseInt(sortSpeedInput.value); } 
 
     function updateLayout() {
         const containers = [arrayContainer, linkedListContainer, queueContainer, graphContainer, treeContainer, searchContainer, listArrContainer, listLLContainer, sortContainer];
@@ -398,45 +442,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- SORT RENDERING & LOGIC ---
     function renderSortBars() {
         sortContainer.innerHTML = '';
-        sortArrData.forEach((val, i) => {
-            const bar = document.createElement('div');
-            bar.className = 'sort-bar';
-            bar.id = 'sb-' + i;
-            bar.style.height = (val * 2.5) + 'px'; // Height map
-            bar.innerHTML = '<span>' + val + '</span>';
-            sortContainer.appendChild(bar);
-        });
+        sortArrData.forEach((val, i) => { const bar = document.createElement('div'); bar.className = 'sort-bar'; bar.id = 'sb-' + i; bar.style.height = (val * 2.5) + 'px'; bar.innerHTML = '<span>' + val + '</span>'; sortContainer.appendChild(bar); });
     }
-
     function setBarVal(index, val) {
-        sortArrData[index] = val;
-        const bar = document.getElementById('sb-' + index);
-        if(bar) {
-            bar.style.height = (val * 2.5) + 'px';
-            bar.innerHTML = '<span>' + val + '</span>';
-        }
+        sortArrData[index] = val; const bar = document.getElementById('sb-' + index); if(bar) { bar.style.height = (val * 2.5) + 'px'; bar.innerHTML = '<span>' + val + '</span>'; }
     }
+    function setBarColor(index, colorClass) { const bar = document.getElementById('sb-' + index); if(bar) bar.className = 'sort-bar ' + colorClass; }
 
-    function setBarColor(index, colorClass) {
-        const bar = document.getElementById('sb-' + index);
-        if(bar) {
-            bar.className = 'sort-bar ' + colorClass;
-        }
-    }
-
-    async function runBubbleSort(id) {
+    async function runBubbleSort() {
         showStatus("Bubble Sort: Swapping adjacent elements", "#60a5fa");
         const n = sortArrData.length;
         for (let i = 0; i < n - 1; i++) {
             for (let j = 0; j < n - i - 1; j++) {
-                if(id !== currentAnimId) return;
-                setBarColor(j, 'comparing'); setBarColor(j+1, 'comparing');
-                await sleep(getDelay());
+                setBarColor(j, 'comparing'); setBarColor(j+1, 'comparing'); await sleep(getDelay());
                 if (sortArrData[j] > sortArrData[j + 1]) {
                     setBarColor(j, 'swapping'); setBarColor(j+1, 'swapping');
-                    let temp = sortArrData[j];
-                    setBarVal(j, sortArrData[j+1]); setBarVal(j+1, temp);
-                    await sleep(getDelay());
+                    let temp = sortArrData[j]; setBarVal(j, sortArrData[j+1]); setBarVal(j+1, temp); await sleep(getDelay());
                 }
                 setBarColor(j, ''); setBarColor(j+1, '');
             }
@@ -445,184 +466,89 @@ document.addEventListener('DOMContentLoaded', () => {
         setBarColor(0, 'sorted');
     }
 
-    async function runSelectionSort(id) {
+    async function runSelectionSort() {
         showStatus("Selection Sort: Finding global minimums.", "#60a5fa");
         const n = sortArrData.length;
         for (let i = 0; i < n - 1; i++) {
-            if(id !== currentAnimId) return;
-            let min_idx = i;
-            setBarColor(min_idx, 'pivot');
+            let min_idx = i; setBarColor(min_idx, 'pivot');
             for (let j = i + 1; j < n; j++) {
-                if(id !== currentAnimId) return;
-                setBarColor(j, 'comparing');
-                await sleep(getDelay());
+                setBarColor(j, 'comparing'); await sleep(getDelay());
                 if (sortArrData[j] < sortArrData[min_idx]) {
-                    if(min_idx !== i) setBarColor(min_idx, '');
-                    min_idx = j;
-                    setBarColor(min_idx, 'swapping');
-                } else {
-                    setBarColor(j, '');
-                }
+                    if(min_idx !== i) setBarColor(min_idx, ''); min_idx = j; setBarColor(min_idx, 'swapping');
+                } else setBarColor(j, '');
             }
-            if(min_idx !== i) {
-                let temp = sortArrData[min_idx];
-                setBarVal(min_idx, sortArrData[i]); setBarVal(i, temp);
-            }
-            setBarColor(min_idx, '');
-            setBarColor(i, 'sorted');
+            if(min_idx !== i) { let temp = sortArrData[min_idx]; setBarVal(min_idx, sortArrData[i]); setBarVal(i, temp); }
+            setBarColor(min_idx, ''); setBarColor(i, 'sorted');
         }
         setBarColor(n-1, 'sorted');
     }
 
-    async function runInsertionSort(id) {
+    async function runInsertionSort() {
         showStatus("Insertion Sort: Shifting and inserting.", "#60a5fa");
-        const n = sortArrData.length;
-        setBarColor(0, 'sorted');
+        const n = sortArrData.length; setBarColor(0, 'sorted');
         for (let i = 1; i < n; i++) {
-            if(id !== currentAnimId) return;
-            let key = sortArrData[i];
-            let j = i - 1;
-            setBarColor(i, 'swapping');
-            await sleep(getDelay());
-            
+            let key = sortArrData[i]; let j = i - 1; setBarColor(i, 'swapping'); await sleep(getDelay());
             while (j >= 0 && sortArrData[j] > key) {
-                if(id !== currentAnimId) return;
-                setBarColor(j, 'comparing');
-                setBarVal(j + 1, sortArrData[j]);
-                await sleep(getDelay());
-                setBarColor(j, 'sorted');
-                setBarColor(j+1, 'sorted');
-                j = j - 1;
+                setBarColor(j, 'comparing'); setBarVal(j + 1, sortArrData[j]); await sleep(getDelay());
+                setBarColor(j, 'sorted'); setBarColor(j+1, 'sorted'); j = j - 1;
             }
-            setBarVal(j + 1, key);
-            setBarColor(j+1, 'sorted');
+            setBarVal(j + 1, key); setBarColor(j+1, 'sorted');
         }
     }
 
-    async function runQuickSort(id) {
-        showStatus("Quick Sort: Partitioning arrays recursively.", "#60a5fa");
-        await qsHelper(0, sortArrData.length - 1, id);
-        if(id === currentAnimId) {
-            for(let i=0; i<sortArrData.length; i++) setBarColor(i, 'sorted');
-        }
+    async function runQuickSort() { showStatus("Quick Sort: Partitioning arrays recursively.", "#60a5fa"); await qsHelper(0, sortArrData.length - 1); }
+    async function qsHelper(low, high) {
+        if (low < high) { let pi = await qsPartition(low, high); await qsHelper(low, pi - 1); await qsHelper(pi + 1, high); } 
+        else if (low >= 0 && high >= 0 && low === high) setBarColor(low, 'sorted');
     }
-
-    async function qsHelper(low, high, id) {
-        if (low < high) {
-            let pi = await qsPartition(low, high, id);
-            if(id !== currentAnimId) return;
-            await qsHelper(low, pi - 1, id);
-            await qsHelper(pi + 1, high, id);
-        } else if (low >= 0 && high >= 0 && low === high) {
-            setBarColor(low, 'sorted');
-        }
-    }
-
-    async function qsPartition(low, high, id) {
-        let pivot = sortArrData[high];
-        setBarColor(high, 'pivot');
-        let i = low - 1;
+    async function qsPartition(low, high) {
+        let pivot = sortArrData[high]; setBarColor(high, 'pivot'); let i = low - 1;
         for (let j = low; j < high; j++) {
-            if(id !== currentAnimId) return;
-            setBarColor(j, 'comparing');
-            await sleep(getDelay());
-            if (sortArrData[j] < pivot) {
-                i++;
-                let temp = sortArrData[i];
-                setBarVal(i, sortArrData[j]); setBarVal(j, temp);
-                setBarColor(i, 'swapping');
-            }
+            setBarColor(j, 'comparing'); await sleep(getDelay());
+            if (sortArrData[j] < pivot) { i++; let temp = sortArrData[i]; setBarVal(i, sortArrData[j]); setBarVal(j, temp); setBarColor(i, 'swapping'); }
             if(i !== j) setBarColor(j, '');
         }
-        await sleep(getDelay());
-        let temp = sortArrData[i+1];
-        setBarVal(i+1, sortArrData[high]); setBarVal(high, temp);
-        setBarColor(high, '');
-        setBarColor(i+1, 'sorted');
-        for(let k=low; k<=i; k++) setBarColor(k, ''); // reset colors
+        await sleep(getDelay()); let temp = sortArrData[i+1]; setBarVal(i+1, sortArrData[high]); setBarVal(high, temp); setBarColor(high, ''); setBarColor(i+1, 'sorted');
+        for(let k=low; k<=i; k++) setBarColor(k, ''); 
         return i + 1;
     }
 
-    async function runMergeSort(id) {
-        showStatus("Merge Sort: Divide and Conquer merging", "#60a5fa");
-        await msHelper(0, sortArrData.length - 1, id);
-        if(id === currentAnimId) {
-            for(let i=0; i<sortArrData.length; i++) setBarColor(i, 'sorted');
-        }
+    async function runMergeSort() { showStatus("Merge Sort: Divide and Conquer merging", "#60a5fa"); await msHelper(0, sortArrData.length - 1); }
+    async function msHelper(l, r) {
+        if (l >= r) return; let m = Math.floor(l + (r - l) / 2); await msHelper(l, m); await msHelper(m + 1, r); await msMerge(l, m, r);
     }
-
-    async function msHelper(l, r, id) {
-        if (l >= r) return;
-        let m = Math.floor(l + (r - l) / 2);
-        await msHelper(l, m, id);
-        if(id !== currentAnimId) return;
-        await msHelper(m + 1, r, id);
-        if(id !== currentAnimId) return;
-        await msMerge(l, m, r, id);
-    }
-
-    async function msMerge(l, m, r, id) {
-        let n1 = m - l + 1, n2 = r - m;
-        let L = [], R = [];
-        for(let i=0; i<n1; i++) L.push(sortArrData[l + i]);
-        for(let j=0; j<n2; j++) R.push(sortArrData[m + 1 + j]);
-
+    async function msMerge(l, m, r) {
+        let n1 = m - l + 1, n2 = r - m; let L = [], R = [];
+        for(let i=0; i<n1; i++) L.push(sortArrData[l + i]); for(let j=0; j<n2; j++) R.push(sortArrData[m + 1 + j]);
         let i = 0, j = 0, k = l;
         while (i < n1 && j < n2) {
-            if(id !== currentAnimId) return;
-            setBarColor(k, 'comparing');
-            await sleep(getDelay());
-            if (L[i] <= R[j]) { setBarVal(k, L[i]); i++; }
-            else { setBarVal(k, R[j]); j++; }
-            setBarColor(k, 'sorted');
-            k++;
+            setBarColor(k, 'comparing'); await sleep(getDelay());
+            if (L[i] <= R[j]) { setBarVal(k, L[i]); i++; } else { setBarVal(k, R[j]); j++; }
+            setBarColor(k, 'sorted'); k++;
         }
-        while (i < n1) {
-            if(id !== currentAnimId) return;
-            setBarVal(k, L[i]); setBarColor(k, 'sorted'); i++; k++; await sleep(getDelay()/2);
-        }
-        while (j < n2) {
-            if(id !== currentAnimId) return;
-            setBarVal(k, R[j]); setBarColor(k, 'sorted'); j++; k++; await sleep(getDelay()/2);
-        }
+        while (i < n1) { setBarVal(k, L[i]); setBarColor(k, 'sorted'); i++; k++; await sleep(getDelay()/2); }
+        while (j < n2) { setBarVal(k, R[j]); setBarColor(k, 'sorted'); j++; k++; await sleep(getDelay()/2); }
     }
 
-    async function runShellSort(id) {
-        showStatus("Shell Sort: Gap insertion sorting.", "#60a5fa");
-        let n = sortArrData.length;
+    async function runShellSort() {
+        showStatus("Shell Sort: Gap insertion sorting.", "#60a5fa"); let n = sortArrData.length;
         for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
             for (let i = gap; i < n; i++) {
-                if(id !== currentAnimId) return;
-                let temp = sortArrData[i];
-                let j;
-                setBarColor(i, 'pivot');
+                let temp = sortArrData[i]; let j; setBarColor(i, 'pivot');
                 for (j = i; j >= gap && sortArrData[j - gap] > temp; j -= gap) {
-                    if(id !== currentAnimId) return;
-                    setBarColor(j - gap, 'comparing');
-                    await sleep(getDelay());
-                    setBarVal(j, sortArrData[j - gap]);
-                    setBarColor(j, 'swapping');
-                    setBarColor(j - gap, '');
+                    setBarColor(j - gap, 'comparing'); await sleep(getDelay()); setBarVal(j, sortArrData[j - gap]); setBarColor(j, 'swapping'); setBarColor(j - gap, '');
                 }
-                setBarVal(j, temp);
-                setBarColor(i, '');
-                setBarColor(j, '');
+                setBarVal(j, temp); setBarColor(i, ''); setBarColor(j, '');
             }
-        }
-        if(id === currentAnimId) {
-            for(let i=0; i<n; i++) setBarColor(i, 'sorted');
         }
     }
 
-    // Search and Base Render logic omitted init for space mapping ...
-    // Wait, I must include or it will break. I compressed them but MUST keep.
     async function runLinearSearch(target) {
         renderSearchArray(arrLinear); showStatus('Starting Linear Search...', '#60a5fa');
         const lPtr = document.getElementById('ptr-l'); lPtr.classList.add('visible'); lPtr.textContent = 'i';
         for (let i = 0; i < arrLinear.length; i++) {
             const slot = document.getElementById('ss-' + i); lPtr.style.left = slot.offsetLeft + 'px';
-            slot.classList.add('active'); showStatus("Checking arr[" + i + "] == " + target, '#fcd34d');
-            await sleep(800);
+            slot.classList.add('active'); showStatus("Checking arr[" + i + "] == " + target, '#fcd34d'); await sleep(800);
             if (arrLinear[i] === target) {
                 slot.classList.remove('active'); slot.classList.add('found'); showStatus("Found " + target + " at index " + i + "!", '#34d399'); return;
             } else { slot.classList.remove('active'); slot.classList.add('dim'); }
