@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Core sets
     let stackData = []; let qArr = new Array(5).fill(null); let qFront = 0; let qRear = -1; let qCount = 0;
     let edges = []; let bstRoot = null; let mainListData = []; let sortArrData = [];
+    let treeDrawLoop = null;
 
     function generateSortArray() { sortArrData = []; for(let i=0; i<15; i++) sortArrData.push(Math.floor(Math.random() * 95) + 5); renderSortBars(); showStatus("Generated Random Array.", "#94a3b8"); }
 
@@ -209,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(currentMode === 'tree-splay') { bstRoot = splayNode(bstRoot, val); renderTree(); showStatus("Splayed " + val, '#fbbf24'); }
     });
 
-    let treeDrawLoop = null; // RAF
+    // RAF
     function drawTreeEdgesContinually() {
         const svg = document.getElementById('tree-edges'); svg.innerHTML = '';
         const nc = document.getElementById('tree-nodes-container');
