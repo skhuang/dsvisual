@@ -23,7 +23,10 @@
                         <input type="radio" id="mode-stack-list" name="ds-mode" value="stack-list"> <label for="mode-stack-list">Stack(List)</label>
                         <input type="radio" id="mode-queue" name="ds-mode" value="queue"> <label for="mode-queue">Queue</label>
                         <input type="radio" id="mode-graph" name="ds-mode" value="graph"> <label for="mode-graph">Graph</label>
-                        <input type="radio" id="mode-tree" name="ds-mode" value="tree"> <label for="mode-tree">Tree(BST)</label>
+                        <input type="radio" id="mode-tree-bst" name="ds-mode" value="tree-bst"> <label for="mode-tree-bst">Tree(BST)</label>
+                        <input type="radio" id="mode-tree-avl" name="ds-mode" value="tree-avl"> <label for="mode-tree-avl">Tree(AVL)</label>
+                        <input type="radio" id="mode-tree-rb" name="ds-mode" value="tree-rb"> <label for="mode-tree-rb">Tree(RB)</label>
+                        <input type="radio" id="mode-tree-splay" name="ds-mode" value="tree-splay"> <label for="mode-tree-splay">Tree(Splay)</label>
                         <input type="radio" id="mode-list-arr" name="ds-mode" value="list-array"> <label for="mode-list-arr">List(Arr)</label>
                         <input type="radio" id="mode-list-list" name="ds-mode" value="list-linked"> <label for="mode-list-list">List(List)</label>
                         <input type="radio" id="mode-search-linear" name="ds-mode" value="search-linear"> <label for="mode-search-linear">Search(L)</label>
@@ -59,6 +62,7 @@
                     <div class="actions hidden" id="tree-actions">
                         <input type="number" id="tree-val" placeholder="Node Value" value="50">
                         <button id="btn-tree-add" class="btn primary">Insert()</button>
+                        <button id="btn-tree-search" class="btn secondary">Splay Search()</button>
                     </div>
 
                     <div class="actions hidden" id="search-actions">
