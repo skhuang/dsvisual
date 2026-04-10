@@ -323,6 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary;
             searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden');
         }
+
+        if (window.Prism) Prism.highlightElement(codeDisplay);
     }
 
     function renderAll() {
