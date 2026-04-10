@@ -136,6 +136,24 @@ document.addEventListener('DOMContentLoaded', () => {
     let edges = []; let bstRoot = null; let mainListData = []; let sortArrData = [];
     let treeDrawLoop = null;
 
+    const tabBtnDesc = document.getElementById('tab-btn-desc');
+    const tabBtnCode = document.getElementById('tab-btn-code');
+    const descView = document.getElementById('desc-view');
+    const codeView = document.getElementById('code-view');
+    const descDisplay = document.getElementById('desc-display');
+
+    tabBtnDesc.addEventListener('click', () => {
+        tabBtnDesc.classList.add('active'); tabBtnDesc.style.borderBottomColor = '#34d399'; tabBtnDesc.style.color = '#34d399';
+        tabBtnCode.classList.remove('active'); tabBtnCode.style.borderBottomColor = 'transparent'; tabBtnCode.style.color = '#94a3b8';
+        descView.style.display = 'block'; codeView.style.display = 'none';
+    });
+    tabBtnCode.addEventListener('click', () => {
+        tabBtnCode.classList.add('active'); tabBtnCode.style.borderBottomColor = '#34d399'; tabBtnCode.style.color = '#34d399';
+        tabBtnDesc.classList.remove('active'); tabBtnDesc.style.borderBottomColor = 'transparent'; tabBtnDesc.style.color = '#94a3b8';
+        codeView.style.display = 'flex'; descView.style.display = 'none';
+        if (window.Prism) Prism.highlightElement(codeDisplay);
+    });
+
     function generateSortArray() { sortArrData = []; for(let i=0; i<15; i++) sortArrData.push(Math.floor(Math.random() * 95) + 5); renderSortBars(); showStatus("Generated Random Array.", "#94a3b8"); }
 
     updateLayout();
@@ -304,6 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const actions = [stdActions, graphActions, treeActions, searchActions, listActions, sortActions];
         containers.forEach(c => c.classList.add('hidden')); actions.forEach(a => a.classList.add('hidden'));
         if(treeDrawLoop) { cancelAnimationFrame(treeDrawLoop); treeDrawLoop = null; }
+
+        if (descDB[currentMode]) { descDisplay.innerHTML = descDB[currentMode]; } else { descDisplay.innerHTML = "<p>No description available.</p>"; }
 
         if(currentMode === 'stack-array') { codeTitle.textContent = 'stack_array.cpp'; codeDisplay.textContent = codeArray; arrayContainer.classList.remove('hidden'); stdActions.classList.remove('hidden'); btnStdAdd.textContent = 'Push()'; btnStdRemove.textContent = 'Pop()'; }
         else if (currentMode === 'stack-list') { codeTitle.textContent = 'stack_linkedlist.cpp'; codeDisplay.textContent = codeLinkedList; linkedListContainer.classList.remove('hidden'); stdActions.classList.remove('hidden'); btnStdAdd.textContent = 'Push()'; btnStdRemove.textContent = 'Pop()'; }

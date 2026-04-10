@@ -137,3 +137,17 @@ header p { color: var(--text-muted); font-size: 0.9rem; }
 .code-header h2 { font-family: 'Fira Code', monospace; font-size: 1.2rem; color: #cbd5e1; }
 .code-content { flex: 1; overflow-y: auto; }
 pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-height: 1.5; color: #e2e8f0; }
+
+/* Explanation Tab Styling */
+.desc-display { padding-right: 15px; color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; }
+.desc-display h3 { font-size: 1.4rem; color: #60a5fa; margin-bottom: 0.5rem; }
+.desc-display p { margin-bottom: 0.8rem; }
+.desc-display hr { border: 0; height: 1px; background: rgba(255,255,255,0.1); margin: 15px 0; }
+.desc-display ul { padding-left: 20px; margin-bottom: 15px; }
+.desc-display li { margin-bottom: 8px; }
+.desc-display code { background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px; font-family: 'Fira Code', monospace; color: #fbbf24; font-size: 0.85em; }
+.complexities { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.badge { padding: 5px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; font-family: 'Fira Code', monospace; }
+.badge.time { background: rgba(52, 211, 153, 0.2); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+.badge.space { background: rgba(96, 165, 250, 0.2); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.3); }
+.badge.exception { background: rgba(248, 113, 113, 0.2); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
