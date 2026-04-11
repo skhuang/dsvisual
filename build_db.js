@@ -31,6 +31,8 @@ const mappings = {
     'heap_fibonacci.cpp': 'codeHeapFibonacci',
     'heap_leftist.cpp': 'codeHeapLeftist',
     'heap_skew.cpp': 'codeHeapSkew',
+    'heap_dary.cpp': 'codeHeapDary',
+    'heap_pairing.cpp': 'codeHeapPairing',
     'tree_trie.cpp': 'codeTreeTrie',
     'tree_radix.cpp': 'codeTreeRadix',
     'tree_ternary.cpp': 'codeTreeTST',
