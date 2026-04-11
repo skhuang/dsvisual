@@ -215,6 +215,51 @@ header p { color: var(--text-muted); font-size: 0.9rem; }
     font-size: 12px;
     font-weight: bold;
 }
+.heap-metrics-panel {
+    width: 100%;
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+}
+.heap-metric-card {
+    background: rgba(15, 23, 42, 0.72);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 68px;
+}
+.heap-metric-card strong {
+    color: #f8fafc;
+    font-size: 0.95rem;
+    line-height: 1.35;
+}
+.heap-metric-card-wide {
+    grid-column: span 3;
+}
+.heap-benchmark-card {
+    background: rgba(30, 41, 59, 0.82);
+    border-color: rgba(96, 165, 250, 0.35);
+}
+.heap-metric-label {
+    color: #94a3b8;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+@media (max-width: 960px) {
+    .heap-metrics-panel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .heap-metric-card-wide {
+        grid-column: span 2;
+    }
+}
 
 @keyframes dash { to { stroke-dashoffset: -10; } }
 @keyframes dashTree { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
