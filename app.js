@@ -508,11 +508,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function runHashInsert(val) {
         if(currentMode === 'hash-chain') {
-            const num = 5; let idx = val % num;
+            const num = 5; let idx = ((val % num) + num) % num;
             showStatus(val + " % " + num + " = " + idx, "#fbbf24"); await sleep(1000);
             hashChData[idx].push(val); renderHashes(); showStatus("Chained at Index " + idx, "#34d399");
         } else if(currentMode === 'hash-open') {
-            const num = 5; let idx = val % num;
+            const num = 5; let idx = ((val % num) + num) % num;
             showStatus(val + " % " + num + " = " + idx, "#fbbf24"); await sleep(800);
             const startIdx = idx;
             while(hashOaData[idx] !== null) {
@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             hashOaData[idx] = val; renderHashes(); showStatus("Inserted at Index " + idx, "#34d399");
         } else if(currentMode === 'hash-bucket') {
-            const numBuckets = 4; const bCapacity = 2; let idx = val % numBuckets;
+            const numBuckets = 4; const bCapacity = 2; let idx = ((val % numBuckets) + numBuckets) % numBuckets;
             showStatus(val + " % " + numBuckets + " = Bucket " + idx, "#fbbf24"); await sleep(800);
             const startIdx = idx;
             while(hashBucketData[idx].length >= bCapacity) {
