@@ -64,4 +64,13 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         // Playwright listens for the DOM string injection reporting Probing
         await expect(page.locator('#status-message')).toContainText('occupied! Probing...', { timeout: 10000 });
     });
+
+    test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {
+        await page.locator('label[for="mode-sort-radix"]').click();
+        await expect(page.locator('#code-title')).toHaveText('sort_radix.cpp');
+        await page.click('#btn-sort-random');
+        await expect(page.locator('.sort-bar')).toHaveCount(15);
+        await page.click('#btn-sort-start');
+        await expect(page.locator('#status-message')).toContainText('Radix Sort', { timeout: 15000 });
+    });
 });

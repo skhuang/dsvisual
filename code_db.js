@@ -242,6 +242,188 @@ int main() {
 }
 `;
 
+const codeSortBucket = `#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+void bucketSort(vector<float>& arr) {
+    int n = arr.size();
+    if (n <= 0) return;
+
+    // 1. Create n empty buckets
+    vector<vector<float>> buckets(n);
+
+    // 2. Distribute elements into buckets based on their value
+    for (int i = 0; i < n; i++) {
+        // Elements are assumed to be normalized between 0.0 and 1.0!
+        // For array [0.78, 0.17, 0.39, 0.26, 0.72]
+        int bucketIndex = n * arr[i];
+        if(bucketIndex >= n) bucketIndex = n - 1; // Catch edge cases
+        buckets[bucketIndex].push_back(arr[i]);
+    }
+
+    // 3. Sort individual buckets (typically using Insertion Sort)
+    for (int i = 0; i < n; i++) {
+        sort(buckets[i].begin(), buckets[i].end());
+    }
+
+    // 4. Concatenate all buckets back into the original array
+    int index = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < buckets[i].size(); j++) {
+            arr[index++] = buckets[i][j];
+        }
+    }
+}
+
+int main() {
+    vector<float> arr = {0.897, 0.565, 0.656, 0.1234, 0.665, 0.3434};
+    bucketSort(arr);
+    return 0;
+}
+`;
+
+const codeSortCounting = `#include <iostream>
+#include <vector>
+using namespace std;
+
+void countingSort(vector<int>& arr) {
+    int max = *max_element(arr.begin(), arr.end());
+    int min = *min_element(arr.begin(), arr.end());
+    int range = max - min + 1;
+
+    // 1. Create a dynamic counting array initialized to 0
+    vector<int> count(range, 0);
+    vector<int> output(arr.size());
+
+    // 2. Count the frequency of each element
+    for (int i = 0; i < arr.size(); i++) {
+        count[arr[i] - min]++;
+    }
+
+    // 3. Modify count array to store actual positions (Cumulative Sum)
+    for (int i = 1; i < count.size(); i++) {
+        count[i] += count[i - 1];
+    }
+
+    // 4. Build output array dynamically by mapping elements back
+    for (int i = arr.size() - 1; i >= 0; i--) {
+        output[count[arr[i] - min] - 1] = arr[i];
+        count[arr[i] - min]--;
+    }
+
+    for (int i = 0; i < arr.size(); i++) {
+        arr[i] = output[i];
+    }
+}
+
+int main() {
+    vector<int> arr = {4, 2, 2, 8, 3, 3, 1};
+    countingSort(arr);
+    return 0;
+}
+`;
+
+const codeSortRadix = `#include <iostream>
+#include <vector>
+using namespace std;
+
+void countingSortDigit(vector<int>& arr, int exp) {
+    int n = arr.size();
+    vector<int> output(n);
+    int count[10] = {0}; // Radix is base-10
+
+    // Store count of occurrences for the defined digit (1s, 10s, 100s...)
+    for (int i = 0; i < n; i++) {
+        count[(arr[i] / exp) % 10]++;
+    }
+
+    // Change count[i] so that count[i] now contains actual position
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    // Build the output array from back to front to maintain stability!
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    }
+
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+}
+
+void radixSort(vector<int>& arr) {
+    int maxEl = *max_element(arr.begin(), arr.end());
+
+    // Do counting sort for every digit. 
+    // exp is 10^i where i is current digit number
+    for (int exp = 1; maxEl / exp > 0; exp *= 10) {
+        countingSortDigit(arr, exp);
+    }
+}
+
+int main() {
+    vector<int> arr = {170, 45, 75, 90, 802, 24, 2, 66};
+    radixSort(arr);
+    return 0;
+}
+`;
+
+const codeSortHeap = `#include <iostream>
+#include <vector>
+
+using namespace std;
+
+// To heapify a subtree rooted with node i
+void heapify(vector<int>& arr, int n, int i) {
+    int largest = i; // Initialize largest as root
+    int left = 2 * i + 1; // Left child relative offset
+    int right = 2 * i + 2; // Right child relative offset
+
+    // If left child is larger than root
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    // If right child is larger than largest so far
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    // If largest is not root
+    if (largest != i) {
+        swap(arr[i], arr[largest]);
+        // Recursively heapify the affected sub-tree
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(vector<int>& arr) {
+    int n = arr.size();
+
+    // 1. Build Heap (rearrange array)
+    for (int i = n / 2 - 1; i >= 0; i--) {
+        heapify(arr, n, i);
+    }
+
+    // 2. One by one extract an element from heap
+    for (int i = n - 1; i > 0; i--) {
+        // Move current root (Absolute maximum) to the array tail
+        swap(arr[0], arr[i]);
+
+        // Call max heapify on the reduced heap enforcing structure
+        heapify(arr, i, 0);
+    }
+}
+
+int main() {
+    vector<int> arr = {12, 11, 13, 5, 6, 7};
+    heapSort(arr);
+    return 0;
+}
+`;
+
 const codeTreeBST = `#include <iostream>
 using namespace std;
 

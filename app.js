@@ -370,6 +370,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'sort-quick') executeAnimWrapper(async () => { await runQuickSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
         else if (currentMode === 'sort-merge') executeAnimWrapper(async () => { await runMergeSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
         else if (currentMode === 'sort-shell') executeAnimWrapper(async () => { await runShellSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
+        else if (currentMode === 'sort-bucket') executeAnimWrapper(async () => { await runBucketSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
+        else if (currentMode === 'sort-count') executeAnimWrapper(async () => { await runCountingSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
+        else if (currentMode === 'sort-radix') executeAnimWrapper(async () => { await runRadixSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
+        else if (currentMode === 'sort-heap') executeAnimWrapper(async () => { await runHeapSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
     });
 
     function showStatus(msg, color) { statusMsg.textContent = msg; statusMsg.style.color = color; }
@@ -422,6 +426,10 @@ document.addEventListener('DOMContentLoaded', () => {
             else if(currentMode === 'sort-quick') { codeTitle.textContent = 'sort_quick.cpp'; codeDisplay.textContent = codeSortQuick; }
             else if(currentMode === 'sort-merge') { codeTitle.textContent = 'sort_merge.cpp'; codeDisplay.textContent = codeSortMerge; }
             else if(currentMode === 'sort-shell') { codeTitle.textContent = 'sort_shell.cpp'; codeDisplay.textContent = codeSortShell; }
+            else if(currentMode === 'sort-bucket') { codeTitle.textContent = 'sort_bucket.cpp'; codeDisplay.textContent = codeSortBucket; }
+            else if(currentMode === 'sort-count') { codeTitle.textContent = 'sort_counting.cpp'; codeDisplay.textContent = codeSortCounting; }
+            else if(currentMode === 'sort-radix') { codeTitle.textContent = 'sort_radix.cpp'; codeDisplay.textContent = codeSortRadix; }
+            else if(currentMode === 'sort-heap') { codeTitle.textContent = 'sort_heap.cpp'; codeDisplay.textContent = codeSortHeap; }
         }
         if (window.Prism) Prism.highlightElement(codeDisplay);
     }
@@ -525,6 +533,88 @@ document.addEventListener('DOMContentLoaded', () => {
                 setBarVal(j, temp); setBarColor(i, ''); setBarColor(j, '');
             }
         }
+    }
+
+    async function runBucketSort() {
+        showStatus("Bucket Sort: Distributing elements into logical buckets", "#fbbf24");
+        // Simulated visualization: We color code ranges
+        let max = Math.max(...sortArrData);
+        for(let i=0; i<sortArrData.length; i++) {
+            let bucketIdx = Math.floor((sortArrData[i] / max) * 4); // 5 colors map
+            const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa'];
+            document.getElementById('sb-' + i).style.background = colors[bucketIdx] || colors[4];
+            await sleep(getDelay() / 4);
+        }
+        await sleep(getDelay());
+        showStatus("Bucket Sort: Sorting inside individual buckets & Re-assembling", "#3b82f6");
+        for (let i = 1; i < sortArrData.length; i++) {
+            let key = sortArrData[i]; let j = i - 1;
+            while (j >= 0 && sortArrData[j] > key) {
+                sortArrData[j + 1] = sortArrData[j];
+                renderSortBars(); await sleep(getDelay() / 2); // Visual step
+                j = j - 1;
+            }
+            sortArrData[j + 1] = key;
+        }
+    }
+
+    async function runCountingSort() {
+        showStatus("Counting Sort: Building Frequency Map", "#fbbf24");
+        let max = Math.max(...sortArrData); let min = Math.min(...sortArrData);
+        let count = new Array(max - min + 1).fill(0); let output = new Array(sortArrData.length).fill(0);
+        
+        for (let i = 0; i < sortArrData.length; i++) {
+            setBarColor(i, 'active'); await sleep(getDelay() / 4);
+            count[sortArrData[i] - min]++; setBarColor(i, 'default');
+        }
+        showStatus("Counting Sort: Re-populating target Array based on accumulated addresses", "#60a5fa");
+        for (let i = 1; i < count.length; i++) { count[i] += count[i - 1]; }
+        for (let i = sortArrData.length - 1; i >= 0; i--) {
+            output[count[sortArrData[i] - min] - 1] = sortArrData[i];
+            count[sortArrData[i] - min]--;
+        }
+        for(let i = 0; i < sortArrData.length; i++) {
+            sortArrData[i] = output[i]; renderSortBars(); setBarColor(i, 'sorted'); await sleep(getDelay() / 2);
+        }
+    }
+
+    async function runRadixSort() {
+        let max = Math.max(...sortArrData);
+        for(let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
+            showStatus('Radix Sort: Distributing strictly based on digit value (' + exp + 's place)', '#f472b6');
+            let output = new Array(sortArrData.length).fill(0); let count = new Array(10).fill(0);
+            for(let i=0; i<sortArrData.length; i++) count[Math.floor((sortArrData[i] / exp) % 10)]++;
+            for(let i=1; i<10; i++) count[i] += count[i - 1];
+            for(let i=sortArrData.length - 1; i>=0; i--) { output[count[Math.floor((sortArrData[i] / exp) % 10)] - 1] = sortArrData[i]; count[Math.floor((sortArrData[i] / exp) % 10)]--; }
+            for(let i=0; i<sortArrData.length; i++) {
+                sortArrData[i] = output[i]; renderSortBars(); setBarColor(i, 'active'); await sleep(getDelay() / 2); setBarColor(i, 'default');
+            }
+        }
+    }
+
+    async function runHeapSort() {
+        let n = sortArrData.length;
+        async function heapify(n, i) {
+            let largest = i; let l = 2*i + 1; let r = 2*i + 2;
+            if(l < n && sortArrData[l] > sortArrData[largest]) largest = l;
+            if(r < n && sortArrData[r] > sortArrData[largest]) largest = r;
+            if(largest !== i) {
+                setBarColor(i, 'active'); setBarColor(largest, 'active'); await sleep(getDelay());
+                let t = sortArrData[i]; sortArrData[i] = sortArrData[largest]; sortArrData[largest] = t;
+                renderSortBars(); await sleep(getDelay()); await heapify(n, largest);
+            }
+        }
+
+        showStatus("Heap Sort: Building absolute Max Heap (Heapify Structure)", "#fbbf24");
+        for(let i = Math.floor(n / 2) - 1; i >= 0; i--) { await heapify(n, i); }
+        
+        showStatus("Heap Sort: Extracting Max Element & Restoring Tree", "#60a5fa");
+        for(let i = n - 1; i > 0; i--) {
+            setBarColor(0, 'active'); setBarColor(i, 'active'); await sleep(getDelay());
+            let t = sortArrData[0]; sortArrData[0] = sortArrData[i]; sortArrData[i] = t;
+            renderSortBars(); setBarColor(i, 'sorted'); await sleep(getDelay()); await heapify(i, 0);
+        }
+        setBarColor(0, 'sorted');
     }
 
     async function runLinearSearch(target) {
