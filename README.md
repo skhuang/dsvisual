@@ -124,10 +124,56 @@ npx playwright test
 ### View test report
 
 ```bash
-npx playwright show-report
+mpx playwright show-report
 ```
 
 Tests cover initial load state, mode switching, and UI interaction for all major data structures.
+
+## Interactive Heap Tutorials
+
+All 7 heap modes include guided, step-by-step tutorials to help users understand heap operations and invariants:
+
+### Starting a Tutorial
+
+1. Select a heap mode (e.g., **Binary Heap** or **Fibonacci Heap**)
+2. Click the **Start Tutorial** button (appears in the Heap Actions panel)
+3. A tutorial overlay panel will appear with:
+   - Current step number (e.g., "Step 1 / 8")
+   - Guidance text explaining the operation
+   - Pre-filled input suggestions
+   - Highlighted controls to guide interaction
+
+### Tutorial Flow
+
+Each heap tutorial guides you through 8 operations:
+
+| Step | Operation | Goal |
+|------|-----------|------|
+| 1 | Insert 12 | Create the root node |
+| 2 | Insert 7 | Observe key bubbling / tree restructuring |
+| 3 | Insert 19 | Build enough structure to inspect |
+| 4 | Peek | Verify which value is at the frontier |
+| 5 | Merge [3, 8, 15] | See merge/union behavior |
+| 6 | Change 19 → 5 | Watch key adjustment and reordering |
+| 7 | Extract | Observe root removal and re-heapification |
+| 8 | Heap Stats | Review final heap size and structure info |
+
+### Tutorial Navigation
+
+- **Next**: Manually advance to the next step (auto-advances when you complete the expected operation)
+- **Restart**: Reset the heap and tutorial progress to the start
+- **Exit**: Close the tutorial and return to free-play mode
+- **Mode Switch**: Exiting the tutorial's heap mode automatically closes the tutorial
+
+### Heap Modes with Tutorials
+
+- **Binary Heap**: Classic balanced binary tree with complete-structure guarantee
+- **Binomial Heap**: Forest of binomial trees linked by degree
+- **Fibonacci Heap**: Lazy forest with cut-based amortized optimization
+- **Leftist Heap**: Recursive merge-first structure with null-path-length balance
+- **Skew Heap**: Self-adjusting skew structure via aggressive swaps
+- **4-ary Heap**: Wider branching factor for shallower trees
+- **Pairing Heap**: Pairwise meld operations for amortized efficiency
 
 ## Architecture
 
