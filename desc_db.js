@@ -130,6 +130,41 @@ const descDB = {
             <span class="badge time">Delete: O(log N) amortized</span>
         </div>
     `,
+    'heap-dary': `
+        <h3>D-ary Heap (4-ary)</h3>
+        <p>A generalization of the binary heap where each node can have four children instead of two.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> Uses a wider branching factor to reduce tree height, trading fewer levels for more child comparisons during <code>sift down</code>.</li>
+            <li><strong>Teaching Value:</strong> Makes branching-factor tradeoffs visible in heap maintenance.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Insert: O(log₄ N)</span>
+            <span class="badge time">Peek: O(1)</span>
+            <span class="badge time">Extract: O(4 log₄ N)</span>
+            <span class="badge time">Merge: O((N+M) log₄(N+M))</span>
+            <span class="badge time">Decrease/Increase: O(log₄ N)</span>
+            <span class="badge time">Delete: O(log₄ N)</span>
+        </div>
+    `,
+    'heap-pairing': `
+        <h3>Pairing Heap</h3>
+        <p>A practical meld-oriented heap built around repeated pairwise linking of subtrees.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> Insert and merge are handled by a simple <code>meld</code>; extract performs pairwise combination of the removed root's children.</li>
+            <li><strong>Teaching Value:</strong> Offers a simpler alternative to Fibonacci heaps while still emphasizing merge-first design.</li>
+            <li><strong>Visualizer Note:</strong> The browser model uses an approximated pairing-tree layout to emphasize melding structure.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Insert: O(1) amortized</span>
+            <span class="badge time">Peek: O(1)</span>
+            <span class="badge time">Extract: O(log N) amortized</span>
+            <span class="badge time">Merge: O(1) amortized</span>
+            <span class="badge time">Decrease/Increase: O(log N) amortized</span>
+            <span class="badge time">Delete: O(log N) amortized</span>
+        </div>
+    `,
     'graph': `
         <h3>Undirected Graph (Adjacency Matrix)</h3>
         <p>A foundational topological structure meant for connecting generic Nodes (Vertices) using Edges.</p>

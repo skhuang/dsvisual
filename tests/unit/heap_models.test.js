@@ -8,6 +8,8 @@ const heapModes = [
     'heap-fibonacci',
     'heap-leftist',
     'heap-skew',
+    'heap-dary',
+    'heap-pairing',
 ];
 
 for (const mode of heapModes) {

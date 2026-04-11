@@ -13,7 +13,7 @@ open index.html
 - Side-by-side **animated visualization** and **C++ source code** display
 - Step-through animation with **pause / stop** controls
 - Algorithm descriptions with **time & space complexity**
-- Covers **35+ data structures and algorithms**
+- Covers **37+ data structures and algorithms**
 
 ## Supported Algorithms
 
@@ -25,7 +25,7 @@ open index.html
 | **List** | Array-based, Linked List |
 | **Graph** | Adjacency representation, traversal |
 | **Hash Table** | Chaining, Open Addressing, Bucket Hashing |
-| **Heap / Priority Queue** | Binary Heap, Binomial Queue, Fibonacci Heap, Leftist Heap, Skew Heap |
+| **Heap / Priority Queue** | Binary Heap, Binomial Queue, Fibonacci Heap, Leftist Heap, Skew Heap, 4-ary Heap, Pairing Heap |
 
 ### Trees
 | Type | Description |

@@ -178,6 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'heap-fibonacci': HeapModels.createHeapModel('heap-fibonacci', heapIsMin),
         'heap-leftist': HeapModels.createHeapModel('heap-leftist', heapIsMin),
         'heap-skew': HeapModels.createHeapModel('heap-skew', heapIsMin),
+        'heap-dary': HeapModels.createHeapModel('heap-dary', heapIsMin),
+        'heap-pairing': HeapModels.createHeapModel('heap-pairing', heapIsMin),
     };
 
     const tabBtnDesc = document.getElementById('tab-btn-desc');
@@ -225,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'SWAP' || type === 'SWAP_CHILDREN') return 'swap';
         if (type === 'CUT') return 'cut';
         if (type === 'MARK') return 'cut';
-        if (type === 'LINK' || type === 'MERGE_START' || type === 'MERGE_DEGREE') return 'link';
+        if (type === 'LINK' || type === 'MERGE_START' || type === 'MERGE_DEGREE' || type === 'PAIR_MELD') return 'link';
         if (type === 'CONSOLIDATE') return 'consolidate';
         return 'active';
     }
@@ -426,6 +428,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (mode === 'heap-fibonacci') {
             const depth = Math.ceil(Math.log2(size + 1));
             statsMsg += ` | MaxDepth: ${depth}`;
+        } else if (mode === 'heap-dary') {
+            const depth = size ? Math.ceil(Math.log(size * 3 + 1) / Math.log(4)) : 0;
+            statsMsg += ` | Arity: 4 | Levels: ${depth}`;
+        } else if (mode === 'heap-pairing') {
+            const approximatePairs = Math.max(0, Math.ceil((size - 1) / 2));
+            statsMsg += ` | Pair Melds: ~${approximatePairs}`;
         }
         
         showStatus(statsMsg, '#a78bfa');
@@ -667,6 +675,8 @@ document.addEventListener('DOMContentLoaded', () => {
             else if(currentMode === 'heap-fibonacci') { codeTitle.textContent = 'heap_fibonacci.cpp'; codeDisplay.textContent = codeHeapFibonacci; }
             else if(currentMode === 'heap-leftist') { codeTitle.textContent = 'heap_leftist.cpp'; codeDisplay.textContent = codeHeapLeftist; }
             else if(currentMode === 'heap-skew') { codeTitle.textContent = 'heap_skew.cpp'; codeDisplay.textContent = codeHeapSkew; }
+            else if(currentMode === 'heap-dary') { codeTitle.textContent = 'heap_dary.cpp'; codeDisplay.textContent = codeHeapDary; }
+            else if(currentMode === 'heap-pairing') { codeTitle.textContent = 'heap_pairing.cpp'; codeDisplay.textContent = codeHeapPairing; }
         }
         if (window.Prism) Prism.highlightElement(codeDisplay);
     }
@@ -710,6 +720,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 const posInLevel = i - first;
                 const count = Math.pow(2, level);
                 const x = ((posInLevel + 1) / (count + 1)) * heapContainer.clientWidth;
+                const y = 42 + level * 62;
+                positionById[node.id] = { x, y };
+            });
+        } else if (snap.kind === 'd-ary') {
+            const arity = snap.arity || 4;
+            let levelStart = 0;
+            let levelCount = 1;
+            let level = 0;
+
+            snap.nodes.forEach((node, index) => {
+                while (index >= levelStart + levelCount) {
+                    levelStart += levelCount;
+                    levelCount *= arity;
+                    level++;
+                }
+                const posInLevel = index - levelStart;
+                const x = ((posInLevel + 1) / (levelCount + 1)) * heapContainer.clientWidth;
                 const y = 42 + level * 62;
                 positionById[node.id] = { x, y };
             });
@@ -801,6 +828,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
             });
+        } else if (snap.kind === 'pairing') {
+            const childrenById = {};
+            snap.edges.forEach(edge => {
+                if (!childrenById[edge.from]) childrenById[edge.from] = [];
+                childrenById[edge.from].push(edge.to);
+            });
+
+            const layoutPairing = (nodeId, depth, left, right) => {
+                const x = (left + right) / 2;
+                const y = 42 + depth * 68;
+                positionById[nodeId] = { x, y };
+                const children = childrenById[nodeId] || [];
+                if (!children.length) return;
+                const segment = (right - left) / children.length;
+                children.forEach((childId, childIndex) => {
+                    const childLeft = left + childIndex * segment;
+                    const childRight = childLeft + segment;
+                    layoutPairing(childId, depth + 1, childLeft + 8, childRight - 8);
+                });
+            };
+
+            if (snap.roots.length) layoutPairing(snap.roots[0], 0, 24, heapContainer.clientWidth - 24);
         } else {
             // Fallback forest layout
             const roots = snap.roots || [];
@@ -850,6 +899,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (node.root) className += ' root';
             if (node.npl !== null) className += ' npl';
             if (heapMode === 'heap-binomial' && node.root) className += ' degree';
+            if (heapMode === 'heap-dary') className += ' dary';
+            if (heapMode === 'heap-pairing') className += ' pairing';
             if (node.marked) className += ' marked';
             el.className = className;
             
@@ -858,6 +909,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rootIdx = snap.roots.indexOf(node.id);
                 if (rootIdx >= 0) el.setAttribute('data-degree', 'B' + rootIdx);
             }
+            if (heapMode === 'heap-dary' && node.root) el.setAttribute('data-degree', '4-ary');
             
             el.textContent = node.value;
             el.style.left = pos.x + 'px';

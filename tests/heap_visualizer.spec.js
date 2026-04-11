@@ -7,6 +7,8 @@ const heapModes = [
     { id: 'mode-heap-fibonacci', title: 'heap_fibonacci.cpp', desc: 'Fibonacci Heap' },
     { id: 'mode-heap-leftist', title: 'heap_leftist.cpp', desc: 'Leftist Heap' },
     { id: 'mode-heap-skew', title: 'heap_skew.cpp', desc: 'Skew Heap' },
+    { id: 'mode-heap-dary', title: 'heap_dary.cpp', desc: 'D-ary Heap' },
+    { id: 'mode-heap-pairing', title: 'heap_pairing.cpp', desc: 'Pairing Heap' },
 ];
 
 test.describe('Heap Visualizer Suite', () => {

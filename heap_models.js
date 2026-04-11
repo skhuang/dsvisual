@@ -3,6 +3,10 @@
         return isMin ? (a, b) => a < b : (a, b) => a > b;
     }
 
+    function arityFor(type) {
+        return type === 'heap-dary' ? 4 : 2;
+    }
+
     class BaseArrayHeapModel {
         constructor(type, isMin) {
             this.type = type;
@@ -10,6 +14,7 @@
             this.data = [];
             this.compare = cmpFactory(isMin);
             this.marked = new Set(); // for Fibonacci heap cascading-cut tracking
+            this.arity = arityFor(type);
         }
 
         setOrder(isMin) {
@@ -25,14 +30,27 @@
         }
 
         heapify() {
-            for (let i = Math.floor(this.data.length / 2) - 1; i >= 0; i--) {
+            for (let i = Math.floor((this.data.length - 2) / this.arity); i >= 0; i--) {
                 this.siftDown(i);
             }
         }
 
+        parentIndex(index) {
+            return Math.floor((index - 1) / this.arity);
+        }
+
+        childIndices(index) {
+            const children = [];
+            for (let offset = 0; offset < this.arity; offset++) {
+                const child = index * this.arity + offset + 1;
+                if (child < this.data.length) children.push(child);
+            }
+            return children;
+        }
+
         siftUp(i, events) {
             while (i > 0) {
-                const p = Math.floor((i - 1) / 2);
+                const p = this.parentIndex(i);
                 events.push({ type: 'COMPARE', a: i, b: p });
                 if (!this.compare(this.data[i], this.data[p])) break;
                 [this.data[i], this.data[p]] = [this.data[p], this.data[i]];
@@ -44,19 +62,12 @@
         siftDown(i, events) {
             let idx = i;
             while (true) {
-                const l = 2 * idx + 1;
-                const r = 2 * idx + 2;
                 let best = idx;
 
-                if (l < this.data.length) {
-                    if (events) events.push({ type: 'COMPARE', a: l, b: best });
-                    if (this.compare(this.data[l], this.data[best])) best = l;
-                }
-
-                if (r < this.data.length) {
-                    if (events) events.push({ type: 'COMPARE', a: r, b: best });
-                    if (this.compare(this.data[r], this.data[best])) best = r;
-                }
+                this.childIndices(idx).forEach((child) => {
+                    if (events) events.push({ type: 'COMPARE', a: child, b: best });
+                    if (this.compare(this.data[child], this.data[best])) best = child;
+                });
 
                 if (best === idx) break;
                 [this.data[idx], this.data[best]] = [this.data[best], this.data[idx]];
@@ -101,6 +112,7 @@
             this.heapify();
             if (this.type === 'heap-fibonacci') events.push({ type: 'CONSOLIDATE' });
             if (this.type === 'heap-skew') events.push({ type: 'SWAP_CHILDREN' });
+            if (this.type === 'heap-pairing') events.push({ type: 'PAIR_MELD' });
             return { ok: true, events };
         }
 
@@ -115,7 +127,7 @@
                 events.push({ type: 'CUT', index: idx });
                 this.marked.delete(idx);
                 // Simulate cascading-cut by marking parent
-                const p = Math.floor((idx - 1) / 2);
+                const p = this.parentIndex(idx);
                 if (p >= 0 && p !== idx) {
                     this.marked.add(p);
                     events.push({ type: 'MARK', index: p });
@@ -141,16 +153,31 @@
 
         validate() {
             for (let i = 0; i < this.data.length; i++) {
-                const l = 2 * i + 1;
-                const r = 2 * i + 2;
-                if (l < this.data.length && !this.compare(this.data[i], this.data[l]) && this.data[i] !== this.data[l]) {
-                    return false;
-                }
-                if (r < this.data.length && !this.compare(this.data[i], this.data[r]) && this.data[i] !== this.data[r]) {
-                    return false;
+                for (const child of this.childIndices(i)) {
+                    if (!this.compare(this.data[i], this.data[child]) && this.data[i] !== this.data[child]) {
+                        return false;
+                    }
                 }
             }
             return true;
+        }
+
+        pairingEdges() {
+            const edges = [];
+            if (!this.data.length) return edges;
+
+            const queue = ['h-0'];
+            let nextIndex = 1;
+            while (queue.length && nextIndex < this.data.length) {
+                const parentId = queue.shift();
+                const childLimit = parentId === 'h-0' ? 3 : 2;
+                for (let count = 0; count < childLimit && nextIndex < this.data.length; count++, nextIndex++) {
+                    const childId = 'h-' + nextIndex;
+                    edges.push({ from: parentId, to: childId });
+                    queue.push(childId);
+                }
+            }
+            return edges;
         }
 
         snapshot() {
@@ -164,10 +191,11 @@
                     npl: this.type === 'heap-leftist' ? this.calcNpl(i) : null,
                     marked: this.type === 'heap-fibonacci' ? this.marked.has(i) : false,
                 });
-                const l = 2 * i + 1;
-                const r = 2 * i + 2;
-                if (l < this.data.length) edges.push({ from: 'h-' + i, to: 'h-' + l });
-                if (r < this.data.length) edges.push({ from: 'h-' + i, to: 'h-' + r });
+                this.childIndices(i).forEach((child) => edges.push({ from: 'h-' + i, to: 'h-' + child }));
+            }
+
+            if (this.type === 'heap-pairing') {
+                return { kind: 'pairing', roots: nodes.length ? ['h-0'] : [], nodes, edges: this.pairingEdges() };
             }
 
             if (this.type === 'heap-binomial' || this.type === 'heap-fibonacci') {
@@ -182,13 +210,18 @@
                 return { kind: 'forest', roots, nodes, edges };
             }
 
+            if (this.type === 'heap-dary') {
+                return { kind: 'd-ary', roots: nodes.length ? ['h-0'] : [], nodes, edges, arity: this.arity };
+            }
+
             return { kind: 'tree', roots: nodes.length ? ['h-0'] : [], nodes, edges };
         }
 
         calcNpl(index) {
             if (index >= this.data.length) return -1;
-            const left = this.calcNpl(2 * index + 1);
-            const right = this.calcNpl(2 * index + 2);
+            const children = this.childIndices(index);
+            const left = children.length > 0 ? this.calcNpl(children[0]) : -1;
+            const right = children.length > 1 ? this.calcNpl(children[1]) : -1;
             return Math.min(left, right) + 1;
         }
     }
