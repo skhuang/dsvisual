@@ -130,6 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const hashOaContainer = document.getElementById('hash-oa-container');
     const hashBucketContainer = document.getElementById('hash-bucket-container');
 
+    const textTreeActions = document.getElementById('text-tree-actions');
+    const textTreeVal = document.getElementById('text-tree-val');
+    const btnTextTreeAdd = document.getElementById('btn-text-tree-add');
+    const advTreeContainer = document.getElementById('advanced-tree-container');
+
     let currentMode = 'stack-array';
     const MAX_SIZE = 5;
 
@@ -144,6 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let hashOaData = new Array(5).fill(null); // Simple array
     let hashBucketData = Array.from({length: 4}, () => []); // 4 buckets, max 2 items each
     let treeDrawLoop = null;
+
+    let trieRoot = { children: {}, endOfWord: false };
+    let radixRoot = { edges: {} };
+    let tstRoot = null;
+    let btreeData = []; let bplusData = [];
 
     const tabBtnDesc = document.getElementById('tab-btn-desc');
     const tabBtnCode = document.getElementById('tab-btn-code');
@@ -176,6 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(currentMode === 'hash-chain') hashChData = Array.from({length: 5}, () => []);
             if(currentMode === 'hash-open') hashOaData = new Array(5).fill(null);
             if(currentMode === 'hash-bucket') hashBucketData = Array.from({length: 4}, () => []);
+            trieRoot = { children: {}, endOfWord: false }; radixRoot = { edges: {} }; tstRoot = null; btreeData = []; bplusData = [];
             if(currentMode.includes('sort-') && sortArrData.length === 0) generateSortArray();
             updateLayout(); renderAll();
             statusMsg.textContent = "Switched to " + currentMode; statusMsg.style.color = '#34d399';
@@ -213,12 +224,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----------- TREES -----------
     btnTreeAdd.addEventListener('click', () => {
-        const val = parseInt(treeVal.value); if(isNaN(val)) return showStatus('Enter valid number.', '#f87171');
-        if(currentMode === 'tree-bst') bstRoot = insertBST(bstRoot, val);
-        else if(currentMode === 'tree-avl') bstRoot = insertAVL(bstRoot, val);
-        else if(currentMode === 'tree-splay') bstRoot = insertSplay(bstRoot, val);
-        else if(currentMode === 'tree-rb') { bstRoot = insertRB_Mock(bstRoot, val); assignRBColors(bstRoot, true); }
-        showStatus("Inserted " + val, '#60a5fa'); treeVal.value = Math.floor(Math.random() * 100); renderTree();
+        executeAnimWrapper(async () => {
+            const val = parseInt(treeVal.value); if(isNaN(val)) return showStatus('Enter valid number.', '#f87171');
+            if(currentMode === 'tree-bst') bstRoot = insertBST(bstRoot, val);
+            else if(currentMode === 'tree-avl') bstRoot = insertAVL(bstRoot, val);
+            else if(currentMode === 'tree-rb') { bstRoot = insertRB_Mock(bstRoot, val); assignRBColors(bstRoot, true); }
+            else if(currentMode === 'tree-splay') bstRoot = insertSplay(bstRoot, val);
+            else if(currentMode === 'tree-btree') { btreeData.push(val); btreeData.sort((a,b)=>a-b); renderAdvTrees(); return showStatus("B-Tree Updated.", "#34d399"); }
+            else if(currentMode === 'tree-bplus') { bplusData.push(val); bplusData.sort((a,b)=>a-b); renderAdvTrees(); return showStatus("B+Tree Updated.", "#34d399"); }
+            showStatus("Inserted " + val, '#60a5fa'); treeVal.value = Math.floor(Math.random() * 100); renderTree();
+        });
     });
     btnTreeSearch.addEventListener('click', () => {
         const val = parseInt(treeVal.value); if(isNaN(val)) return;
@@ -324,6 +339,28 @@ document.addEventListener('DOMContentLoaded', () => {
         executeAnimWrapper(async () => await runHashInsert(val));
     });
 
+    btnTextTreeAdd.addEventListener('click', () => {
+        let str = textTreeVal.value.trim().toUpperCase();
+        if(!str) return showStatus('Enter a word!', '#f87171');
+        executeAnimWrapper(async () => {
+            if(currentMode === 'tree-trie') {
+                let curr = trieRoot; for(let char of str) { if(!curr.children[char]) curr.children[char] = { children: {}, endOfWord: false }; curr = curr.children[char]; }
+                curr.endOfWord = true; renderAdvTrees(); showStatus("Trie Inserted: " + str, "#34d399");
+            } else if (currentMode === 'tree-radix') {
+                radixRoot.edges[str] = { edges: {}, endOfWord: true }; renderAdvTrees(); showStatus("Radix Block Inserted: " + str, "#34d399");
+            } else if (currentMode === 'tree-ternary') {
+                function ins(node, word, depth) {
+                    let c = word[depth]; if(!node) node = { char: c, isEnd: false, left: null, eq: null, right: null };
+                    if(c < node.char) node.left = ins(node.left, word, depth);
+                    else if(c > node.char) node.right = ins(node.right, word, depth);
+                    else { if(depth+1 < word.length) node.eq = ins(node.eq, word, depth+1); else node.isEnd = true; }
+                    return node;
+                }
+                tstRoot = ins(tstRoot, str, 0); renderAdvTrees(); showStatus("TST Inserted: " + str, "#34d399");
+            }
+        });
+    });
+
     btnSortRandom.addEventListener('click', () => { if(animState === 'playing' || animState === 'paused') return; generateSortArray(); });
     btnSortStart.addEventListener('click', () => {
         renderSortBars(); 
@@ -338,8 +375,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function showStatus(msg, color) { statusMsg.textContent = msg; statusMsg.style.color = color; }
     function getDelay() { return 610 - parseInt(sortSpeedInput.value); } 
     function updateLayout() {
-        const containers = [arrayContainer, linkedListContainer, queueContainer, graphContainer, treeContainer, searchContainer, listArrContainer, listLLContainer, sortContainer, hashChContainer, hashOaContainer, hashBucketContainer];
-        const actions = [stdActions, graphActions, treeActions, searchActions, listActions, sortActions, hashActions];
+        const containers = [arrayContainer, linkedListContainer, queueContainer, graphContainer, treeContainer, advTreeContainer, searchContainer, listArrContainer, listLLContainer, sortContainer, hashChContainer, hashOaContainer, hashBucketContainer];
+        const actions = [stdActions, graphActions, treeActions, textTreeActions, searchActions, listActions, sortActions, hashActions];
         containers.forEach(c => c.classList.add('hidden')); actions.forEach(a => a.classList.add('hidden'));
         if(treeDrawLoop) { cancelAnimationFrame(treeDrawLoop); treeDrawLoop = null; }
 
@@ -355,6 +392,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if(currentMode === 'tree-avl') { codeTitle.textContent = 'tree_avl.cpp'; codeDisplay.textContent = codeTreeAVL; }
             if(currentMode === 'tree-rb') { codeTitle.textContent = 'tree_rb.cpp'; codeDisplay.textContent = codeTreeRB; }
             if(currentMode === 'tree-splay') { codeTitle.textContent = 'tree_splay.cpp'; codeDisplay.textContent = codeTreeSplay; }
+        }
+        else if (['tree-trie', 'tree-radix', 'tree-ternary'].includes(currentMode)) {
+            advTreeContainer.classList.remove('hidden'); textTreeActions.classList.remove('hidden');
+            if(currentMode === 'tree-trie') { codeTitle.textContent = 'tree_trie.cpp'; codeDisplay.textContent = codeTreeTrie; }
+            if(currentMode === 'tree-radix') { codeTitle.textContent = 'tree_radix.cpp'; codeDisplay.textContent = codeTreeRadix; }
+            if(currentMode === 'tree-ternary') { codeTitle.textContent = 'tree_ternary.cpp'; codeDisplay.textContent = codeTreeTST; }
+        }
+        else if (['tree-btree', 'tree-bplus'].includes(currentMode)) {
+            advTreeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden');
+            if(currentMode === 'tree-btree') { codeTitle.textContent = 'tree_btree.cpp'; codeDisplay.textContent = codeTreeBTree; }
+            if(currentMode === 'tree-bplus') { codeTitle.textContent = 'tree_bplus.cpp'; codeDisplay.textContent = codeTreeBPlus; }
         }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
@@ -381,7 +429,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
         else if (currentMode === 'graph') renderGraph();
-        else if (currentMode.includes('tree')) renderTree();
+        else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
+        else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
@@ -570,6 +619,94 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 hashBucketContainer.appendChild(bBlock);
             });
+        }
+    }
+
+    function renderAdvTrees() {
+        advTreeContainer.innerHTML = '';
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.style.position = "absolute"; svg.style.top = "0"; svg.style.left = "0"; svg.style.width = "100%"; svg.style.height = "100%"; svg.style.zIndex="5"; svg.style.pointerEvents = "none";
+        advTreeContainer.appendChild(svg);
+
+        const cx = advTreeContainer.clientWidth / 2;
+        const cy = 40;
+
+        function drawLine(x1, y1, x2, y2, label="") {
+            const line = document.createElementNS(svgNS, "line");
+            line.setAttribute("x1", x1); line.setAttribute("y1", y1); line.setAttribute("x2", x2); line.setAttribute("y2", y2);
+            line.setAttribute("stroke", "#94a3b8"); line.setAttribute("stroke-width", "2"); svg.appendChild(line);
+            if(label) {
+                const el = document.createElement('div'); el.className = 'edge-label'; el.textContent = label;
+                el.style.left = ((x1+x2)/2) + "px"; el.style.top = ((y1+y2)/2) + "px";
+                advTreeContainer.appendChild(el);
+            }
+        }
+
+        if(currentMode === 'tree-trie') {
+            function drawTrie(node, x, y, dx) {
+                const el = document.createElement('div'); el.className = 'tree-node' + (node.endOfWord ? ' trie-end' : '');
+                el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = '20px'; el.style.height = '20px';
+                if(node.endOfWord) el.style.backgroundColor = '#ec4899';
+                advTreeContainer.appendChild(el);
+                let keys = Object.keys(node.children);
+                if(keys.length === 0) return;
+                let startX = x - (keys.length-1)*dx/2;
+                keys.forEach((k, i) => {
+                    let nx = startX + i*dx; let ny = y + 60;
+                    drawLine(x, y, nx, ny, k); drawTrie(node.children[k], nx, ny, dx/1.5);
+                });
+            }
+            drawTrie(trieRoot, cx, cy, 150);
+        } else if (currentMode === 'tree-radix') {
+            function drawRadix(node, x, y, dx) {
+                const el = document.createElement('div'); el.className = 'tree-node' + (node.endOfWord ? ' trie-end' : '');
+                el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = '20px'; el.style.height = '20px';
+                advTreeContainer.appendChild(el);
+                let keys = Object.keys(node.edges);
+                if(keys.length === 0) return;
+                let startX = x - (keys.length-1)*dx/2;
+                keys.forEach((k, i) => {
+                    let nx = startX + i*dx; let ny = y + 80;
+                    drawLine(x, y, nx, ny, k); drawRadix(node.edges[k], nx, ny, dx/1.5);
+                });
+            }
+            drawRadix(radixRoot, cx, cy, 200);
+        } else if (currentMode === 'tree-ternary') {
+            function drawTST(node, x, y, dx) {
+                if(!node) return;
+                const el = document.createElement('div'); el.className = 'tree-node' + (node.isEnd ? ' trie-end' : ' tst-char');
+                el.style.left = x + 'px'; el.style.top = y + 'px'; el.textContent = node.char;
+                if(node.isEnd) el.style.borderColor = '#ec4899';
+                advTreeContainer.appendChild(el);
+                if(node.left) { let nx=x-dx; let ny=y+60; drawLine(x,y,nx,ny,"<"); drawTST(node.left, nx, ny, dx/1.5); }
+                if(node.eq) { let nx=x; let ny=y+80; drawLine(x,y,nx,ny,"="); drawTST(node.eq, nx, ny, dx/1.5); }
+                if(node.right) { let nx=x+dx; let ny=y+60; drawLine(x,y,nx,ny,">"); drawTST(node.right, nx, ny, dx/1.5); }
+            }
+            drawTST(tstRoot, cx, cy, 120);
+        } else if (currentMode === 'tree-btree' || currentMode === 'tree-bplus') {
+            // Simplified Block Presentation Fallback
+            const dataToRender = (currentMode === 'tree-btree') ? btreeData : bplusData;
+            const el = document.createElement('div'); el.className = 'btree-node';
+            el.style.left = cx + 'px'; el.style.top = '100px';
+            if(dataToRender.length === 0) el.innerHTML = "<div class='key'>Empty</div>";
+            else {
+                // Chunk keys to simulate multiple leaf nodes horizontally for B+Tree
+                if(currentMode === 'tree-bplus' && dataToRender.length > 2) {
+                    el.innerHTML = "<div class='key'>Root Index Block</div>";
+                    const leaves = document.createElement('div'); leaves.style.display='flex'; leaves.style.gap='20px'; leaves.style.position='absolute'; leaves.style.top='180px'; leaves.style.left='50%'; leaves.style.transform='translateX(-50%)';
+                    for(let i=0; i<dataToRender.length; i+=2) {
+                        const b = document.createElement('div'); b.className='btree-node'; b.style.position='relative'; b.style.transform='none';
+                        b.innerHTML = "<div class='key'>" + dataToRender[i] + "</div>" + (dataToRender[i+1] ? ("<div class='key'>"+dataToRender[i+1]+"</div>") : "");
+                        leaves.appendChild(b);
+                    }
+                    advTreeContainer.appendChild(leaves);
+                    const p = document.createElement('div'); p.style.position='absolute'; p.style.top='220px'; p.style.left='50%'; p.style.transform='translateX(-50%)'; p.style.color='#ec4899'; p.textContent = '----[ Sequence Pointer Path ]---->'; advTreeContainer.appendChild(p);
+                } else {
+                    dataToRender.forEach(k => { const s = document.createElement('div'); s.className='key'; s.textContent=k; el.appendChild(s); });
+                }
+            }
+            advTreeContainer.appendChild(el);
         }
     }
 

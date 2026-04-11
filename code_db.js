@@ -707,50 +707,6 @@ int main() {
 }
 `;
 
-const codeListArray = `#include <iostream>
-using namespace std;
-
-class ArrayList {
-private:
-    int* arr;
-    int capacity;
-    int size;
-
-public:
-    ArrayList(int cap = 10) {
-        capacity = cap;
-        size = 0;
-        arr = new int[capacity];
-    }
-    ~ArrayList() { delete[] arr; }
-
-    void insert(int index, int val) {
-        if (index < 0 || index > size || size >= capacity) return;
-        for (int i = size; i > index; i--) {
-            arr[i] = arr[i - 1]; // Shift right
-        }
-        arr[index] = val;
-        size++;
-    }
-
-    void remove(int index) {
-        if (index < 0 || index >= size) return;
-        for (int i = index; i < size - 1; i++) {
-            arr[i] = arr[i + 1]; // Shift left
-        }
-        size--;
-    }
-};
-
-int main() {
-    ArrayList list(10);
-    list.insert(0, 10);
-    list.insert(1, 20);
-    list.remove(0);
-    return 0;
-}
-`;
-
 const codeListLinked = `#include <iostream>
 using namespace std;
 
@@ -987,6 +943,277 @@ int main() {
     ht.insert(10);
     ht.insert(14); // Collision? 14%4=2, 10%4=2. Fills Bucket 2 nicely.
     ht.insert(22); // 22%4=2! Bucket 2 is FULL! This will overflow to Bucket 3.
+    return 0;
+}
+`;
+
+const codeTreeTrie = `#include <iostream>
+#include <string>
+using namespace std;
+
+class TrieNode {
+public:
+    TrieNode* children[26];
+    bool isEndOfWord;
+    TrieNode() {
+        isEndOfWord = false;
+        for (int i = 0; i < 26; i++) children[i] = nullptr;
+    }
+};
+
+class Trie {
+private:
+    TrieNode* root;
+
+public:
+    Trie() { root = new TrieNode(); }
+
+    void insert(string word) {
+        TrieNode* curr = root;
+        for (char c : word) {
+            int index = c - 'A'; // Assuming uppercase for visualization
+            if (curr->children[index] == nullptr) {
+                curr->children[index] = new TrieNode();
+            }
+            curr = curr->children[index];
+        }
+        curr->isEndOfWord = true;
+        cout << "Inserted word: " << word << endl;
+    }
+
+    bool search(string word) {
+        TrieNode* curr = root;
+        for (char c : word) {
+            int index = c - 'A';
+            if (curr->children[index] == nullptr) return false;
+            curr = curr->children[index];
+        }
+        return curr->isEndOfWord;
+    }
+};
+
+int main() {
+    Trie trie;
+    trie.insert("CAR");
+    trie.insert("CAT");
+    trie.insert("DOG");
+    cout << "Contains CAT? " << (trie.search("CAT") ? "Yes" : "No") << endl;
+    return 0;
+}
+`;
+
+const codeTreeRadix = `#include <iostream>
+#include <string>
+#include <map>
+using namespace std;
+
+class RadixNode {
+public:
+    map<string, RadixNode*> edges;
+    bool isEndOfWord;
+    RadixNode() : isEndOfWord(false) {}
+};
+
+class RadixTree {
+public:
+    RadixNode* root;
+    RadixTree() { root = new RadixNode(); }
+
+    void insert(string word) {
+        // Warning: Simplified implementation for presentation
+        // Real Radix trees actively split existing string edges based on longest common prefix.
+        RadixNode* curr = root;
+        
+        // Simulating the compressed prefix routing:
+        if(curr->edges.find(word) == curr->edges.end()) {
+            curr->edges[word] = new RadixNode();
+        }
+        curr->edges[word]->isEndOfWord = true;
+        cout << "Inserted compressed prefix: " << word << endl;
+    }
+};
+
+int main() {
+    RadixTree radix;
+    radix.insert("WATER");
+    radix.insert("WATCH"); // In real radix, "WAT" splits from "ER" and "CH"
+    return 0;
+}
+`;
+
+const codeTreeTST = `#include <iostream>
+#include <string>
+using namespace std;
+
+struct TSTNode {
+    char data;
+    bool isEndOfWord;
+    TSTNode *left, *eq, *right;
+
+    TSTNode(char data) : data(data), isEndOfWord(false), left(nullptr), eq(nullptr), right(nullptr) {}
+};
+
+class TernarySearchTree {
+private:
+    TSTNode* insertRecursive(TSTNode* root, const string& word, int index) {
+        if (!root) root = new TSTNode(word[index]);
+
+        if (word[index] < root->data) {
+            root->left = insertRecursive(root->left, word, index);
+        } else if (word[index] > root->data) {
+            root->right = insertRecursive(root->right, word, index);
+        } else {
+            if (index + 1 < word.length()) {
+                root->eq = insertRecursive(root->eq, word, index + 1);
+            } else {
+                root->isEndOfWord = true;
+            }
+        }
+        return root;
+    }
+
+public:
+    TSTNode* root;
+    TernarySearchTree() { root = nullptr; }
+
+    void insert(string word) {
+        root = insertRecursive(root, word, 0);
+        cout << "Inserted " << word << " via ternary logic." << endl;
+    }
+};
+
+int main() {
+    TernarySearchTree tst;
+    tst.insert("CAR");
+    tst.insert("CAT"); // 'T' goes > 'R' under the 'A' middle branch
+    return 0;
+}
+`;
+
+const codeTreeBTree = `#include <iostream>
+#include <vector>
+using namespace std;
+
+class BTreeNode {
+public:
+    vector<int> keys;
+    vector<BTreeNode*> children;
+    bool leaf;
+    int t; // Minimum degree (defines the range for number of keys)
+
+    BTreeNode(int t, bool leaf) : t(t), leaf(leaf) {}
+
+    void insertNonFull(int k) {
+        int i = keys.size() - 1;
+        if (leaf) {
+            keys.push_back(0); // Make space
+            while (i >= 0 && keys[i] > k) {
+                keys[i + 1] = keys[i];
+                i--;
+            }
+            keys[i + 1] = k;
+        } else {
+            while (i >= 0 && keys[i] > k) i--;
+            if (children[i + 1]->keys.size() == 2 * t - 1) {
+                splitChild(i + 1, children[i + 1]);
+                if (keys[i + 1] < k) i++;
+            }
+            children[i + 1]->insertNonFull(k);
+        }
+    }
+
+    void splitChild(int i, BTreeNode* y) {
+        BTreeNode* z = new BTreeNode(y->t, y->leaf);
+        for (int j = 0; j < t - 1; j++) z->keys.push_back(y->keys[j + t]);
+        if (!y->leaf) {
+            for (int j = 0; j < t; j++) z->children.push_back(y->children[j + t]);
+            y->children.resize(t); // Cut children
+        }
+        keys.insert(keys.begin() + i, y->keys[t - 1]);
+        y->keys.resize(t - 1); // Cut keys
+        children.insert(children.begin() + i + 1, z);
+    }
+};
+
+class BTree {
+    BTreeNode* root;
+    int t;
+public:
+    BTree(int t) : root(nullptr), t(t) {}
+
+    void insert(int k) {
+        if (!root) {
+            root = new BTreeNode(t, true);
+            root->keys.push_back(k);
+        } else {
+            if (root->keys.size() == 2 * t - 1) {
+                BTreeNode* s = new BTreeNode(t, false);
+                s->children.push_back(root);
+                s->splitChild(0, root);
+                int i = (s->keys[0] < k) ? 1 : 0;
+                s->children[i]->insertNonFull(k);
+                root = s;
+            } else {
+                root->insertNonFull(k);
+            }
+        }
+        cout << "Inserted " << k << " into B-Tree block." << endl;
+    }
+};
+
+int main() {
+    BTree t(3); // Order 5 typically, max 5 children, 4 keys
+    t.insert(10); t.insert(20); t.insert(5); t.insert(6); t.insert(12);
+    // As it hits capacity, blocks split!
+    return 0;
+}
+`;
+
+const codeTreeBPlus = `#include <iostream>
+#include <vector>
+using namespace std;
+
+class BPlusNode {
+public:
+    vector<int> keys;
+    vector<BPlusNode*> children;
+    BPlusNode* nextLeaf; // Critical difference: Horizontal chain
+    bool isLeaf;
+    int MAX;
+    
+    BPlusNode(int maxKeys, bool isLeaf) : MAX(maxKeys), isLeaf(isLeaf), nextLeaf(nullptr) {}
+};
+
+class BPlusTree {
+    BPlusNode* root;
+    int MAX;
+public:
+    BPlusTree(int maxKeys = 3) : root(nullptr), MAX(maxKeys) {}
+    
+    // Core theory of B+ Trees:
+    // 1. All actual data resides strictly at the leaf level.
+    // 2. Internal nodes strictly act as index routing guides.
+    // 3. Leaves are chained together via \`nextLeaf\` pointer for rapid range queries.
+    
+    void insert(int k) {
+        // Warning: Precise splitting algorithm omitted to maintain focus on structure.
+        // A true B+Tree copies the median key UP when a leaf splits, 
+        // but pushes the median UP when an internal routing node splits.
+        if (!root) {
+            root = new BPlusNode(MAX, true);
+            root->keys.push_back(k);
+        } else {
+            cout << "Routing " << k << " to appropriate leaf block..." << endl;
+            // ... descent and leaf-splitting logic ...
+        }
+    }
+};
+
+int main() {
+    BPlusTree tree(3);
+    tree.insert(10);
+    tree.insert(20);
+    // As sequence fills, leaf nodes expand sideways and index nodes rise up!
     return 0;
 }
 `;

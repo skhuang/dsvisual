@@ -17,11 +17,15 @@ const mappings = {
     'stack_linkedlist.cpp': 'codeLinkedList',
     'queue.cpp': 'codeQueue',
     'graph.cpp': 'codeGraph',
-    'list_array.cpp': 'codeListArray',
     'list_linked.cpp': 'codeListLinked',
     'hash_chaining.cpp': 'codeHashChain',
     'hash_open_address.cpp': 'codeHashOpen',
-    'hash_bucket.cpp': 'codeHashBucket'
+    'hash_bucket.cpp': 'codeHashBucket',
+    'tree_trie.cpp': 'codeTreeTrie',
+    'tree_radix.cpp': 'codeTreeRadix',
+    'tree_ternary.cpp': 'codeTreeTST',
+    'tree_btree.cpp': 'codeTreeBTree',
+    'tree_bplus.cpp': 'codeTreeBPlus'
 };
 
 let out = '// Auto-generated code DB for visualization\n';

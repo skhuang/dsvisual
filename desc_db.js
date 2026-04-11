@@ -276,5 +276,67 @@ const descDB = {
             <span class="badge time">Avg Bounded Insert: O(1)</span>
             <span class="badge exception">Saturated Block Failure: O(T)</span>
         </div>
+    `,
+    'tree-trie': `
+        <h3>Trie (Prefix Tree)</h3>
+        <p>A specialized massive 26-ary tree mapped strictly to the alphabet, dominating Prefix Search.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> Nodes do NOT store characters directly! The character is implicitly defined by the <em>Edge</em> (the pointer index 0-25) chosen to traverse to the next Node. A boolean flag marks a Node as a valid <strong>Word End</strong>.</li>
+            <li><strong>Advantage:</strong> Finding a string or all autocomplete prefixes strictly takes time exactly equal to the length of the string, completely independent of how many millions of words exist in the dictionary.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Search Time: O(L) [L = Word Length]</span>
+            <span class="badge exception">Space: Phenomenally high O(26^L)</span>
+        </div>
+    `,
+    'tree-radix': `
+        <h3>Radix Tree (Patricia Trie / Compact Trie)</h3>
+        <p>An aggressively space-optimized variant of the Trie resolving its horrific memory usage.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> Identifies long "branches" in a standard Trie that only have a single consecutive child (e.g., W-A-T-E-R), and literally compresses them into a single edge labeled "WATER".</li>
+            <li><strong>Splitting:</strong> If "WATCH" is inserted later, the node "WATER" logically fractures at the common prefix "WAT", sprouting two terminal forks: "ER" and "CH".</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Search Time: O(L)</span>
+            <span class="badge space">Optimal Space: Low compared to Trie</span>
+        </div>
+    `,
+    'tree-ternary': `
+        <h3>Ternary Search Tree (TST)</h3>
+        <p>A brilliant hybrid mixing Binary Search Trees with Prefix Tries, ideal for spell-checking.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> Every node actually holds a specific Character and has exactly 3 pointers: Left (alphabetically less), Middle (equal to current char, progress to next letter of word), and Right (alphabetically greater).</li>
+            <li><strong>Advantage:</strong> Utterly destroys Trie's massive 26-pointer memory overhead by only allocating standard 3-pointer BST nodes, while remaining vastly superior for finding prefixes than a standard BST.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Avg Search: O(log N + L)</span>
+        </div>
+    `,
+    'tree-btree': `
+        <h3>B-Tree (Balanced Multi-way Disk Tree)</h3>
+        <p>The undisputed king of physical mechanical Hard Drive / Database indexing hierarchies.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> To minimize slow mechanical Disk Reads, a B-Tree Node is a massive literal Block (or "Page", e.g., 4KB) storing multiple sorted Keys side-by-side. An Order-5 tree holds up to 4 Keys and branches to 5 Sub-blocks per node.</li>
+            <li><strong>Splitting:</strong> Unlike basic trees that grow downwards, B-Trees grow <strong>upwards</strong>. When a Block becomes 100% full, it physically splits in half and violently violently pushes its median Key up into its Parent block.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Disk Read Operations: Extremely Low O(log_m N)</span>
+        </div>
+    `,
+    'tree-bplus': `
+        <h3>B+ Tree (Optimal Database Indexer)</h3>
+        <p>The absolute industry standard tree running beneath MySQL, PostgreSQL, and modern filesystems.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> A stricter B-Tree where Internal Nodes strictly ONLY store index routing copies. 100% of the authentic data resides trapped at the absolute bottom Leaf Level.</li>
+            <li><strong>Range Scans:</strong> Because all data is at the bottom, every Leaf node is chained horizontally via a Linked List Pointer. A query like <code>SELECT * WHERE age BETWEEN 10 AND 50</code> finds '10' via tree traversal, then instantly glides horizontally across the leaves until '50' without re-climbing!</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Range Query: O(log_m N + K results)</span>
+        </div>
     `
 };
