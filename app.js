@@ -139,6 +139,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnHeapDelete = document.getElementById('btn-heap-delete');
     const btnHeapFindMin = document.getElementById('btn-heap-find-min');
     const btnHeapStats = document.getElementById('btn-heap-stats');
+    const btnHeapBenchmark = document.getElementById('btn-heap-benchmark');
+    const heapMetricsPanel = document.getElementById('heap-metrics-panel');
+    const heapMetricType = document.getElementById('heap-metric-type');
+    const heapMetricOrder = document.getElementById('heap-metric-order');
+    const heapMetricNodes = document.getElementById('heap-metric-nodes');
+    const heapMetricRoots = document.getElementById('heap-metric-roots');
+    const heapMetricDepth = document.getElementById('heap-metric-depth');
+    const heapMetricDetails = document.getElementById('heap-metric-details');
+    const heapBenchmarkOutput = document.getElementById('heap-benchmark-output');
 
     const hashActions = document.getElementById('hash-actions');
     const btnHashAdd = document.getElementById('btn-hash-add'); const hashVal = document.getElementById('hash-val');
@@ -179,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'heap-leftist': HeapModels.createHeapModel('heap-leftist', heapIsMin),
         'heap-skew': HeapModels.createHeapModel('heap-skew', heapIsMin),
     };
+    const heapBenchmarkResults = {};
 
     const tabBtnDesc = document.getElementById('tab-btn-desc');
     const tabBtnCode = document.getElementById('tab-btn-code');
@@ -219,6 +229,107 @@ document.addEventListener('DOMContentLoaded', () => {
             m.setOrder(heapIsMin);
         });
         clearHeapEventMarks();
+    }
+
+    function formatHeapMode(mode) {
+        return mode.replace('heap-', '').split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
+    }
+
+    function getHeapBenchmarkKey(mode, isMin) {
+        return mode + ':' + (isMin ? 'min' : 'max');
+    }
+
+    function computeHeapDepth(snap) {
+        if (!snap.nodes.length || !snap.roots.length) return 0;
+        const childrenById = {};
+        snap.edges.forEach(edge => {
+            if (!childrenById[edge.from]) childrenById[edge.from] = [];
+            childrenById[edge.from].push(edge.to);
+        });
+        let maxDepth = 0;
+        const walk = (nodeId, depth) => {
+            if (depth > maxDepth) maxDepth = depth;
+            (childrenById[nodeId] || []).forEach(childId => walk(childId, depth + 1));
+        };
+        snap.roots.forEach(rootId => walk(rootId, 1));
+        return maxDepth;
+    }
+
+    function getHeapMetrics(model, mode) {
+        const snap = model.snapshot();
+        const nodeCount = snap.nodes.length;
+        const rootCount = snap.roots.length;
+        const depth = computeHeapDepth(snap);
+        const markedCount = snap.nodes.filter(node => node.marked).length;
+        let details = 'Array-backed heap state.';
+
+        if (mode === 'heap-binomial') {
+            details = snap.roots.length ? snap.roots.map((_, idx) => 'B' + idx).join(', ') : 'No binomial trees.';
+        } else if (mode === 'heap-fibonacci') {
+            details = 'Marked nodes: ' + markedCount + (rootCount ? ' | Root list size: ' + rootCount : '');
+        } else if (mode === 'heap-leftist') {
+            const rootNode = snap.nodes.find(node => node.root);
+            details = 'Root NPL: ' + (rootNode && rootNode.npl !== null ? rootNode.npl : 0);
+        } else if (mode === 'heap-skew') {
+            details = 'Self-adjusting merge heap.';
+        } else if (mode === 'heap-binary') {
+            details = 'Complete tree layout with sift-up/sift-down maintenance.';
+        }
+
+        return {
+            type: formatHeapMode(mode),
+            order: model.isMin ? 'Min-Heap' : 'Max-Heap',
+            nodes: nodeCount,
+            roots: rootCount,
+            depth,
+            details,
+        };
+    }
+
+    function renderHeapMetrics() {
+        if (!currentMode.includes('heap-')) return;
+        const model = getActiveHeapModel();
+        if (!model) return;
+
+        const metrics = getHeapMetrics(model, currentMode);
+        const benchmark = heapBenchmarkResults[getHeapBenchmarkKey(currentMode, model.isMin)];
+
+        heapMetricType.textContent = metrics.type;
+        heapMetricOrder.textContent = metrics.order;
+        heapMetricNodes.textContent = String(metrics.nodes);
+        heapMetricRoots.textContent = String(metrics.roots);
+        heapMetricDepth.textContent = String(metrics.depth);
+        heapMetricDetails.textContent = metrics.details;
+        heapBenchmarkOutput.textContent = benchmark
+            ? 'Insert ' + benchmark.insertMs.toFixed(2) + 'ms | Extract ' + benchmark.extractMs.toFixed(2) + 'ms | Total ' + benchmark.totalMs.toFixed(2) + 'ms over ' + benchmark.rounds + ' rounds'
+            : 'No benchmark run yet.';
+    }
+
+    function runHeapBenchmark(mode, isMin) {
+        const rounds = 5;
+        const dataset = Array.from({ length: 48 }, (_, index) => ((index * 17) % 97) + 3);
+        let insertMs = 0;
+        let extractMs = 0;
+
+        for (let round = 0; round < rounds; round++) {
+            const benchModel = HeapModels.createHeapModel(mode, isMin);
+            const insertStart = performance.now();
+            dataset.forEach(value => benchModel.insert(value + round));
+            insertMs += performance.now() - insertStart;
+
+            const extractStart = performance.now();
+            while (benchModel.data.length) {
+                benchModel.extract();
+            }
+            extractMs += performance.now() - extractStart;
+        }
+
+        return {
+            rounds,
+            insertMs: insertMs / rounds,
+            extractMs: extractMs / rounds,
+            totalMs: (insertMs + extractMs) / rounds,
+        };
     }
 
     function eventToClass(type) {
@@ -309,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.values(heapModels).forEach(m => m.setOrder(heapIsMin));
         if (currentMode.includes('heap-')) {
             renderHeap();
+            renderHeapMetrics();
             showStatus('Comparator switched to ' + (heapIsMin ? 'Min-Heap' : 'Max-Heap'), '#60a5fa');
         }
     });
@@ -320,6 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
         executeAnimWrapper(async () => {
             const out = model.insert(val);
             renderHeap();
+            renderHeapMetrics();
             await animateHeapEvents(out.events);
             showStatus('Inserted ' + val, '#34d399');
             return '__KEEP_STATUS__';
@@ -332,6 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const out = model.peek();
         if (!out.ok) return showStatus(out.error, '#f87171');
         renderHeap();
+        renderHeapMetrics();
         showStatus('Peek = ' + out.value, '#fbbf24');
     });
 
@@ -342,6 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const out = model.extract();
             if (!out.ok) return showStatus(out.error, '#f87171');
             renderHeap();
+            renderHeapMetrics();
             await animateHeapEvents(out.events);
             showStatus('Extracted ' + out.value, '#ec4899');
             return '__KEEP_STATUS__';
@@ -357,6 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const out = model.merge(values);
             if (!out.ok) return showStatus(out.error, '#f87171');
             renderHeap();
+            renderHeapMetrics();
             await animateHeapEvents(out.events);
             showStatus('Merged ' + values.length + ' values', '#34d399');
             return '__KEEP_STATUS__';
@@ -372,6 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const out = model.changeKey(oldVal, newVal);
             if (!out.ok) return showStatus(out.error, '#f87171');
             renderHeap();
+            renderHeapMetrics();
             await animateHeapEvents(out.events);
             showStatus('Key changed: ' + oldVal + ' -> ' + newVal, '#34d399');
             return '__KEEP_STATUS__';
@@ -386,6 +503,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const out = model.deleteValue(val);
             if (!out.ok) return showStatus(out.error, '#f87171');
             renderHeap();
+            renderHeapMetrics();
             await animateHeapEvents(out.events);
             showStatus('Deleted value ' + val, '#34d399');
             return '__KEEP_STATUS__';
@@ -406,29 +524,20 @@ document.addEventListener('DOMContentLoaded', () => {
     btnHeapStats.addEventListener('click', () => {
         const model = getActiveHeapModel();
         if (!model) return;
-        const size = model.data.length;
-        const isMin = model.isMin;
-        const mode = currentMode;
-        let statsMsg = `Size: ${size}, Order: ${isMin ? 'Min-Heap' : 'Max-Heap'}`;
-        
-        if (mode === 'heap-binomial') {
-            const degreeCount = {};
-            let idx = 0;
-            let degree = 0;
-            while (idx < size) {
-                const deg = Math.min(degree, Math.floor(Math.log2(size - idx)));
-                degreeCount[deg] = (degreeCount[deg] || 0) + 1;
-                idx += Math.max(1, 1 << deg);
-                degree++;
-            }
-            const degrees = Object.keys(degreeCount).map(d => `B${d}:${degreeCount[d]}`).join(', ');
-            statsMsg += ` | Trees: ${degrees}`;
-        } else if (mode === 'heap-fibonacci') {
-            const depth = Math.ceil(Math.log2(size + 1));
-            statsMsg += ` | MaxDepth: ${depth}`;
-        }
-        
-        showStatus(statsMsg, '#a78bfa');
+        renderHeapMetrics();
+        showStatus('Heap metrics refreshed.', '#a78bfa');
+    });
+
+    btnHeapBenchmark.addEventListener('click', () => {
+        const model = getActiveHeapModel();
+        if (!model) return;
+        executeAnimWrapper(async () => {
+            const result = runHeapBenchmark(currentMode, model.isMin);
+            heapBenchmarkResults[getHeapBenchmarkKey(currentMode, model.isMin)] = result;
+            renderHeapMetrics();
+            showStatus('Benchmark complete for ' + formatHeapMode(currentMode), '#60a5fa');
+            return '__KEEP_STATUS__';
+        });
     });
 
     // ----------- TREES -----------
@@ -542,6 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnHeapDelete.disabled = isPlaying;
             btnHeapFindMin.disabled = isPlaying;
             btnHeapStats.disabled = isPlaying;
+            btnHeapBenchmark.disabled = isPlaying;
             heapOrderSelect.disabled = isPlaying;
         }
         modeRadios.forEach(r => r.disabled = isPlaying);
@@ -606,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showStatus(msg, color) { statusMsg.textContent = msg; statusMsg.style.color = color; }
     function getDelay() { return 610 - parseInt(sortSpeedInput.value); } 
     function updateLayout() {
-        const containers = [arrayContainer, linkedListContainer, queueContainer, graphContainer, treeContainer, advTreeContainer, searchContainer, listArrContainer, listLLContainer, sortContainer, hashChContainer, hashOaContainer, hashBucketContainer, heapContainer];
+        const containers = [arrayContainer, linkedListContainer, queueContainer, graphContainer, treeContainer, advTreeContainer, searchContainer, listArrContainer, listLLContainer, sortContainer, hashChContainer, hashOaContainer, hashBucketContainer, heapContainer, heapMetricsPanel];
         const actions = [stdActions, graphActions, treeActions, textTreeActions, searchActions, listActions, sortActions, hashActions, heapActions];
         containers.forEach(c => c.classList.add('hidden')); actions.forEach(a => a.classList.add('hidden'));
         if(treeDrawLoop) { cancelAnimationFrame(treeDrawLoop); treeDrawLoop = null; }
@@ -660,6 +770,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else if (currentMode.includes('heap-')) {
             heapContainer.classList.remove('hidden');
+            heapMetricsPanel.classList.remove('hidden');
             heapActions.classList.remove('hidden');
             heapOrderSelect.value = heapIsMin ? 'min' : 'max';
             if(currentMode === 'heap-binary') { codeTitle.textContent = 'heap_binary.cpp'; codeDisplay.textContent = codeHeapBinary; }
@@ -680,7 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
         else if (currentMode.includes('sort-')) renderSortBars();
-        else if (currentMode.includes('heap-')) renderHeap();
+        else if (currentMode.includes('heap-')) { renderHeap(); renderHeapMetrics(); }
     }
 
     // Sort renderers omitted mapping exactly to previous standard block 

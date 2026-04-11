@@ -124,7 +124,8 @@
                         <button id="btn-heap-change" class="btn secondary">Decrease/Increase</button>
                         <button id="btn-heap-delete" class="btn exception">Delete(value)</button>
                         <button id="btn-heap-find-min" class="btn secondary" style="font-size: 0.8rem;">Find-Min</button>
-                        <button id="btn-heap-stats" class="btn secondary" style="font-size: 0.8rem;">Heap Stats</button>
+                        <button id="btn-heap-stats" class="btn secondary" style="font-size: 0.8rem;">Refresh Metrics</button>
+                        <button id="btn-heap-benchmark" class="btn secondary" style="font-size: 0.8rem;">Benchmark</button>
                     </div>
                     
                     <div id="status-message" class="status-message">Visualizer initialized.</div>
@@ -187,6 +188,37 @@
                         <div id="heap-container" class="heap-container hidden">
                             <svg id="heap-edges"></svg>
                             <div id="heap-nodes-container"></div>
+                        </div>
+
+                        <div id="heap-metrics-panel" class="heap-metrics-panel hidden">
+                            <div class="heap-metric-card">
+                                <span class="heap-metric-label">Type</span>
+                                <strong id="heap-metric-type">-</strong>
+                            </div>
+                            <div class="heap-metric-card">
+                                <span class="heap-metric-label">Order</span>
+                                <strong id="heap-metric-order">-</strong>
+                            </div>
+                            <div class="heap-metric-card">
+                                <span class="heap-metric-label">Nodes</span>
+                                <strong id="heap-metric-nodes">0</strong>
+                            </div>
+                            <div class="heap-metric-card">
+                                <span class="heap-metric-label">Roots</span>
+                                <strong id="heap-metric-roots">0</strong>
+                            </div>
+                            <div class="heap-metric-card">
+                                <span class="heap-metric-label">Depth</span>
+                                <strong id="heap-metric-depth">0</strong>
+                            </div>
+                            <div class="heap-metric-card heap-metric-card-wide">
+                                <span class="heap-metric-label">Details</span>
+                                <strong id="heap-metric-details">No heap loaded.</strong>
+                            </div>
+                            <div class="heap-metric-card heap-metric-card-wide heap-benchmark-card">
+                                <span class="heap-metric-label">Benchmark</span>
+                                <strong id="heap-benchmark-output">No benchmark run yet.</strong>
+                            </div>
                         </div>
 
                     </div>

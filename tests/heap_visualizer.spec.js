@@ -21,6 +21,7 @@ test.describe('Heap Visualizer Suite', () => {
             await expect(page.locator('#code-title')).toHaveText(mode.title);
             await expect(page.locator('#desc-view h3')).toContainText(mode.desc);
             await expect(page.locator('#heap-container')).toBeVisible();
+            await expect(page.locator('#heap-metrics-panel')).toBeVisible();
         });
 
         test(`${mode.id}: insert / peek / extract / merge / change / delete`, async ({ page }) => {
@@ -90,5 +91,31 @@ test.describe('Heap Visualizer Suite', () => {
         }
         await page.click('#btn-heap-extract');
         await expect(page.locator('#status-message')).toContainText('Extracted 9');
+    });
+
+    test('Persistent metrics panel and benchmark update for heaps', async ({ page }) => {
+        await page.locator('label[for="mode-heap-fibonacci"]').click();
+
+        await expect(page.locator('#heap-metric-type')).toHaveText('Fibonacci');
+        await expect(page.locator('#heap-metric-order')).toHaveText('Min-Heap');
+        await expect(page.locator('#heap-metric-nodes')).toHaveText('0');
+
+        await page.fill('#heap-val', '11');
+        await page.click('#btn-heap-insert');
+        await expect(page.locator('#btn-heap-insert')).toBeEnabled();
+        await expect(page.locator('#heap-metric-nodes')).toHaveText('1');
+        await expect(page.locator('#heap-metric-roots')).toHaveText('1');
+
+        await page.fill('#heap-val', '4');
+        await page.click('#btn-heap-insert');
+        await expect(page.locator('#btn-heap-insert')).toBeEnabled();
+        await expect(page.locator('#heap-metric-nodes')).toHaveText('2');
+        await expect(page.locator('#heap-metric-details')).toContainText('Marked nodes');
+
+        await page.click('#btn-heap-benchmark');
+        await expect(page.locator('#btn-heap-benchmark')).toBeEnabled();
+        await expect(page.locator('#status-message')).toContainText('Benchmark complete');
+        await expect(page.locator('#heap-benchmark-output')).toContainText('Insert');
+        await expect(page.locator('#heap-benchmark-output')).toContainText('Extract');
     });
 });
