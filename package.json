@@ -1,0 +1,24 @@
+{
+  "name": "dsvisual",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/skhuang/dsvisual.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/skhuang/dsvisual/issues"
+  },
+  "homepage": "https://github.com/skhuang/dsvisual#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1"
+  }
+}
