@@ -29,6 +29,133 @@ header p { color: var(--text-muted); font-size: 0.9rem; }
 .mode-toggle label { flex: 1 1 calc(20% - 4px); text-align: center; padding: 0.4rem 0.1rem; cursor: pointer; border-radius: 6px; transition: all 0.3s ease; font-weight: 600; font-size: 0.7rem; white-space: nowrap; }
 .mode-toggle input[type="radio"]:checked + label { background: var(--primary-color); color: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
 
+/* Mode Groups - Categorized Menu */
+.mode-groups {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    padding: 0.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.mode-group {
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    background: rgba(0,0,0,0.3);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.mode-group:hover {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(0,0,0,0.4);
+}
+
+.group-header {
+    padding: 0.6rem 0.8rem;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    user-select: none;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.group-header::after {
+    content: '▼';
+    display: inline-block;
+    transition: transform 0.3s ease;
+    font-size: 0.7rem;
+    margin-left: 0.5rem;
+}
+
+.mode-group.collapsed .group-header::after {
+    transform: rotate(-90deg);
+}
+
+.group-header:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3));
+}
+
+.group-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0.5rem;
+    animation: slideDown 0.3s ease;
+}
+
+.group-content.hidden {
+    display: none !important;
+    animation: slideUp 0.3s ease;
+}
+
+.mode-groups input[type="radio"] {
+    display: none;
+}
+
+.mode-groups label {
+    flex: 1 1 calc(50% - 4px);
+    text-align: center;
+    padding: 0.35rem 0.2rem;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #cbd5e1;
+}
+
+.mode-groups label:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.mode-groups input[type="radio"]:checked + label {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+}
+
+.subgroup {
+    flex: 1 1 100%;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.subgroup:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.subgroup-label {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.4rem;
+    display: block;
+}
+
+@keyframes slideUp {
+    from { max-height: 500px; opacity: 1; }
+    to { max-height: 0; opacity: 0; }
+}
+
 .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
 .actions input[type="number"] { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid var(--card-border); color: white; padding: 0.75rem 1rem; border-radius: 8px; font-size: 1rem; outline: none; }
 .actions input:focus { border-color: var(--primary-color); }

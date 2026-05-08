@@ -15,6 +15,13 @@ test.describe('Heap Visualizer Suite', () => {
     test.beforeEach(async ({ page }) => {
         const fileUri = 'file://' + path.resolve(__dirname, '../index.html');
         await page.goto(fileUri);
+
+        const advancedGroup = page.locator('.mode-group').nth(3);
+        const advancedContent = advancedGroup.locator('.group-content');
+        if (!(await advancedContent.isVisible())) {
+            await advancedGroup.locator('.group-header').click();
+            await expect(advancedContent).toBeVisible();
+        }
     });
 
     for (const mode of heapModes) {
@@ -97,6 +104,8 @@ test.describe('Heap Visualizer Suite', () => {
     for (const mode of heapModes) {
         test(`${mode.id}: tutorial opens and exits`, async ({ page }) => {
             await page.locator(`label[for="${mode.id}"]`).click();
+            await expect(page.locator('#code-title')).toHaveText(mode.title);
+            await expect(page.locator('#btn-heap-tutorial')).toBeVisible();
             await page.click('#btn-heap-tutorial');
 
             await expect(page.locator('#heap-tutorial-panel')).toBeVisible();
@@ -113,6 +122,8 @@ test.describe('Heap Visualizer Suite', () => {
 
     test('Heap tutorial auto-advances and can restart', async ({ page }) => {
         await page.locator('label[for="mode-heap-binary"]').click();
+        await expect(page.locator('#code-title')).toHaveText('heap_binary.cpp');
+        await expect(page.locator('#btn-heap-tutorial')).toBeVisible();
         await page.click('#btn-heap-tutorial');
 
         await expect(page.locator('#heap-tutorial-progress')).toContainText('Step 1 / 8');

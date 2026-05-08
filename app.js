@@ -97,6 +97,28 @@ function assignRBColors(node, isRoot=true) {
 document.addEventListener('DOMContentLoaded', () => {
     const modeRadios = document.querySelectorAll('input[name="ds-mode"]');
     
+    // Setup collapsible mode groups
+    const groupHeaders = document.querySelectorAll('.group-header');
+    groupHeaders.forEach((header, index) => {
+        const groupContent = header.nextElementSibling;
+        if (groupContent && groupContent.classList.contains('group-content')) {
+            // Initialize: first group open, others closed
+            if (index === 0) {
+                groupContent.style.display = 'flex';
+                header.parentElement.classList.remove('collapsed');
+            } else {
+                groupContent.style.display = 'none';
+                header.parentElement.classList.add('collapsed');
+            }
+            
+            // Toggle on click
+            header.addEventListener('click', () => {
+                const isCollapsed = header.parentElement.classList.toggle('collapsed');
+                groupContent.style.display = isCollapsed ? 'none' : 'flex';
+            });
+        }
+    });
+    
     // Containers
     const arrayContainer = document.getElementById('array-container'); const linkedListContainer = document.getElementById('linkedlist-container');
     const queueContainer = document.getElementById('queue-container'); const graphContainer = document.getElementById('graph-container');
