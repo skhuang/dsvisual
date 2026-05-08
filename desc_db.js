@@ -193,6 +193,50 @@ const descDB = {
             <span class="badge space">Space: O(V + E)</span>
         </div>
     `,
+    'graph-dijkstra': `
+        <h3>Dijkstra's Shortest Path Algorithm</h3>
+        <p><strong>Dijkstra</strong> computes the shortest path from a source node to all other nodes in a weighted graph with non-negative edge weights.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> Use a priority queue to always process the unvisited node with the smallest distance first, then relax its outgoing edges.</li>
+            <li><strong>Greedy Approach:</strong> Once a node is visited, its shortest distance is finalized and never updated.</li>
+            <li><strong>Limitation:</strong> Cannot handle negative edge weights. For that, use Bellman-Ford algorithm.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Binary Heap: O((V + E) log V)</span>
+            <span class="badge time">Fibonacci Heap: O(E + V log V)</span>
+            <span class="badge space">Space: O(V)</span>
+        </div>
+    `,
+    'graph-topo': `
+        <h3>Topological Sort</h3>
+        <p><strong>Topological Sort</strong> arranges nodes of a directed acyclic graph (DAG) in a linear order such that every edge goes from an earlier node to a later node.</p>
+        <hr>
+        <ul>
+            <li><strong>Kahn's Algorithm (BFS-based):</strong> Remove nodes with in-degree 0 repeatedly, adding them to the result in order.</li>
+            <li><strong>DFS-based approach:</strong> Perform DFS and record nodes in reverse post-order.</li>
+            <li><strong>Requirement:</strong> Input must be a DAG. If a cycle exists, topological sort is undefined.</li>
+            <li><strong>Applications:</strong> Task scheduling, dependency resolution, instruction ordering in compilers.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(V + E)</span>
+            <span class="badge space">Space: O(V)</span>
+        </div>
+    `,
+    'tree-bst': `
+        <h3>Binary Search Tree (Standard)</h3>
+        <p>An elegant hierarchical associative routing structure.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Rule:</strong> Every node to the <em>left</em> of a parent must be strictly <strong>less than</strong> the parent. Every node to the <em>right</em> must be strictly <strong>greater</strong>.</li>
+            <li><strong>Risk:</strong> Standard BSTs possess no balancing logic. If sorted data is inserted consecutively, the tree severely degenerates into an unbalanced linked list (O(N) retrieval).</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Best Search/Insert: O(log N)</span>
+            <span class="badge exception">Worst Case: O(N)</span>
+            <span class="badge space">Space: O(N)</span>
+        </div>
+    `,
     'tree-bst': `
         <h3>Binary Search Tree (Standard)</h3>
         <p>An elegant hierarchical associative routing structure.</p>
