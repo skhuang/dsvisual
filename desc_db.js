@@ -179,6 +179,20 @@ const descDB = {
             <span class="badge space">Space: O(V²)</span>
         </div>
     `,
+    'graph-kruskal': `
+        <h3>Minimum Spanning Tree (Kruskal Algorithm)</h3>
+        <p><strong>Kruskal</strong> builds an MST by greedily picking the smallest-weight edge that does not create a cycle.</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> Sort edges by weight, then use <code>Disjoint Set Union (Union-Find)</code> to detect cycles efficiently.</li>
+            <li><strong>Result:</strong> For a connected graph, MST contains exactly <code>V-1</code> edges with minimum total weight.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Sort Edges: O(E log E)</span>
+            <span class="badge time">Union-Find: O(E α(V))</span>
+            <span class="badge space">Space: O(V + E)</span>
+        </div>
+    `,
     'tree-bst': `
         <h3>Binary Search Tree (Standard)</h3>
         <p>An elegant hierarchical associative routing structure.</p>

@@ -57,6 +57,7 @@
                                 <div class="subgroup">
                                     <div class="subgroup-label">Graphs</div>
                                     <input type="radio" id="mode-graph" name="ds-mode" value="graph"> <label for="mode-graph">Undirected Graph</label>
+                                    <input type="radio" id="mode-graph-kruskal" name="ds-mode" value="graph-kruskal"> <label for="mode-graph-kruskal" style="color:#fcd34d">Kruskal MST</label>
                                 </div>
                             </div>
                         </div>
@@ -120,7 +121,10 @@
                     <div class="actions hidden" id="graph-actions">
                         <input type="number" id="graph-u" placeholder="U(0-4)" min="0" max="4" value="0">
                         <input type="number" id="graph-v" placeholder="V(0-4)" min="0" max="4" value="1">
+                        <input type="number" id="graph-w" placeholder="Weight" min="1" value="4">
                         <button id="btn-graph-add" class="btn primary">Add Edge</button>
+                        <button id="btn-graph-kruskal" class="btn secondary">Run Kruskal()</button>
+                        <button id="btn-graph-clear" class="btn exception">Reset Graph</button>
                     </div>
 
                     <div class="actions hidden" id="hash-actions">
