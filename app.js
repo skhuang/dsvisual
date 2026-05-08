@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Controls
     const btnStdAdd = document.getElementById('btn-std-add'); const btnStdRemove = document.getElementById('btn-std-remove'); const stdVal = document.getElementById('std-value');
     const btnGraphAdd = document.getElementById('btn-graph-add'); const graphU = document.getElementById('graph-u'); const graphV = document.getElementById('graph-v');
+    const graphW = document.getElementById('graph-w'); const btnGraphKruskal = document.getElementById('btn-graph-kruskal'); const btnGraphClear = document.getElementById('btn-graph-clear');
     const btnTreeAdd = document.getElementById('btn-tree-add'); const treeVal = document.getElementById('tree-val'); const btnTreeSearch = document.getElementById('btn-tree-search');
     
     const btnSearchGo = document.getElementById('btn-search-go'); const btnSearchPause = document.getElementById('btn-search-pause'); const btnSearchStop = document.getElementById('btn-search-stop'); const searchVal = document.getElementById('search-val');
@@ -191,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Core sets
     let stackData = []; let qArr = new Array(5).fill(null); let qFront = 0; let qRear = -1; let qCount = 0;
-    let edges = []; let bstRoot = null; let mainListData = []; let sortArrData = [];
+    let edges = []; let weightedEdges = []; let mstEdgeKeys = new Set(); let graphCandidateEdgeKey = null; let bstRoot = null; let mainListData = []; let sortArrData = [];
     let hashChData = Array.from({length: 5}, () => []); // Array of arrays representing Chains
     let hashOaData = new Array(5).fill(null); // Simple array
     let hashBucketData = Array.from({length: 4}, () => []); // 4 buckets, max 2 items each
@@ -524,7 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(animState === 'playing' || animState === 'paused') { e.target.checked = false; document.getElementById("mode-" + currentMode).checked = true; return; }
             if (heapTutorialState.active && e.target.value !== heapTutorialState.mode) exitHeapTutorial(true);
             currentMode = e.target.value;
-            stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0; edges = []; bstRoot = null; 
+            stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0; edges = []; weightedEdges = []; mstEdgeKeys.clear(); graphCandidateEdgeKey = null; bstRoot = null; 
             if(currentMode === 'list-array' || currentMode === 'list-linked') mainListData = [];
             if(currentMode === 'hash-chain') hashChData = Array.from({length: 5}, () => []);
             if(currentMode === 'hash-open') hashOaData = new Array(5).fill(null);
@@ -556,8 +557,37 @@ document.addEventListener('DOMContentLoaded', () => {
     btnGraphAdd.addEventListener('click', () => {
         const u = parseInt(graphU.value); const v = parseInt(graphV.value);
         if(isNaN(u) || isNaN(v) || u<0 || u>4 || v<0 || v>4) return showStatus('Invalid Nodes (0-4)', '#f87171');
-        if(u === v) return showStatus('No self loops', '#f87171'); if(edges.some(e => (e[0]===u && e[1]===v) || (e[0]===v && e[1]===u))) return showStatus('Edge already exists', '#f87171');
+        if(u === v) return showStatus('No self loops', '#f87171');
+        if (currentMode === 'graph-kruskal') {
+            const w = parseInt(graphW.value);
+            if (isNaN(w) || w <= 0) return showStatus('Weight must be >= 1', '#f87171');
+            const key = edgeKey(u, v);
+            if (weightedEdges.some(e => edgeKey(e.u, e.v) === key)) return showStatus('Edge already exists', '#f87171');
+            weightedEdges.push({ u, v, w });
+            mstEdgeKeys.clear();
+            graphCandidateEdgeKey = null;
+            showStatus('Added weighted edge: ' + u + ' - ' + v + ' (w=' + w + ')', '#60a5fa');
+            renderGraph();
+            return;
+        }
+        if(edges.some(e => (e[0]===u && e[1]===v) || (e[0]===v && e[1]===u))) return showStatus('Edge already exists', '#f87171');
         edges.push([u, v]); showStatus("Added edge: " + u + " - " + v, '#60a5fa'); renderGraph();
+    });
+    btnGraphKruskal.addEventListener('click', () => {
+        if (currentMode !== 'graph-kruskal') return;
+        executeAnimWrapper(async () => {
+            if (weightedEdges.length === 0) return showStatus('Add weighted edges first.', '#f87171');
+            await runKruskalMST();
+            return '__KEEP_STATUS__';
+        });
+    });
+    btnGraphClear.addEventListener('click', () => {
+        edges = [];
+        weightedEdges = [];
+        mstEdgeKeys.clear();
+        graphCandidateEdgeKey = null;
+        renderGraph();
+        showStatus('Graph reset.', '#94a3b8');
     });
     btnListAdd.addEventListener('click', () => {
         const i = parseInt(listIdx.value); const v = parseInt(listValInput.value);
@@ -831,6 +861,13 @@ document.addEventListener('DOMContentLoaded', () => {
             btnHeapStats.disabled = isPlaying;
             btnHeapTutorial.disabled = isPlaying;
             heapOrderSelect.disabled = isPlaying;
+        } else if (currentMode.includes('graph')) {
+            btnGraphAdd.disabled = isPlaying;
+            btnGraphKruskal.disabled = isPlaying;
+            btnGraphClear.disabled = isPlaying;
+            graphU.disabled = isPlaying;
+            graphV.disabled = isPlaying;
+            graphW.disabled = isPlaying;
         }
         modeRadios.forEach(r => r.disabled = isPlaying);
         syncHeapTutorialChrome();
@@ -906,7 +943,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if(currentMode === 'stack-array') { codeTitle.textContent = 'stack_array.cpp'; codeDisplay.textContent = codeArray; arrayContainer.classList.remove('hidden'); stdActions.classList.remove('hidden'); btnStdAdd.textContent = 'Push()'; btnStdRemove.textContent = 'Pop()'; }
         else if (currentMode === 'stack-list') { codeTitle.textContent = 'stack_linkedlist.cpp'; codeDisplay.textContent = codeLinkedList; linkedListContainer.classList.remove('hidden'); stdActions.classList.remove('hidden'); btnStdAdd.textContent = 'Push()'; btnStdRemove.textContent = 'Pop()'; }
         else if (currentMode === 'queue') { codeTitle.textContent = 'queue.cpp'; codeDisplay.textContent = codeQueue; queueContainer.classList.remove('hidden'); stdActions.classList.remove('hidden'); btnStdAdd.textContent = 'Enqueue()'; btnStdRemove.textContent = 'Dequeue()'; }
-        else if (currentMode === 'graph') { codeTitle.textContent = 'graph.cpp'; codeDisplay.textContent = codeGraph; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden'); }
+        else if (currentMode === 'graph') {
+            codeTitle.textContent = 'graph.cpp'; codeDisplay.textContent = codeGraph; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Edge';
+        }
+        else if (currentMode === 'graph-kruskal') {
+            codeTitle.textContent = 'graph_kruskal.cpp'; codeDisplay.textContent = codeGraphKruskal; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
+            graphW.classList.remove('hidden'); btnGraphKruskal.classList.remove('hidden'); btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Weighted Edge';
+        }
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) { 
             treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden'); 
             if(currentMode === 'tree-bst') { codeTitle.textContent = 'tree_bst.cpp'; codeDisplay.textContent = codeTreeBST; }
@@ -967,7 +1011,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
-        else if (currentMode === 'graph') renderGraph();
+        else if (currentMode === 'graph' || currentMode === 'graph-kruskal') renderGraph();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
@@ -1642,8 +1686,80 @@ document.addEventListener('DOMContentLoaded', () => {
         const pf = document.getElementById('front-ptr'); const pr = document.getElementById('rear-ptr');
         if (qCount === 0) { pf.style.left =  (30 + qFront * 65) + 'px'; pr.style.left = (30 + (qRear<0?0:qRear) * 65) + 'px'; } else { pf.style.left = (30 + qFront * 65) + 'px'; pr.style.left = (30 + qRear * 65) + 'px'; }
     }
+    function edgeKey(u, v) {
+        return u < v ? (u + '-' + v) : (v + '-' + u);
+    }
+
+    async function runKruskalMST() {
+        const nodeCount = 5;
+        const parent = Array.from({ length: nodeCount }, (_, i) => i);
+        const rank = Array(nodeCount).fill(0);
+        const sorted = [...weightedEdges].sort((a, b) => a.w - b.w);
+        mstEdgeKeys.clear();
+
+        function find(x) {
+            if (parent[x] !== x) parent[x] = find(parent[x]);
+            return parent[x];
+        }
+
+        function unite(a, b) {
+            let ra = find(a); let rb = find(b);
+            if (ra === rb) return false;
+            if (rank[ra] < rank[rb]) [ra, rb] = [rb, ra];
+            parent[rb] = ra;
+            if (rank[ra] === rank[rb]) rank[ra] += 1;
+            return true;
+        }
+
+        let totalWeight = 0;
+        let selected = 0;
+
+        for (const e of sorted) {
+            graphCandidateEdgeKey = edgeKey(e.u, e.v);
+            renderGraph();
+            showStatus('Consider edge ' + e.u + '-' + e.v + ' (w=' + e.w + ')', '#fbbf24');
+            await sleep(500);
+
+            if (unite(e.u, e.v)) {
+                mstEdgeKeys.add(graphCandidateEdgeKey);
+                totalWeight += e.w;
+                selected += 1;
+                renderGraph();
+                showStatus('Pick edge ' + e.u + '-' + e.v + ' (w=' + e.w + ')', '#34d399');
+                await sleep(500);
+                if (selected === nodeCount - 1) break;
+            }
+        }
+
+        graphCandidateEdgeKey = null;
+        renderGraph();
+        if (selected === nodeCount - 1) showStatus('Kruskal complete: MST weight = ' + totalWeight, '#34d399');
+        else showStatus('Kruskal complete: forest weight = ' + totalWeight + ' (graph disconnected)', '#fbbf24');
+    }
+
     function renderGraph() {
         const svg = document.getElementById('graph-edges'); svg.innerHTML = ''; const pos = [{x:150,y:30},{x:270,y:120},{x:225,y:255},{x:75,y:255},{x:30,y:120}];
+        if (currentMode === 'graph-kruskal') {
+            weightedEdges.forEach(e => {
+                const p1 = pos[e.u], p2 = pos[e.v];
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", p1.x); line.setAttribute("y1", p1.y); line.setAttribute("x2", p2.x); line.setAttribute("y2", p2.y);
+                const key = edgeKey(e.u, e.v);
+                let className = 'graph-edge weighted';
+                if (key === graphCandidateEdgeKey) className += ' candidate';
+                if (mstEdgeKeys.has(key)) className += ' mst';
+                line.setAttribute("class", className);
+                svg.appendChild(line);
+
+                const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                tx.setAttribute('x', ((p1.x + p2.x) / 2));
+                tx.setAttribute('y', ((p1.y + p2.y) / 2));
+                tx.setAttribute('class', 'graph-weight');
+                tx.textContent = String(e.w);
+                svg.appendChild(tx);
+            });
+            return;
+        }
         edges.forEach(e => { const p1 = pos[e[0]], p2 = pos[e[1]]; const line = document.createElementNS("http://www.w3.org/2000/svg", "line"); line.setAttribute("x1", p1.x); line.setAttribute("y1", p1.y); line.setAttribute("x2", p2.x); line.setAttribute("y2", p2.y); line.setAttribute("class", "graph-edge"); svg.appendChild(line); });
     }
     // End original routines mappings

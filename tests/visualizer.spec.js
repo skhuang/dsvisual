@@ -89,6 +89,37 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#status-message')).toContainText('occupied! Probing...', { timeout: 10000 });
     });
 
+    test('Graph Kruskal: Builds MST from weighted edges', async ({ page }) => {
+        // Expand Non-Linear group
+        const nonLinearGroup = page.locator('.mode-group').nth(2);
+        const nonLinearHeader = nonLinearGroup.locator('.group-header');
+        const nonLinearContent = nonLinearGroup.locator('.group-content');
+        if (!(await nonLinearContent.isVisible())) {
+            await nonLinearHeader.click();
+        }
+
+        await page.locator('label[for="mode-graph-kruskal"]').click();
+        await expect(page.locator('#code-title')).toHaveText('graph_kruskal.cpp');
+        await expect(page.locator('#desc-view h3')).toContainText('Minimum Spanning Tree');
+
+        const addWeighted = async (u, v, w) => {
+            await page.fill('#graph-u', String(u));
+            await page.fill('#graph-v', String(v));
+            await page.fill('#graph-w', String(w));
+            await page.click('#btn-graph-add');
+        };
+
+        await addWeighted(0, 1, 4);
+        await addWeighted(1, 2, 1);
+        await addWeighted(2, 3, 2);
+        await addWeighted(3, 4, 6);
+        await addWeighted(1, 3, 3);
+
+        await page.click('#btn-graph-kruskal');
+        await expect(page.locator('#status-message')).toContainText('Kruskal complete', { timeout: 10000 });
+        await expect(page.locator('#graph-edges .graph-edge.mst')).toHaveCount(4);
+    });
+
     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {
         // Expand Advanced group
         const advancedGroup = page.locator('.mode-group').nth(3);
@@ -226,6 +257,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
             { group: 1, selector: '#mode-list-list', title: 'list_linked.cpp' },
             { group: 2, selector: '#mode-tree-bst', title: 'tree_bst.cpp' },
             { group: 2, selector: '#mode-graph', title: 'graph.cpp' },
+            { group: 2, selector: '#mode-graph-kruskal', title: 'graph_kruskal.cpp' },
             { group: 3, selector: '#mode-hash-chain', title: 'hash_chaining.cpp' },
             { group: 3, selector: '#mode-search-binary', title: 'search_binary.cpp' },
             { group: 3, selector: '#mode-heap-binary', title: '', desc: 'Binary Heap' },
