@@ -139,6 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnStdAdd = document.getElementById('btn-std-add'); const btnStdRemove = document.getElementById('btn-std-remove'); const stdVal = document.getElementById('std-value');
     const btnGraphAdd = document.getElementById('btn-graph-add'); const graphU = document.getElementById('graph-u'); const graphV = document.getElementById('graph-v');
     const graphW = document.getElementById('graph-w'); const btnGraphKruskal = document.getElementById('btn-graph-kruskal'); const btnGraphClear = document.getElementById('btn-graph-clear');
+    const graphSource = document.getElementById('graph-source'); const graphTarget = document.getElementById('graph-target');
+    const btnGraphDijkstra = document.getElementById('btn-graph-dijkstra'); const btnGraphTopo = document.getElementById('btn-graph-topo');
     const btnTreeAdd = document.getElementById('btn-tree-add'); const treeVal = document.getElementById('tree-val'); const btnTreeSearch = document.getElementById('btn-tree-search');
     
     const btnSearchGo = document.getElementById('btn-search-go'); const btnSearchPause = document.getElementById('btn-search-pause'); const btnSearchStop = document.getElementById('btn-search-stop'); const searchVal = document.getElementById('search-val');
@@ -192,7 +194,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Core sets
     let stackData = []; let qArr = new Array(5).fill(null); let qFront = 0; let qRear = -1; let qCount = 0;
-    let edges = []; let weightedEdges = []; let mstEdgeKeys = new Set(); let graphCandidateEdgeKey = null; let bstRoot = null; let mainListData = []; let sortArrData = [];
+    let edges = []; let weightedEdges = []; let mstEdgeKeys = new Set(); let graphCandidateEdgeKey = null;
+    let dijkstraDistances = new Map(); let dijkstraVisited = new Set(); let shortestPathEdges = new Set(); 
+    let topoOrder = []; let topoVisited = new Set(); let topoEdges = []; let bstRoot = null; let mainListData = []; let sortArrData = [];
     let hashChData = Array.from({length: 5}, () => []); // Array of arrays representing Chains
     let hashOaData = new Array(5).fill(null); // Simple array
     let hashBucketData = Array.from({length: 4}, () => []); // 4 buckets, max 2 items each
@@ -570,6 +574,25 @@ document.addEventListener('DOMContentLoaded', () => {
             renderGraph();
             return;
         }
+        if (currentMode === 'graph-dijkstra') {
+            if(edges.some(e => (e[0]===u && e[1]===v) || (e[0]===v && e[1]===u))) return showStatus('Edge already exists', '#f87171');
+            edges.push([u, v]);
+            dijkstraDistances.clear();
+            dijkstraVisited.clear();
+            shortestPathEdges.clear();
+            showStatus('Added undirected edge: ' + u + ' - ' + v, '#60a5fa');
+            renderGraph();
+            return;
+        }
+        if (currentMode === 'graph-topo') {
+            if(topoEdges.some(e => e[0]===u && e[1]===v)) return showStatus('Edge already exists', '#f87171');
+            topoEdges.push([u, v]);
+            topoOrder = [];
+            topoVisited.clear();
+            showStatus('Added directed edge: ' + u + ' → ' + v, '#60a5fa');
+            renderGraph();
+            return;
+        }
         if(edges.some(e => (e[0]===u && e[1]===v) || (e[0]===v && e[1]===u))) return showStatus('Edge already exists', '#f87171');
         edges.push([u, v]); showStatus("Added edge: " + u + " - " + v, '#60a5fa'); renderGraph();
     });
@@ -581,11 +604,35 @@ document.addEventListener('DOMContentLoaded', () => {
             return '__KEEP_STATUS__';
         });
     });
+    btnGraphDijkstra.addEventListener('click', () => {
+        if (currentMode !== 'graph-dijkstra') return;
+        const src = parseInt(graphSource.value);
+        if (isNaN(src) || src < 0 || src > 4) return showStatus('Invalid source node.', '#f87171');
+        executeAnimWrapper(async () => {
+            if (edges.length === 0) return showStatus('Add edges first.', '#f87171');
+            await runDijkstra(src);
+            return '__KEEP_STATUS__';
+        });
+    });
+    btnGraphTopo.addEventListener('click', () => {
+        if (currentMode !== 'graph-topo') return;
+        executeAnimWrapper(async () => {
+            if (topoEdges.length === 0) return showStatus('Add directed edges first.', '#f87171');
+            await runTopoSort();
+            return '__KEEP_STATUS__';
+        });
+    });
     btnGraphClear.addEventListener('click', () => {
         edges = [];
         weightedEdges = [];
         mstEdgeKeys.clear();
         graphCandidateEdgeKey = null;
+        dijkstraDistances.clear();
+        dijkstraVisited.clear();
+        shortestPathEdges.clear();
+        topoOrder = [];
+        topoVisited.clear();
+        topoEdges = [];
         renderGraph();
         showStatus('Graph reset.', '#94a3b8');
     });
@@ -945,11 +992,27 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'queue') { codeTitle.textContent = 'queue.cpp'; codeDisplay.textContent = codeQueue; queueContainer.classList.remove('hidden'); stdActions.classList.remove('hidden'); btnStdAdd.textContent = 'Enqueue()'; btnStdRemove.textContent = 'Dequeue()'; }
         else if (currentMode === 'graph') {
             codeTitle.textContent = 'graph.cpp'; codeDisplay.textContent = codeGraph; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
-            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Edge';
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden'); 
+            graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
+            btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Edge';
         }
         else if (currentMode === 'graph-kruskal') {
             codeTitle.textContent = 'graph_kruskal.cpp'; codeDisplay.textContent = codeGraphKruskal; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
-            graphW.classList.remove('hidden'); btnGraphKruskal.classList.remove('hidden'); btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Weighted Edge';
+            graphW.classList.remove('hidden'); btnGraphKruskal.classList.remove('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden');
+            graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
+            btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Weighted Edge';
+        }
+        else if (currentMode === 'graph-dijkstra') {
+            codeTitle.textContent = 'graph_dijkstra.cpp'; codeDisplay.textContent = codeGraphDijkstra; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.remove('hidden'); btnGraphTopo.classList.add('hidden');
+            graphSource.classList.remove('hidden'); graphTarget.classList.add('hidden');
+            btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Edge';
+        }
+        else if (currentMode === 'graph-topo') {
+            codeTitle.textContent = 'graph_topo.cpp'; codeDisplay.textContent = codeGraphTopo; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.remove('hidden');
+            graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
+            btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Edge (Directed)';
         }
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) { 
             treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden'); 
@@ -1011,7 +1074,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
-        else if (currentMode === 'graph' || currentMode === 'graph-kruskal') renderGraph();
+        else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo') renderGraph();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
@@ -1738,7 +1801,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGraph() {
-        const svg = document.getElementById('graph-edges'); svg.innerHTML = ''; const pos = [{x:150,y:30},{x:270,y:120},{x:225,y:255},{x:75,y:255},{x:30,y:120}];
+        const svg = document.getElementById('graph-edges'); svg.innerHTML = '';
+        const pos = [{x:150,y:30},{x:270,y:120},{x:225,y:255},{x:75,y:255},{x:30,y:120}];
+        
+        // Update node classes
+        for (let i = 0; i < 5; i++) {
+            const nodeEl = document.getElementById('gn-' + i);
+            nodeEl.className = 'graph-node';
+            if (currentMode === 'graph-dijkstra') {
+                if (i === parseInt(graphSource.value)) nodeEl.classList.add('source');
+                else if (dijkstraVisited.has(i)) nodeEl.classList.add('visited');
+            } else if (currentMode === 'graph-topo') {
+                if (topoVisited.has(i)) nodeEl.classList.add('visited');
+            }
+        }
+        
         if (currentMode === 'graph-kruskal') {
             weightedEdges.forEach(e => {
                 const p1 = pos[e.u], p2 = pos[e.v];
@@ -1758,9 +1835,151 @@ document.addEventListener('DOMContentLoaded', () => {
                 tx.textContent = String(e.w);
                 svg.appendChild(tx);
             });
-            return;
+        } else if (currentMode === 'graph-dijkstra') {
+            edges.forEach(e => {
+                const p1 = pos[e[0]], p2 = pos[e[1]];
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", p1.x); line.setAttribute("y1", p1.y); line.setAttribute("x2", p2.x); line.setAttribute("y2", p2.y);
+                let className = 'graph-edge';
+                if (shortestPathEdges.has(edgeKey(e[0], e[1]))) className += ' shortest';
+                else if (dijkstraVisited.has(e[0]) && dijkstraVisited.has(e[1])) className += ' visited';
+                line.setAttribute("class", className);
+                svg.appendChild(line);
+            });
+            // Display distances
+            dijkstraDistances.forEach((dist, node) => {
+                const p = pos[node];
+                const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                tx.setAttribute('x', p.x);
+                tx.setAttribute('y', p.y + 20);
+                tx.setAttribute('class', 'graph-distance');
+                tx.textContent = 'd=' + dist;
+                svg.appendChild(tx);
+            });
+        } else if (currentMode === 'graph-topo') {
+            topoEdges.forEach(e => {
+                const p1 = pos[e[0]], p2 = pos[e[1]];
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", p1.x); line.setAttribute("y1", p1.y); line.setAttribute("x2", p2.x); line.setAttribute("y2", p2.y);
+                line.setAttribute("class", 'graph-edge');
+                svg.appendChild(line);
+                // Add arrow for directed edge
+                const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+                const arrowSize = 8;
+                const arrowX = p2.x - arrowSize * Math.cos(angle);
+                const arrowY = p2.y - arrowSize * Math.sin(angle);
+                const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+                poly.setAttribute("points", `${p2.x},${p2.y} ${arrowX - arrowSize * Math.sin(angle)},${arrowY + arrowSize * Math.cos(angle)} ${arrowX + arrowSize * Math.sin(angle)},${arrowY - arrowSize * Math.cos(angle)}`);
+                poly.setAttribute("fill", "#94a3b8");
+                svg.appendChild(poly);
+            });
+            // Display topo order
+            topoOrder.forEach((node, idx) => {
+                const p = pos[node];
+                const tx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+                tx.setAttribute('x', p.x);
+                tx.setAttribute('y', p.y + 20);
+                tx.setAttribute('class', 'graph-order');
+                tx.textContent = '#' + (idx + 1);
+                svg.appendChild(tx);
+            });
+        } else {
+            edges.forEach(e => { const p1 = pos[e[0]], p2 = pos[e[1]]; const line = document.createElementNS("http://www.w3.org/2000/svg", "line"); line.setAttribute("x1", p1.x); line.setAttribute("y1", p1.y); line.setAttribute("x2", p2.x); line.setAttribute("y2", p2.y); line.setAttribute("class", "graph-edge"); svg.appendChild(line); });
         }
-        edges.forEach(e => { const p1 = pos[e[0]], p2 = pos[e[1]]; const line = document.createElementNS("http://www.w3.org/2000/svg", "line"); line.setAttribute("x1", p1.x); line.setAttribute("y1", p1.y); line.setAttribute("x2", p2.x); line.setAttribute("y2", p2.y); line.setAttribute("class", "graph-edge"); svg.appendChild(line); });
+    }
+
+    async function runDijkstra(source) {
+        dijkstraDistances.clear();
+        dijkstraVisited.clear();
+        shortestPathEdges.clear();
+
+        // Initialize distances
+        for (let i = 0; i < 5; i++) {
+            dijkstraDistances.set(i, i === source ? 0 : Infinity);
+        }
+
+        const pq = [[0, source]]; // [distance, node]
+        const visited = new Set();
+
+        while (pq.length > 0) {
+            // Manual priority queue - find min
+            let minIdx = 0;
+            for (let i = 1; i < pq.length; i++) {
+                if (pq[i][0] < pq[minIdx][0]) minIdx = i;
+            }
+            const [dist, u] = pq.splice(minIdx, 1)[0];
+
+            if (visited.has(u)) continue;
+            visited.add(u);
+            dijkstraVisited.add(u);
+            renderGraph();
+
+            showStatus(`Processing node ${u}, distance: ${dist}`, '#60a5fa');
+            await sleep(500);
+
+            // Find neighbors
+            for (const edge of edges) {
+                let v = -1;
+                if (edge[0] === u) v = edge[1];
+                else if (edge[1] === u) v = edge[0];
+                if (v === -1 || visited.has(v)) continue;
+
+                // Assume unit weights for simplicity
+                const newDist = dist + 1;
+                if (newDist < dijkstraDistances.get(v)) {
+                    dijkstraDistances.set(v, newDist);
+                    pq.push([newDist, v]);
+                }
+            }
+            renderGraph();
+        }
+
+        showStatus(`Dijkstra complete from node ${source}. All distances computed.`, '#34d399');
+    }
+
+    async function runTopoSort() {
+        topoOrder = [];
+        topoVisited.clear();
+        const adjList = Array(5).fill(null).map(() => []);
+        const inDegree = Array(5).fill(0);
+
+        // Build adjacency list and in-degrees
+        topoEdges.forEach(e => {
+            adjList[e[0]].push(e[1]);
+            inDegree[e[1]]++;
+        });
+
+        // Find all nodes with in-degree 0
+        const queue = [];
+        for (let i = 0; i < 5; i++) {
+            if (inDegree[i] === 0) queue.push(i);
+        }
+
+        while (queue.length > 0) {
+            const u = queue.shift();
+            topoOrder.push(u);
+            topoVisited.add(u);
+            renderGraph();
+
+            showStatus(`Added node ${u} to topological order. Sequence: [${topoOrder.join(', ')}]`, '#a78bfa');
+            await sleep(500);
+
+            // Reduce in-degree for neighbors
+            for (const v of adjList[u]) {
+                inDegree[v]--;
+                if (inDegree[v] === 0) {
+                    queue.push(v);
+                }
+            }
+            renderGraph();
+        }
+
+        if (topoOrder.length < 5) {
+            showStatus('Topological sort: Cycle detected! Only ' + topoOrder.length + ' nodes visited.', '#f87171');
+        } else {
+            showStatus(`Topological sort complete: [${topoOrder.join(' → ')}]`, '#34d399');
+        }
     }
     // End original routines mappings
 });
+

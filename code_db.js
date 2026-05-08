@@ -1055,6 +1055,99 @@ int main() {
 }
 `;
 
+const codeGraphDijkstra = `#include <iostream>
+#include <vector>
+#include <queue>
+#include <limits>
+using namespace std;
+
+const int INF = 1e9;
+
+int main() {
+    int V = 5;
+    vector<vector<pair<int,int>>> adj(V); // adjacency list with weights
+    
+    // Build graph
+    adj[0].push_back({1, 4}); adj[0].push_back({2, 1});
+    adj[1].push_back({0, 4}); adj[1].push_back({2, 2});
+    adj[2].push_back({0, 1}); adj[2].push_back({1, 2});
+    adj[2].push_back({3, 1}); adj[3].push_back({2, 1});
+    adj[3].push_back({4, 3}); adj[4].push_back({3, 3});
+    
+    int source = 0;
+    vector<int> dist(V, INF);
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;
+    
+    dist[source] = 0;
+    pq.push({0, source});
+    
+    while (!pq.empty()) {
+        auto [d, u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;
+        
+        for (auto [v, w] : adj[u]) {
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    
+    cout << "Shortest distances from node " << source << ":\n";
+    for (int i = 0; i < V; i++) {
+        cout << "Node " << i << ": ";
+        if (dist[i] == INF) cout << "INF\n";
+        else cout << dist[i] << "\n";
+    }
+    return 0;
+}
+`;
+
+const codeGraphTopo = `#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+int main() {
+    int V = 5;
+    vector<vector<int>> adj(V);
+    vector<int> inDegree(V, 0);
+    
+    // Build directed graph
+    vector<pair<int,int>> edges = {{0,1}, {0,2}, {1,2}, {1,3}, {2,3}, {3,4}};
+    for (auto [u, v] : edges) {
+        adj[u].push_back(v);
+        inDegree[v]++;
+    }
+    
+    // Kahn's Algorithm
+    queue<int> q;
+    for (int i = 0; i < V; i++) {
+        if (inDegree[i] == 0) q.push(i);
+    }
+    
+    vector<int> topoOrder;
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+        topoOrder.push_back(u);
+        
+        for (int v : adj[u]) {
+            inDegree[v]--;
+            if (inDegree[v] == 0) q.push(v);
+        }
+    }
+    
+    if (topoOrder.size() != V) {
+        cout << "Cycle detected!\n";
+    } else {
+        cout << "Topological order: ";
+        for (int node : topoOrder) cout << node << " ";
+        cout << "\n";
+    }
+    return 0;
+}
+`;
+
 const codeListArray = `#include <iostream>
 using namespace std;
 

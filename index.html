@@ -58,6 +58,8 @@
                                     <div class="subgroup-label">Graphs</div>
                                     <input type="radio" id="mode-graph" name="ds-mode" value="graph"> <label for="mode-graph">Undirected Graph</label>
                                     <input type="radio" id="mode-graph-kruskal" name="ds-mode" value="graph-kruskal"> <label for="mode-graph-kruskal" style="color:#fcd34d">Kruskal MST</label>
+                                    <input type="radio" id="mode-graph-dijkstra" name="ds-mode" value="graph-dijkstra"> <label for="mode-graph-dijkstra" style="color:#f472b6">Dijkstra (Shortest Path)</label>
+                                    <input type="radio" id="mode-graph-topo" name="ds-mode" value="graph-topo"> <label for="mode-graph-topo" style="color:#a78bfa">Topological Sort</label>
                                 </div>
                             </div>
                         </div>
@@ -124,6 +126,10 @@
                         <input type="number" id="graph-w" placeholder="Weight" min="1" value="4">
                         <button id="btn-graph-add" class="btn primary">Add Edge</button>
                         <button id="btn-graph-kruskal" class="btn secondary">Run Kruskal()</button>
+                        <input type="number" id="graph-source" placeholder="Source(0-4)" min="0" max="4" value="0" class="hidden">
+                        <input type="number" id="graph-target" placeholder="Target(0-4)" min="0" max="4" value="4" class="hidden">
+                        <button id="btn-graph-dijkstra" class="btn secondary">Run Dijkstra()</button>
+                        <button id="btn-graph-topo" class="btn secondary">Run Topo Sort()</button>
                         <button id="btn-graph-clear" class="btn exception">Reset Graph</button>
                     </div>
 

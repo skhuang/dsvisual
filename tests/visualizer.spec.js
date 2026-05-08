@@ -120,6 +120,68 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#graph-edges .graph-edge.mst')).toHaveCount(4);
     });
 
+    test('Graph Dijkstra: Computes shortest paths from source', async ({ page }) => {
+        // Expand Non-Linear group
+        const nonLinearGroup = page.locator('.mode-group').nth(2);
+        const nonLinearHeader = nonLinearGroup.locator('.group-header');
+        const nonLinearContent = nonLinearGroup.locator('.group-content');
+        if (!(await nonLinearContent.isVisible())) {
+            await nonLinearHeader.click();
+        }
+
+        await page.locator('label[for="mode-graph-dijkstra"]').click();
+        await expect(page.locator('#code-title')).toHaveText('graph_dijkstra.cpp');
+        await expect(page.locator('#desc-view h3')).toContainText('Dijkstra');
+
+        const addEdge = async (u, v) => {
+            await page.fill('#graph-u', String(u));
+            await page.fill('#graph-v', String(v));
+            await page.click('#btn-graph-add');
+        };
+
+        await addEdge(0, 1);
+        await addEdge(0, 2);
+        await addEdge(1, 2);
+        await addEdge(1, 3);
+        await addEdge(2, 3);
+        await addEdge(3, 4);
+
+        // Set source node to 0
+        await page.fill('#graph-source', '0');
+        await page.click('#btn-graph-dijkstra');
+        await expect(page.locator('#status-message')).toContainText('Dijkstra complete', { timeout: 10000 });
+    });
+
+    test('Graph Topological Sort: Orders DAG nodes correctly', async ({ page }) => {
+        // Expand Non-Linear group
+        const nonLinearGroup = page.locator('.mode-group').nth(2);
+        const nonLinearHeader = nonLinearGroup.locator('.group-header');
+        const nonLinearContent = nonLinearGroup.locator('.group-content');
+        if (!(await nonLinearContent.isVisible())) {
+            await nonLinearHeader.click();
+        }
+
+        await page.locator('label[for="mode-graph-topo"]').click();
+        await expect(page.locator('#code-title')).toHaveText('graph_topo.cpp');
+        await expect(page.locator('#desc-view h3')).toContainText('Topological Sort');
+
+        const addDirectedEdge = async (u, v) => {
+            await page.fill('#graph-u', String(u));
+            await page.fill('#graph-v', String(v));
+            await page.click('#btn-graph-add');
+        };
+
+        await addDirectedEdge(0, 1);
+        await addDirectedEdge(0, 2);
+        await addDirectedEdge(1, 3);
+        await addDirectedEdge(2, 3);
+        await addDirectedEdge(3, 4);
+
+        await page.click('#btn-graph-topo');
+        await expect(page.locator('#status-message')).toContainText('Topological sort complete', { timeout: 10000 });
+        await expect(page.locator('#graph-edges svg')).toBeTruthy();
+    });
+
     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {
         // Expand Advanced group
         const advancedGroup = page.locator('.mode-group').nth(3);
