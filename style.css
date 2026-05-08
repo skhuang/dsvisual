@@ -458,34 +458,240 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
     body {
         align-items: flex-start;
     }
-}
 
-@media (max-width: 720px) {
-    body {
-        padding: 1rem;
+    .controls {
+        margin-bottom: 1.25rem;
     }
 
-    header h1 {
-        font-size: 2rem;
+    .mode-groups {
+        max-height: 42vh;
+    }
+
+    .stack-container-wrapper {
+        min-height: 420px;
+    }
+}
+
+@media (max-width: 900px) {
+    body {
+        padding: 1.25rem;
+    }
+
+    .app-container {
+        gap: 1.25rem;
     }
 
     .glass-panel {
         padding: 1rem;
     }
 
-    .mode-toggle label {
-        flex: 1 1 calc(33.333% - 4px);
+    .mode-groups {
+        max-height: 38vh;
+    }
+
+    .mode-groups label {
+        flex: 1 1 calc(50% - 4px);
+        font-size: 0.72rem;
+    }
+
+    .actions {
+        gap: 8px;
+    }
+
+    .actions input[type="number"],
+    .actions input[type="text"],
+    .actions select {
+        min-width: 120px;
+    }
+
+    .btn {
+        padding: 0.65rem 0.8rem;
+        font-size: 0.82rem;
+    }
+
+    .sort-container {
+        height: 230px;
+    }
+
+    .sort-bar {
+        width: 16px;
+    }
+
+    .graph-container,
+    .tree-container {
+        width: min(100%, 340px);
+        height: 280px;
     }
 
     .heap-container {
-        height: 380px;
+        height: 360px;
+    }
+}
+
+@media (max-width: 720px) {
+    body {
+        padding: 0.75rem;
+    }
+
+    header h1 {
+        font-size: 1.8rem;
+    }
+
+    header p {
+        font-size: 0.82rem;
+    }
+
+    .panel-tabs {
+        gap: 10px !important;
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        font-size: 14px !important;
+    }
+
+    .mode-groups {
+        max-height: 34vh;
+        padding: 0.4rem;
+    }
+
+    .group-header {
+        padding: 0.52rem 0.65rem;
+        font-size: 0.78rem;
+    }
+
+    .mode-groups label {
+        flex: 1 1 100%;
+        font-size: 0.76rem;
+        white-space: normal;
+        line-height: 1.2;
+    }
+
+    .subgroup-label {
+        font-size: 0.66rem;
+    }
+
+    .actions {
+        gap: 6px;
+    }
+
+    .actions input[type="number"],
+    .actions input[type="text"],
+    .actions select,
+    .actions .btn {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+
+    #sort-actions > div {
+        margin-left: 0 !important;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    #sort-speed {
+        width: 100% !important;
+    }
+
+    .stack-container-wrapper {
+        min-height: 340px;
+    }
+
+    .sort-container {
+        height: 200px;
+        gap: 2px;
+    }
+
+    .sort-bar {
+        width: 11px;
+    }
+
+    .sort-bar span {
+        font-size: 0.5rem;
+    }
+
+    .graph-container,
+    .tree-container {
+        width: min(100%, 300px);
+        height: 250px;
+    }
+
+    .heap-container {
+        height: 350px;
     }
 
     .heap-tutorial-panel {
-        left: 12px;
-        right: 12px;
+        left: 10px;
+        right: 10px;
         width: auto;
         top: auto;
-        bottom: 12px;
+        bottom: 10px;
+        padding: 12px;
+    }
+
+    .desc-display {
+        font-size: 0.9rem;
+        line-height: 1.55;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-container {
+        gap: 0.9rem;
+    }
+
+    header h1 {
+        font-size: 1.55rem;
+    }
+
+    .glass-panel {
+        border-radius: 12px;
+        padding: 0.82rem;
+    }
+
+    .mode-groups {
+        max-height: 30vh;
+    }
+
+    .group-header {
+        font-size: 0.72rem;
+    }
+
+    .mode-groups label {
+        font-size: 0.72rem;
+        padding: 0.4rem 0.28rem;
+    }
+
+    .btn {
+        font-size: 0.78rem;
+        padding: 0.58rem 0.72rem;
+    }
+
+    .status-message {
+        font-size: 0.8rem;
+    }
+
+    .stack-container-wrapper {
+        min-height: 300px;
+    }
+
+    .sort-container {
+        height: 180px;
+    }
+
+    .sort-bar {
+        width: 9px;
+    }
+
+    .heap-container {
+        height: 320px;
+    }
+
+    .heap-tutorial-panel h3 {
+        font-size: 0.9rem;
+    }
+
+    .heap-tutorial-panel p {
+        font-size: 0.8rem;
     }
 }
