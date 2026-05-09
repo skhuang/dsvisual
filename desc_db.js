@@ -520,5 +520,54 @@ const descDB = {
         <div class="complexities">
             <span class="badge time">Range Query: O(log_m N + K results)</span>
         </div>
+    `,
+    'oop-inheritance': `
+        <h3>Class Inheritance (IS-A Relationship)</h3>
+        <p>Inheritance allows derived classes to acquire properties and methods from a base class, enabling code reuse and establishing hierarchical relationships.</p>
+        <hr>
+        <ul>
+            <li><strong>Base Class:</strong> Defines common interface with virtual methods that derived classes override.</li>
+            <li><strong>Derived Classes:</strong> Inherit from base class and can override virtual methods to provide specialized behavior.</li>
+            <li><strong>Constructor/Destructor Chaining:</strong> When derived object is created, base constructor is called first. On deletion, destructors execute in reverse order (derived to base).</li>
+            <li><strong>Virtual Destructor:</strong> Must be virtual to ensure correct cleanup of derived objects through base pointers.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Lookup: O(1)</span>
+            <span class="badge space">Memory: One vptr per object</span>
+            <span class="badge exception">Compile-time checked</span>
+        </div>
+    `,
+    'oop-polymorphism': `
+        <h3>Virtual Functions & Polymorphism</h3>
+        <p>Polymorphism enables objects of different types to be used through the same interface, with the correct method selected at runtime.</p>
+        <hr>
+        <ul>
+            <li><strong>Virtual Pointer (vptr):</strong> Every polymorphic object contains a hidden pointer to its class's Virtual Method Table.</li>
+            <li><strong>Virtual Table (VTable):</strong> Array of function pointers, one entry per virtual function, pointing to the correct implementation for that class.</li>
+            <li><strong>Dynamic Dispatch:</strong> At runtime, virtual function calls are resolved by following vptr to VTable to actual function implementation.</li>
+            <li><strong>Override:</strong> Derived class marks method with <code>override</code> keyword, replacing base class entry in VTable.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Dispatch: O(1)</span>
+            <span class="badge space">VTable: O(# virtual methods)</span>
+            <span class="badge exception">Runtime overhead: One indirection</span>
+        </div>
+    `,
+    'oop-encapsulation': `
+        <h3>Encapsulation & Access Levels</h3>
+        <p>Encapsulation protects internal object state by controlling access through well-defined public interfaces while hiding implementation details.</p>
+        <hr>
+        <ul>
+            <li><strong>public:</strong> Members accessible from anywhere. Part of the class contract.</li>
+            <li><strong>protected:</strong> Members accessible only by derived classes and the class itself. Used for helper methods.</li>
+            <li><strong>private:</strong> Members accessible only within the class. Enforces information hiding and invariant protection.</li>
+            <li><strong>friend:</strong> Grants specific external functions/classes access to private members, breaking encapsulation when necessary.</li>
+            <li><strong>const-correctness:</strong> <code>const</code> methods cannot modify state, enabling read-only access guarantees.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Access Check: O(1)</span>
+            <span class="badge space">Zero runtime overhead</span>
+            <span class="badge exception">Compile-time enforcement</span>
+        </div>
     `
 };

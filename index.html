@@ -105,6 +105,16 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- 4. OOP Concepts -->
+                        <div class="mode-group collapsed">
+                            <div class="group-header" data-group="oop-concepts">🎓 OOP Concepts (C++)</div>
+                            <div class="group-content" style="display:none;">
+                                <input type="radio" id="mode-oop-inheritance" name="ds-mode" value="oop-inheritance"> <label for="mode-oop-inheritance" style="color:#06b6d4">Class Inheritance</label>
+                                <input type="radio" id="mode-oop-polymorphism" name="ds-mode" value="oop-polymorphism"> <label for="mode-oop-polymorphism" style="color:#f59e0b">Polymorphism (Virtual)</label>
+                                <input type="radio" id="mode-oop-encapsulation" name="ds-mode" value="oop-encapsulation"> <label for="mode-oop-encapsulation" style="color:#8b5cf6">Encapsulation & Access</label>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="actions" id="std-actions">
@@ -185,6 +195,16 @@
                         <button id="btn-heap-tutorial" class="btn primary" style="font-size: 0.8rem;">Start Tutorial</button>
                     </div>
                     
+                    <div class="actions hidden" id="oop-actions">
+                        <select id="oop-mode-select" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 0.7rem; border-radius: 8px;">
+                            <option value="inheritance">Class Inheritance Hierarchy</option>
+                            <option value="polymorphism">Virtual Functions & Polymorphism</option>
+                            <option value="encapsulation">Encapsulation & Access Levels</option>
+                        </select>
+                        <button id="btn-oop-demo" class="btn primary">Visualize Concept</button>
+                        <button id="btn-oop-reset" class="btn secondary">Reset</button>
+                    </div>
+                    
                     <div id="status-message" class="status-message">Visualizer initialized.</div>
                 </div>
 
@@ -260,8 +280,42 @@
                             </div>
                         </div>
 
+                        <div id="oop-container" class="oop-container hidden">
+                            <div id="oop-visualization" class="oop-visualization">
+                                <!-- Inheritance: Class hierarchy tree -->
+                                <div id="oop-inheritance-view" class="oop-view hidden">
+                                    <h3 style="color: #06b6d4; margin-bottom: 1rem;">Class Inheritance Hierarchy</h3>
+                                    <svg id="oop-inheritance-svg" width="100%" height="350" style="border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: rgba(0,0,0,0.2);"></svg>
+                                    <div id="oop-inheritance-legend" style="margin-top: 1rem; font-size: 0.85rem; color: #cbd5e1;">
+                                        <div>Base Class → <span style="color: #34d399;">Virtual Methods</span></div>
+                                        <div>Derived Classes → <span style="color: #f472b6;">Override Methods</span></div>
+                                    </div>
+                                </div>
+
+                                <!-- Polymorphism: Virtual function table -->
+                                <div id="oop-polymorphism-view" class="oop-view hidden">
+                                    <h3 style="color: #f59e0b; margin-bottom: 1rem;">Virtual Functions & Polymorphism</h3>
+                                    <svg id="oop-poly-svg" width="100%" height="350" style="border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: rgba(0,0,0,0.2);"></svg>
+                                    <div id="oop-poly-legend" style="margin-top: 1rem; font-size: 0.85rem; color: #cbd5e1;">
+                                        <div><span style="color: #fbbf24;">vptr</span> → Virtual Function Table</div>
+                                        <div><span style="color: #34d399;">Dynamic Dispatch</span> → Runtime Resolution</div>
+                                    </div>
+                                </div>
+
+                                <!-- Encapsulation: Member visibility -->
+                                <div id="oop-encapsulation-view" class="oop-view hidden">
+                                    <h3 style="color: #8b5cf6; margin-bottom: 1rem;">Encapsulation & Access Levels</h3>
+                                    <svg id="oop-encap-svg" width="100%" height="350" style="border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; background: rgba(0,0,0,0.2);"></svg>
+                                    <div id="oop-encap-legend" style="margin-top: 1rem; font-size: 0.85rem; color: #cbd5e1;">
+                                        <div><span style="color: #ef4444;">public:</span> Visible to all</div>
+                                        <div><span style="color: #f59e0b;">protected:</span> Derived classes only</div>
+                                        <div><span style="color: #7c3aed;">private:</span> Class only</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
-                </div>
             </section>
 
             <section class="code-panel glass-panel" style="display: flex; flex-direction: column;">

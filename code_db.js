@@ -2645,3 +2645,166 @@ int main() {
 }
 `;
 
+const codeOOPInheritance = `#include <iostream>
+using namespace std;
+
+class Animal {
+public:
+    Animal() { cout << "Animal constructor called" << endl; }
+    virtual ~Animal() { cout << "Animal destructor called" << endl; }
+
+    virtual void speak() {
+        cout << "Animal speaks..." << endl;
+    }
+
+    void move() { cout << "Moving..." << endl; }
+};
+
+class Dog : public Animal {
+public:
+    Dog() { cout << "Dog constructor called" << endl; }
+    ~Dog() override { cout << "Dog destructor called" << endl; }
+
+    void speak() override {
+        cout << "Woof! Woof!" << endl;
+    }
+};
+
+class Cat : public Animal {
+public:
+    Cat() { cout << "Cat constructor called" << endl; }
+    ~Cat() override { cout << "Cat destructor called" << endl; }
+
+    void speak() override {
+        cout << "Meow! Meow!" << endl;
+    }
+};
+
+int main() {
+    Dog dog;        // Constructor: Dog -> Animal
+    Cat cat;        // Constructor: Cat -> Animal
+
+    dog.speak();    // Output: Woof!
+    cat.speak();    // Output: Meow!
+    dog.move();     // Inherited: Moving...
+
+    return 0;
+}  // Destructors: ~Dog, ~Animal, ~Cat, ~Animal
+`;
+
+const codeOOPPolymorphism = `#include <iostream>
+using namespace std;
+
+class Shape {
+public:
+    virtual ~Shape() {}
+
+    virtual void draw() {
+        cout << "Drawing generic shape" << endl;
+    }
+
+    virtual double area() = 0;
+};
+
+class Circle : public Shape {
+private:
+    double radius;
+public:
+    Circle(double r) : radius(r) {}
+
+    void draw() override {
+        cout << "Drawing circle with radius " << radius << endl;
+    }
+
+    double area() override {
+        return 3.14159 * radius * radius;
+    }
+};
+
+class Rectangle : public Shape {
+private:
+    double width, height;
+public:
+    Rectangle(double w, double h) : width(w), height(h) {}
+
+    void draw() override {
+        cout << "Drawing rectangle " << width << "x" << height << endl;
+    }
+
+    double area() override {
+        return width * height;
+    }
+};
+
+int main() {
+    Shape* shapes[2];
+    shapes[0] = new Circle(5.0);
+    shapes[1] = new Rectangle(4.0, 6.0);
+
+    // Polymorphic dispatch: calls overridden methods
+    for (int i = 0; i < 2; i++) {
+        shapes[i]->draw();
+        cout << "Area: " << shapes[i]->area() << endl;
+    }
+
+    return 0;
+}
+`;
+
+const codeOOPEncapsulation = `#include <iostream>
+#include <mutex>
+using namespace std;
+
+class BankAccount {
+public:
+    BankAccount(double initial) : m_balance(initial) {}
+
+    void deposit(double amount) {
+        lock_guard<mutex> lock(m_lock);
+        if (amount > 0) {
+            m_balance += amount;
+            cout << "Deposited: $" << amount << endl;
+        }
+    }
+
+    bool withdraw(double amount) {
+        lock_guard<mutex> lock(m_lock);
+        if (validate(amount)) {
+            m_balance -= amount;
+            log_transaction("withdraw", amount);
+            return true;
+        }
+        return false;
+    }
+
+    double getBalance() const {
+        return m_balance;
+    }
+
+protected:
+    bool validate(double amount) {
+        return amount > 0 && amount <= m_balance;
+    }
+
+    void log_transaction(const string& type, double amount) {
+        cout << "LOG: " << type << " amount=" << amount << endl;
+    }
+
+private:
+    double m_balance;
+    mutable mutex m_lock;
+};
+
+int main() {
+    BankAccount account(1000);
+
+    account.deposit(500);        // public: OK
+    account.withdraw(200);       // public: OK
+    // account.m_balance = 999;  // ERROR: private!
+    // account.validate(100);    // ERROR: protected!
+
+    cout << "Balance: $" << account.getBalance() << endl;
+    return 0;
+}
+`;
+
