@@ -330,7 +330,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
             const group = page.locator('.mode-group').nth(test.group);
             const header = group.locator('.group-header');
             const content = group.locator('.group-content');
-            
+
             if (!(await content.isVisible())) {
                 await header.click();
             }
@@ -346,6 +346,56 @@ test.describe('Data Structure Visualizer Full Suite', () => {
                 await expect(page.locator('#desc-view h3')).toContainText(test.desc);
             }
         }
+    });
+
+    test('OOP Inheritance: Renders hierarchy and completes demo flow', async ({ page }) => {
+        const oopGroup = page.locator('.mode-group').nth(4);
+        const oopContent = oopGroup.locator('.group-content');
+        if (!(await oopContent.isVisible())) {
+            await oopGroup.locator('.group-header').click();
+        }
+
+        await page.locator('label[for="mode-oop-inheritance"]').click();
+        await expect(page.locator('#code-title')).toHaveText('oop_inheritance.cpp');
+        await expect(page.locator('#oop-inheritance-view')).toBeVisible();
+
+        await page.click('#btn-oop-demo');
+        await expect(page.locator('#status-message')).toContainText('Execution Complete!', { timeout: 12000 });
+        await expect(page.locator('#oop-inheritance-svg rect')).toHaveCount(3);
+    });
+
+    test('OOP Polymorphism: Shows virtual dispatch model and demo run', async ({ page }) => {
+        const oopGroup = page.locator('.mode-group').nth(4);
+        const oopContent = oopGroup.locator('.group-content');
+        if (!(await oopContent.isVisible())) {
+            await oopGroup.locator('.group-header').click();
+        }
+
+        await page.locator('label[for="mode-oop-polymorphism"]').click();
+        await expect(page.locator('#code-title')).toHaveText('oop_polymorphism.cpp');
+        await expect(page.locator('#oop-polymorphism-view')).toBeVisible();
+
+        await page.click('#btn-oop-demo');
+        await expect(page.locator('#status-message')).toContainText('Execution Complete!', { timeout: 12000 });
+        await expect(page.locator('#oop-poly-svg .oop-vptr-box')).toHaveCount(1);
+    });
+
+    test('OOP Encapsulation: Shows access levels and demo run', async ({ page }) => {
+        const oopGroup = page.locator('.mode-group').nth(4);
+        const oopContent = oopGroup.locator('.group-content');
+        if (!(await oopContent.isVisible())) {
+            await oopGroup.locator('.group-header').click();
+        }
+
+        await page.locator('label[for="mode-oop-encapsulation"]').click();
+        await expect(page.locator('#code-title')).toHaveText('oop_encapsulation.cpp');
+        await expect(page.locator('#oop-encapsulation-view')).toBeVisible();
+
+        await page.click('#btn-oop-demo');
+        await expect(page.locator('#status-message')).toContainText('Execution Complete!', { timeout: 12000 });
+        await expect(page.locator('#oop-encap-svg')).toContainText('public:');
+        await expect(page.locator('#oop-encap-svg')).toContainText('protected:');
+        await expect(page.locator('#oop-encap-svg')).toContainText('private:');
     });
 
 });
