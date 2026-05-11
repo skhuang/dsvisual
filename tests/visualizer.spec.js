@@ -398,4 +398,101 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#oop-encap-svg')).toContainText('private:');
     });
 
+    // Design Patterns Tests
+    test('Design Patterns: Singleton - Renders and demo runs', async ({ page }) => {
+        const patternsGroup = page.locator('.mode-group').nth(5);
+        const patternsContent = patternsGroup.locator('.group-content');
+        if (!(await patternsContent.isVisible())) {
+            await patternsGroup.locator('.group-header').click();
+        }
+
+        const creatSubgroup = patternsContent.locator('.subgroup').first();
+        await creatSubgroup.locator('label[for="mode-pattern-singleton"]').click();
+        await expect(page.locator('#code-title')).toHaveText('pattern_singleton.cpp');
+        await expect(page.locator('#pattern-singleton-view')).toBeVisible();
+
+        await page.click('#btn-pattern-demo');
+        await expect(page.locator('#status-message')).toContainText('getInstance', { timeout: 3000 });
+    });
+
+    test('Design Patterns: Factory - Renders and demo runs', async ({ page }) => {
+        const patternsGroup = page.locator('.mode-group').nth(5);
+        const patternsContent = patternsGroup.locator('.group-content');
+        if (!(await patternsContent.isVisible())) {
+            await patternsGroup.locator('.group-header').click();
+        }
+
+        const creatSubgroup = patternsContent.locator('.subgroup').first();
+        await creatSubgroup.locator('label[for="mode-pattern-factory"]').click();
+        await expect(page.locator('#code-title')).toHaveText('pattern_factory.cpp');
+        await expect(page.locator('#pattern-factory-view')).toBeVisible();
+
+        await page.click('#btn-pattern-demo');
+        await expect(page.locator('#status-message')).toContainText('Factory', { timeout: 3000 });
+    });
+
+    test('Design Patterns: Adapter - Renders and demo runs', async ({ page }) => {
+        const patternsGroup = page.locator('.mode-group').nth(5);
+        const patternsContent = patternsGroup.locator('.group-content');
+        if (!(await patternsContent.isVisible())) {
+            await patternsGroup.locator('.group-header').click();
+        }
+
+        const structSubgroup = patternsContent.locator('.subgroup').nth(1);
+        await structSubgroup.locator('label[for="mode-pattern-adapter"]').click();
+        await expect(page.locator('#code-title')).toHaveText('pattern_adapter.cpp');
+        await expect(page.locator('#pattern-adapter-view')).toBeVisible();
+
+        await page.click('#btn-pattern-demo');
+        await expect(page.locator('#status-message')).toContainText('Adapting', { timeout: 3000 });
+    });
+
+    test('Design Patterns: Decorator - Renders and demo runs', async ({ page }) => {
+        const patternsGroup = page.locator('.mode-group').nth(5);
+        const patternsContent = patternsGroup.locator('.group-content');
+        if (!(await patternsContent.isVisible())) {
+            await patternsGroup.locator('.group-header').click();
+        }
+
+        const structSubgroup = patternsContent.locator('.subgroup').nth(1);
+        await structSubgroup.locator('label[for="mode-pattern-decorator"]').click();
+        await expect(page.locator('#code-title')).toHaveText('pattern_decorator.cpp');
+        await expect(page.locator('#pattern-decorator-view')).toBeVisible();
+
+        await page.click('#btn-pattern-demo');
+        await expect(page.locator('#status-message')).toContainText('Decorating', { timeout: 3000 });
+    });
+
+    test('Design Patterns: Observer - Renders and demo runs', async ({ page }) => {
+        const patternsGroup = page.locator('.mode-group').nth(5);
+        const patternsContent = patternsGroup.locator('.group-content');
+        if (!(await patternsContent.isVisible())) {
+            await patternsGroup.locator('.group-header').click();
+        }
+
+        const behavSubgroup = patternsContent.locator('.subgroup').nth(2);
+        await behavSubgroup.locator('label[for="mode-pattern-observer"]').click();
+        await expect(page.locator('#code-title')).toHaveText('pattern_observer.cpp');
+        await expect(page.locator('#pattern-observer-view')).toBeVisible();
+
+        await page.click('#btn-pattern-demo');
+        await expect(page.locator('#status-message')).toContainText('Observer', { timeout: 3000 });
+    });
+
+    test('Design Patterns: Strategy - Renders and demo runs', async ({ page }) => {
+        const patternsGroup = page.locator('.mode-group').nth(5);
+        const patternsContent = patternsGroup.locator('.group-content');
+        if (!(await patternsContent.isVisible())) {
+            await patternsGroup.locator('.group-header').click();
+        }
+
+        const behavSubgroup = patternsContent.locator('.subgroup').nth(2);
+        await behavSubgroup.locator('label[for="mode-pattern-strategy"]').click();
+        await expect(page.locator('#code-title')).toHaveText('pattern_strategy.cpp');
+        await expect(page.locator('#pattern-strategy-view')).toBeVisible();
+
+        await page.click('#btn-pattern-demo');
+        await expect(page.locator('#status-message')).toContainText('Strategy', { timeout: 3000 });
+    });
+
 });

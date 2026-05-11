@@ -1,0 +1,1905 @@
+
+> dsvisual@1.0.0 test
+> playwright test --reporter=json
+
+✔ heap-binary: min-heap invariant with full operations (0.677083ms)
+✔ heap-binary: max-heap invariant with comparator switch (0.101167ms)
+✔ heap-binomial: min-heap invariant with full operations (0.050917ms)
+✔ heap-binomial: max-heap invariant with comparator switch (0.037625ms)
+✔ heap-fibonacci: min-heap invariant with full operations (0.052333ms)
+✔ heap-fibonacci: max-heap invariant with comparator switch (0.040833ms)
+✔ heap-leftist: min-heap invariant with full operations (0.046209ms)
+✔ heap-leftist: max-heap invariant with comparator switch (0.031709ms)
+✔ heap-skew: min-heap invariant with full operations (0.045666ms)
+✔ heap-skew: max-heap invariant with comparator switch (0.060625ms)
+✔ heap-dary: min-heap invariant with full operations (0.040209ms)
+✔ heap-dary: max-heap invariant with comparator switch (0.03025ms)
+✔ heap-pairing: min-heap invariant with full operations (0.0325ms)
+✔ heap-pairing: max-heap invariant with comparator switch (0.024417ms)
+{
+  "config": {
+    "configFile": "/Users/skhuang/course/dsvisual/playwright.config.js",
+    "rootDir": "/Users/skhuang/course/dsvisual/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 5
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/skhuang/course/dsvisual/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/skhuang/course/dsvisual/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 5,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "heap_visualizer.spec.js",
+      "file": "heap_visualizer.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Heap Visualizer Suite",
+          "file": "heap_visualizer.spec.js",
+          "line": 14,
+          "column": 6,
+          "specs": [
+            {
+              "title": "mode-heap-binary: mode switch shows source + description",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1409,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:53.200Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-d2f86aaa894d8d99c1ec",
+              "file": "heap_visualizer.spec.js",
+              "line": 28,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-binary: insert / peek / extract / merge / change / delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 9873,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:53.230Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-59a9d5c998967124968a",
+              "file": "heap_visualizer.spec.js",
+              "line": 35,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-binomial: mode switch shows source + description",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1507,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:53.192Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-df9cda99a1c2ba1fc283",
+              "file": "heap_visualizer.spec.js",
+              "line": 28,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-binomial: insert / peek / extract / merge / change / delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 11168,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:53.189Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-b8c13b6948d17cf15c81",
+              "file": "heap_visualizer.spec.js",
+              "line": 35,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-fibonacci: mode switch shows source + description",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 949,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:53.204Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-4b64653dcf6989111c5d",
+              "file": "heap_visualizer.spec.js",
+              "line": 28,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-fibonacci: insert / peek / extract / merge / change / delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 10763,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:54.422Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-7ac5f48a17e84ae0fc36",
+              "file": "heap_visualizer.spec.js",
+              "line": 35,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-leftist: mode switch shows source + description",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1196,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:54.953Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-bbe41c263ee7ef128739",
+              "file": "heap_visualizer.spec.js",
+              "line": 28,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-leftist: insert / peek / extract / merge / change / delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 9475,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:54.992Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-5c5e38c18ab59fcba75a",
+              "file": "heap_visualizer.spec.js",
+              "line": 35,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-skew: mode switch shows source + description",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1268,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:56.165Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-82fb4506506c847654c0",
+              "file": "heap_visualizer.spec.js",
+              "line": 28,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-skew: insert / peek / extract / merge / change / delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8948,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:35:57.470Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-b39cdfe05951558a2d62",
+              "file": "heap_visualizer.spec.js",
+              "line": 35,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-dary: mode switch shows source + description",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 800,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:03.386Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-d6883229651b58f7c24d",
+              "file": "heap_visualizer.spec.js",
+              "line": 28,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-dary: insert / peek / extract / merge / change / delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 8200,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:04.201Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-8b37c24b0c8db2ac7528",
+              "file": "heap_visualizer.spec.js",
+              "line": 35,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-pairing: mode switch shows source + description",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 890,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:04.486Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-f465733a3ee72ad259b8",
+              "file": "heap_visualizer.spec.js",
+              "line": 28,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-pairing: insert / peek / extract / merge / change / delete",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 9487,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:04.652Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-02c14fee9e0d28987a9d",
+              "file": "heap_visualizer.spec.js",
+              "line": 35,
+              "column": 9
+            },
+            {
+              "title": "Min/Max switch changes extracted semantics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 9520,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:05.209Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-6ec0a60ec9f7617938ae",
+              "file": "heap_visualizer.spec.js",
+              "line": 79,
+              "column": 5
+            },
+            {
+              "title": "mode-heap-binary: tutorial opens and exits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 944,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:05.391Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-d5585ad52cbd6f455430",
+              "file": "heap_visualizer.spec.js",
+              "line": 105,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-binomial: tutorial opens and exits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1715,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:06.360Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-4150e3bd8c8627115db2",
+              "file": "heap_visualizer.spec.js",
+              "line": 105,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-fibonacci: tutorial opens and exits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1682,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:06.451Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-d6112cc98d2dc3852440",
+              "file": "heap_visualizer.spec.js",
+              "line": 105,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-leftist: tutorial opens and exits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 912,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:08.099Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-f752cdeb94cb622512c2",
+              "file": "heap_visualizer.spec.js",
+              "line": 105,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-skew: tutorial opens and exits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 890,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:08.160Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-90c07c30e311eb90cd5c",
+              "file": "heap_visualizer.spec.js",
+              "line": 105,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-dary: tutorial opens and exits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 946,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:09.026Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-e9b7ae207058c63cdb3b",
+              "file": "heap_visualizer.spec.js",
+              "line": 105,
+              "column": 9
+            },
+            {
+              "title": "mode-heap-pairing: tutorial opens and exits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 485,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:09.071Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-7ba8c57d9a420c1f8261",
+              "file": "heap_visualizer.spec.js",
+              "line": 105,
+              "column": 9
+            },
+            {
+              "title": "Heap tutorial auto-advances and can restart",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2325,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:09.567Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-1f043622447c9ffc7c0e",
+              "file": "heap_visualizer.spec.js",
+              "line": 123,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "responsive_viewport.spec.js",
+      "file": "responsive_viewport.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Responsive Viewport: iPhone 12",
+          "file": "responsive_viewport.spec.js",
+          "line": 16,
+          "column": 6,
+          "specs": [
+            {
+              "title": "loads default mode and keeps controls accessible on mobile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 234,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:10.003Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-f4203392b26724009cf8",
+              "file": "responsive_viewport.spec.js",
+              "line": 23,
+              "column": 3
+            },
+            {
+              "title": "can expand advanced group and execute sorting flow on mobile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 1230,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:10.249Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-711e2780f9faa27add43",
+              "file": "responsive_viewport.spec.js",
+              "line": 31,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Responsive Viewport: iPad Mini",
+          "file": "responsive_viewport.spec.js",
+          "line": 45,
+          "column": 6,
+          "specs": [
+            {
+              "title": "can switch to tree mode and run trie insertion on tablet",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 937,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:11.498Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-1ea7bd0206407a3187c3",
+              "file": "responsive_viewport.spec.js",
+              "line": 52,
+              "column": 3
+            },
+            {
+              "title": "can use heap mode after expanding advanced group on tablet",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1269,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:11.916Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-4d8458fc6d135528451b",
+              "file": "responsive_viewport.spec.js",
+              "line": 65,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "visualizer.spec.js",
+      "file": "visualizer.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Data Structure Visualizer Full Suite",
+          "file": "visualizer.spec.js",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Initial Load: Should load Array Stack correctly by default",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 347,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:12.438Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-97db830b22efcebecb38",
+              "file": "visualizer.spec.js",
+              "line": 12,
+              "column": 5
+            },
+            {
+              "title": "Trie Trees: Submits string prefix and generates character-marked edges",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 795,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:12.459Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-9e786959ff90b19ed2a4",
+              "file": "visualizer.spec.js",
+              "line": 18,
+              "column": 5
+            },
+            {
+              "title": "Sorting Engine: Instantiates bars and manages states successfully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 927,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:12.807Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-2977a665890b8284f217",
+              "file": "visualizer.spec.js",
+              "line": 49,
+              "column": 5
+            },
+            {
+              "title": "Hash Tables: Explicitly verifies Collision Handlers catch overlaps",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2944,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:13.213Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-7f2a477eb368ff3034ba",
+              "file": "visualizer.spec.js",
+              "line": 70,
+              "column": 5
+            },
+            {
+              "title": "Graph Kruskal: Builds MST from weighted edges",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 6530,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:13.265Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-bdd81e75565da7996a98",
+              "file": "visualizer.spec.js",
+              "line": 92,
+              "column": 5
+            },
+            {
+              "title": "Graph Dijkstra: Computes shortest paths from source",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 4428,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:13.757Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-e0cfc41c1f45cefe40b7",
+              "file": "visualizer.spec.js",
+              "line": 123,
+              "column": 5
+            },
+            {
+              "title": "Graph Topological Sort: Orders DAG nodes correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 4923,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:14.204Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-d0f8882b582891076db7",
+              "file": "visualizer.spec.js",
+              "line": 155,
+              "column": 5
+            },
+            {
+              "title": "Advanced Sort: Radix Sort completes execution properly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1679,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:14.780Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-7cdc09227a7eae05dc90",
+              "file": "visualizer.spec.js",
+              "line": 185,
+              "column": 5
+            },
+            {
+              "title": "Shaker Sort: Bidirectional bubble sort completes correctly",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3410,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:16.215Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-4d884f7ce8c6faa23f46",
+              "file": "visualizer.spec.js",
+              "line": 202,
+              "column": 5
+            },
+            {
+              "title": "Mode Groups: First group (Basic Linear) is expanded by default",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 535,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:16.489Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-05f4224bd5e339acb085",
+              "file": "visualizer.spec.js",
+              "line": 224,
+              "column": 5
+            },
+            {
+              "title": "Mode Groups: Other groups are collapsed by default",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 554,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:17.046Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-175cc1eaecbd54abdea0",
+              "file": "visualizer.spec.js",
+              "line": 239,
+              "column": 5
+            },
+            {
+              "title": "Mode Groups: Clicking group header toggles expansion",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 742,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:17.633Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-62079aa0c69436dfd47d",
+              "file": "visualizer.spec.js",
+              "line": 256,
+              "column": 5
+            },
+            {
+              "title": "Mode Groups: Can select mode from different groups",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 912,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:18.207Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-10a93b4118455ea045c6",
+              "file": "visualizer.spec.js",
+              "line": 275,
+              "column": 5
+            },
+            {
+              "title": "Mode Groups: Switching between groups preserves group expansion state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 937,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:18.396Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-8c68068a49a294652b04",
+              "file": "visualizer.spec.js",
+              "line": 293,
+              "column": 5
+            },
+            {
+              "title": "Mode Groups: All data structure modes are accessible from menus",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 3095,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:19.170Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-9503fa4688bc896637cb",
+              "file": "visualizer.spec.js",
+              "line": 316,
+              "column": 5
+            },
+            {
+              "title": "OOP Inheritance: Renders hierarchy and completes demo flow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 5434,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:19.213Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-bb92fbca96575bc0dc94",
+              "file": "visualizer.spec.js",
+              "line": 351,
+              "column": 5
+            },
+            {
+              "title": "OOP Polymorphism: Shows virtual dispatch model and demo run",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 5706,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:19.374Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-d847b486027dd6c9217e",
+              "file": "visualizer.spec.js",
+              "line": 367,
+              "column": 5
+            },
+            {
+              "title": "OOP Encapsulation: Shows access levels and demo run",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "passed",
+                      "duration": 5336,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:19.828Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-6950d59fc18ade4423b4",
+              "file": "visualizer.spec.js",
+              "line": 383,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Singleton - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2315,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:19.829Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-535787d696e31bd5e8e1",
+              "file": "visualizer.spec.js",
+              "line": 402,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Factory - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 679,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:22.162Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-965c4db715035c2c72da",
+              "file": "visualizer.spec.js",
+              "line": 418,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Adapter - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 2216,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:22.298Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-082ef7a664a26df5b95d",
+              "file": "visualizer.spec.js",
+              "line": 434,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Decorator - Renders and demo runs",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 12316,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#status-message')\nExpected substring: \u001b[32m\"Decorator\"\u001b[39m\nReceived string:    \u001b[31m\"Execution Complete!\"\u001b[39m\nTimeout: 12000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 12000ms\u001b[22m\n\u001b[2m  - waiting for locator('#status-message')\u001b[22m\n\u001b[2m    4 × locator resolved to <div id=\"status-message\" class=\"status-message\">Decorating SimpleCoffee with features...</div>\u001b[22m\n\u001b[2m      - unexpected value \"Decorating SimpleCoffee with features...\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Create SimpleCoffee: $2.00</div>\u001b[22m\n\u001b[2m    - unexpected value \"Create SimpleCoffee: $2.00\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Add Milk decorator: +$0.50</div>\u001b[22m\n\u001b[2m    - unexpected value \"Add Milk decorator: +$0.50\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Result: Coffee with Milk - $2.50</div>\u001b[22m\n\u001b[2m    - unexpected value \"Result: Coffee with Milk - $2.50\"\u001b[22m\n\u001b[2m    9 × locator resolved to <div id=\"status-message\" class=\"status-message\">Execution Complete!</div>\u001b[22m\n\u001b[2m      - unexpected value \"Execution Complete!\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#status-message')\nExpected substring: \u001b[32m\"Decorator\"\u001b[39m\nReceived string:    \u001b[31m\"Execution Complete!\"\u001b[39m\nTimeout: 12000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 12000ms\u001b[22m\n\u001b[2m  - waiting for locator('#status-message')\u001b[22m\n\u001b[2m    4 × locator resolved to <div id=\"status-message\" class=\"status-message\">Decorating SimpleCoffee with features...</div>\u001b[22m\n\u001b[2m      - unexpected value \"Decorating SimpleCoffee with features...\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Create SimpleCoffee: $2.00</div>\u001b[22m\n\u001b[2m    - unexpected value \"Create SimpleCoffee: $2.00\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Add Milk decorator: +$0.50</div>\u001b[22m\n\u001b[2m    - unexpected value \"Add Milk decorator: +$0.50\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Result: Coffee with Milk - $2.50</div>\u001b[22m\n\u001b[2m    - unexpected value \"Result: Coffee with Milk - $2.50\"\u001b[22m\n\u001b[2m    9 × locator resolved to <div id=\"status-message\" class=\"status-message\">Execution Complete!</div>\u001b[22m\n\u001b[2m      - unexpected value \"Execution Complete!\"\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:463:55",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 55,
+                          "line": 463
+                        },
+                        "snippet": "  461 |\n  462 |         await page.click('#btn-pattern-demo');\n> 463 |         await expect(page.locator('#status-message')).toContainText('Decorator', { timeout: 12000 });\n      |                                                       ^\n  464 |     });\n  465 |\n  466 |     test('Design Patterns: Observer - Renders and demo runs', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 55,
+                            "line": 463
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#status-message')\nExpected substring: \u001b[32m\"Decorator\"\u001b[39m\nReceived string:    \u001b[31m\"Execution Complete!\"\u001b[39m\nTimeout: 12000ms\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" with timeout 12000ms\u001b[22m\n\u001b[2m  - waiting for locator('#status-message')\u001b[22m\n\u001b[2m    4 × locator resolved to <div id=\"status-message\" class=\"status-message\">Decorating SimpleCoffee with features...</div>\u001b[22m\n\u001b[2m      - unexpected value \"Decorating SimpleCoffee with features...\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Create SimpleCoffee: $2.00</div>\u001b[22m\n\u001b[2m    - unexpected value \"Create SimpleCoffee: $2.00\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Add Milk decorator: +$0.50</div>\u001b[22m\n\u001b[2m    - unexpected value \"Add Milk decorator: +$0.50\"\u001b[22m\n\u001b[2m    - locator resolved to <div id=\"status-message\" class=\"status-message\">Result: Coffee with Milk - $2.50</div>\u001b[22m\n\u001b[2m    - unexpected value \"Result: Coffee with Milk - $2.50\"\u001b[22m\n\u001b[2m    9 × locator resolved to <div id=\"status-message\" class=\"status-message\">Execution Complete!</div>\u001b[22m\n\u001b[2m      - unexpected value \"Execution Complete!\"\u001b[22m\n\n\n  461 |\n  462 |         await page.click('#btn-pattern-demo');\n> 463 |         await expect(page.locator('#status-message')).toContainText('Decorator', { timeout: 12000 });\n      |                                                       ^\n  464 |     });\n  465 |\n  466 |     test('Design Patterns: Observer - Renders and demo runs', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:463:55"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:22.863Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--49536-tor---Renders-and-demo-runs-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 55,
+                        "line": 463
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-c6ddefbfd61094b10aa9",
+              "file": "visualizer.spec.js",
+              "line": 450,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Observer - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 916,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:24.579Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-d95daa063104f08b1a79",
+              "file": "visualizer.spec.js",
+              "line": 466,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Strategy - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 882,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-10T23:36:24.680Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-590e307d9e4de1e1798f",
+              "file": "visualizer.spec.js",
+              "line": 482,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-05-10T23:35:52.778Z",
+    "duration": 42466.451,
+    "expected": 50,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
