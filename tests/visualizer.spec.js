@@ -444,7 +444,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#pattern-adapter-view')).toBeVisible();
 
         await page.click('#btn-pattern-demo');
-        await expect(page.locator('#status-message')).toContainText('Adapter', { timeout: 3000 });
+        await expect(page.locator('#status-message')).toContainText('Adapting', { timeout: 3000 });
     });
 
     test('Design Patterns: Decorator - Renders and demo runs', async ({ page }) => {
