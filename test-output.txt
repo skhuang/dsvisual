@@ -1,0 +1,113 @@
+
+> dsvisual@1.0.0 test
+> playwright test
+
+[32m✔ heap-binary: min-heap invariant with full operations [90m(0.622458ms)[39m[39m
+[32m✔ heap-binary: max-heap invariant with comparator switch [90m(0.091375ms)[39m[39m
+[32m✔ heap-binomial: min-heap invariant with full operations [90m(0.0485ms)[39m[39m
+[32m✔ heap-binomial: max-heap invariant with comparator switch [90m(0.036209ms)[39m[39m
+[32m✔ heap-fibonacci: min-heap invariant with full operations [90m(0.050125ms)[39m[39m
+[32m✔ heap-fibonacci: max-heap invariant with comparator switch [90m(0.037625ms)[39m[39m
+[32m✔ heap-leftist: min-heap invariant with full operations [90m(0.044084ms)[39m[39m
+[32m✔ heap-leftist: max-heap invariant with comparator switch [90m(0.055834ms)[39m[39m
+[32m✔ heap-skew: min-heap invariant with full operations [90m(0.04375ms)[39m[39m
+[32m✔ heap-skew: max-heap invariant with comparator switch [90m(0.058833ms)[39m[39m
+[32m✔ heap-dary: min-heap invariant with full operations [90m(0.03825ms)[39m[39m
+[32m✔ heap-dary: max-heap invariant with comparator switch [90m(0.026208ms)[39m[39m
+[32m✔ heap-pairing: min-heap invariant with full operations [90m(0.0315ms)[39m[39m
+[32m✔ heap-pairing: max-heap invariant with comparator switch [90m(0.025875ms)[39m[39m
+
+Running 51 tests using 5 workers
+
+[1A[2K[1/51] [chromium] › tests/heap_visualizer.spec.js:28:9 › Heap Visualizer Suite › mode-heap-binary: mode switch shows source + description
+[1A[2K[2/51] [chromium] › tests/heap_visualizer.spec.js:28:9 › Heap Visualizer Suite › mode-heap-binomial: mode switch shows source + description
+[1A[2K[3/51] [chromium] › tests/heap_visualizer.spec.js:28:9 › Heap Visualizer Suite › mode-heap-fibonacci: mode switch shows source + description
+[1A[2K[4/51] [chromium] › tests/heap_visualizer.spec.js:35:9 › Heap Visualizer Suite › mode-heap-binary: insert / peek / extract / merge / change / delete
+[1A[2K[5/51] [chromium] › tests/heap_visualizer.spec.js:35:9 › Heap Visualizer Suite › mode-heap-binomial: insert / peek / extract / merge / change / delete
+[1A[2K[6/51] [chromium] › tests/heap_visualizer.spec.js:35:9 › Heap Visualizer Suite › mode-heap-fibonacci: insert / peek / extract / merge / change / delete
+[1A[2K[7/51] [chromium] › tests/heap_visualizer.spec.js:28:9 › Heap Visualizer Suite › mode-heap-leftist: mode switch shows source + description
+[1A[2K[8/51] [chromium] › tests/heap_visualizer.spec.js:35:9 › Heap Visualizer Suite › mode-heap-leftist: insert / peek / extract / merge / change / delete
+[1A[2K[9/51] [chromium] › tests/heap_visualizer.spec.js:28:9 › Heap Visualizer Suite › mode-heap-skew: mode switch shows source + description
+[1A[2K[10/51] [chromium] › tests/heap_visualizer.spec.js:35:9 › Heap Visualizer Suite › mode-heap-skew: insert / peek / extract / merge / change / delete
+[1A[2K[11/51] [chromium] › tests/heap_visualizer.spec.js:28:9 › Heap Visualizer Suite › mode-heap-dary: mode switch shows source + description
+[1A[2K[12/51] [chromium] › tests/heap_visualizer.spec.js:35:9 › Heap Visualizer Suite › mode-heap-dary: insert / peek / extract / merge / change / delete
+[1A[2K[13/51] [chromium] › tests/heap_visualizer.spec.js:28:9 › Heap Visualizer Suite › mode-heap-pairing: mode switch shows source + description
+[1A[2K[14/51] [chromium] › tests/heap_visualizer.spec.js:35:9 › Heap Visualizer Suite › mode-heap-pairing: insert / peek / extract / merge / change / delete
+[1A[2K[15/51] [chromium] › tests/heap_visualizer.spec.js:79:5 › Heap Visualizer Suite › Min/Max switch changes extracted semantics
+[1A[2K[16/51] [chromium] › tests/heap_visualizer.spec.js:105:9 › Heap Visualizer Suite › mode-heap-binary: tutorial opens and exits
+[1A[2K[17/51] [chromium] › tests/heap_visualizer.spec.js:105:9 › Heap Visualizer Suite › mode-heap-binomial: tutorial opens and exits
+[1A[2K[18/51] [chromium] › tests/heap_visualizer.spec.js:105:9 › Heap Visualizer Suite › mode-heap-fibonacci: tutorial opens and exits
+[1A[2K[19/51] [chromium] › tests/heap_visualizer.spec.js:105:9 › Heap Visualizer Suite › mode-heap-leftist: tutorial opens and exits
+[1A[2K[20/51] [chromium] › tests/heap_visualizer.spec.js:105:9 › Heap Visualizer Suite › mode-heap-skew: tutorial opens and exits
+[1A[2K[21/51] [chromium] › tests/heap_visualizer.spec.js:105:9 › Heap Visualizer Suite › mode-heap-dary: tutorial opens and exits
+[1A[2K[22/51] [chromium] › tests/heap_visualizer.spec.js:105:9 › Heap Visualizer Suite › mode-heap-pairing: tutorial opens and exits
+[1A[2K[23/51] [chromium] › tests/heap_visualizer.spec.js:123:5 › Heap Visualizer Suite › Heap tutorial auto-advances and can restart
+[1A[2K[24/51] [chromium] › tests/responsive_viewport.spec.js:23:3 › Responsive Viewport: iPhone 12 › loads default mode and keeps controls accessible on mobile
+[1A[2K[25/51] [chromium] › tests/responsive_viewport.spec.js:31:3 › Responsive Viewport: iPhone 12 › can expand advanced group and execute sorting flow on mobile
+[1A[2K[26/51] [chromium] › tests/responsive_viewport.spec.js:52:3 › Responsive Viewport: iPad Mini › can switch to tree mode and run trie insertion on tablet
+[1A[2K[27/51] [chromium] › tests/responsive_viewport.spec.js:65:3 › Responsive Viewport: iPad Mini › can use heap mode after expanding advanced group on tablet
+[1A[2K[28/51] [chromium] › tests/visualizer.spec.js:12:5 › Data Structure Visualizer Full Suite › Initial Load: Should load Array Stack correctly by default
+[1A[2K[29/51] [chromium] › tests/visualizer.spec.js:18:5 › Data Structure Visualizer Full Suite › Trie Trees: Submits string prefix and generates character-marked edges
+[1A[2K[30/51] [chromium] › tests/visualizer.spec.js:49:5 › Data Structure Visualizer Full Suite › Sorting Engine: Instantiates bars and manages states successfully
+[1A[2K[31/51] [chromium] › tests/visualizer.spec.js:70:5 › Data Structure Visualizer Full Suite › Hash Tables: Explicitly verifies Collision Handlers catch overlaps
+[1A[2K[32/51] [chromium] › tests/visualizer.spec.js:92:5 › Data Structure Visualizer Full Suite › Graph Kruskal: Builds MST from weighted edges
+[1A[2K[33/51] [chromium] › tests/visualizer.spec.js:155:5 › Data Structure Visualizer Full Suite › Graph Topological Sort: Orders DAG nodes correctly
+[1A[2K[34/51] [chromium] › tests/visualizer.spec.js:123:5 › Data Structure Visualizer Full Suite › Graph Dijkstra: Computes shortest paths from source
+[1A[2K[35/51] [chromium] › tests/visualizer.spec.js:185:5 › Data Structure Visualizer Full Suite › Advanced Sort: Radix Sort completes execution properly
+[1A[2K[36/51] [chromium] › tests/visualizer.spec.js:202:5 › Data Structure Visualizer Full Suite › Shaker Sort: Bidirectional bubble sort completes correctly
+[1A[2K[37/51] [chromium] › tests/visualizer.spec.js:224:5 › Data Structure Visualizer Full Suite › Mode Groups: First group (Basic Linear) is expanded by default
+[1A[2K[38/51] [chromium] › tests/visualizer.spec.js:239:5 › Data Structure Visualizer Full Suite › Mode Groups: Other groups are collapsed by default
+[1A[2K[39/51] [chromium] › tests/visualizer.spec.js:256:5 › Data Structure Visualizer Full Suite › Mode Groups: Clicking group header toggles expansion
+[1A[2K[40/51] [chromium] › tests/visualizer.spec.js:275:5 › Data Structure Visualizer Full Suite › Mode Groups: Can select mode from different groups
+[1A[2K[41/51] [chromium] › tests/visualizer.spec.js:293:5 › Data Structure Visualizer Full Suite › Mode Groups: Switching between groups preserves group expansion state
+[1A[2K[42/51] [chromium] › tests/visualizer.spec.js:316:5 › Data Structure Visualizer Full Suite › Mode Groups: All data structure modes are accessible from menus
+[1A[2K[43/51] [chromium] › tests/visualizer.spec.js:351:5 › Data Structure Visualizer Full Suite › OOP Inheritance: Renders hierarchy and completes demo flow
+[1A[2K[44/51] [chromium] › tests/visualizer.spec.js:367:5 › Data Structure Visualizer Full Suite › OOP Polymorphism: Shows virtual dispatch model and demo run
+[1A[2K[45/51] [chromium] › tests/visualizer.spec.js:383:5 › Data Structure Visualizer Full Suite › OOP Encapsulation: Shows access levels and demo run
+[1A[2K[46/51] [chromium] › tests/visualizer.spec.js:402:5 › Data Structure Visualizer Full Suite › Design Patterns: Singleton - Renders and demo runs
+[1A[2K[47/51] [chromium] › tests/visualizer.spec.js:418:5 › Data Structure Visualizer Full Suite › Design Patterns: Factory - Renders and demo runs
+[1A[2K[48/51] [chromium] › tests/visualizer.spec.js:434:5 › Data Structure Visualizer Full Suite › Design Patterns: Adapter - Renders and demo runs
+[1A[2K[49/51] [chromium] › tests/visualizer.spec.js:450:5 › Data Structure Visualizer Full Suite › Design Patterns: Decorator - Renders and demo runs
+[1A[2K[50/51] [chromium] › tests/visualizer.spec.js:466:5 › Data Structure Visualizer Full Suite › Design Patterns: Observer - Renders and demo runs
+[1A[2K[51/51] [chromium] › tests/visualizer.spec.js:482:5 › Data Structure Visualizer Full Suite › Design Patterns: Strategy - Renders and demo runs
+[1A[2K  1) [chromium] › tests/visualizer.spec.js:450:5 › Data Structure Visualizer Full Suite › Design Patterns: Decorator - Renders and demo runs 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('#status-message')
+    Expected substring: [32m"Decorator"[39m
+    Received string:    [31m"Execution Complete!"[39m
+    Timeout: 12000ms
+
+    Call log:
+    [2m  - Expect "toContainText" with timeout 12000ms[22m
+    [2m  - waiting for locator('#status-message')[22m
+    [2m    4 × locator resolved to <div id="status-message" class="status-message">Decorating SimpleCoffee with features...</div>[22m
+    [2m      - unexpected value "Decorating SimpleCoffee with features..."[22m
+    [2m    - locator resolved to <div id="status-message" class="status-message">Create SimpleCoffee: $2.00</div>[22m
+    [2m    - unexpected value "Create SimpleCoffee: $2.00"[22m
+    [2m    - locator resolved to <div id="status-message" class="status-message">Add Milk decorator: +$0.50</div>[22m
+    [2m    - unexpected value "Add Milk decorator: +$0.50"[22m
+    [2m    - locator resolved to <div id="status-message" class="status-message">Result: Coffee with Milk - $2.50</div>[22m
+    [2m    - unexpected value "Result: Coffee with Milk - $2.50"[22m
+    [2m    9 × locator resolved to <div id="status-message" class="status-message">Execution Complete!</div>[22m
+    [2m      - unexpected value "Execution Complete!"[22m
+
+
+      461 |
+      462 |         await page.click('#btn-pattern-demo');
+    > 463 |         await expect(page.locator('#status-message')).toContainText('Decorator', { timeout: 12000 });
+          |                                                       ^
+      464 |     });
+      465 |
+      466 |     test('Design Patterns: Observer - Renders and demo runs', async ({ page }) => {
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:463:55
+
+    Error Context: test-results/visualizer-Data-Structure--49536-tor---Renders-and-demo-runs-chromium/error-context.md
+
+
+[1A[2K  1 failed
+    [chromium] › tests/visualizer.spec.js:450:5 › Data Structure Visualizer Full Suite › Design Patterns: Decorator - Renders and demo runs 
+  50 passed (40.8s)
+
+[36m  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.[39m

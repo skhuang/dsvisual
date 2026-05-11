@@ -2808,3 +2808,294 @@ int main() {
 }
 `;
 
+// Design Patterns - Creational
+const codePatternSingleton = `#include <iostream>
+using namespace std;
+
+class Singleton {
+private:
+    static Singleton* m_instance;
+    int m_value;
+
+    // Private constructor
+    Singleton() : m_value(0) {}
+
+public:
+    // Prevent copying
+    Singleton(const Singleton&) = delete;
+    void operator=(const Singleton&) = delete;
+
+    // Get singleton instance
+    static Singleton* getInstance() {
+        if (m_instance == nullptr) {
+            m_instance = new Singleton();
+        }
+        return m_instance;
+    }
+
+    void setValue(int val) { m_value = val; }
+    int getValue() { return m_value; }
+};
+
+// Static member initialization
+Singleton* Singleton::m_instance = nullptr;
+
+int main() {
+    Singleton* s1 = Singleton::getInstance();
+    Singleton* s2 = Singleton::getInstance();
+
+    s1->setValue(42);
+    cout << "s1 value: " << s1->getValue() << endl;
+    cout << "s2 value: " << s2->getValue() << endl;
+    cout << "Same object: " << (s1 == s2 ? "YES" : "NO") << endl;
+
+    return 0;
+}
+`;
+
+const codePatternFactory = `#include <iostream>
+using namespace std;
+
+// Product interface
+class Vehicle {
+public:
+    virtual ~Vehicle() {}
+    virtual void display() = 0;
+};
+
+// Concrete products
+class Car : public Vehicle {
+public:
+    void display() override {
+        cout << "[Car] 4 wheels, sedan" << endl;
+    }
+};
+
+class Bike : public Vehicle {
+public:
+    void display() override {
+        cout << "[Bike] 2 wheels, fast" << endl;
+    }
+};
+
+// Factory
+class VehicleFactory {
+public:
+    static Vehicle* createVehicle(string type) {
+        if (type == "car")
+            return new Car();
+        else if (type == "bike")
+            return new Bike();
+        return nullptr;
+    }
+};
+
+int main() {
+    Vehicle* v1 = VehicleFactory::createVehicle("car");
+    Vehicle* v2 = VehicleFactory::createVehicle("bike");
+
+    v1->display();
+    v2->display();
+
+    delete v1;
+    delete v2;
+    return 0;
+}
+`;
+
+// Design Patterns - Structural
+const codePatternAdapter = `#include <iostream>
+using namespace std;
+
+// Old interface
+class LegacyData {
+public:
+    string getData() {
+        return "Legacy: [DATA]";
+    }
+};
+
+// Target interface
+class ModernInterface {
+public:
+    virtual ~ModernInterface() {}
+    virtual string fetch() = 0;
+};
+
+// Adapter
+class DataAdapter : public ModernInterface {
+private:
+    LegacyData m_legacy;
+
+public:
+    string fetch() override {
+        return m_legacy.getData();
+    }
+};
+
+int main() {
+    ModernInterface* adapter = new DataAdapter();
+    cout << adapter->fetch() << endl;
+
+    delete adapter;
+    return 0;
+}
+`;
+
+const codePatternDecorator = `#include <iostream>
+using namespace std;
+
+// Component
+class Coffee {
+public:
+    virtual ~Coffee() {}
+    virtual string getDescription() = 0;
+    virtual double getCost() = 0;
+};
+
+// Concrete component
+class SimpleCoffee : public Coffee {
+public:
+    string getDescription() override { return "Coffee"; }
+    double getCost() override { return 2.0; }
+};
+
+// Decorator
+class CoffeeDecorator : public Coffee {
+protected:
+    Coffee* m_coffee;
+
+public:
+    CoffeeDecorator(Coffee* coffee) : m_coffee(coffee) {}
+};
+
+// Concrete decorators
+class Milk : public CoffeeDecorator {
+public:
+    Milk(Coffee* coffee) : CoffeeDecorator(coffee) {}
+    string getDescription() override {
+        return m_coffee->getDescription() + " + Milk";
+    }
+    double getCost() override {
+        return m_coffee->getCost() + 0.5;
+    }
+};
+
+int main() {
+    Coffee* coffee = new SimpleCoffee();
+    coffee = new Milk(coffee);
+
+    cout << coffee->getDescription() << endl;
+    cout << "Cost: $" << coffee->getCost() << endl;
+
+    return 0;
+}
+`;
+
+// Design Patterns - Behavioral
+const codePatternObserver = `#include <iostream>
+#include <vector>
+using namespace std;
+
+class Observer {
+public:
+    virtual ~Observer() {}
+    virtual void update(string msg) = 0;
+};
+
+class Subject {
+private:
+    vector<Observer*> m_observers;
+
+public:
+    void attach(Observer* obs) {
+        m_observers.push_back(obs);
+    }
+
+    void notify(string msg) {
+        for (auto obs : m_observers) {
+            obs->update(msg);
+        }
+    }
+};
+
+class ConcreteObserver : public Observer {
+private:
+    string m_name;
+
+public:
+    ConcreteObserver(string name) : m_name(name) {}
+
+    void update(string msg) override {
+        cout << m_name << " received: " << msg << endl;
+    }
+};
+
+int main() {
+    Subject subject;
+    ConcreteObserver obs1("Observer1");
+    ConcreteObserver obs2("Observer2");
+
+    subject.attach(&obs1);
+    subject.attach(&obs2);
+    subject.notify("Event occurred!");
+
+    return 0;
+}
+`;
+
+const codePatternStrategy = `#include <iostream>
+using namespace std;
+
+// Strategy interface
+class PaymentStrategy {
+public:
+    virtual ~PaymentStrategy() {}
+    virtual void pay(double amount) = 0;
+};
+
+// Concrete strategies
+class CreditCardPayment : public PaymentStrategy {
+public:
+    void pay(double amount) override {
+        cout << "Paying $" << amount << " with Credit Card" << endl;
+    }
+};
+
+class CryptoCurrencyPayment : public PaymentStrategy {
+public:
+    void pay(double amount) override {
+        cout << "Paying " << amount << " BTC via Crypto" << endl;
+    }
+};
+
+// Context
+class PaymentProcessor {
+private:
+    PaymentStrategy* m_strategy;
+
+public:
+    void setStrategy(PaymentStrategy* strategy) {
+        m_strategy = strategy;
+    }
+
+    void processPayment(double amount) {
+        m_strategy->pay(amount);
+    }
+};
+
+int main() {
+    PaymentProcessor processor;
+
+    CreditCardPayment cc;
+    processor.setStrategy(&cc);
+    processor.processPayment(100);
+
+    CryptoCurrencyPayment crypto;
+    processor.setStrategy(&crypto);
+    processor.processPayment(0.005);
+
+    return 0;
+}
+`;
+

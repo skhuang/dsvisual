@@ -569,5 +569,110 @@ const descDB = {
             <span class="badge space">Zero runtime overhead</span>
             <span class="badge exception">Compile-time enforcement</span>
         </div>
+    `,
+
+    // Design Patterns - Creational
+    'pattern-singleton': `
+        <h2>🔒 Singleton Pattern</h2>
+        <p><strong>Ensures a class has only one instance and provides a global access point to it.</strong></p>
+        <ul class="key-points">
+            <li><strong>Private Constructor:</strong> Prevents instantiation from outside the class.</li>
+            <li><strong>Static Instance:</strong> Maintains a single static instance of the class.</li>
+            <li><strong>getInstance():</strong> Lazy initialization - creates instance on first call, returns existing instance on subsequent calls.</li>
+            <li><strong>Thread Safety:</strong> In multithreaded environments, use locks or atomic operations.</li>
+            <li><strong>Use Cases:</strong> Logger, Database connection pool, Configuration manager.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">getInstance(): O(1)</span>
+            <span class="badge space">Single instance in memory</span>
+            <span class="badge exception">Global state management</span>
+        </div>
+    `,
+
+    'pattern-factory': `
+        <h2>🏭 Factory Method Pattern</h2>
+        <p><strong>Defines an interface for creating objects, but lets subclasses decide the exact class to instantiate.</strong></p>
+        <ul class="key-points">
+            <li><strong>Product Interface:</strong> Base class/interface for all products the factory creates.</li>
+            <li><strong>Concrete Products:</strong> Specific implementations inheriting from product interface.</li>
+            <li><strong>Factory Method:</strong> Static or instance method that encapsulates object creation logic.</li>
+            <li><strong>Decoupling:</strong> Client code depends on abstractions, not concrete classes.</li>
+            <li><strong>Use Cases:</strong> Database drivers, UI element creation, plugin systems.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">createVehicle(): O(1)</span>
+            <span class="badge space">Per-instance creation</span>
+            <span class="badge exception">Polymorphic dispatch</span>
+        </div>
+    `,
+
+    // Design Patterns - Structural
+    'pattern-adapter': `
+        <h2>🔌 Adapter Pattern</h2>
+        <p><strong>Converts the interface of a class into another interface clients expect, enabling incompatible interfaces to work together.</strong></p>
+        <ul class="key-points">
+            <li><strong>Legacy Interface:</strong> Existing class with incompatible interface (LegacyData).</li>
+            <li><strong>Target Interface:</strong> New interface clients expect (ModernInterface).</li>
+            <li><strong>Adapter Class:</strong> Implements target interface and adapts calls to legacy interface.</li>
+            <li><strong>Composition:</strong> Holds reference to legacy object and translates method calls.</li>
+            <li><strong>Use Cases:</strong> Third-party library integration, API versioning, legacy system integration.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">fetch(): O(1)</span>
+            <span class="badge space">Wrapper overhead</span>
+            <span class="badge exception">Single level of indirection</span>
+        </div>
+    `,
+
+    'pattern-decorator': `
+        <h2>🎨 Decorator Pattern</h2>
+        <p><strong>Attaches additional responsibilities to an object dynamically, providing a flexible alternative to subclassing.</strong></p>
+        <ul class="key-points">
+            <li><strong>Component Interface:</strong> Base class defining the core object interface (Coffee).</li>
+            <li><strong>Concrete Component:</strong> Original object without decorations (SimpleCoffee).</li>
+            <li><strong>Decorator:</strong> Base decorator implementing same interface, holding reference to wrapped component.</li>
+            <li><strong>Concrete Decorators:</strong> Add specific behaviors/features (Milk, Sugar).</li>
+            <li><strong>Composition over Inheritance:</strong> Chain decorators for flexible combinations.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">getDescription(): O(n) where n=decorator chain length</span>
+            <span class="badge space">O(n) for decoration chain</span>
+            <span class="badge exception">Runtime composition flexibility</span>
+        </div>
+    `,
+
+    // Design Patterns - Behavioral
+    'pattern-observer': `
+        <h2>👁️ Observer Pattern</h2>
+        <p><strong>Defines a one-to-many dependency between objects so that when one object changes state, all dependents are notified automatically.</strong></p>
+        <ul class="key-points">
+            <li><strong>Subject:</strong> Maintains list of observers and notifies them of state changes.</li>
+            <li><strong>Observer Interface:</strong> Defines update() method called by subject.</li>
+            <li><strong>Concrete Observers:</strong> Implement update() to react to notifications.</li>
+            <li><strong>Loose Coupling:</strong> Subject knows only about observer interface, not concrete classes.</li>
+            <li><strong>Use Cases:</strong> Event systems, MVC pattern, real-time notifications, reactive programming.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">notify(): O(n) where n=observer count</span>
+            <span class="badge space">O(n) for observer list</span>
+            <span class="badge exception">Asynchronous event propagation</span>
+        </div>
+    `,
+
+    'pattern-strategy': `
+        <h2>⚙️ Strategy Pattern</h2>
+        <p><strong>Defines a family of algorithms, encapsulates each one, and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.</strong></p>
+        <ul class="key-points">
+            <li><strong>Strategy Interface:</strong> Defines common interface for all algorithms (PaymentStrategy).</li>
+            <li><strong>Concrete Strategies:</strong> Implement specific algorithms (CreditCard, Crypto).</li>
+            <li><strong>Context:</strong> Uses strategy interface to execute algorithm (PaymentProcessor).</li>
+            <li><strong>Runtime Selection:</strong> Strategy can be changed at runtime via setStrategy().</li>
+            <li><strong>Use Cases:</strong> Sorting algorithms, compression methods, payment methods, AI behaviors.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">processPayment(): O(1) dispatch, algorithm varies</span>
+            <span class="badge space">One active strategy instance</span>
+            <span class="badge exception">Polymorphic dispatch overhead</span>
+        </div>
     `
 };
