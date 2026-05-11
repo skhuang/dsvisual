@@ -412,7 +412,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#pattern-singleton-view')).toBeVisible();
 
         await page.click('#btn-pattern-demo');
-        await expect(page.locator('#status-message')).toContainText('getInstance', { timeout: 12000 });
+        await expect(page.locator('#status-message')).toContainText('getInstance', { timeout: 3000 });
     });
 
     test('Design Patterns: Factory - Renders and demo runs', async ({ page }) => {
@@ -428,7 +428,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#pattern-factory-view')).toBeVisible();
 
         await page.click('#btn-pattern-demo');
-        await expect(page.locator('#status-message')).toContainText('Factory', { timeout: 12000 });
+        await expect(page.locator('#status-message')).toContainText('Factory', { timeout: 3000 });
     });
 
     test('Design Patterns: Adapter - Renders and demo runs', async ({ page }) => {
@@ -444,7 +444,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#pattern-adapter-view')).toBeVisible();
 
         await page.click('#btn-pattern-demo');
-        await expect(page.locator('#status-message')).toContainText('Adapter', { timeout: 12000 });
+        await expect(page.locator('#status-message')).toContainText('Adapter', { timeout: 3000 });
     });
 
     test('Design Patterns: Decorator - Renders and demo runs', async ({ page }) => {
@@ -460,7 +460,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#pattern-decorator-view')).toBeVisible();
 
         await page.click('#btn-pattern-demo');
-        await expect(page.locator('#status-message')).toContainText('Decorating', { timeout: 12000 });
+        await expect(page.locator('#status-message')).toContainText('decorator', { timeout: 3000 });
     });
 
     test('Design Patterns: Observer - Renders and demo runs', async ({ page }) => {
@@ -476,7 +476,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#pattern-observer-view')).toBeVisible();
 
         await page.click('#btn-pattern-demo');
-        await expect(page.locator('#status-message')).toContainText('Observer', { timeout: 12000 });
+        await expect(page.locator('#status-message')).toContainText('Observer', { timeout: 3000 });
     });
 
     test('Design Patterns: Strategy - Renders and demo runs', async ({ page }) => {
@@ -492,7 +492,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#pattern-strategy-view')).toBeVisible();
 
         await page.click('#btn-pattern-demo');
-        await expect(page.locator('#status-message')).toContainText('Strategy', { timeout: 12000 });
+        await expect(page.locator('#status-message')).toContainText('Strategy', { timeout: 3000 });
     });
 
 });
