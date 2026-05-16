@@ -30,7 +30,7 @@
 
 ### 🔗 相关链接
 - Issue #23: https://github.com/skhuang/dsvisual/issues/23
-- PR: 待建立
+- PR #24: https://github.com/skhuang/dsvisual/pull/24
 - 分支: `feature/stvisual-ui-refresh`
 
 ---
