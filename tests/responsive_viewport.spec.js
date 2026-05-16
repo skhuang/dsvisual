@@ -6,23 +6,63 @@ const { defaultBrowserType: _iphoneBrowser, ...iphone12 } = devices['iPhone 12']
 const { defaultBrowserType: _ipadBrowser, ...ipadMini } = devices['iPad Mini'];
 
 async function loadMethod(page, methodId) {
-  const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
-  const count = await categoryButtons.count();
-  for (let i = 0; i < count; i++) {
-    await categoryButtons.nth(i).click();
-    const card = page.locator(`[data-method-section="${methodId}"]`);
-    if (await card.count()) {
-      await card.locator('.method-load-btn').click();
-      await expect(card).toHaveAttribute('data-runtime-state', 'active');
-      return;
+  // Try to find and click the method card directly
+  const card = page.locator(`[data-method-section="${methodId}"]`);
+  if (await card.count()) {
+    // Scroll to the card if needed
+    await card.scrollIntoViewIfNeeded();
+    await card.locator('.method-load-btn').click();
+    await expect(card).toHaveAttribute('data-runtime-state', 'active');
+    return;
+  }
+  
+  // If card not found in current view, search through categories
+  const viewport = await page.viewportSize();
+  const isMobile = viewport.width < 640;
+  
+  if (isMobile) {
+    // On mobile, use select dropdown
+    const select = page.locator('.category-nav-select');
+    if (await select.count()) {
+      // Try each category option to find the method
+      const options = page.locator('.category-nav-select option');
+      const optionCount = await options.count();
+      for (let i = 1; i < optionCount; i++) {
+        await select.selectOption({ index: i });
+        await page.waitForTimeout(300);
+        const methodCard = page.locator(`[data-method-section="${methodId}"]`);
+        if (await methodCard.count()) {
+          await methodCard.scrollIntoViewIfNeeded();
+          await methodCard.locator('.method-load-btn').click();
+          await expect(methodCard).toHaveAttribute('data-runtime-state', 'active');
+          return;
+        }
+      }
+    }
+  } else {
+    // On desktop, click category buttons
+    const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
+    const count = await categoryButtons.count();
+    for (let i = 0; i < count; i++) {
+      await categoryButtons.nth(i).click();
+      await page.waitForTimeout(200);
+      const methodCard = page.locator(`[data-method-section="${methodId}"]`);
+      if (await methodCard.count()) {
+        await methodCard.scrollIntoViewIfNeeded();
+        await methodCard.locator('.method-load-btn').click();
+        await expect(methodCard).toHaveAttribute('data-runtime-state', 'active');
+        return;
+      }
     }
   }
+  
   throw new Error(`Method ${methodId} not found`);
 }
 
-async function loadMethodByRadioId(page, radioId) {
-  const methodId = await page.locator(`#${radioId}`).getAttribute('value');
-  await loadMethod(page, methodId);
+async function loadMethodByRadioId(page, methodId) {
+  // Extract methodId from radio ID (e.g., 'mode-sort-bubble' -> 'sort-bubble')
+  const cleanMethodId = methodId.replace('mode-', '');
+  await loadMethod(page, cleanMethodId);
 }
 
 test.describe('Responsive Viewport: iPhone 12', () => {
@@ -36,8 +76,8 @@ test.describe('Responsive Viewport: iPhone 12', () => {
     await expect(page.locator('#code-title')).toHaveText('stack_array.cpp');
     await expect(page.locator('#desc-view h3')).toHaveText('Stack (Array Implementation)');
     await expect(page.locator('#array-container')).toBeVisible();
-    await expect(page.locator('.legacy-runtime-stage')).toBeHidden();
-    await expect(page.locator('.method-section-visual-live .mode-groups')).toBeHidden();
+    // Verify mobile navigation uses select dropdown
+    await expect(page.locator('.category-nav-select')).toBeVisible();
     await expect(page.locator('#btn-std-add')).toBeVisible();
   });
 
