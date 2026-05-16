@@ -98,8 +98,9 @@ Header 下方新增 stvisual 风格的 top-level nav：
 ### 🛠️ 建议进行方式
 
 #### Phase 1: 建立分类与方法 registry
-- **Status**: In progress
+- **Status**: PR open
 - **Issue #25**: https://github.com/skhuang/dsvisual/issues/25
+- **PR #26**: https://github.com/skhuang/dsvisual/pull/26
 - **Branch**: `feature/ui-phase-1-method-registry`
 - 新增 `METHOD_GROUPS` 或类似资料结构，集中定义：
   - group id / title
