@@ -93,19 +93,148 @@ function assignRBColors(node, isRoot=true) {
     if(node.right) { node.right.color = node.color === 'black' ? 'red' : 'black'; assignRBColors(node.right, false); }
 }
 
+const METHOD_GROUPS = [
+    {
+        id: 'basic-linear',
+        title: 'Basic Linear Structures',
+        methods: [
+            { id: 'stack-array', title: 'Stack (Array)', file: 'stack_array.cpp', visualizer: 'stack', controls: 'standard' },
+            { id: 'stack-list', title: 'Stack (List)', file: 'stack_linkedlist.cpp', visualizer: 'linked-stack', controls: 'standard' },
+            { id: 'queue', title: 'Queue', file: 'queue.cpp', visualizer: 'queue', controls: 'standard' },
+            { id: 'list-array', title: 'Array List', file: 'list_array.cpp', visualizer: 'array-list', controls: 'list' },
+        ],
+    },
+    {
+        id: 'linked-lists',
+        title: 'Linked Lists',
+        methods: [
+            { id: 'list-linked', title: 'Singly Linked List', file: 'list_linked.cpp', visualizer: 'linked-list', controls: 'list' },
+        ],
+    },
+    {
+        id: 'non-linear',
+        title: 'Non-Linear Structures',
+        methods: [
+            { id: 'tree-bst', title: 'Binary Search Tree', file: 'tree_bst.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'tree-avl', title: 'AVL Tree', file: 'tree_avl.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'tree-rb', title: 'Red-Black Tree', file: 'tree_rb.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'tree-splay', title: 'Splay Tree', file: 'tree_splay.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'tree-trie', title: 'Trie', file: 'tree_trie.cpp', visualizer: 'text-tree', controls: 'text-tree' },
+            { id: 'tree-radix', title: 'Radix Tree', file: 'tree_radix.cpp', visualizer: 'text-tree', controls: 'text-tree' },
+            { id: 'tree-ternary', title: 'Ternary Search Tree', file: 'tree_ternary.cpp', visualizer: 'text-tree', controls: 'text-tree' },
+            { id: 'tree-btree', title: 'B-Tree', file: 'tree_btree.cpp', visualizer: 'advanced-tree', controls: 'tree' },
+            { id: 'tree-bplus', title: 'B+ Tree', file: 'tree_bplus.cpp', visualizer: 'advanced-tree', controls: 'tree' },
+            { id: 'graph', title: 'Undirected Graph', file: 'graph.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-kruskal', title: 'Kruskal MST', file: 'graph_kruskal.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-dijkstra', title: 'Dijkstra (Shortest Path)', file: 'graph_dijkstra.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-topo', title: 'Topological Sort', file: 'graph_topo.cpp', visualizer: 'graph', controls: 'graph' },
+        ],
+    },
+    {
+        id: 'advanced',
+        title: 'Advanced & Application-Specific',
+        methods: [
+            { id: 'hash-chain', title: 'Hash Chaining', file: 'hash_chaining.cpp', visualizer: 'hash', controls: 'hash' },
+            { id: 'hash-open', title: 'Open Addressing', file: 'hash_open_address.cpp', visualizer: 'hash', controls: 'hash' },
+            { id: 'hash-bucket', title: 'Bucketing', file: 'hash_bucket.cpp', visualizer: 'hash', controls: 'hash' },
+            { id: 'search-linear', title: 'Linear Search', file: 'search_linear.cpp', visualizer: 'search', controls: 'search' },
+            { id: 'search-binary', title: 'Binary Search', file: 'search_binary.cpp', visualizer: 'search', controls: 'search' },
+            { id: 'sort-bubble', title: 'Bubble Sort', file: 'sort_bubble.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-select', title: 'Selection Sort', file: 'sort_selection.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-insert', title: 'Insertion Sort', file: 'sort_insertion.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-quick', title: 'Quick Sort', file: 'sort_quick.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-merge', title: 'Merge Sort', file: 'sort_merge.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-shell', title: 'Shell Sort', file: 'sort_shell.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-bucket', title: 'Bucket Sort', file: 'sort_bucket.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-count', title: 'Counting Sort', file: 'sort_counting.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-radix', title: 'Radix Sort', file: 'sort_radix.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-heap', title: 'Heap Sort', file: 'sort_heap.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-shaker', title: 'Shaker Sort', file: 'sort_shaker.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'heap-binary', title: 'Binary Heap', file: 'heap_binary.cpp', visualizer: 'heap', controls: 'heap' },
+            { id: 'heap-binomial', title: 'Binomial Heap', file: 'heap_binomial.cpp', visualizer: 'heap', controls: 'heap' },
+            { id: 'heap-fibonacci', title: 'Fibonacci Heap', file: 'heap_fibonacci.cpp', visualizer: 'heap', controls: 'heap' },
+            { id: 'heap-leftist', title: 'Leftist Heap', file: 'heap_leftist.cpp', visualizer: 'heap', controls: 'heap' },
+            { id: 'heap-skew', title: 'Skew Heap', file: 'heap_skew.cpp', visualizer: 'heap', controls: 'heap' },
+            { id: 'heap-dary', title: '4-ary Heap', file: 'heap_dary.cpp', visualizer: 'heap', controls: 'heap' },
+            { id: 'heap-pairing', title: 'Pairing Heap', file: 'heap_pairing.cpp', visualizer: 'heap', controls: 'heap' },
+        ],
+    },
+    {
+        id: 'oop-concepts',
+        title: 'OOP Concepts',
+        methods: [
+            { id: 'oop-inheritance', title: 'Class Inheritance', file: 'oop_inheritance.cpp', visualizer: 'oop', controls: 'oop' },
+            { id: 'oop-polymorphism', title: 'Polymorphism (Virtual)', file: 'oop_polymorphism.cpp', visualizer: 'oop', controls: 'oop' },
+            { id: 'oop-encapsulation', title: 'Encapsulation & Access', file: 'oop_encapsulation.cpp', visualizer: 'oop', controls: 'oop' },
+        ],
+    },
+    {
+        id: 'design-patterns',
+        title: 'Design Patterns',
+        methods: [
+            { id: 'pattern-singleton', title: 'Singleton', file: 'pattern_singleton.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-factory', title: 'Factory Method', file: 'pattern_factory.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-adapter', title: 'Adapter', file: 'pattern_adapter.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-decorator', title: 'Decorator', file: 'pattern_decorator.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-observer', title: 'Observer', file: 'pattern_observer.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-strategy', title: 'Strategy', file: 'pattern_strategy.cpp', visualizer: 'pattern', controls: 'pattern' },
+        ],
+    },
+];
+
 // MAIN DOM INTERACTION
 document.addEventListener('DOMContentLoaded', () => {
     const modeRadios = document.querySelectorAll('input[name="ds-mode"]');
+    const categoryNav = document.getElementById('category-nav');
     
     // Setup collapsible mode groups
     const groupHeaders = document.querySelectorAll('.group-header');
+    const groupContentById = new Map();
+    const categoryButtons = new Map();
+
+    function setActiveCategory(groupId) {
+        categoryButtons.forEach((button, id) => {
+            const isActive = id === groupId;
+            button.classList.toggle('active', isActive);
+            button.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+    }
+
+    function expandModeGroup(groupId) {
+        const groupContent = groupContentById.get(groupId);
+        if (!groupContent) return;
+        groupContent.style.display = 'flex';
+        groupContent.parentElement.classList.remove('collapsed');
+        setActiveCategory(groupId);
+    }
+
+    function renderCategoryNav() {
+        if (!categoryNav) return;
+        categoryNav.innerHTML = '';
+        METHOD_GROUPS.forEach((group) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'category-nav-btn';
+            button.dataset.group = group.id;
+            button.textContent = group.title;
+            button.addEventListener('click', () => expandModeGroup(group.id));
+            categoryButtons.set(group.id, button);
+            categoryNav.appendChild(button);
+        });
+    }
+
+    renderCategoryNav();
+
     groupHeaders.forEach((header, index) => {
         const groupContent = header.nextElementSibling;
         if (groupContent && groupContent.classList.contains('group-content')) {
+            const groupId = header.dataset.group;
+            groupContentById.set(groupId, groupContent);
             // Initialize: first group open, others closed
             if (index === 0) {
                 groupContent.style.display = 'flex';
                 header.parentElement.classList.remove('collapsed');
+                setActiveCategory(groupId);
             } else {
                 groupContent.style.display = 'none';
                 header.parentElement.classList.add('collapsed');
@@ -115,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             header.addEventListener('click', () => {
                 const isCollapsed = header.parentElement.classList.toggle('collapsed');
                 groupContent.style.display = isCollapsed ? 'none' : 'flex';
+                if (!isCollapsed) setActiveCategory(header.dataset.group);
             });
         }
     });

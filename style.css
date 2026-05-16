@@ -35,6 +35,43 @@ input:focus-visible { outline: none; box-shadow: var(--app-focus-ring); }
 .app-header__text { position: relative; z-index: 1; }
 header h1 { font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: 0; margin-bottom: 0.5rem; }
 header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
+.app-category-nav {
+    display: flex;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 10px 20px 8px;
+    background: var(--card-bg);
+    box-shadow: var(--app-shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+}
+.category-nav-btn {
+    flex: 0 0 auto;
+    padding: 7px 13px;
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--primary-hover);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 800;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s, border-color 0.15s;
+}
+.category-nav-btn:hover {
+    background: rgba(52, 152, 219, 0.1);
+    border-color: var(--primary-color);
+}
+.category-nav-btn.active {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #fff;
+}
 .main-content { width: min(1240px, calc(100% - 48px)); margin: 48px auto; display: grid; grid-template-columns: minmax(360px, 0.95fr) minmax(0, 1.25fr); gap: 24px; align-items: stretch; }
 .glass-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--app-radius-lg); padding: 1.25rem; display: flex; flex-direction: column; box-shadow: var(--app-shadow-md); }
 .controls { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }

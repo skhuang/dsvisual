@@ -15,6 +15,20 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#array-container')).toBeVisible();
     });
 
+    test('Phase 1 category nav: renders six top-level groups and syncs with menu expansion', async ({ page }) => {
+        const categoryNav = page.locator('[data-testid="category-nav"]');
+        await expect(categoryNav).toBeVisible();
+        await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(6);
+        await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Basic Linear Structures');
+
+        await categoryNav.getByRole('button', { name: 'Advanced & Application-Specific' }).click();
+        await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Advanced & Application-Specific');
+        await expect(page.locator('.mode-group').nth(3).locator('.group-content')).toBeVisible();
+
+        await page.locator('.mode-group').nth(2).locator('.group-header').click();
+        await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Non-Linear Structures');
+    });
+
     test('Trie Trees: Submits string prefix and generates character-marked edges', async ({ page }) => {
         // Expand Non-Linear group
         const nonLinearGroup = page.locator('.mode-group').nth(2);
