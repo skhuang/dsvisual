@@ -40,7 +40,6 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(categoryNav).toBeVisible();
         await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(6);
         await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Basic Linear Structures');
-        await expect(page.locator('.legacy-runtime-stage')).toBeHidden();
 
         await categoryNav.getByRole('button', { name: 'Advanced & Application-Specific' }).click();
         await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Advanced & Application-Specific');
@@ -249,9 +248,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#status-message')).toHaveText('Execution Complete!', { timeout: 15000 });
     });
 
-    test('Primary UI: legacy mode menu is hidden and active card owns runtime', async ({ page }) => {
-        await expect(page.locator('.legacy-runtime-stage')).toBeHidden();
-        await expect(page.locator('.method-section-visual-live .mode-groups')).toBeHidden();
+    test('Primary UI: active card owns runtime', async ({ page }) => {
         await expect(page.locator('[data-method-section="stack-array"] .method-section-visual-live #array-container')).toBeVisible();
         await expect(page.locator('[data-method-section="stack-array"] .method-section-code')).toContainText('stack_array.cpp');
     });

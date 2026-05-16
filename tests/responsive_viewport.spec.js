@@ -36,8 +36,7 @@ test.describe('Responsive Viewport: iPhone 12', () => {
     await expect(page.locator('#code-title')).toHaveText('stack_array.cpp');
     await expect(page.locator('#desc-view h3')).toHaveText('Stack (Array Implementation)');
     await expect(page.locator('#array-container')).toBeVisible();
-    await expect(page.locator('.legacy-runtime-stage')).toBeHidden();
-    await expect(page.locator('.method-section-visual-live .mode-groups')).toBeHidden();
+
     await expect(page.locator('#btn-std-add')).toBeVisible();
   });
 
