@@ -276,9 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function expandModeGroup(groupId) {
         const groupContent = groupContentById.get(groupId);
-        if (!groupContent) return;
-        groupContent.style.display = 'flex';
-        groupContent.parentElement.classList.remove('collapsed');
+        if (groupContent) {
+            groupContent.style.display = 'flex';
+            groupContent.parentElement.classList.remove('collapsed');
+        }
         setActiveCategory(groupId);
         renderMethodSections(groupId);
     }
@@ -292,7 +293,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function mountActiveRuntime(section) {
         const visualHost = section.querySelector('.method-section-visual');
-        if (!visualHost || !runtimeControls || !runtimeVisualizer) return;
+        if (!visualHost) return;
+        
+        // Get method info
+        const methodId = section.dataset.methodSection;
+        let method = null;
+        for (const group of METHOD_GROUPS) {
+            method = group.methods.find(m => m.id === methodId);
+            if (method) break;
+        }
+        
+        // For OOP and pattern visualizations (not yet implemented), just add the class
+        if (method && (method.visualizer === 'oop' || method.visualizer === 'pattern')) {
+            visualHost.classList.add('method-section-visual-live');
+            visualHost.setAttribute('aria-label', 'Active visualization');
+            return;
+        }
+        
+        // For other visualizations, mount the runtime components
+        if (!runtimeControls || !runtimeVisualizer) return;
         visualHost.classList.add('method-section-visual-live');
         visualHost.setAttribute('aria-label', 'Active interactive visualization');
         visualHost.innerHTML = '';
@@ -303,24 +322,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderMethodSections(groupId) {
         if (!methodSections) return;
         const group = getMethodGroupById(groupId);
-        const runtimeFragment = document.createDocumentFragment();
-        if (runtimeControls?.parentNode) runtimeFragment.appendChild(runtimeControls);
-        if (runtimeVisualizer?.parentNode) runtimeFragment.appendChild(runtimeVisualizer);
         methodSections.innerHTML = '';
         const heading = document.createElement('div');
         heading.className = 'method-sections-heading';
         heading.innerHTML = `<h2>${group.title}</h2><p>${group.methods.length} methods</p>`;
         methodSections.appendChild(heading);
 
-        group.methods.forEach((method) => {
-            const runtimeState = method.id === visualizerRuntime.activeMode
-                ? 'active'
-                : visualizerRuntime.loadedMethods.has(method.id) ? 'loaded' : 'idle';
+        // 允許傳入 activeMethodId，否則預設第一個 active
+        let activeMethodId = arguments[1];
+        group.methods.forEach((method, idx) => {
+            const isActive = (activeMethodId ? method.id === activeMethodId : idx === 0);
+            const runtimeState = isActive ? 'active' : (visualizerRuntime.loadedMethods.has(method.id) ? 'loaded' : 'idle');
+            if (isActive) visualizerRuntime.setMode(method.id);
             const section = document.createElement('section');
             section.className = 'method-section-card';
             section.dataset.methodSection = method.id;
             section.dataset.runtimeState = runtimeState;
-            section.classList.toggle('active', runtimeState === 'active');
+            section.classList.toggle('active', isActive);
             section.innerHTML = `
                 <div class="method-section-header">
                     <div>
@@ -329,9 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="method-section-actions">
                         <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
-                        <button type="button" class="btn primary method-load-btn" data-method="${method.id}">
-                            ${runtimeState === 'active' ? 'Active' : 'Load'}
-                        </button>
                     </div>
                 </div>
                 <div class="method-section-grid">
@@ -345,10 +360,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
-            section.querySelector('.method-load-btn').addEventListener('click', () => selectMethod(method.id));
             section.querySelector('.method-slides-btn').addEventListener('click', () => openSlides(method.id));
             methodSections.appendChild(section);
-            if (runtimeState === 'active') mountActiveRuntime(section);
+            if (isActive) mountActiveRuntime(section);
         });
     }
 
@@ -420,14 +434,45 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!categoryNav) return;
         categoryNav.innerHTML = '';
         METHOD_GROUPS.forEach((group) => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'category-nav-btn';
-            button.dataset.group = group.id;
-            button.textContent = group.title;
-            button.addEventListener('click', () => expandModeGroup(group.id));
-            categoryButtons.set(group.id, button);
-            categoryNav.appendChild(button);
+            const groupMenu = document.createElement('div');
+            groupMenu.className = 'category-nav-menu';
+            const groupBtn = document.createElement('button');
+            groupBtn.type = 'button';
+            groupBtn.className = 'category-nav-btn';
+            groupBtn.dataset.group = group.id;
+            groupBtn.textContent = group.title;
+            groupMenu.appendChild(groupBtn);
+
+            // 子選單
+            const submenu = document.createElement('div');
+            submenu.className = 'category-nav-submenu';
+            group.methods.forEach((method, idx) => {
+                const methodBtn = document.createElement('button');
+                methodBtn.type = 'button';
+                methodBtn.className = 'category-nav-method-btn';
+                methodBtn.dataset.method = method.id;
+                methodBtn.textContent = method.title;
+                methodBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    setActiveCategory(group.id);
+                    visualizerRuntime.setMode(method.id);
+                    renderMethodSections(group.id, method.id);
+                });
+                submenu.appendChild(methodBtn);
+            });
+            groupMenu.appendChild(submenu);
+
+            groupBtn.addEventListener('click', () => {
+                setActiveCategory(group.id);
+                // 預設第一個 method active
+                const firstMethod = group.methods[0];
+                if (firstMethod) {
+                    visualizerRuntime.setMode(firstMethod.id);
+                    renderMethodSections(group.id, firstMethod.id);
+                }
+            });
+            categoryButtons.set(group.id, groupBtn);
+            categoryNav.appendChild(groupMenu);
         });
     }
 

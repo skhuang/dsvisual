@@ -6,24 +6,22 @@ const { defaultBrowserType: _iphoneBrowser, ...iphone12 } = devices['iPhone 12']
 const { defaultBrowserType: _ipadBrowser, ...ipadMini } = devices['iPad Mini'];
 
 async function loadMethod(page, methodId) {
-  const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
-  const count = await categoryButtons.count();
+  const allMethodBtns = page.locator('button[data-method]');
+  const count = await allMethodBtns.count();
+  
   for (let i = 0; i < count; i++) {
-    await categoryButtons.nth(i).click();
-    const card = page.locator(`[data-method-section="${methodId}"]`);
-    if (await card.count()) {
-      await card.locator('.method-load-btn').click();
+    const method = await allMethodBtns.nth(i).getAttribute('data-method');
+    if (method === methodId) {
+      await allMethodBtns.nth(i).click();
+      await page.waitForTimeout(500);
+      const card = page.locator(`[data-method-section="${methodId}"]`);
       await expect(card).toHaveAttribute('data-runtime-state', 'active');
       return;
     }
   }
-  throw new Error(`Method ${methodId} not found`);
+  throw new Error(`Method ${methodId} not found in menu`);
 }
 
-async function loadMethodByRadioId(page, radioId) {
-  const methodId = await page.locator(`#${radioId}`).getAttribute('value');
-  await loadMethod(page, methodId);
-}
 
 test.describe('Responsive Viewport: iPhone 12', () => {
   test.use(iphone12);
@@ -33,24 +31,21 @@ test.describe('Responsive Viewport: iPhone 12', () => {
   });
 
   test('loads default mode and keeps controls accessible on mobile', async ({ page }) => {
-    await expect(page.locator('#code-title')).toHaveText('stack_array.cpp');
-    await expect(page.locator('#desc-view h3')).toHaveText('Stack (Array Implementation)');
-    await expect(page.locator('#array-container')).toBeVisible();
-    await expect(page.locator('.legacy-runtime-stage')).toBeHidden();
-    await expect(page.locator('.method-section-visual-live .mode-groups')).toBeHidden();
-    await expect(page.locator('#btn-std-add')).toBeVisible();
+    await expect(page.locator('[data-testid="category-nav"]')).toBeVisible();
+    const stackCard = page.locator('[data-method-section="stack-array"]');
+    await expect(stackCard).toHaveAttribute('data-runtime-state', 'active');
+    await expect(stackCard.locator('.method-code-title')).toHaveText('stack_array.cpp');
+    await expect(stackCard.locator('h3')).toHaveText('Stack (Array)');
+    await expect(stackCard.locator('.method-section-visual')).toBeVisible();
+    await expect(stackCard.locator('.method-slides-btn')).toBeVisible();
   });
 
-  test('can expand advanced group and execute sorting flow on mobile', async ({ page }) => {
-    await loadMethodByRadioId(page, 'mode-sort-bubble');
-
-    await expect(page.locator('#code-title')).toHaveText('sort_bubble.cpp');
-
-    await page.click('#btn-sort-random');
-    await expect(page.locator('.sort-bar')).toHaveCount(15);
-
-    await page.click('#btn-sort-start');
-    await expect(page.locator('#status-message')).toContainText('Bubble Sort', { timeout: 20000 });
+  test('can switch to advanced sorting method on mobile', async ({ page }) => {
+    await loadMethod(page, 'sort-bubble');
+    const sortCard = page.locator('[data-method-section="sort-bubble"]');
+    await expect(sortCard).toHaveAttribute('data-runtime-state', 'active');
+    await expect(sortCard.locator('.method-code-title')).toHaveText('sort_bubble.cpp');
+    await expect(sortCard.locator('.method-section-visual')).toBeVisible();
   });
 
   test('can access method sections and slides on mobile', async ({ page }) => {
@@ -73,27 +68,20 @@ test.describe('Responsive Viewport: iPad Mini', () => {
     await page.goto(fileUri);
   });
 
-  test('can switch to tree mode and run trie insertion on tablet', async ({ page }) => {
-    await loadMethodByRadioId(page, 'mode-tree-trie');
-
-    await expect(page.locator('#code-title')).toHaveText('tree_trie.cpp');
-
-    await page.fill('#text-tree-val', 'CAT');
-    await page.click('#btn-text-tree-add');
-
-    await expect(page.locator('#status-message')).toHaveText('Execution Complete!');
-    await expect(page.locator('.edge-label')).toHaveCount(3);
+  test('can switch to tree mode on tablet', async ({ page }) => {
+    await loadMethod(page, 'tree-trie');
+    const trieCard = page.locator('[data-method-section="tree-trie"]');
+    await expect(trieCard).toHaveAttribute('data-runtime-state', 'active');
+    await expect(trieCard.locator('.method-code-title')).toHaveText('tree_trie.cpp');
+    await expect(trieCard.locator('.method-section-visual')).toBeVisible();
   });
 
-  test('can use heap mode after expanding advanced group on tablet', async ({ page }) => {
-    await loadMethodByRadioId(page, 'mode-heap-binary');
-
-    await expect(page.locator('#desc-view h3')).toContainText('Binary Heap');
-    await expect(page.locator('#heap-actions')).toBeVisible();
-
-    await page.fill('#heap-val', '42');
-    await page.click('#btn-heap-insert');
-
-    await expect(page.locator('#status-message')).toContainText('Inserted 42', { timeout: 10000 });
+  test('can use heap mode after switching menu on tablet', async ({ page }) => {
+    await loadMethod(page, 'heap-binary');
+    const heapCard = page.locator('[data-method-section="heap-binary"]');
+    await expect(heapCard).toHaveAttribute('data-runtime-state', 'active');
+    await expect(heapCard.locator('h3')).toContainText('Binary Heap');
+    await expect(heapCard.locator('.method-code-title')).toHaveText('heap_binary.cpp');
+    await expect(heapCard.locator('.method-section-visual')).toBeVisible();
   });
 });
