@@ -33,17 +33,21 @@ test.describe('Responsive Viewport: iPhone 12', () => {
   });
 
   test('loads default mode and keeps controls accessible on mobile', async ({ page }) => {
-    await expect(page.locator('#code-title')).toHaveText('stack_array.cpp');
-    await expect(page.locator('#desc-view h3')).toHaveText('Stack (Array Implementation)');
-    await expect(page.locator('#array-container')).toBeVisible();
-
-    await expect(page.locator('#btn-std-add')).toBeVisible();
+    // 檢查卡片標題與檔名
+    const stackCard = page.locator('[data-method-section="stack-array"]');
+    await expect(stackCard.locator('.method-code-title')).toHaveText('stack_array.cpp');
+    await expect(stackCard.locator('h3')).toHaveText('Stack (Array)');
+    // 檢查可見的視覺化區塊
+    await expect(stackCard.locator('.method-section-visual')).toBeVisible();
+    // 檢查互動按鈕
+    await expect(stackCard.locator('.method-load-btn')).toBeVisible();
+    await expect(stackCard.locator('.method-slides-btn')).toBeVisible();
   });
 
   test('can expand advanced group and execute sorting flow on mobile', async ({ page }) => {
-    await loadMethodByRadioId(page, 'mode-sort-bubble');
-
-    await expect(page.locator('#code-title')).toHaveText('sort_bubble.cpp');
+    await loadMethod(page, 'sort-bubble');
+    const sortCard = page.locator('[data-method-section="sort-bubble"]');
+    await expect(sortCard.locator('.method-code-title')).toHaveText('sort_bubble.cpp');
 
     await page.click('#btn-sort-random');
     await expect(page.locator('.sort-bar')).toHaveCount(15);
@@ -73,9 +77,9 @@ test.describe('Responsive Viewport: iPad Mini', () => {
   });
 
   test('can switch to tree mode and run trie insertion on tablet', async ({ page }) => {
-    await loadMethodByRadioId(page, 'mode-tree-trie');
-
-    await expect(page.locator('#code-title')).toHaveText('tree_trie.cpp');
+    await loadMethod(page, 'tree-trie');
+    const trieCard = page.locator('[data-method-section="tree-trie"]');
+    await expect(trieCard.locator('.method-code-title')).toHaveText('tree_trie.cpp');
 
     await page.fill('#text-tree-val', 'CAT');
     await page.click('#btn-text-tree-add');
@@ -85,9 +89,9 @@ test.describe('Responsive Viewport: iPad Mini', () => {
   });
 
   test('can use heap mode after expanding advanced group on tablet', async ({ page }) => {
-    await loadMethodByRadioId(page, 'mode-heap-binary');
-
-    await expect(page.locator('#desc-view h3')).toContainText('Binary Heap');
+    await loadMethod(page, 'heap-binary');
+    const heapCard = page.locator('[data-method-section="heap-binary"]');
+    await expect(heapCard.locator('h3')).toContainText('Binary Heap');
     await expect(page.locator('#heap-actions')).toBeVisible();
 
     await page.fill('#heap-val', '42');
