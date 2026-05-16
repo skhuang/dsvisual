@@ -293,7 +293,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function mountActiveRuntime(section) {
         const visualHost = section.querySelector('.method-section-visual');
-        if (!visualHost || !runtimeControls || !runtimeVisualizer) return;
+        if (!visualHost) return;
+        
+        // Get method info
+        const methodId = section.dataset.methodSection;
+        let method = null;
+        for (const group of METHOD_GROUPS) {
+            method = group.methods.find(m => m.id === methodId);
+            if (method) break;
+        }
+        
+        // For OOP and pattern visualizations (not yet implemented), just add the class
+        if (method && (method.visualizer === 'oop' || method.visualizer === 'pattern')) {
+            visualHost.classList.add('method-section-visual-live');
+            visualHost.setAttribute('aria-label', 'Active visualization');
+            return;
+        }
+        
+        // For other visualizations, mount the runtime components
+        if (!runtimeControls || !runtimeVisualizer) return;
         visualHost.classList.add('method-section-visual-live');
         visualHost.setAttribute('aria-label', 'Active interactive visualization');
         visualHost.innerHTML = '';
