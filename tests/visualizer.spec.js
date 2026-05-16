@@ -2,19 +2,16 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 async function loadMethod(page, methodId) {
-    const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
-    const count = await categoryButtons.count();
-    for (let i = 0; i < count; i++) {
-        await categoryButtons.nth(i).click();
-        await page.waitForSelector('[data-method-section]', { timeout: 5000 });
+    // 在 menu 中尋找相應的 method button 並點擊
+    const methodBtn = page.locator(`[data-testid="category-nav"] button[data-method="${methodId}"]`);
+    if (await methodBtn.count()) {
+        await methodBtn.click();
+        await page.waitForSelector(`[data-method-section="${methodId}"]`, { timeout: 5000 });
         const card = page.locator(`[data-method-section="${methodId}"]`);
-        if (await card.count()) {
-            await card.locator('.method-load-btn').click();
-            await expect(card).toHaveAttribute('data-runtime-state', 'active');
-            return;
-        }
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        return;
     }
-    throw new Error(`Method ${methodId} not found`);
+    throw new Error(`Method ${methodId} not found in menu`);
 }
 
 test.describe('Data Structure Visualizer Full Suite', () => {

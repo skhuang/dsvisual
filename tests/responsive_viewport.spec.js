@@ -6,24 +6,16 @@ const { defaultBrowserType: _iphoneBrowser, ...iphone12 } = devices['iPhone 12']
 const { defaultBrowserType: _ipadBrowser, ...ipadMini } = devices['iPad Mini'];
 
 async function loadMethod(page, methodId) {
-  const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
-  const count = await categoryButtons.count();
-  for (let i = 0; i < count; i++) {
-    await categoryButtons.nth(i).click();
+  const methodBtn = page.locator(`[data-testid="category-nav"] button[data-method="${methodId}"]`);
+  if (await methodBtn.count()) {
+    await methodBtn.click();
     const card = page.locator(`[data-method-section="${methodId}"]`);
-    if (await card.count()) {
-      await card.locator('.method-load-btn').click();
-      await expect(card).toHaveAttribute('data-runtime-state', 'active');
-      return;
-    }
+    await expect(card).toHaveAttribute('data-runtime-state', 'active');
+    return;
   }
-  throw new Error(`Method ${methodId} not found`);
+  throw new Error(`Method ${methodId} not found in menu`);
 }
 
-async function loadMethodByRadioId(page, radioId) {
-  const methodId = await page.locator(`#${radioId}`).getAttribute('value');
-  await loadMethod(page, methodId);
-}
 
 test.describe('Responsive Viewport: iPhone 12', () => {
   test.use(iphone12);
