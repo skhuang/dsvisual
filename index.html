@@ -420,6 +420,24 @@
         </div>
 
         <section id="method-sections" class="method-sections" aria-label="Methods in selected category" data-testid="method-sections"></section>
+
+        <div id="slide-viewer" class="slide-viewer" data-testid="slide-viewer" hidden>
+            <button type="button" class="slide-viewer-backdrop" data-slide-close aria-label="Close slides"></button>
+            <section class="slide-viewer-panel" role="dialog" aria-modal="true" aria-labelledby="slide-viewer-title" tabindex="-1">
+                <header class="slide-viewer-header">
+                    <div>
+                        <p id="slide-viewer-progress">Slide 1 / 1</p>
+                        <h2 id="slide-viewer-title">Method slides</h2>
+                    </div>
+                    <button type="button" class="slide-viewer-close" data-slide-close aria-label="Close slides">×</button>
+                </header>
+                <div id="slide-viewer-body" class="slide-viewer-body"></div>
+                <footer class="slide-viewer-footer">
+                    <button type="button" id="slide-prev" class="btn secondary">Previous</button>
+                    <button type="button" id="slide-next" class="btn primary">Next</button>
+                </footer>
+            </section>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>

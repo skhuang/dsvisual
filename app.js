@@ -251,6 +251,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const modeRadios = document.querySelectorAll('input[name="ds-mode"]');
     const categoryNav = document.getElementById('category-nav');
     const methodSections = document.getElementById('method-sections');
+    const slideViewer = document.getElementById('slide-viewer');
+    const slideViewerTitle = document.getElementById('slide-viewer-title');
+    const slideViewerProgress = document.getElementById('slide-viewer-progress');
+    const slideViewerBody = document.getElementById('slide-viewer-body');
+    const slidePrev = document.getElementById('slide-prev');
+    const slideNext = document.getElementById('slide-next');
+    const slideCloseButtons = document.querySelectorAll('[data-slide-close]');
     
     // Setup collapsible mode groups
     const groupHeaders = document.querySelectorAll('.group-header');
@@ -308,9 +315,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="method-section-kicker">${group.title}</span>
                         <h3>${method.title}</h3>
                     </div>
-                    <button type="button" class="btn primary method-load-btn" data-method="${method.id}">
-                        ${runtimeState === 'active' ? 'Active' : 'Load'}
-                    </button>
+                    <div class="method-section-actions">
+                        <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
+                        <button type="button" class="btn primary method-load-btn" data-method="${method.id}">
+                            ${runtimeState === 'active' ? 'Active' : 'Load'}
+                        </button>
+                    </div>
                 </div>
                 <div class="method-section-grid">
                     <div class="method-section-visual" aria-label="${method.title} visualization shell">
@@ -324,6 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             section.querySelector('.method-load-btn').addEventListener('click', () => selectMethod(method.id));
+            section.querySelector('.method-slides-btn').addEventListener('click', () => openSlides(method.id));
             methodSections.appendChild(section);
         });
     }
@@ -341,6 +352,64 @@ document.addEventListener('DOMContentLoaded', () => {
             renderMethodSections(group.id);
         }
     }
+
+    let slideDeck = [];
+    let slideIndex = 0;
+
+    function getMethodById(methodId) {
+        for (const group of METHOD_GROUPS) {
+            const method = group.methods.find((candidate) => candidate.id === methodId);
+            if (method) return method;
+        }
+        return null;
+    }
+
+    function buildSlides(methodId) {
+        const method = getMethodById(methodId);
+        return [{
+            title: method ? method.title : 'Method slides',
+            body: descDB[methodId] || '<p>No explanation available.</p>',
+        }];
+    }
+
+    function renderSlide() {
+        if (!slideViewer || slideDeck.length === 0) return;
+        const slide = slideDeck[slideIndex];
+        slideViewerTitle.textContent = slide.title;
+        slideViewerProgress.textContent = 'Slide ' + (slideIndex + 1) + ' / ' + slideDeck.length;
+        slideViewerBody.innerHTML = slide.body;
+        slidePrev.disabled = slideIndex === 0;
+        slideNext.disabled = slideIndex >= slideDeck.length - 1;
+    }
+
+    function openSlides(methodId) {
+        slideDeck = buildSlides(methodId);
+        slideIndex = 0;
+        renderSlide();
+        slideViewer.hidden = false;
+        slideViewer.classList.add('open');
+        slideViewer.querySelector('.slide-viewer-panel').focus();
+    }
+
+    function closeSlides() {
+        if (!slideViewer) return;
+        slideViewer.hidden = true;
+        slideViewer.classList.remove('open');
+    }
+
+    slideCloseButtons.forEach((button) => button.addEventListener('click', closeSlides));
+    slidePrev.addEventListener('click', () => {
+        if (slideIndex > 0) {
+            slideIndex--;
+            renderSlide();
+        }
+    });
+    slideNext.addEventListener('click', () => {
+        if (slideIndex < slideDeck.length - 1) {
+            slideIndex++;
+            renderSlide();
+        }
+    });
 
     function renderCategoryNav() {
         if (!categoryNav) return;

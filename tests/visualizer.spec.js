@@ -56,6 +56,20 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'loaded');
     });
 
+    test('Phase 4 slides viewer: opens method explanation and closes', async ({ page }) => {
+        const methodSections = page.locator('[data-testid="method-sections"]');
+        const slideViewer = page.locator('[data-testid="slide-viewer"]');
+
+        await methodSections.locator('[data-method-section="stack-array"] .method-slides-btn').click();
+        await expect(slideViewer).toBeVisible();
+        await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array)');
+        await expect(page.locator('#slide-viewer-progress')).toHaveText('Slide 1 / 1');
+        await expect(page.locator('#slide-viewer-body')).toContainText('Stack');
+
+        await page.locator('.slide-viewer-close').click();
+        await expect(slideViewer).toBeHidden();
+    });
+
     test('Trie Trees: Submits string prefix and generates character-marked edges', async ({ page }) => {
         // Expand Non-Linear group
         const nonLinearGroup = page.locator('.mode-group').nth(2);
