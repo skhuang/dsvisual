@@ -70,6 +70,22 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(slideViewer).toBeHidden();
     });
 
+    test('Phase 5 regression: every top-level category renders method sections', async ({ page }) => {
+        const expectedCounts = [
+            ['Basic Linear Structures', 4],
+            ['Linked Lists', 1],
+            ['Non-Linear Structures', 13],
+            ['Advanced & Application-Specific', 23],
+            ['OOP Concepts', 3],
+            ['Design Patterns', 6],
+        ];
+
+        for (const [category, count] of expectedCounts) {
+            await page.locator('[data-testid="category-nav"]').getByRole('button', { name: category }).click();
+            await expect(page.locator('[data-testid="method-sections"] [data-method-section]')).toHaveCount(count);
+        }
+    });
+
     test('Trie Trees: Submits string prefix and generates character-marked edges', async ({ page }) => {
         // Expand Non-Linear group
         const nonLinearGroup = page.locator('.mode-group').nth(2);
