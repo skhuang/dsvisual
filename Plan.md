@@ -98,7 +98,7 @@ Header 下方新增 stvisual 风格的 top-level nav：
 ### 🛠️ 建议进行方式
 
 #### Phase 1: 建立分类与方法 registry
-- **Status**: PR open
+- **Status**: Merged
 - **Issue #25**: https://github.com/skhuang/dsvisual/issues/25
 - **PR #26**: https://github.com/skhuang/dsvisual/pull/26
 - **Branch**: `feature/ui-phase-1-method-registry`
@@ -113,7 +113,7 @@ Header 下方新增 stvisual 风格的 top-level nav：
 - 保留现有单一 visualizer 运作逻辑，降低第一阶段风险。
 
 #### Phase 2: 建立 method section layout
-- **Status**: PR open
+- **Status**: Merged
 - **Issue #27**: https://github.com/skhuang/dsvisual/issues/27
 - **PR #28**: https://github.com/skhuang/dsvisual/pull/28
 - **Branch**: `feature/ui-phase-2-method-sections`
@@ -125,7 +125,7 @@ Header 下方新增 stvisual 风格的 top-level nav：
 - 初期可以只让当前 active method 具备完整互动，其余 section 先静态显示标题与程式码，逐步迁移。
 
 #### Phase 3: 拆分 visualizer instance
-- **Status**: PR open
+- **Status**: Merged
 - **Issue #29**: https://github.com/skhuang/dsvisual/issues/29
 - **PR #30**: https://github.com/skhuang/dsvisual/pull/30
 - **Branch**: `feature/ui-phase-3-runtime-boundary`
@@ -140,7 +140,7 @@ Header 下方新增 stvisual 风格的 top-level nav：
 - 避免同一页面多个区块出现重复 id 冲突。
 
 #### Phase 4: Slides viewer
-- **Status**: PR open
+- **Status**: Merged
 - **Issue #31**: https://github.com/skhuang/dsvisual/issues/31
 - **PR #32**: https://github.com/skhuang/dsvisual/pull/32
 - **Branch**: `feature/ui-phase-4-slides-viewer`
@@ -159,7 +159,7 @@ SLIDE_DB = {
 ```
 
 #### Phase 5: 测试与回归保护
-- **Status**: PR open
+- **Status**: Merged
 - **Issue #33**: https://github.com/skhuang/dsvisual/issues/33
 - **PR #34**: https://github.com/skhuang/dsvisual/pull/34
 - **Branch**: `feature/ui-phase-5-regression-coverage`
