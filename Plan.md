@@ -113,6 +113,9 @@ Header 下方新增 stvisual 风格的 top-level nav：
 - 保留现有单一 visualizer 运作逻辑，降低第一阶段风险。
 
 #### Phase 2: 建立 method section layout
+- **Status**: In progress
+- **Issue #27**: https://github.com/skhuang/dsvisual/issues/27
+- **Branch**: `feature/ui-phase-2-method-sections`
 - 将选到的大类渲染为多个 method sections。
 - 每个 section 先呈现：
   - header + `说明 / Slides` 按钮
