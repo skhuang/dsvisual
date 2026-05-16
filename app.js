@@ -385,6 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
         slideViewerBody.innerHTML = slide.body;
         slidePrev.disabled = slideIndex === 0;
         slideNext.disabled = slideIndex >= slideDeck.length - 1;
+        // Scroll to top of slide for better readability
+        slideViewerBody.scrollTop = 0;
     }
 
     function openSlides(methodId) {
@@ -394,12 +396,33 @@ document.addEventListener('DOMContentLoaded', () => {
         slideViewer.hidden = false;
         slideViewer.classList.add('open');
         slideViewer.querySelector('.slide-viewer-panel').focus();
+        // Trap keyboard focus within modal
+        slideViewer.addEventListener('keydown', handleSlideKeydown);
     }
 
     function closeSlides() {
         if (!slideViewer) return;
         slideViewer.hidden = true;
         slideViewer.classList.remove('open');
+        slideViewer.removeEventListener('keydown', handleSlideKeydown);
+    }
+
+    function handleSlideKeydown(e) {
+        if (e.key === 'Escape') {
+            closeSlides();
+        } else if (e.key === 'ArrowRight' || e.key === ' ') {
+            e.preventDefault();
+            if (slideIndex < slideDeck.length - 1) {
+                slideIndex++;
+                renderSlide();
+            }
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            if (slideIndex > 0) {
+                slideIndex--;
+                renderSlide();
+            }
+        }
     }
 
     slideCloseButtons.forEach((button) => button.addEventListener('click', closeSlides));
