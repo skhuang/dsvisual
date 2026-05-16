@@ -29,6 +29,22 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Non-Linear Structures');
     });
 
+    test('Phase 2 method sections: renders selected category methods and loads a method', async ({ page }) => {
+        const methodSections = page.locator('[data-testid="method-sections"]');
+        await expect(methodSections).toBeVisible();
+        await expect(methodSections.locator('[data-method-section]')).toHaveCount(4);
+        await expect(methodSections.locator('[data-method-section="stack-array"] .method-section-code')).toContainText('stack_array.cpp');
+
+        await page.locator('[data-testid="category-nav"]').getByRole('button', { name: 'Advanced & Application-Specific' }).click();
+        await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toBeVisible();
+        await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-grid')).toBeVisible();
+        await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-code')).toContainText('sort_bubble.cpp');
+
+        await methodSections.locator('[data-method-section="sort-bubble"] .method-load-btn').click();
+        await expect(page.locator('#code-title')).toHaveText('sort_bubble.cpp');
+        await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toHaveClass(/active/);
+    });
+
     test('Trie Trees: Submits string prefix and generates character-marked edges', async ({ page }) => {
         // Expand Non-Linear group
         const nonLinearGroup = page.locator('.mode-group').nth(2);

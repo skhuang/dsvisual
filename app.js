@@ -182,10 +182,75 @@ const METHOD_GROUPS = [
     },
 ];
 
+function getMethodGroupById(groupId) {
+    return METHOD_GROUPS.find((group) => group.id === groupId) || METHOD_GROUPS[0];
+}
+
+function getMethodGroupForMode(mode) {
+    return METHOD_GROUPS.find((group) => group.methods.some((method) => method.id === mode)) || METHOD_GROUPS[0];
+}
+
+function getCodeForMethod(methodId) {
+    const codeByMethod = {
+        'stack-array': codeArray,
+        'stack-list': codeLinkedList,
+        queue: codeQueue,
+        'list-array': codeListArray,
+        'list-linked': codeListLinked,
+        'tree-bst': codeTreeBST,
+        'tree-avl': codeTreeAVL,
+        'tree-rb': codeTreeRB,
+        'tree-splay': codeTreeSplay,
+        'tree-trie': codeTreeTrie,
+        'tree-radix': codeTreeRadix,
+        'tree-ternary': codeTreeTST,
+        'tree-btree': codeTreeBTree,
+        'tree-bplus': codeTreeBPlus,
+        graph: codeGraph,
+        'graph-kruskal': codeGraphKruskal,
+        'graph-dijkstra': codeGraphDijkstra,
+        'graph-topo': codeGraphTopo,
+        'hash-chain': codeHashChain,
+        'hash-open': codeHashOpen,
+        'hash-bucket': codeHashBucket,
+        'search-linear': codeSearchLinear,
+        'search-binary': codeSearchBinary,
+        'sort-bubble': codeSortBubble,
+        'sort-select': codeSortSelect,
+        'sort-insert': codeSortInsert,
+        'sort-quick': codeSortQuick,
+        'sort-merge': codeSortMerge,
+        'sort-shell': codeSortShell,
+        'sort-bucket': codeSortBucket,
+        'sort-count': codeSortCounting,
+        'sort-radix': codeSortRadix,
+        'sort-heap': codeSortHeap,
+        'sort-shaker': codeSortShaker,
+        'heap-binary': codeHeapBinary,
+        'heap-binomial': codeHeapBinomial,
+        'heap-fibonacci': codeHeapFibonacci,
+        'heap-leftist': codeHeapLeftist,
+        'heap-skew': codeHeapSkew,
+        'heap-dary': codeHeapDary,
+        'heap-pairing': codeHeapPairing,
+        'oop-inheritance': codeOOPInheritance,
+        'oop-polymorphism': codeOOPPolymorphism,
+        'oop-encapsulation': codeOOPEncapsulation,
+        'pattern-singleton': codePatternSingleton,
+        'pattern-factory': codePatternFactory,
+        'pattern-adapter': codePatternAdapter,
+        'pattern-decorator': codePatternDecorator,
+        'pattern-observer': codePatternObserver,
+        'pattern-strategy': codePatternStrategy,
+    };
+    return codeByMethod[methodId] || '// Source code pending.';
+}
+
 // MAIN DOM INTERACTION
 document.addEventListener('DOMContentLoaded', () => {
     const modeRadios = document.querySelectorAll('input[name="ds-mode"]');
     const categoryNav = document.getElementById('category-nav');
+    const methodSections = document.getElementById('method-sections');
     
     // Setup collapsible mode groups
     const groupHeaders = document.querySelectorAll('.group-header');
@@ -206,6 +271,70 @@ document.addEventListener('DOMContentLoaded', () => {
         groupContent.style.display = 'flex';
         groupContent.parentElement.classList.remove('collapsed');
         setActiveCategory(groupId);
+        renderMethodSections(groupId);
+    }
+
+    function getCodePreview(methodId) {
+        return getCodeForMethod(methodId)
+            .split('\n')
+            .slice(0, 18)
+            .join('\n')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    function renderMethodSections(groupId) {
+        if (!methodSections) return;
+        const group = getMethodGroupById(groupId);
+        methodSections.innerHTML = '';
+        const heading = document.createElement('div');
+        heading.className = 'method-sections-heading';
+        heading.innerHTML = `<h2>${group.title}</h2><p>${group.methods.length} methods</p>`;
+        methodSections.appendChild(heading);
+
+        group.methods.forEach((method) => {
+            const section = document.createElement('section');
+            section.className = 'method-section-card';
+            section.dataset.methodSection = method.id;
+            section.classList.toggle('active', method.id === currentMode);
+            section.innerHTML = `
+                <div class="method-section-header">
+                    <div>
+                        <span class="method-section-kicker">${group.title}</span>
+                        <h3>${method.title}</h3>
+                    </div>
+                    <button type="button" class="btn primary method-load-btn" data-method="${method.id}">
+                        ${method.id === currentMode ? 'Active' : 'Load'}
+                    </button>
+                </div>
+                <div class="method-section-grid">
+                    <div class="method-section-visual" aria-label="${method.title} visualization shell">
+                        <span>${method.visualizer}</span>
+                        <strong>${method.title}</strong>
+                    </div>
+                    <div class="method-section-code">
+                        <div class="method-code-title">${method.file}</div>
+                        <pre><code>${getCodePreview(method.id)}</code></pre>
+                    </div>
+                </div>
+            `;
+            section.querySelector('.method-load-btn').addEventListener('click', () => selectMethod(method.id));
+            methodSections.appendChild(section);
+        });
+    }
+
+    function selectMethod(methodId) {
+        const radio = document.querySelector(`input[name="ds-mode"][value="${methodId}"]`);
+        if (!radio) return;
+        const group = getMethodGroupForMode(methodId);
+        expandModeGroup(group.id);
+        if (!radio.checked) {
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            renderMethodSections(group.id);
+        }
     }
 
     function renderCategoryNav() {
@@ -244,7 +373,10 @@ document.addEventListener('DOMContentLoaded', () => {
             header.addEventListener('click', () => {
                 const isCollapsed = header.parentElement.classList.toggle('collapsed');
                 groupContent.style.display = isCollapsed ? 'none' : 'flex';
-                if (!isCollapsed) setActiveCategory(header.dataset.group);
+                if (!isCollapsed) {
+                    setActiveCategory(header.dataset.group);
+                    renderMethodSections(header.dataset.group);
+                }
             });
         }
     });
@@ -332,6 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const patternVisualization = document.getElementById('pattern-visualization');
 
     let currentMode = 'stack-array';
+    renderMethodSections(getMethodGroupForMode(currentMode).id);
     const MAX_SIZE = 5;
 
     // Search Vectors
@@ -697,7 +830,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 heapModels[currentMode].setOrder(heapIsMin);
             }
             if(currentMode.includes('sort-') && sortArrData.length === 0) generateSortArray();
-            updateLayout(); renderAll();
+            updateLayout(); renderAll(); renderMethodSections(getMethodGroupForMode(currentMode).id);
             statusMsg.textContent = "Switched to " + currentMode; statusMsg.style.color = '#34d399';
             if(currentMode === 'tree-splay') btnTreeSearch.classList.remove('hidden'); else btnTreeSearch.classList.add('hidden');
         });

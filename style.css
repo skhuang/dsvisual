@@ -76,6 +76,107 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 .glass-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--app-radius-lg); padding: 1.25rem; display: flex; flex-direction: column; box-shadow: var(--app-shadow-md); }
 .controls { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
 
+.method-sections {
+    width: min(1240px, calc(100% - 48px));
+    margin: 0 auto 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.method-sections-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid var(--primary-color);
+}
+.method-sections-heading h2 {
+    font-size: 1.35rem;
+    color: var(--text-main);
+}
+.method-sections-heading p {
+    color: var(--text-subtle);
+    font-weight: 800;
+    font-size: 0.82rem;
+}
+.method-section-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--app-radius-lg);
+    box-shadow: var(--app-shadow-md);
+    padding: 18px;
+}
+.method-section-card.active {
+    border-color: var(--primary-color);
+    box-shadow: var(--app-shadow-lg);
+}
+.method-section-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+.method-section-kicker {
+    display: block;
+    color: var(--primary-hover);
+    font-size: 0.74rem;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.method-section-header h3 {
+    font-size: 1.08rem;
+    color: var(--text-main);
+}
+.method-section-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
+    gap: 16px;
+}
+.method-section-visual {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--app-radius-md);
+    background: var(--surface-muted);
+    text-align: center;
+}
+.method-section-visual span {
+    color: var(--text-subtle);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.method-section-visual strong {
+    color: var(--text-main);
+    font-size: 1rem;
+}
+.method-section-code {
+    min-width: 0;
+    border: 1px solid #1f2937;
+    border-radius: var(--app-radius-md);
+    background: #0f172a;
+    overflow: hidden;
+}
+.method-code-title {
+    padding: 10px 12px;
+    border-bottom: 1px solid #334155;
+    color: #cbd5e1;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.78rem;
+}
+.method-section-code pre {
+    max-height: 260px;
+    overflow: auto;
+    padding: 12px;
+    font-size: 0.78rem;
+}
+
 .mode-toggle { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 0.35rem; }
 .mode-toggle input[type="radio"] { display: none; }
 .mode-toggle label { flex: 1 1 calc(20% - 4px); text-align: center; padding: 0.4rem 0.1rem; cursor: pointer; border-radius: 6px; transition: all 0.3s ease; font-weight: 600; font-size: 0.7rem; white-space: nowrap; }
@@ -525,6 +626,10 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
         height: auto;
     }
 
+    .method-section-grid {
+        grid-template-columns: 1fr;
+    }
+
     body {
         align-items: flex-start;
     }
@@ -549,6 +654,10 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 
     .app-container {
         gap: 1.25rem;
+    }
+
+    .method-sections {
+        width: min(100%, calc(100% - 32px));
     }
 
     .glass-panel {
@@ -618,6 +727,20 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 
     .tab-btn {
         font-size: 14px !important;
+    }
+
+    .method-sections {
+        width: min(100%, calc(100% - 24px));
+        margin-bottom: 36px;
+    }
+
+    .method-section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .method-load-btn {
+        width: 100%;
     }
 
     .mode-groups {
