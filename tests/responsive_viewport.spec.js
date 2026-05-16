@@ -6,12 +6,18 @@ const { defaultBrowserType: _iphoneBrowser, ...iphone12 } = devices['iPhone 12']
 const { defaultBrowserType: _ipadBrowser, ...ipadMini } = devices['iPad Mini'];
 
 async function loadMethod(page, methodId) {
-  const methodBtn = page.locator(`[data-testid="category-nav"] button[data-method="${methodId}"]`);
-  if (await methodBtn.count()) {
-    await methodBtn.click();
-    const card = page.locator(`[data-method-section="${methodId}"]`);
-    await expect(card).toHaveAttribute('data-runtime-state', 'active');
-    return;
+  const allMethodBtns = page.locator('button[data-method]');
+  const count = await allMethodBtns.count();
+  
+  for (let i = 0; i < count; i++) {
+    const method = await allMethodBtns.nth(i).getAttribute('data-method');
+    if (method === methodId) {
+      await allMethodBtns.nth(i).click();
+      await page.waitForTimeout(500);
+      const card = page.locator(`[data-method-section="${methodId}"]`);
+      await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      return;
+    }
   }
   throw new Error(`Method ${methodId} not found in menu`);
 }

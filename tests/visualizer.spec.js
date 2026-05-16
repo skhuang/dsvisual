@@ -2,14 +2,20 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 async function loadMethod(page, methodId) {
-    // 在 menu 中尋找相應的 method button 並點擊
-    const methodBtn = page.locator(`[data-testid="category-nav"] button[data-method="${methodId}"]`);
-    if (await methodBtn.count()) {
-        await methodBtn.click();
-        await page.waitForSelector(`[data-method-section="${methodId}"]`, { timeout: 5000 });
-        const card = page.locator(`[data-method-section="${methodId}"]`);
-        await expect(card).toHaveAttribute('data-runtime-state', 'active');
-        return;
+    // 首先找到包含此 method 的 group，通過在所有 submenu button 中搜尋
+    const allMethodBtns = page.locator('button[data-method]');
+    const count = await allMethodBtns.count();
+    
+    for (let i = 0; i < count; i++) {
+        const method = await allMethodBtns.nth(i).getAttribute('data-method');
+        if (method === methodId) {
+            // 找到了，點擊它
+            await allMethodBtns.nth(i).click();
+            await page.waitForTimeout(500); // 等待 UI 更新
+            const card = page.locator(`[data-method-section="${methodId}"]`);
+            await expect(card).toHaveAttribute('data-runtime-state', 'active');
+            return;
+        }
     }
     throw new Error(`Method ${methodId} not found in menu`);
 }
