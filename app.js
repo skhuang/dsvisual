@@ -276,9 +276,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function expandModeGroup(groupId) {
         const groupContent = groupContentById.get(groupId);
-        if (!groupContent) return;
-        groupContent.style.display = 'flex';
-        groupContent.parentElement.classList.remove('collapsed');
+        if (groupContent) {
+            groupContent.style.display = 'flex';
+            groupContent.parentElement.classList.remove('collapsed');
+        }
         setActiveCategory(groupId);
         renderMethodSections(groupId);
     }
