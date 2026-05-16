@@ -159,6 +159,9 @@ SLIDE_DB = {
 ```
 
 #### Phase 5: 测试与回归保护
+- **Status**: In progress
+- **Issue #33**: https://github.com/skhuang/dsvisual/issues/33
+- **Branch**: `feature/ui-phase-5-regression-coverage`
 - 新增/更新 Playwright 测试：
   - 顶层 6 大类导览可切换。
   - 每个大类下方显示对应方法区块。

@@ -40,6 +40,18 @@ test.describe('Responsive Viewport: iPhone 12', () => {
     await page.click('#btn-sort-start');
     await expect(page.locator('#status-message')).toContainText('Bubble Sort', { timeout: 20000 });
   });
+
+  test('can access method sections and slides on mobile', async ({ page }) => {
+    await expect(page.locator('[data-testid="category-nav"]')).toBeVisible();
+    await expect(page.locator('[data-testid="method-sections"] [data-method-section]')).toHaveCount(4);
+
+    await page.locator('[data-method-section="stack-array"] .method-slides-btn').click();
+    await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
+    await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array)');
+
+    await page.locator('.slide-viewer-close').click();
+    await expect(page.locator('[data-testid="slide-viewer"]')).toBeHidden();
+  });
 });
 
 test.describe('Responsive Viewport: iPad Mini', () => {
