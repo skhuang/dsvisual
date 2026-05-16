@@ -16,6 +16,8 @@ async function loadMethod(page, methodId) {
     const count = await categoryButtons.count();
     for (let i = 0; i < count; i++) {
         await categoryButtons.nth(i).click();
+        // Wait for method sections to render after clicking category
+        await page.waitForSelector('[data-method-section]', { timeout: 5000 });
         const card = page.locator(`[data-method-section="${methodId}"]`);
         if (await card.count()) {
             await card.locator('.method-load-btn').click();
