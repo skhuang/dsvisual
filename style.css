@@ -72,6 +72,30 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     border-color: var(--primary-hover);
     color: #fff;
 }
+
+/* 行動版分類選擇器 */
+.category-nav-select {
+    display: none;
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--app-radius-md);
+    background: var(--card-bg);
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+@media (max-width: 639px) {
+    .category-nav-select {
+        display: block;
+    }
+    
+    .category-nav-btn {
+        display: none;
+    }
+}
 .main-content { width: min(1240px, calc(100% - 48px)); margin: 48px auto; display: grid; grid-template-columns: minmax(360px, 0.95fr) minmax(0, 1.25fr); gap: 24px; align-items: stretch; }
 .legacy-runtime-stage {
     display: none;

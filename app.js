@@ -419,17 +419,61 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCategoryNav() {
         if (!categoryNav) return;
         categoryNav.innerHTML = '';
-        METHOD_GROUPS.forEach((group) => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'category-nav-btn';
-            button.dataset.group = group.id;
-            button.textContent = group.title;
-            button.addEventListener('click', () => expandModeGroup(group.id));
-            categoryButtons.set(group.id, button);
-            categoryNav.appendChild(button);
-        });
+        
+        // 檢查是否為行動版 (< 640px)
+        const isMobile = window.innerWidth < 640;
+        
+        if (isMobile) {
+            // 行動版：使用 <select> 下拉選單
+            const select = document.createElement('select');
+            select.className = 'category-nav-select';
+            select.setAttribute('aria-label', 'Select data structure category');
+            
+            METHOD_GROUPS.forEach((group) => {
+                const option = document.createElement('option');
+                option.value = group.id;
+                option.textContent = group.title;
+                select.appendChild(option);
+            });
+            
+            select.addEventListener('change', (e) => {
+                expandModeGroup(e.target.value);
+            });
+            
+            categoryNav.appendChild(select);
+        } else {
+            // 桌機版：按鈕導航
+            METHOD_GROUPS.forEach((group) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'category-nav-btn';
+                button.dataset.group = group.id;
+                button.textContent = group.title;
+                button.addEventListener('click', () => expandModeGroup(group.id));
+                categoryButtons.set(group.id, button);
+                categoryNav.appendChild(button);
+            });
+        }
     }
+
+    function scrollToCategory(groupId) {
+        const section = document.querySelector(`[data-testid="method-sections"]`);
+        if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
+
+    function expandModeGroupWithScroll(groupId) {
+        expandModeGroup(groupId);
+        scrollToCategory(groupId);
+    }
+
+    // 改進 expandModeGroup 呼叫
+    const originalExpandModeGroup = expandModeGroup;
+    expandModeGroup = function(groupId) {
+        originalExpandModeGroup(groupId);
+        scrollToCategory(groupId);
+    };
 
     renderCategoryNav();
 
