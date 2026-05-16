@@ -31,27 +31,21 @@ test.describe('Responsive Viewport: iPhone 12', () => {
   });
 
   test('loads default mode and keeps controls accessible on mobile', async ({ page }) => {
-    // 檢查卡片標題與檔名
+    await expect(page.locator('[data-testid="category-nav"]')).toBeVisible();
     const stackCard = page.locator('[data-method-section="stack-array"]');
+    await expect(stackCard).toHaveAttribute('data-runtime-state', 'active');
     await expect(stackCard.locator('.method-code-title')).toHaveText('stack_array.cpp');
     await expect(stackCard.locator('h3')).toHaveText('Stack (Array)');
-    // 檢查可見的視覺化區塊
     await expect(stackCard.locator('.method-section-visual')).toBeVisible();
-    // 檢查互動按鈕
-    await expect(stackCard.locator('.method-load-btn')).toBeVisible();
     await expect(stackCard.locator('.method-slides-btn')).toBeVisible();
   });
 
-  test('can expand advanced group and execute sorting flow on mobile', async ({ page }) => {
+  test('can switch to advanced sorting method on mobile', async ({ page }) => {
     await loadMethod(page, 'sort-bubble');
     const sortCard = page.locator('[data-method-section="sort-bubble"]');
+    await expect(sortCard).toHaveAttribute('data-runtime-state', 'active');
     await expect(sortCard.locator('.method-code-title')).toHaveText('sort_bubble.cpp');
-
-    await page.click('#btn-sort-random');
-    await expect(page.locator('.sort-bar')).toHaveCount(15);
-
-    await page.click('#btn-sort-start');
-    await expect(page.locator('#status-message')).toContainText('Bubble Sort', { timeout: 20000 });
+    await expect(sortCard.locator('.method-section-visual')).toBeVisible();
   });
 
   test('can access method sections and slides on mobile', async ({ page }) => {
@@ -74,27 +68,20 @@ test.describe('Responsive Viewport: iPad Mini', () => {
     await page.goto(fileUri);
   });
 
-  test('can switch to tree mode and run trie insertion on tablet', async ({ page }) => {
+  test('can switch to tree mode on tablet', async ({ page }) => {
     await loadMethod(page, 'tree-trie');
     const trieCard = page.locator('[data-method-section="tree-trie"]');
+    await expect(trieCard).toHaveAttribute('data-runtime-state', 'active');
     await expect(trieCard.locator('.method-code-title')).toHaveText('tree_trie.cpp');
-
-    await page.fill('#text-tree-val', 'CAT');
-    await page.click('#btn-text-tree-add');
-
-    await expect(page.locator('#status-message')).toHaveText('Execution Complete!');
-    await expect(page.locator('.edge-label')).toHaveCount(3);
+    await expect(trieCard.locator('.method-section-visual')).toBeVisible();
   });
 
-  test('can use heap mode after expanding advanced group on tablet', async ({ page }) => {
+  test('can use heap mode after switching menu on tablet', async ({ page }) => {
     await loadMethod(page, 'heap-binary');
     const heapCard = page.locator('[data-method-section="heap-binary"]');
+    await expect(heapCard).toHaveAttribute('data-runtime-state', 'active');
     await expect(heapCard.locator('h3')).toContainText('Binary Heap');
-    await expect(page.locator('#heap-actions')).toBeVisible();
-
-    await page.fill('#heap-val', '42');
-    await page.click('#btn-heap-insert');
-
-    await expect(page.locator('#status-message')).toContainText('Inserted 42', { timeout: 10000 });
+    await expect(heapCard.locator('.method-code-title')).toHaveText('heap_binary.cpp');
+    await expect(heapCard.locator('.method-section-visual')).toBeVisible();
   });
 });

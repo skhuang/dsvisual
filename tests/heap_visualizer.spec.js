@@ -12,18 +12,11 @@ const heapModes = [
 ];
 
 async function loadMethod(page, methodId) {
-    const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
-    const count = await categoryButtons.count();
-    for (let i = 0; i < count; i++) {
-        await categoryButtons.nth(i).click();
-        await page.waitForSelector('[data-method-section]', { timeout: 5000 });
-        const card = page.locator(`[data-method-section="${methodId}"]`);
-        if (await card.count()) {
-            await card.locator('.method-load-btn').click();
-            return;
-        }
-    }
-    throw new Error(`Method ${methodId} not found`);
+    const methodBtn = page.locator(`[data-testid="category-nav"] button[data-method="${methodId}"]`);
+    await expect(methodBtn).toHaveCount(1);
+    await methodBtn.click();
+    const card = page.locator(`[data-method-section="${methodId}"]`);
+    await expect(card).toHaveAttribute('data-runtime-state', 'active');
 }
 
 test.describe('Heap Visualizer Suite', () => {
@@ -33,12 +26,12 @@ test.describe('Heap Visualizer Suite', () => {
     });
 
     for (const mode of heapModes) {
-        test(`${mode.id}: method card loads and opens slides`, async ({ page }) => {
+        test(`${mode.id}: menu selection activates card and opens slides`, async ({ page }) => {
             await loadMethod(page, mode.id);
 
             const card = page.locator(`[data-method-section="${mode.id}"]`);
             await expect(card).toBeVisible();
-            await expect(card.locator('.method-section-code')).toContainText(mode.file);
+            await expect(card.locator('.method-code-title')).toHaveText(mode.file);
 
             await card.locator('.method-slides-btn').click();
             await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
