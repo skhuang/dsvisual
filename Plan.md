@@ -140,6 +140,9 @@ Header 下方新增 stvisual 风格的 top-level nav：
 - 避免同一页面多个区块出现重复 id 冲突。
 
 #### Phase 4: Slides viewer
+- **Status**: In progress
+- **Issue #31**: https://github.com/skhuang/dsvisual/issues/31
+- **Branch**: `feature/ui-phase-4-slides-viewer`
 - 新增 slide modal / viewer 基础元件。
 - 第一版从 `desc_db.js` 产生单页说明。
 - 第二版新增 `slide_db.js`，将说明拆成多页：
