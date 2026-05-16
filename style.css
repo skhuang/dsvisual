@@ -105,17 +105,57 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 }
 .method-section-card {
     background: var(--card-bg);
-    border: 1px solid var(--card-border);
+    border: 2px solid var(--card-border);
     border-radius: var(--app-radius-lg);
-    box-shadow: var(--app-shadow-md);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     padding: 18px;
+    transition: all 0.3s ease;
+    position: relative;
 }
+
+/* 未互動狀態 - 灰色，低對比 */
+.method-section-card[data-runtime-state="idle"] {
+    opacity: 0.85;
+}
+
+.method-section-card[data-runtime-state="idle"]:hover {
+    border-color: rgba(52, 152, 219, 0.3);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+    opacity: 1;
+}
+
+/* 已載入狀態 - 淺藍邊框 */
+.method-section-card[data-runtime-state="loaded"]:not(.active) {
+    border-color: rgba(52, 152, 219, 0.45);
+    box-shadow: 0 2px 12px rgba(52, 152, 219, 0.08);
+}
+
+.method-section-card[data-runtime-state="loaded"]:not(.active):hover {
+    box-shadow: 0 6px 16px rgba(52, 152, 219, 0.12);
+}
+
+/* 活躍狀態 - 藍色邊框 + 陰影 */
 .method-section-card.active {
     border-color: var(--primary-color);
     box-shadow: var(--app-shadow-lg);
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(52, 152, 219, 0.02) 100%);
 }
-.method-section-card[data-runtime-state="loaded"]:not(.active) {
-    border-color: rgba(52, 152, 219, 0.45);
+
+.method-section-card.active::before {
+    content: '✓';
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 900;
 }
 .method-section-header {
     display: flex;
@@ -454,6 +494,28 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 .btn.primary { background: var(--primary-color); } .btn.primary:hover:not(:disabled) { background: var(--primary-hover); }
 .btn.secondary { background: var(--secondary-color); } .btn.secondary:hover:not(:disabled) { background: var(--secondary-hover); }
 .btn.exception { background: #ef4444; } .btn.exception:hover:not(:disabled) { background: #dc2626; }
+
+/* 卡片狀態按鈕 */
+.method-load-btn {
+    position: relative;
+}
+
+.method-section-card[data-runtime-state="idle"] .method-load-btn {
+    opacity: 0.7;
+}
+
+.method-section-card[data-runtime-state="loaded"]:not(.active) .method-load-btn {
+    background: #3b82f6;
+}
+
+.method-section-card.active .method-load-btn {
+    background: var(--primary-color);
+    cursor: default;
+}
+
+.method-section-card.active .method-load-btn:hover {
+    background: var(--primary-color);
+}
 
 .status-message { text-align: center; padding: 0.5rem; color: #0f766e; font-size: 0.9rem; min-height: 1.5rem; font-weight: 800;}
 
