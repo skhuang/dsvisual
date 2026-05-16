@@ -2,13 +2,13 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 const heapModes = [
-    { id: 'mode-heap-binary', title: 'heap_binary.cpp', desc: 'Binary Heap', tutorial: 'Binary Heap' },
-    { id: 'mode-heap-binomial', title: 'heap_binomial.cpp', desc: 'Binomial Queue', tutorial: 'Binomial Heap' },
-    { id: 'mode-heap-fibonacci', title: 'heap_fibonacci.cpp', desc: 'Fibonacci Heap', tutorial: 'Fibonacci Heap' },
-    { id: 'mode-heap-leftist', title: 'heap_leftist.cpp', desc: 'Leftist Heap', tutorial: 'Leftist Heap' },
-    { id: 'mode-heap-skew', title: 'heap_skew.cpp', desc: 'Skew Heap', tutorial: 'Skew Heap' },
-    { id: 'mode-heap-dary', title: 'heap_dary.cpp', desc: 'D-ary Heap', tutorial: '4-ary Heap' },
-    { id: 'mode-heap-pairing', title: 'heap_pairing.cpp', desc: 'Pairing Heap', tutorial: 'Pairing Heap' },
+    { id: 'heap-binary', title: 'heap_binary.cpp', desc: 'Binary Heap', tutorial: 'Binary Heap' },
+    { id: 'heap-binomial', title: 'heap_binomial.cpp', desc: 'Binomial Queue', tutorial: 'Binomial Heap' },
+    { id: 'heap-fibonacci', title: 'heap_fibonacci.cpp', desc: 'Fibonacci Heap', tutorial: 'Fibonacci Heap' },
+    { id: 'heap-leftist', title: 'heap_leftist.cpp', desc: 'Leftist Heap', tutorial: 'Leftist Heap' },
+    { id: 'heap-skew', title: 'heap_skew.cpp', desc: 'Skew Heap', tutorial: 'Skew Heap' },
+    { id: 'heap-dary', title: 'heap_dary.cpp', desc: 'D-ary Heap', tutorial: '4-ary Heap' },
+    { id: 'heap-pairing', title: 'heap_pairing.cpp', desc: 'Pairing Heap', tutorial: 'Pairing Heap' },
 ];
 
 async function loadMethod(page, methodId) {
@@ -26,8 +26,8 @@ async function loadMethod(page, methodId) {
     throw new Error(`Method ${methodId} not found`);
 }
 
-async function loadMethodByRadioId(page, radioId) {
-    const methodId = await page.locator(`#${radioId}`).getAttribute('value');
+async function loadMethodByRadioId(page, methodId) {
+    // methodId is now passed directly since radio buttons no longer exist
     await loadMethod(page, methodId);
 }
 
