@@ -35,6 +35,134 @@
 
 ---
 
+## 下阶段 UI 重构规划：stvisual 式章节与方法区块
+
+### 🎯 目标
+将目前「单一 visualizer + 模式切换」改为更接近 `skhuang.github.io/stvisual` 的课程章节式界面：
+- 顶层显示 6 大类，类似 stvisual 顶部的方法分类导览。
+- 每个大类下方列出该类别的所有方法。
+- 每一种方法都是独立区块，左侧为可操作的视觉化，右侧为 C++ 程式码。
+- 原本 Explanation 说明区不再占用右侧 tab，改为「说明 / Slides」按钮，之后用简报 viewer 呈现。
+
+### 🧭 建议版面
+
+#### 1. 顶层 6 大类导览
+Header 下方新增 stvisual 风格的 top-level nav：
+- Basic Linear Structures
+- Linked Lists
+- Non-Linear Structures
+- Advanced & Application-Specific
+- OOP Concepts
+- Design Patterns
+
+桌机版使用横向 pill nav；手机版可改为 `<select>` 或横向滑动 tabs。
+
+#### 2. 每个方法独立区块
+每个 method section 采用固定结构：
+
+```text
+[方法名称 / 类别标签]                              [说明 / Slides]
+
+┌───────────────────────────────┬───────────────────────────────┐
+│ 左：视觉化 + 操作控制            │ 右：C++ Source Code            │
+│ visualizer / controls          │ filename + Prism code panel    │
+└───────────────────────────────┴───────────────────────────────┘
+```
+
+响应式规则：
+- 桌机：左右双栏，视觉化在左、程式码在右。
+- 平板/手机：上下排列，视觉化在上、程式码在下。
+
+#### 3. 说明改为 Slides 按钮
+移除目前 `Explanation / C++ Source` tab 的说明显示方式。
+
+每个方法标题列加入按钮：
+- `说明`
+- 或 `Slides`
+
+第一阶段按钮可先打开 modal，把现有 `DESC_DB[mode]` 内容放进去；后续再转换为真正的 slide deck。
+
+未来 slide viewer 目标：
+
+```text
+┌────────────────────────────────────────────┐
+│ Stack: Array Implementation          [×]   │
+├────────────────────────────────────────────┤
+│ Slide 1 / N                                │
+│ 核心概念 / 操作流程 / 复杂度 / 图解          │
+├────────────────────────────────────────────┤
+│ [上一页]                         [下一页] │
+└────────────────────────────────────────────┘
+```
+
+### 🛠️ 建议进行方式
+
+#### Phase 1: 建立分类与方法 registry
+- **Status**: In progress
+- **Issue #25**: https://github.com/skhuang/dsvisual/issues/25
+- **Branch**: `feature/ui-phase-1-method-registry`
+- 新增 `METHOD_GROUPS` 或类似资料结构，集中定义：
+  - group id / title
+  - method id / title
+  - C++ filename
+  - desc key
+  - visualizer type
+  - controls type
+- 先让顶层 6 大类导览由 registry 产生。
+- 保留现有单一 visualizer 运作逻辑，降低第一阶段风险。
+
+#### Phase 2: 建立 method section layout
+- 将选到的大类渲染为多个 method sections。
+- 每个 section 先呈现：
+  - header + `说明 / Slides` 按钮
+  - 左侧 visualizer 容器
+  - 右侧 code panel
+- 初期可以只让当前 active method 具备完整互动，其余 section 先静态显示标题与程式码，逐步迁移。
+
+#### Phase 3: 拆分 visualizer instance
+- 将目前依赖全域 DOM id 的逻辑改为区块内 scope 查找。
+- 每个 method block 拥有自己的状态：
+  - stack/list/queue data
+  - graph edges
+  - tree root
+  - sort array
+  - heap model
+  - animation state
+- 避免同一页面多个区块出现重复 id 冲突。
+
+#### Phase 4: Slides viewer
+- 新增 slide modal / viewer 基础元件。
+- 第一版从 `desc_db.js` 产生单页说明。
+- 第二版新增 `slide_db.js`，将说明拆成多页：
+
+```js
+SLIDE_DB = {
+  "stack-array": [
+    { title: "核心概念", body: "..." },
+    { title: "操作流程", body: "..." },
+    { title: "复杂度", body: "..." }
+  ]
+}
+```
+
+#### Phase 5: 测试与回归保护
+- 新增/更新 Playwright 测试：
+  - 顶层 6 大类导览可切换。
+  - 每个大类下方显示对应方法区块。
+  - 方法区块左侧 visualizer、右侧 C++ code panel 可见。
+  - `Explanation / C++ Source` tab 不再出现在方法区块中。
+  - `说明 / Slides` 按钮可开启并关闭 viewer。
+  - mobile viewport 下左右栏改上下排列。
+- 保留既有算法互动测试，迁移时逐批调整 selector。
+
+### ⚠️ 风险与注意事项
+- 目前 `app.js` 高度依赖单一 DOM 与全域状态；直接一次改成多 instance 风险较高。
+- 建议以 registry 与 layout 先行，再逐步拆 renderer/state。
+- 每次 PR 控制在一个阶段，确保 CI 与互动行为容易定位问题。
+- `desc_db.js` 可先继续沿用，等 slide viewer 稳定后再拆 `slide_db.js`。
+
+---
+
 ## 当前状态 (2026-05-14)
 
 ### ✅ 已完成
