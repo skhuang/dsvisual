@@ -6,7 +6,9 @@
   "scripts": {
     "test": "playwright test",
     "test:unit": "node --test tests/unit/*.test.js",
-    "test:all": "npm run test:unit && npm test"
+    "test:all": "npm run test:unit && npm test",
+    "build:slides": "node build_slides.js",
+    "slides:pdf": "marp --pdf --allow-local-files --input-dir slides/zh -o slides/pdf/zh && marp --pdf --allow-local-files --input-dir slides/en -o slides/pdf/en"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,9 @@
   },
   "homepage": "https://github.com/skhuang/dsvisual#readme",
   "devDependencies": {
-    "@playwright/test": "^1.59.1"
+    "@marp-team/marp-cli": "^4.4.0",
+    "@mermaid-js/mermaid-cli": "^11.15.0",
+    "@playwright/test": "^1.59.1",
+    "katex": "^0.16.47"
   }
 }
