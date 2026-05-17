@@ -1,0 +1,2143 @@
+✔ heap-binary: min-heap invariant with full operations (0.628584ms)
+✔ heap-binary: max-heap invariant with comparator switch (0.098125ms)
+✔ heap-binomial: min-heap invariant with full operations (0.052375ms)
+✔ heap-binomial: max-heap invariant with comparator switch (0.046416ms)
+✔ heap-fibonacci: min-heap invariant with full operations (0.054ms)
+✔ heap-fibonacci: max-heap invariant with comparator switch (0.038458ms)
+✔ heap-leftist: min-heap invariant with full operations (0.045834ms)
+✔ heap-leftist: max-heap invariant with comparator switch (0.033042ms)
+✔ heap-skew: min-heap invariant with full operations (0.046875ms)
+✔ heap-skew: max-heap invariant with comparator switch (0.060375ms)
+✔ heap-dary: min-heap invariant with full operations (0.039875ms)
+✔ heap-dary: max-heap invariant with comparator switch (0.026875ms)
+✔ heap-pairing: min-heap invariant with full operations (0.032209ms)
+✔ heap-pairing: max-heap invariant with comparator switch (0.025916ms)
+{
+  "config": {
+    "configFile": "/Users/skhuang/course/dsvisual/playwright.config.js",
+    "rootDir": "/Users/skhuang/course/dsvisual/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 5
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/skhuang/course/dsvisual/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 5
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/skhuang/course/dsvisual/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.59.1",
+    "workers": 5,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "heap_visualizer.spec.js",
+      "file": "heap_visualizer.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Heap Visualizer Suite",
+          "file": "heap_visualizer.spec.js",
+          "line": 29,
+          "column": 6,
+          "specs": [
+            {
+              "title": "heap-binary: method card loads and opens slides",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30076,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js",
+                            "column": 52,
+                            "line": 22
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-method-section=\"heap-binary\"]').locator('.method-load-btn')\u001b[22m\n\n\n  20 |         const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  21 |         if (await card.count()) {\n> 22 |             await card.locator('.method-load-btn').click();\n     |                                                    ^\n  23 |             return;\n  24 |         }\n  25 |     }\n    at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)\n    at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:17:38.066Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/heap_visualizer-Heap-Visua-f4318-card-loads-and-opens-slides-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-54550b0bd2ac26d58403",
+              "file": "heap_visualizer.spec.js",
+              "line": 36,
+              "column": 9
+            },
+            {
+              "title": "heap-binomial: method card loads and opens slides",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 30087,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js",
+                            "column": 52,
+                            "line": 22
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-method-section=\"heap-binomial\"]').locator('.method-load-btn')\u001b[22m\n\n\n  20 |         const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  21 |         if (await card.count()) {\n> 22 |             await card.locator('.method-load-btn').click();\n     |                                                    ^\n  23 |             return;\n  24 |         }\n  25 |     }\n    at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)\n    at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:17:38.070Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/heap_visualizer-Heap-Visua-bcb18-card-loads-and-opens-slides-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-1b0475e05c3a30968b7f",
+              "file": "heap_visualizer.spec.js",
+              "line": 36,
+              "column": 9
+            },
+            {
+              "title": "heap-fibonacci: method card loads and opens slides",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 2,
+                      "status": "timedOut",
+                      "duration": 30077,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js",
+                            "column": 52,
+                            "line": 22
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-method-section=\"heap-fibonacci\"]').locator('.method-load-btn')\u001b[22m\n\n\n  20 |         const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  21 |         if (await card.count()) {\n> 22 |             await card.locator('.method-load-btn').click();\n     |                                                    ^\n  23 |             return;\n  24 |         }\n  25 |     }\n    at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)\n    at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:17:38.067Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/heap_visualizer-Heap-Visua-6be8c-card-loads-and-opens-slides-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-664fd5228805b3cd4f69",
+              "file": "heap_visualizer.spec.js",
+              "line": 36,
+              "column": 9
+            },
+            {
+              "title": "heap-leftist: method card loads and opens slides",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 3,
+                      "status": "timedOut",
+                      "duration": 30081,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js",
+                            "column": 52,
+                            "line": 22
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-method-section=\"heap-leftist\"]').locator('.method-load-btn')\u001b[22m\n\n\n  20 |         const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  21 |         if (await card.count()) {\n> 22 |             await card.locator('.method-load-btn').click();\n     |                                                    ^\n  23 |             return;\n  24 |         }\n  25 |     }\n    at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)\n    at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:17:38.073Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/heap_visualizer-Heap-Visua-51af5-card-loads-and-opens-slides-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-505f818c3da3841adde8",
+              "file": "heap_visualizer.spec.js",
+              "line": 36,
+              "column": 9
+            },
+            {
+              "title": "heap-skew: method card loads and opens slides",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "timedOut",
+                      "duration": 30078,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js",
+                            "column": 52,
+                            "line": 22
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-method-section=\"heap-skew\"]').locator('.method-load-btn')\u001b[22m\n\n\n  20 |         const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  21 |         if (await card.count()) {\n> 22 |             await card.locator('.method-load-btn').click();\n     |                                                    ^\n  23 |             return;\n  24 |         }\n  25 |     }\n    at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)\n    at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:17:38.079Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/heap_visualizer-Heap-Visua-08aad-card-loads-and-opens-slides-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-5b0a8a8a0f424f555ae8",
+              "file": "heap_visualizer.spec.js",
+              "line": 36,
+              "column": 9
+            },
+            {
+              "title": "heap-dary: method card loads and opens slides",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 2,
+                      "status": "timedOut",
+                      "duration": 30058,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js",
+                            "column": 52,
+                            "line": 22
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-method-section=\"heap-dary\"]').locator('.method-load-btn')\u001b[22m\n\n\n  20 |         const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  21 |         if (await card.count()) {\n> 22 |             await card.locator('.method-load-btn').click();\n     |                                                    ^\n  23 |             return;\n  24 |         }\n  25 |     }\n    at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)\n    at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:08.941Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/heap_visualizer-Heap-Visua-fb37f-card-loads-and-opens-slides-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-c0978655d8d7e77e3388",
+              "file": "heap_visualizer.spec.js",
+              "line": 36,
+              "column": 9
+            },
+            {
+              "title": "heap-pairing: method card loads and opens slides",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 3,
+                      "status": "timedOut",
+                      "duration": 30051,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js",
+                            "column": 52,
+                            "line": 22
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-method-section=\"heap-pairing\"]').locator('.method-load-btn')\u001b[22m\n\n\n  20 |         const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  21 |         if (await card.count()) {\n> 22 |             await card.locator('.method-load-btn').click();\n     |                                                    ^\n  23 |             return;\n  24 |         }\n  25 |     }\n    at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)\n    at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:08.942Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/heap_visualizer-Heap-Visua-9d5b4-card-loads-and-opens-slides-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "a52c5d27ff80fb9dfd00-edc1fb5d48cee9b71cee",
+              "file": "heap_visualizer.spec.js",
+              "line": 36,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "responsive_viewport.spec.js",
+      "file": "responsive_viewport.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Responsive Viewport: iPhone 12",
+          "file": "responsive_viewport.spec.js",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "loads default mode and keeps controls accessible on mobile",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 5383,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"stack-array\"]').locator('.method-load-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"stack-array\"]').locator('.method-load-btn')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"stack-array\"]').locator('.method-load-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"stack-array\"]').locator('.method-load-btn')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:35:57",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js",
+                          "column": 57,
+                          "line": 35
+                        },
+                        "snippet": "  33 |     await expect(stackCard.locator('.method-section-visual')).toBeVisible();\n  34 |     // 檢查互動按鈕\n> 35 |     await expect(stackCard.locator('.method-load-btn')).toBeVisible();\n     |                                                         ^\n  36 |     await expect(stackCard.locator('.method-slides-btn')).toBeVisible();\n  37 |   });\n  38 |"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js",
+                            "column": 57,
+                            "line": 35
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"stack-array\"]').locator('.method-load-btn')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"stack-array\"]').locator('.method-load-btn')\u001b[22m\n\n\n  33 |     await expect(stackCard.locator('.method-section-visual')).toBeVisible();\n  34 |     // 檢查互動按鈕\n> 35 |     await expect(stackCard.locator('.method-load-btn')).toBeVisible();\n     |                                                         ^\n  36 |     await expect(stackCard.locator('.method-slides-btn')).toBeVisible();\n  37 |   });\n  38 |\n    at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:35:57"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:08.948Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/responsive_viewport-Respon-7e36b-ntrols-accessible-on-mobile-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js",
+                        "column": 57,
+                        "line": 35
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-f4203392b26724009cf8",
+              "file": "responsive_viewport.spec.js",
+              "line": 27,
+              "column": 3
+            },
+            {
+              "title": "can expand advanced group and execute sorting flow on mobile",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30058,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js",
+                            "column": 16,
+                            "line": 44
+                          },
+                          "message": "Error: page.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#btn-sort-random')\u001b[22m\n\n\n  42 |     await expect(sortCard.locator('.method-code-title')).toHaveText('sort_bubble.cpp');\n  43 |\n> 44 |     await page.click('#btn-sort-random');\n     |                ^\n  45 |     await expect(page.locator('.sort-bar')).toHaveCount(15);\n  46 |\n  47 |     await page.click('#btn-sort-start');\n    at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:44:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:08.942Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/responsive_viewport-Respon-d3efe-cute-sorting-flow-on-mobile-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-711e2780f9faa27add43",
+              "file": "responsive_viewport.spec.js",
+              "line": 39,
+              "column": 3
+            },
+            {
+              "title": "can access method sections and slides on mobile",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 442,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:08.953Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-2157babd3799e3954014",
+              "file": "responsive_viewport.spec.js",
+              "line": 51,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "Responsive Viewport: iPad Mini",
+          "file": "responsive_viewport.spec.js",
+          "line": 64,
+          "column": 6,
+          "specs": [
+            {
+              "title": "can switch to tree mode and run trie insertion on tablet",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 1,
+                      "status": "timedOut",
+                      "duration": 30020,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js",
+                            "column": 16,
+                            "line": 76
+                          },
+                          "message": "Error: page.fill: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#text-tree-val')\u001b[22m\n\n\n  74 |     await expect(trieCard.locator('.method-code-title')).toHaveText('tree_trie.cpp');\n  75 |\n> 76 |     await page.fill('#text-tree-val', 'CAT');\n     |                ^\n  77 |     await page.click('#btn-text-tree-add');\n  78 |\n  79 |     await expect(page.locator('#status-message')).toHaveText('Execution Complete!');\n    at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:76:16"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:09.563Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/responsive_viewport-Respon-1af06-un-trie-insertion-on-tablet-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-1ea7bd0206407a3187c3",
+              "file": "responsive_viewport.spec.js",
+              "line": 71,
+              "column": 3
+            },
+            {
+              "title": "can use heap mode after expanding advanced group on tablet",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 5312,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#heap-actions')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#heap-actions')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#heap-actions')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#heap-actions')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:87:49",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js",
+                          "column": 49,
+                          "line": 87
+                        },
+                        "snippet": "  85 |     const heapCard = page.locator('[data-method-section=\"heap-binary\"]');\n  86 |     await expect(heapCard.locator('h3')).toContainText('Binary Heap');\n> 87 |     await expect(page.locator('#heap-actions')).toBeVisible();\n     |                                                 ^\n  88 |\n  89 |     await page.fill('#heap-val', '42');\n  90 |     await page.click('#btn-heap-insert');"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js",
+                            "column": 49,
+                            "line": 87
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('#heap-actions')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('#heap-actions')\u001b[22m\n\n\n  85 |     const heapCard = page.locator('[data-method-section=\"heap-binary\"]');\n  86 |     await expect(heapCard.locator('h3')).toContainText('Binary Heap');\n> 87 |     await expect(page.locator('#heap-actions')).toBeVisible();\n     |                                                 ^\n  88 |\n  89 |     await page.fill('#heap-val', '42');\n  90 |     await page.click('#btn-heap-insert');\n    at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:87:49"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:14.797Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/responsive_viewport-Respon-e012f-ng-advanced-group-on-tablet-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js",
+                        "column": 49,
+                        "line": 87
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "630936f17930c92aea2e-4d8458fc6d135528451b",
+              "file": "responsive_viewport.spec.js",
+              "line": 83,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "visualizer.spec.js",
+      "file": "visualizer.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Data Structure Visualizer Full Suite",
+          "file": "visualizer.spec.js",
+          "line": 17,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Initial Load: Should load Array Stack correctly by default",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 205,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:20.513Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-97db830b22efcebecb38",
+              "file": "visualizer.spec.js",
+              "line": 25,
+              "column": 5
+            },
+            {
+              "title": "Phase 1 category nav: renders six top-level groups and drives method sections",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 5199,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"category-nav\"]').locator('.category-nav-btn.active')\nExpected: \u001b[32m\"Basic Linear Structures\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"category-nav\"]').locator('.category-nav-btn.active')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"category-nav\"]').locator('.category-nav-btn.active')\nExpected: \u001b[32m\"Basic Linear Structures\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"category-nav\"]').locator('.category-nav-btn.active')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:38:71",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 71,
+                          "line": 38
+                        },
+                        "snippet": "  36 |         await expect(categoryNav).toBeVisible();\n  37 |         await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(6);\n> 38 |         await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Basic Linear Structures');\n     |                                                                       ^\n  39 |\n  40 |         await categoryNav.getByRole('button', { name: 'Advanced & Application-Specific' }).click();\n  41 |         await page.waitForSelector('[data-method-section]', { timeout: 5000 });"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 71,
+                            "line": 38
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoHaveText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-testid=\"category-nav\"]').locator('.category-nav-btn.active')\nExpected: \u001b[32m\"Basic Linear Structures\"\u001b[39m\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toHaveText\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"category-nav\"]').locator('.category-nav-btn.active')\u001b[22m\n\n\n  36 |         await expect(categoryNav).toBeVisible();\n  37 |         await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(6);\n> 38 |         await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Basic Linear Structures');\n     |                                                                       ^\n  39 |\n  40 |         await categoryNav.getByRole('button', { name: 'Advanced & Application-Specific' }).click();\n  41 |         await page.waitForSelector('[data-method-section]', { timeout: 5000 });\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:38:71"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:20.800Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--2be0b--and-drives-method-sections-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 71,
+                        "line": 38
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-f0cd171ee3b8099d5574",
+              "file": "visualizer.spec.js",
+              "line": 34,
+              "column": 5
+            },
+            {
+              "title": "Phase 2 method sections: renders selected category methods and loads a method",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 12,
+                      "parallelIndex": 4,
+                      "status": "timedOut",
+                      "duration": 30039,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 94,
+                            "line": 62
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"method-sections\"]').locator('[data-method-section=\"sort-bubble\"] .method-load-btn')\u001b[22m\n\n\n  60 |         await expect(methodSections.locator('[data-method-section=\"sort-bubble\"] .method-section-code')).toContainText('sort_bubble.cpp');\n  61 |\n> 62 |         await methodSections.locator('[data-method-section=\"sort-bubble\"] .method-load-btn').click();\n     |                                                                                              ^\n  63 |         await expect(methodSections.locator('[data-method-section=\"sort-bubble\"]')).toHaveAttribute('data-runtime-state', 'active');\n  64 |     });\n  65 |\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:62:94"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:26.293Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--9a524--methods-and-loads-a-method-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-42d3b15a0d1c527c6383",
+              "file": "visualizer.spec.js",
+              "line": 51,
+              "column": 5
+            },
+            {
+              "title": "Phase 3 runtime boundary: method sections track active and loaded states",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 13,
+                      "parallelIndex": 2,
+                      "status": "timedOut",
+                      "duration": 30027,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 88,
+                            "line": 71
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"method-sections\"]').locator('[data-method-section=\"queue\"] .method-load-btn')\u001b[22m\n\n\n  69 |         await expect(methodSections.locator('[data-method-section=\"queue\"]')).toHaveAttribute('data-runtime-state', 'idle');\n  70 |\n> 71 |         await methodSections.locator('[data-method-section=\"queue\"] .method-load-btn').click();\n     |                                                                                        ^\n  72 |         await expect(methodSections.locator('[data-method-section=\"queue\"]')).toHaveAttribute('data-runtime-state', 'active');\n  73 |         await expect(methodSections.locator('[data-method-section=\"stack-array\"]')).toHaveAttribute('data-runtime-state', 'loaded');\n  74 |     });\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:71:88"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:39.569Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--729ce-ck-active-and-loaded-states-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-d5fae351be080cef513d",
+              "file": "visualizer.spec.js",
+              "line": 66,
+              "column": 5
+            },
+            {
+              "title": "Phase 4 slides viewer: opens method explanation and closes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 3,
+                      "status": "passed",
+                      "duration": 353,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:39.569Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-d0acabf5fc8fc65a86b4",
+              "file": "visualizer.spec.js",
+              "line": 76,
+              "column": 5
+            },
+            {
+              "title": "Phase 5 regression: every top-level category renders method sections",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 493,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:39.569Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-942c94c02cbda78643fe",
+              "file": "visualizer.spec.js",
+              "line": 89,
+              "column": 5
+            },
+            {
+              "title": "Trie Trees: Submits string prefix and generates character-marked edges",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 16,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 5295,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"tree-trie\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"tree-trie\"] .method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"tree-trie\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"tree-trie\"] .method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:109:36",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 36,
+                          "line": 109
+                        },
+                        "snippet": "  107 |         await loadMethod(page, 'tree-trie');\n  108 |         const trieSections = page.locator('[data-method-section=\"tree-trie\"] .method-section-visual-live');\n> 109 |         await expect(trieSections).toBeVisible();\n      |                                    ^\n  110 |     });\n  111 |\n  112 |     test('Sorting Engine: Instantiates bars and manages states successfully', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 36,
+                            "line": 109
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"tree-trie\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"tree-trie\"] .method-section-visual-live')\u001b[22m\n\n\n  107 |         await loadMethod(page, 'tree-trie');\n  108 |         const trieSections = page.locator('[data-method-section=\"tree-trie\"] .method-section-visual-live');\n> 109 |         await expect(trieSections).toBeVisible();\n      |                                    ^\n  110 |     });\n  111 |\n  112 |     test('Sorting Engine: Instantiates bars and manages states successfully', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:109:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:40.056Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--bc33d-ates-character-marked-edges-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 36,
+                        "line": 109
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-9e786959ff90b19ed2a4",
+              "file": "visualizer.spec.js",
+              "line": 106,
+              "column": 5
+            },
+            {
+              "title": "Sorting Engine: Instantiates bars and manages states successfully",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 14,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 5281,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:115:36",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 36,
+                          "line": 115
+                        },
+                        "snippet": "  113 |         await loadMethod(page, 'sort-bubble');\n  114 |         const sortSections = page.locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live');\n> 115 |         await expect(sortSections).toBeVisible();\n      |                                    ^\n  116 |     });\n  117 |\n  118 |     test('Hash Tables: Explicitly verifies Collision Handlers catch overlaps', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 36,
+                            "line": 115
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live')\u001b[22m\n\n\n  113 |         await loadMethod(page, 'sort-bubble');\n  114 |         const sortSections = page.locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live');\n> 115 |         await expect(sortSections).toBeVisible();\n      |                                    ^\n  116 |     });\n  117 |\n  118 |     test('Hash Tables: Explicitly verifies Collision Handlers catch overlaps', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:115:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:40.058Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--33564-manages-states-successfully-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 36,
+                        "line": 115
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-2977a665890b8284f217",
+              "file": "visualizer.spec.js",
+              "line": 112,
+              "column": 5
+            },
+            {
+              "title": "Hash Tables: Explicitly verifies Collision Handlers catch overlaps",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 15,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5275,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"hash-open\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"hash-open\"] .method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"hash-open\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"hash-open\"] .method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:121:36",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 36,
+                          "line": 121
+                        },
+                        "snippet": "  119 |         await loadMethod(page, 'hash-open');\n  120 |         const hashSections = page.locator('[data-method-section=\"hash-open\"] .method-section-visual-live');\n> 121 |         await expect(hashSections).toBeVisible();\n      |                                    ^\n  122 |     });\n  123 |\n  124 |     test('Graph Kruskal: Builds MST from weighted edges', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 36,
+                            "line": 121
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"hash-open\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"hash-open\"] .method-section-visual-live')\u001b[22m\n\n\n  119 |         await loadMethod(page, 'hash-open');\n  120 |         const hashSections = page.locator('[data-method-section=\"hash-open\"] .method-section-visual-live');\n> 121 |         await expect(hashSections).toBeVisible();\n      |                                    ^\n  122 |     });\n  123 |\n  124 |     test('Graph Kruskal: Builds MST from weighted edges', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:121:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:40.200Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--6f654-ion-Handlers-catch-overlaps-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 36,
+                        "line": 121
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-7f2a477eb368ff3034ba",
+              "file": "visualizer.spec.js",
+              "line": 118,
+              "column": 5
+            },
+            {
+              "title": "Graph Kruskal: Builds MST from weighted edges",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 17,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 5316,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-kruskal\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-kruskal\"] .method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-kruskal\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-kruskal\"] .method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:127:37",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 37,
+                          "line": 127
+                        },
+                        "snippet": "  125 |         await loadMethod(page, 'graph-kruskal');\n  126 |         const graphSections = page.locator('[data-method-section=\"graph-kruskal\"] .method-section-visual-live');\n> 127 |         await expect(graphSections).toBeVisible();\n      |                                     ^\n  128 |     });\n  129 |\n  130 |     test('Graph Dijkstra: Computes shortest paths from source', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 37,
+                            "line": 127
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-kruskal\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-kruskal\"] .method-section-visual-live')\u001b[22m\n\n\n  125 |         await loadMethod(page, 'graph-kruskal');\n  126 |         const graphSections = page.locator('[data-method-section=\"graph-kruskal\"] .method-section-visual-live');\n> 127 |         await expect(graphSections).toBeVisible();\n      |                                     ^\n  128 |     });\n  129 |\n  130 |     test('Graph Dijkstra: Computes shortest paths from source', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:127:37"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:45.667Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--0fc33-lds-MST-from-weighted-edges-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 37,
+                        "line": 127
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-bdd81e75565da7996a98",
+              "file": "visualizer.spec.js",
+              "line": 124,
+              "column": 5
+            },
+            {
+              "title": "Graph Dijkstra: Computes shortest paths from source",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 18,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 5319,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-dijkstra\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-dijkstra\"] .method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-dijkstra\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-dijkstra\"] .method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:133:37",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 37,
+                          "line": 133
+                        },
+                        "snippet": "  131 |         await loadMethod(page, 'graph-dijkstra');\n  132 |         const graphSections = page.locator('[data-method-section=\"graph-dijkstra\"] .method-section-visual-live');\n> 133 |         await expect(graphSections).toBeVisible();\n      |                                     ^\n  134 |     });\n  135 |\n  136 |     test('Graph Topological Sort: Orders DAG nodes correctly', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 37,
+                            "line": 133
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-dijkstra\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-dijkstra\"] .method-section-visual-live')\u001b[22m\n\n\n  131 |         await loadMethod(page, 'graph-dijkstra');\n  132 |         const graphSections = page.locator('[data-method-section=\"graph-dijkstra\"] .method-section-visual-live');\n> 133 |         await expect(graphSections).toBeVisible();\n      |                                     ^\n  134 |     });\n  135 |\n  136 |     test('Graph Topological Sort: Orders DAG nodes correctly', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:133:37"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:45.783Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--07226--shortest-paths-from-source-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 37,
+                        "line": 133
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-e0cfc41c1f45cefe40b7",
+              "file": "visualizer.spec.js",
+              "line": 130,
+              "column": 5
+            },
+            {
+              "title": "Graph Topological Sort: Orders DAG nodes correctly",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 19,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5324,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-topo\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-topo\"] .method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-topo\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-topo\"] .method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:139:37",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 37,
+                          "line": 139
+                        },
+                        "snippet": "  137 |         await loadMethod(page, 'graph-topo');\n  138 |         const graphSections = page.locator('[data-method-section=\"graph-topo\"] .method-section-visual-live');\n> 139 |         await expect(graphSections).toBeVisible();\n      |                                     ^\n  140 |     });\n  141 |\n  142 |     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 37,
+                            "line": 139
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"graph-topo\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"graph-topo\"] .method-section-visual-live')\u001b[22m\n\n\n  137 |         await loadMethod(page, 'graph-topo');\n  138 |         const graphSections = page.locator('[data-method-section=\"graph-topo\"] .method-section-visual-live');\n> 139 |         await expect(graphSections).toBeVisible();\n      |                                     ^\n  140 |     });\n  141 |\n  142 |     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:139:37"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:45.807Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--6d15d--Orders-DAG-nodes-correctly-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 37,
+                        "line": 139
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-d0f8882b582891076db7",
+              "file": "visualizer.spec.js",
+              "line": 136,
+              "column": 5
+            },
+            {
+              "title": "Advanced Sort: Radix Sort completes execution properly",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 20,
+                      "parallelIndex": 3,
+                      "status": "failed",
+                      "duration": 5306,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-radix\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-radix\"] .method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-radix\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-radix\"] .method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:145:36",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 36,
+                          "line": 145
+                        },
+                        "snippet": "  143 |         await loadMethod(page, 'sort-radix');\n  144 |         const sortSections = page.locator('[data-method-section=\"sort-radix\"] .method-section-visual-live');\n> 145 |         await expect(sortSections).toBeVisible();\n      |                                    ^\n  146 |     });\n  147 |\n  148 |     test('Shaker Sort: Bidirectional bubble sort completes correctly', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 36,
+                            "line": 145
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-radix\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-radix\"] .method-section-visual-live')\u001b[22m\n\n\n  143 |         await loadMethod(page, 'sort-radix');\n  144 |         const sortSections = page.locator('[data-method-section=\"sort-radix\"] .method-section-visual-live');\n> 145 |         await expect(sortSections).toBeVisible();\n      |                                    ^\n  146 |     });\n  147 |\n  148 |     test('Shaker Sort: Bidirectional bubble sort completes correctly', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:145:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:51.425Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--82462-ompletes-execution-properly-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 36,
+                        "line": 145
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-7cdc09227a7eae05dc90",
+              "file": "visualizer.spec.js",
+              "line": 142,
+              "column": 5
+            },
+            {
+              "title": "Shaker Sort: Bidirectional bubble sort completes correctly",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 21,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 5330,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-shaker\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-shaker\"] .method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-shaker\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-shaker\"] .method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:151:36",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 36,
+                          "line": 151
+                        },
+                        "snippet": "  149 |         await loadMethod(page, 'sort-shaker');\n  150 |         const sortSections = page.locator('[data-method-section=\"sort-shaker\"] .method-section-visual-live');\n> 151 |         await expect(sortSections).toBeVisible();\n      |                                    ^\n  152 |     });\n  153 |\n  154 |     test('Primary UI: active card owns runtime', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 36,
+                            "line": 151
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"sort-shaker\"] .method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"sort-shaker\"] .method-section-visual-live')\u001b[22m\n\n\n  149 |         await loadMethod(page, 'sort-shaker');\n  150 |         const sortSections = page.locator('[data-method-section=\"sort-shaker\"] .method-section-visual-live');\n> 151 |         await expect(sortSections).toBeVisible();\n      |                                    ^\n  152 |     });\n  153 |\n  154 |     test('Primary UI: active card owns runtime', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:151:36"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:51.539Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--9aafb-le-sort-completes-correctly-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 36,
+                        "line": 151
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-4d884f7ce8c6faa23f46",
+              "file": "visualizer.spec.js",
+              "line": 148,
+              "column": 5
+            },
+            {
+              "title": "Primary UI: active card owns runtime",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 22,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5257,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"stack-array\"]').locator('.method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"stack-array\"]').locator('.method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"stack-array\"]').locator('.method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"stack-array\"]').locator('.method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:157:77",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 77,
+                          "line": 157
+                        },
+                        "snippet": "  155 |         const stackArrayCard = page.locator('[data-method-section=\"stack-array\"]');\n  156 |         await expect(stackArrayCard).toHaveAttribute('data-runtime-state', 'active');\n> 157 |         await expect(stackArrayCard.locator('.method-section-visual-live')).toBeVisible();\n      |                                                                             ^\n  158 |     });\n  159 |\n  160 |     test('Primary UI: can select mode from different categories', async ({ page }) => {"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 77,
+                            "line": 157
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"stack-array\"]').locator('.method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"stack-array\"]').locator('.method-section-visual-live')\u001b[22m\n\n\n  155 |         const stackArrayCard = page.locator('[data-method-section=\"stack-array\"]');\n  156 |         await expect(stackArrayCard).toHaveAttribute('data-runtime-state', 'active');\n> 157 |         await expect(stackArrayCard.locator('.method-section-visual-live')).toBeVisible();\n      |                                                                             ^\n  158 |     });\n  159 |\n  160 |     test('Primary UI: can select mode from different categories', async ({ page }) => {\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:157:77"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:51.576Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--9cc12-UI-active-card-owns-runtime-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 77,
+                        "line": 157
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-55b2878fa647f0d4d460",
+              "file": "visualizer.spec.js",
+              "line": 154,
+              "column": 5
+            },
+            {
+              "title": "Primary UI: can select mode from different categories",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 23,
+                      "parallelIndex": 4,
+                      "status": "timedOut",
+                      "duration": 30043,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 94,
+                            "line": 166
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"method-sections\"]').locator('[data-method-section=\"sort-bubble\"] .method-load-btn')\u001b[22m\n\n\n  164 |         await page.locator('[data-testid=\"category-nav\"]').getByRole('button', { name: 'Advanced & Application-Specific' }).click();\n  165 |         await page.waitForSelector('[data-method-section]', { timeout: 5000 });\n> 166 |         await methodSections.locator('[data-method-section=\"sort-bubble\"] .method-load-btn').click();\n      |                                                                                              ^\n  167 |         \n  168 |         await expect(methodSections.locator('[data-method-section=\"sort-bubble\"]')).toHaveAttribute('data-runtime-state', 'active');\n  169 |         await expect(methodSections.locator('[data-method-section=\"sort-bubble\"] .method-section-visual-live')).toBeVisible();\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:166:94"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:56.717Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--47f07-e-from-different-categories-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-3c7c61af4ad346bd0ee5",
+              "file": "visualizer.spec.js",
+              "line": 160,
+              "column": 5
+            },
+            {
+              "title": "Primary UI: switching methods tracks active and loaded cards",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 24,
+                      "parallelIndex": 3,
+                      "status": "timedOut",
+                      "duration": 30033,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 88,
+                            "line": 176
+                          },
+                          "message": "Error: locator.click: Test timeout of 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"method-sections\"]').locator('[data-method-section=\"queue\"] .method-load-btn')\u001b[22m\n\n\n  174 |         \n  175 |         // Load queue\n> 176 |         await methodSections.locator('[data-method-section=\"queue\"] .method-load-btn').click();\n      |                                                                                        ^\n  177 |         await expect(methodSections.locator('[data-method-section=\"queue\"]')).toHaveAttribute('data-runtime-state', 'active');\n  178 |         await expect(methodSections.locator('[data-method-section=\"stack-array\"]')).toHaveAttribute('data-runtime-state', 'loaded');\n  179 |         \n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:176:88"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:57.173Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--eed74-cks-active-and-loaded-cards-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-0a0251f27acba4920010",
+              "file": "visualizer.spec.js",
+              "line": 172,
+              "column": 5
+            },
+            {
+              "title": "Primary UI: all sampled data structure modes are accessible from method cards",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 25,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 5322,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"queue\"]').locator('.method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"queue\"]').locator('.method-section-visual-live')\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"queue\"]').locator('.method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"queue\"]').locator('.method-section-visual-live')\u001b[22m\n\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:207:75",
+                        "location": {
+                          "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                          "column": 75,
+                          "line": 207
+                        },
+                        "snippet": "  205 |                 const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  206 |                 await expect(card).toHaveAttribute('data-runtime-state', 'active');\n> 207 |                 await expect(card.locator('.method-section-visual-live')).toBeVisible();\n      |                                                                           ^\n  208 |             } catch (error) {\n  209 |                 console.log(`Failed to load ${methodId}:`, error.message);\n  210 |                 throw error;"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                            "column": 75,
+                            "line": 207
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"queue\"]').locator('.method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"queue\"]').locator('.method-section-visual-live')\u001b[22m\n\n\n  205 |                 const card = page.locator(`[data-method-section=\"${methodId}\"]`);\n  206 |                 await expect(card).toHaveAttribute('data-runtime-state', 'active');\n> 207 |                 await expect(card.locator('.method-section-visual-live')).toBeVisible();\n      |                                                                           ^\n  208 |             } catch (error) {\n  209 |                 console.log(`Failed to load ${methodId}:`, error.message);\n  210 |                 throw error;\n    at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:207:75"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "Failed to load queue: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[data-method-section=\"queue\"]').locator('.method-section-visual-live')\nExpected: visible\nTimeout: 5000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-method-section=\"queue\"]').locator('.method-section-visual-live')\u001b[22m\n\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:57.289Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/skhuang/course/dsvisual/test-results/visualizer-Data-Structure--a921f-ccessible-from-method-cards-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/skhuang/course/dsvisual/tests/visualizer.spec.js",
+                        "column": 75,
+                        "line": 207
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-e7b1bb1773d5bf0873e6",
+              "file": "visualizer.spec.js",
+              "line": 190,
+              "column": 5
+            },
+            {
+              "title": "OOP Inheritance: Renders hierarchy and completes demo flow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 307,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:57.320Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-bb92fbca96575bc0dc94",
+              "file": "visualizer.spec.js",
+              "line": 215,
+              "column": 5
+            },
+            {
+              "title": "OOP Polymorphism: Shows virtual dispatch model and demo run",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 251,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:57.722Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-d847b486027dd6c9217e",
+              "file": "visualizer.spec.js",
+              "line": 222,
+              "column": 5
+            },
+            {
+              "title": "OOP Encapsulation: Shows access levels and demo run",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 230,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:57.980Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-6950d59fc18ade4423b4",
+              "file": "visualizer.spec.js",
+              "line": 229,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Singleton - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 237,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:58.216Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-535787d696e31bd5e8e1",
+              "file": "visualizer.spec.js",
+              "line": 237,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Factory - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 224,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:58.459Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-965c4db715035c2c72da",
+              "file": "visualizer.spec.js",
+              "line": 244,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Adapter - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 224,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:58.690Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-082ef7a664a26df5b95d",
+              "file": "visualizer.spec.js",
+              "line": 251,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Decorator - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 230,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:58.924Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-c6ddefbfd61094b10aa9",
+              "file": "visualizer.spec.js",
+              "line": 258,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Observer - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 247,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:59.160Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-d95daa063104f08b1a79",
+              "file": "visualizer.spec.js",
+              "line": 265,
+              "column": 5
+            },
+            {
+              "title": "Design Patterns: Strategy - Renders and demo runs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 26,
+                      "parallelIndex": 1,
+                      "status": "passed",
+                      "duration": 303,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-05-16T23:18:59.419Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "6f36e6e71c59d14dc489-590e307d9e4de1e1798f",
+              "file": "visualizer.spec.js",
+              "line": 272,
+              "column": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-05-16T23:17:37.675Z",
+    "duration": 109660.493,
+    "expected": 13,
+    "skipped": 0,
+    "unexpected": 26,
+    "flaky": 0
+  }
+}

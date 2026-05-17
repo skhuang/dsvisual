@@ -715,6 +715,30 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
     }
 }
 
+.category-nav-select {
+    display: none;
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--app-radius-md);
+    background: var(--card-bg);
+    color: var(--text-main);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+@media (max-width: 639px) {
+    .category-nav-select {
+        display: block;
+    }
+    
+    .category-nav-btn,
+    .category-nav-submenu {
+        display: none;
+    }
+}
+
 @media (max-width: 720px) {
     body {
         padding: 0.75rem;

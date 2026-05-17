@@ -1,0 +1,883 @@
+
+> dsvisual@1.0.0 test
+> playwright test
+
+✔ heap-binary: min-heap invariant with full operations (0.565375ms)
+✔ heap-binary: max-heap invariant with comparator switch (0.080209ms)
+✔ heap-binomial: min-heap invariant with full operations (0.043125ms)
+✔ heap-binomial: max-heap invariant with comparator switch (0.032875ms)
+✔ heap-fibonacci: min-heap invariant with full operations (0.050583ms)
+✔ heap-fibonacci: max-heap invariant with comparator switch (0.038042ms)
+✔ heap-leftist: min-heap invariant with full operations (0.043125ms)
+✔ heap-leftist: max-heap invariant with comparator switch (0.030834ms)
+✔ heap-skew: min-heap invariant with full operations (0.040375ms)
+✔ heap-skew: max-heap invariant with comparator switch (0.06125ms)
+✔ heap-dary: min-heap invariant with full operations (0.037875ms)
+✔ heap-dary: max-heap invariant with comparator switch (0.0265ms)
+✔ heap-pairing: min-heap invariant with full operations (0.030834ms)
+✔ heap-pairing: max-heap invariant with comparator switch (0.021625ms)
+
+Running 39 tests using 5 workers
+
+[1A[2K[1/39] [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-skew: method card loads and opens slides
+[1A[2K[2/39] [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-binomial: method card loads and opens slides
+[1A[2K[3/39] [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-binary: method card loads and opens slides
+[1A[2K[4/39] [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-fibonacci: method card loads and opens slides
+[1A[2K[5/39] [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-leftist: method card loads and opens slides
+[1A[2K  1) [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-skew: method card loads and opens slides 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="heap-skew"]').locator('.method-load-btn')[22m
+
+
+      20 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      21 |         if (await card.count()) {
+    > 22 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      23 |             return;
+      24 |         }
+      25 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)
+        at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13
+
+    Error Context: test-results/heap_visualizer-Heap-Visua-08aad-card-loads-and-opens-slides-chromium/error-context.md
+
+
+[1A[2K  2) [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-leftist: method card loads and opens slides 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="heap-leftist"]').locator('.method-load-btn')[22m
+
+
+      20 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      21 |         if (await card.count()) {
+    > 22 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      23 |             return;
+      24 |         }
+      25 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)
+        at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13
+
+    Error Context: test-results/heap_visualizer-Heap-Visua-51af5-card-loads-and-opens-slides-chromium/error-context.md
+
+
+[1A[2K  3) [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-binomial: method card loads and opens slides 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="heap-binomial"]').locator('.method-load-btn')[22m
+
+
+      20 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      21 |         if (await card.count()) {
+    > 22 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      23 |             return;
+      24 |         }
+      25 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)
+        at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13
+
+    Error Context: test-results/heap_visualizer-Heap-Visua-bcb18-card-loads-and-opens-slides-chromium/error-context.md
+
+
+[1A[2K  4) [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-binary: method card loads and opens slides 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="heap-binary"]').locator('.method-load-btn')[22m
+
+
+      20 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      21 |         if (await card.count()) {
+    > 22 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      23 |             return;
+      24 |         }
+      25 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)
+        at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13
+
+    Error Context: test-results/heap_visualizer-Heap-Visua-f4318-card-loads-and-opens-slides-chromium/error-context.md
+
+
+[1A[2K  5) [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-fibonacci: method card loads and opens slides 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="heap-fibonacci"]').locator('.method-load-btn')[22m
+
+
+      20 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      21 |         if (await card.count()) {
+    > 22 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      23 |             return;
+      24 |         }
+      25 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)
+        at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13
+
+    Error Context: test-results/heap_visualizer-Heap-Visua-6be8c-card-loads-and-opens-slides-chromium/error-context.md
+
+
+[1A[2K[6/39] [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-pairing: method card loads and opens slides
+[1A[2K[7/39] [chromium] › tests/responsive_viewport.spec.js:59:3 › Responsive Viewport: iPhone 12 › can access method sections and slides on mobile
+[1A[2K[8/39] [chromium] › tests/responsive_viewport.spec.js:35:3 › Responsive Viewport: iPhone 12 › loads default mode and keeps controls accessible on mobile
+[1A[2K[9/39] [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-dary: method card loads and opens slides
+[1A[2K[10/39] [chromium] › tests/responsive_viewport.spec.js:47:3 › Responsive Viewport: iPhone 12 › can expand advanced group and execute sorting flow on mobile
+[1A[2K[11/39] [chromium] › tests/responsive_viewport.spec.js:79:3 › Responsive Viewport: iPad Mini › can switch to tree mode and run trie insertion on tablet
+[1A[2K  6) [chromium] › tests/responsive_viewport.spec.js:35:3 › Responsive Viewport: iPhone 12 › loads default mode and keeps controls accessible on mobile 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('[data-method-section="stack-array"]').locator('.method-load-btn')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('[data-method-section="stack-array"]').locator('.method-load-btn')[22m
+
+
+      41 |     await expect(stackCard.locator('.method-section-visual')).toBeVisible();
+      42 |     // 檢查互動按鈕
+    > 43 |     await expect(stackCard.locator('.method-load-btn')).toBeVisible();
+         |                                                         ^
+      44 |     await expect(stackCard.locator('.method-slides-btn')).toBeVisible();
+      45 |   });
+      46 |
+        at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:43:57
+
+    Error Context: test-results/responsive_viewport-Respon-7e36b-ntrols-accessible-on-mobile-chromium/error-context.md
+
+
+[1A[2K[12/39] [chromium] › tests/responsive_viewport.spec.js:91:3 › Responsive Viewport: iPad Mini › can use heap mode after expanding advanced group on tablet
+[1A[2K  7) [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-pairing: method card loads and opens slides 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="heap-pairing"]').locator('.method-load-btn')[22m
+
+
+      20 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      21 |         if (await card.count()) {
+    > 22 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      23 |             return;
+      24 |         }
+      25 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)
+        at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13
+
+    Error Context: test-results/heap_visualizer-Heap-Visua-9d5b4-card-loads-and-opens-slides-chromium/error-context.md
+
+
+[1A[2K  8) [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-dary: method card loads and opens slides 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="heap-dary"]').locator('.method-load-btn')[22m
+
+
+      20 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      21 |         if (await card.count()) {
+    > 22 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      23 |             return;
+      24 |         }
+      25 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:22:52)
+        at /Users/skhuang/course/dsvisual/tests/heap_visualizer.spec.js:37:13
+
+    Error Context: test-results/heap_visualizer-Heap-Visua-fb37f-card-loads-and-opens-slides-chromium/error-context.md
+
+
+[1A[2K  9) [chromium] › tests/responsive_viewport.spec.js:47:3 › Responsive Viewport: iPhone 12 › can expand advanced group and execute sorting flow on mobile 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="sort-bubble"]').locator('.method-load-btn')[22m
+
+
+      13 |     const card = page.locator(`[data-method-section="${methodId}"]`);
+      14 |     if (await card.count()) {
+    > 15 |       await card.locator('.method-load-btn').click();
+         |                                              ^
+      16 |       await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      17 |       return;
+      18 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:15:46)
+        at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:48:5
+
+    Error Context: test-results/responsive_viewport-Respon-d3efe-cute-sorting-flow-on-mobile-chromium/error-context.md
+
+
+[1A[2K[13/39] [chromium] › tests/visualizer.spec.js:28:5 › Data Structure Visualizer Full Suite › Initial Load: Should load Array Stack correctly by default
+[1A[2K[14/39] [chromium] › tests/visualizer.spec.js:37:5 › Data Structure Visualizer Full Suite › Phase 1 category nav: renders six top-level groups and drives method sections
+[1A[2K[15/39] [chromium] › tests/visualizer.spec.js:54:5 › Data Structure Visualizer Full Suite › Phase 2 method sections: renders selected category methods and loads a method
+[1A[2K  10) [chromium] › tests/responsive_viewport.spec.js:79:3 › Responsive Viewport: iPad Mini › can switch to tree mode and run trie insertion on tablet 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="tree-trie"]').locator('.method-load-btn')[22m
+
+
+      13 |     const card = page.locator(`[data-method-section="${methodId}"]`);
+      14 |     if (await card.count()) {
+    > 15 |       await card.locator('.method-load-btn').click();
+         |                                              ^
+      16 |       await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      17 |       return;
+      18 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:15:46)
+        at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:80:5
+
+    Error Context: test-results/responsive_viewport-Respon-1af06-un-trie-insertion-on-tablet-chromium/error-context.md
+
+
+[1A[2K[16/39] [chromium] › tests/visualizer.spec.js:79:5 › Data Structure Visualizer Full Suite › Phase 4 slides viewer: opens method explanation and closes
+[1A[2K[17/39] [chromium] › tests/visualizer.spec.js:69:5 › Data Structure Visualizer Full Suite › Phase 3 runtime boundary: method sections track active and loaded states
+[1A[2K[18/39] [chromium] › tests/visualizer.spec.js:92:5 › Data Structure Visualizer Full Suite › Phase 5 regression: every top-level category renders method sections
+[1A[2K[19/39] [chromium] › tests/visualizer.spec.js:109:5 › Data Structure Visualizer Full Suite › Trie Trees: Submits string prefix and generates character-marked edges
+[1A[2K  11) [chromium] › tests/responsive_viewport.spec.js:91:3 › Responsive Viewport: iPad Mini › can use heap mode after expanding advanced group on tablet 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="heap-binary"]').locator('.method-load-btn')[22m
+
+
+      13 |     const card = page.locator(`[data-method-section="${methodId}"]`);
+      14 |     if (await card.count()) {
+    > 15 |       await card.locator('.method-load-btn').click();
+         |                                              ^
+      16 |       await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      17 |       return;
+      18 |     }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:15:46)
+        at /Users/skhuang/course/dsvisual/tests/responsive_viewport.spec.js:92:5
+
+    Error Context: test-results/responsive_viewport-Respon-e012f-ng-advanced-group-on-tablet-chromium/error-context.md
+
+
+[1A[2K  12) [chromium] › tests/visualizer.spec.js:37:5 › Data Structure Visualizer Full Suite › Phase 1 category nav: renders six top-level groups and drives method sections 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveText[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: locator('[data-testid="category-nav"]').locator('.category-nav-btn.active')
+    Expected: [32m"Basic Linear Structures"[39m
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toHaveText" with timeout 5000ms[22m
+    [2m  - waiting for locator('[data-testid="category-nav"]').locator('.category-nav-btn.active')[22m
+
+
+      39 |         await expect(categoryNav).toBeVisible();
+      40 |         await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(6);
+    > 41 |         await expect(categoryNav.locator('.category-nav-btn.active')).toHaveText('Basic Linear Structures');
+         |                                                                       ^
+      42 |
+      43 |         await categoryNav.getByRole('button', { name: 'Advanced & Application-Specific' }).click();
+      44 |         await page.waitForSelector('[data-method-section]', { timeout: 5000 });
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:41:71
+
+    Error Context: test-results/visualizer-Data-Structure--2be0b--and-drives-method-sections-chromium/error-context.md
+
+
+[1A[2K[20/39] [chromium] › tests/visualizer.spec.js:115:5 › Data Structure Visualizer Full Suite › Sorting Engine: Instantiates bars and manages states successfully
+[1A[2K[21/39] [chromium] › tests/visualizer.spec.js:121:5 › Data Structure Visualizer Full Suite › Hash Tables: Explicitly verifies Collision Handlers catch overlaps
+[1A[2K  13) [chromium] › tests/visualizer.spec.js:54:5 › Data Structure Visualizer Full Suite › Phase 2 method sections: renders selected category methods and loads a method 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="method-sections"]').locator('[data-method-section="sort-bubble"] .method-load-btn')[22m
+
+
+      63 |         await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-code')).toContainText('sort_bubble.cpp');
+      64 |
+    > 65 |         await methodSections.locator('[data-method-section="sort-bubble"] .method-load-btn').click();
+         |                                                                                              ^
+      66 |         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
+      67 |     });
+      68 |
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:65:94
+
+    Error Context: test-results/visualizer-Data-Structure--9a524--methods-and-loads-a-method-chromium/error-context.md
+
+
+[1A[2K[22/39] [chromium] › tests/visualizer.spec.js:127:5 › Data Structure Visualizer Full Suite › Graph Kruskal: Builds MST from weighted edges
+[1A[2K  14) [chromium] › tests/visualizer.spec.js:69:5 › Data Structure Visualizer Full Suite › Phase 3 runtime boundary: method sections track active and loaded states 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="method-sections"]').locator('[data-method-section="queue"] .method-load-btn')[22m
+
+
+      72 |         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'idle');
+      73 |
+    > 74 |         await methodSections.locator('[data-method-section="queue"] .method-load-btn').click();
+         |                                                                                        ^
+      75 |         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'active');
+      76 |         await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'loaded');
+      77 |     });
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:74:88
+
+    Error Context: test-results/visualizer-Data-Structure--729ce-ck-active-and-loaded-states-chromium/error-context.md
+
+
+[1A[2K[23/39] [chromium] › tests/visualizer.spec.js:133:5 › Data Structure Visualizer Full Suite › Graph Dijkstra: Computes shortest paths from source
+[1A[2K  15) [chromium] › tests/visualizer.spec.js:109:5 › Data Structure Visualizer Full Suite › Trie Trees: Submits string prefix and generates character-marked edges 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="tree-trie"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:110:9
+
+    Error Context: test-results/visualizer-Data-Structure--bc33d-ates-character-marked-edges-chromium/error-context.md
+
+
+[1A[2K[24/39] [chromium] › tests/visualizer.spec.js:139:5 › Data Structure Visualizer Full Suite › Graph Topological Sort: Orders DAG nodes correctly
+[1A[2K  16) [chromium] › tests/visualizer.spec.js:121:5 › Data Structure Visualizer Full Suite › Hash Tables: Explicitly verifies Collision Handlers catch overlaps 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="hash-open"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:122:9
+
+    Error Context: test-results/visualizer-Data-Structure--6f654-ion-Handlers-catch-overlaps-chromium/error-context.md
+
+
+[1A[2K  17) [chromium] › tests/visualizer.spec.js:115:5 › Data Structure Visualizer Full Suite › Sorting Engine: Instantiates bars and manages states successfully 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="sort-bubble"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:116:9
+
+    Error Context: test-results/visualizer-Data-Structure--33564-manages-states-successfully-chromium/error-context.md
+
+
+[1A[2K[25/39] [chromium] › tests/visualizer.spec.js:145:5 › Data Structure Visualizer Full Suite › Advanced Sort: Radix Sort completes execution properly
+[1A[2K[26/39] [chromium] › tests/visualizer.spec.js:151:5 › Data Structure Visualizer Full Suite › Shaker Sort: Bidirectional bubble sort completes correctly
+[1A[2K  18) [chromium] › tests/visualizer.spec.js:127:5 › Data Structure Visualizer Full Suite › Graph Kruskal: Builds MST from weighted edges 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="graph-kruskal"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:128:9
+
+    Error Context: test-results/visualizer-Data-Structure--0fc33-lds-MST-from-weighted-edges-chromium/error-context.md
+
+
+[1A[2K[27/39] [chromium] › tests/visualizer.spec.js:157:5 › Data Structure Visualizer Full Suite › Primary UI: active card owns runtime
+[1A[2K  19) [chromium] › tests/visualizer.spec.js:133:5 › Data Structure Visualizer Full Suite › Graph Dijkstra: Computes shortest paths from source 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="graph-dijkstra"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:134:9
+
+    Error Context: test-results/visualizer-Data-Structure--07226--shortest-paths-from-source-chromium/error-context.md
+
+
+[1A[2K[28/39] [chromium] › tests/visualizer.spec.js:163:5 › Data Structure Visualizer Full Suite › Primary UI: can select mode from different categories
+[1A[2K  20) [chromium] › tests/visualizer.spec.js:139:5 › Data Structure Visualizer Full Suite › Graph Topological Sort: Orders DAG nodes correctly 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="graph-topo"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:140:9
+
+    Error Context: test-results/visualizer-Data-Structure--6d15d--Orders-DAG-nodes-correctly-chromium/error-context.md
+
+
+[1A[2K[29/39] [chromium] › tests/visualizer.spec.js:175:5 › Data Structure Visualizer Full Suite › Primary UI: switching methods tracks active and loaded cards
+[1A[2K  21) [chromium] › tests/visualizer.spec.js:145:5 › Data Structure Visualizer Full Suite › Advanced Sort: Radix Sort completes execution properly 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="sort-radix"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:146:9
+
+    Error Context: test-results/visualizer-Data-Structure--82462-ompletes-execution-properly-chromium/error-context.md
+
+
+[1A[2K  22) [chromium] › tests/visualizer.spec.js:151:5 › Data Structure Visualizer Full Suite › Shaker Sort: Bidirectional bubble sort completes correctly 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="sort-shaker"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:152:9
+
+    Error Context: test-results/visualizer-Data-Structure--9aafb-le-sort-completes-correctly-chromium/error-context.md
+
+
+[1A[2K  23) [chromium] › tests/visualizer.spec.js:157:5 › Data Structure Visualizer Full Suite › Primary UI: active card owns runtime 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('[data-method-section="stack-array"]').locator('.method-section-visual-live')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('[data-method-section="stack-array"]').locator('.method-section-visual-live')[22m
+
+
+      158 |         const stackArrayCard = page.locator('[data-method-section="stack-array"]');
+      159 |         await expect(stackArrayCard).toHaveAttribute('data-runtime-state', 'active');
+    > 160 |         await expect(stackArrayCard.locator('.method-section-visual-live')).toBeVisible();
+          |                                                                             ^
+      161 |     });
+      162 |
+      163 |     test('Primary UI: can select mode from different categories', async ({ page }) => {
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:160:77
+
+    Error Context: test-results/visualizer-Data-Structure--9cc12-UI-active-card-owns-runtime-chromium/error-context.md
+
+
+[1A[2K[30/39] [chromium] › tests/visualizer.spec.js:225:5 › Data Structure Visualizer Full Suite › OOP Polymorphism: Shows virtual dispatch model and demo run
+[1A[2K[31/39] [chromium] › tests/visualizer.spec.js:193:5 › Data Structure Visualizer Full Suite › Primary UI: all sampled data structure modes are accessible from method cards
+[1A[2K[32/39] [chromium] › tests/visualizer.spec.js:218:5 › Data Structure Visualizer Full Suite › OOP Inheritance: Renders hierarchy and completes demo flow
+[1A[2K  24) [chromium] › tests/visualizer.spec.js:163:5 › Data Structure Visualizer Full Suite › Primary UI: can select mode from different categories 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="method-sections"]').locator('[data-method-section="sort-bubble"] .method-load-btn')[22m
+
+
+      167 |         await page.locator('[data-testid="category-nav"]').getByRole('button', { name: 'Advanced & Application-Specific' }).click();
+      168 |         await page.waitForSelector('[data-method-section]', { timeout: 5000 });
+    > 169 |         await methodSections.locator('[data-method-section="sort-bubble"] .method-load-btn').click();
+          |                                                                                              ^
+      170 |         
+      171 |         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
+      172 |         await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-visual-live')).toBeVisible();
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:169:94
+
+    Error Context: test-results/visualizer-Data-Structure--47f07-e-from-different-categories-chromium/error-context.md
+
+
+[1A[2K  25) [chromium] › tests/visualizer.spec.js:175:5 › Data Structure Visualizer Full Suite › Primary UI: switching methods tracks active and loaded cards 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-testid="method-sections"]').locator('[data-method-section="queue"] .method-load-btn')[22m
+
+
+      177 |         
+      178 |         // Load queue
+    > 179 |         await methodSections.locator('[data-method-section="queue"] .method-load-btn').click();
+          |                                                                                        ^
+      180 |         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'active');
+      181 |         await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'loaded');
+      182 |         
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:179:88
+
+    Error Context: test-results/visualizer-Data-Structure--eed74-cks-active-and-loaded-cards-chromium/error-context.md
+
+
+[1A[2K[33/39] [chromium] › tests/visualizer.spec.js:232:5 › Data Structure Visualizer Full Suite › OOP Encapsulation: Shows access levels and demo run
+[1A[2K[34/39] [chromium] › tests/visualizer.spec.js:240:5 › Data Structure Visualizer Full Suite › Design Patterns: Singleton - Renders and demo runs
+[1A[2K[chromium] › tests/visualizer.spec.js:193:5 › Data Structure Visualizer Full Suite › Primary UI: all sampled data structure modes are accessible from method cards
+Failed to load queue: locator.click: Test timeout of 30000ms exceeded.
+Call log:
+[2m  - waiting for locator('[data-method-section="queue"]').locator('.method-load-btn')[22m
+
+
+[1A[2K  26) [chromium] › tests/visualizer.spec.js:225:5 › Data Structure Visualizer Full Suite › OOP Polymorphism: Shows virtual dispatch model and demo run 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="oop-polymorphism"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:226:9
+
+    Error Context: test-results/visualizer-Data-Structure--b0c06-dispatch-model-and-demo-run-chromium/error-context.md
+
+
+[1A[2K  27) [chromium] › tests/visualizer.spec.js:218:5 › Data Structure Visualizer Full Suite › OOP Inheritance: Renders hierarchy and completes demo flow 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="oop-inheritance"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:219:9
+
+    Error Context: test-results/visualizer-Data-Structure--3b62b-chy-and-completes-demo-flow-chromium/error-context.md
+
+
+[1A[2K  28) [chromium] › tests/visualizer.spec.js:193:5 › Data Structure Visualizer Full Suite › Primary UI: all sampled data structure modes are accessible from method cards 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="queue"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:207:17
+
+    Error Context: test-results/visualizer-Data-Structure--a921f-ccessible-from-method-cards-chromium/error-context.md
+
+
+[1A[2K[35/39] [chromium] › tests/visualizer.spec.js:254:5 › Data Structure Visualizer Full Suite › Design Patterns: Adapter - Renders and demo runs
+[1A[2K[36/39] [chromium] › tests/visualizer.spec.js:247:5 › Data Structure Visualizer Full Suite › Design Patterns: Factory - Renders and demo runs
+[1A[2K[37/39] [chromium] › tests/visualizer.spec.js:261:5 › Data Structure Visualizer Full Suite › Design Patterns: Decorator - Renders and demo runs
+[1A[2K  29) [chromium] › tests/visualizer.spec.js:232:5 › Data Structure Visualizer Full Suite › OOP Encapsulation: Shows access levels and demo run 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="oop-encapsulation"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:233:9
+
+    Error Context: test-results/visualizer-Data-Structure--36e37--access-levels-and-demo-run-chromium/error-context.md
+
+
+[1A[2K  30) [chromium] › tests/visualizer.spec.js:240:5 › Data Structure Visualizer Full Suite › Design Patterns: Singleton - Renders and demo runs 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="pattern-singleton"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:241:9
+
+    Error Context: test-results/visualizer-Data-Structure--038f8-ton---Renders-and-demo-runs-chromium/error-context.md
+
+
+[1A[2K[38/39] [chromium] › tests/visualizer.spec.js:268:5 › Data Structure Visualizer Full Suite › Design Patterns: Observer - Renders and demo runs
+[1A[2K[39/39] [chromium] › tests/visualizer.spec.js:275:5 › Data Structure Visualizer Full Suite › Design Patterns: Strategy - Renders and demo runs
+[1A[2K  31) [chromium] › tests/visualizer.spec.js:254:5 › Data Structure Visualizer Full Suite › Design Patterns: Adapter - Renders and demo runs 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="pattern-adapter"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:255:9
+
+    Error Context: test-results/visualizer-Data-Structure--40ab7-ter---Renders-and-demo-runs-chromium/error-context.md
+
+
+[1A[2K  32) [chromium] › tests/visualizer.spec.js:261:5 › Data Structure Visualizer Full Suite › Design Patterns: Decorator - Renders and demo runs 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="pattern-decorator"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:262:9
+
+    Error Context: test-results/visualizer-Data-Structure--49536-tor---Renders-and-demo-runs-chromium/error-context.md
+
+
+[1A[2K  33) [chromium] › tests/visualizer.spec.js:247:5 › Data Structure Visualizer Full Suite › Design Patterns: Factory - Renders and demo runs 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="pattern-factory"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         if (await card.count()) {
+    > 12 |             await card.locator('.method-load-btn').click();
+         |                                                    ^
+      13 |             await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      14 |             return;
+      15 |         }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:248:9
+
+    Error Context: test-results/visualizer-Data-Structure--9eb7d-ory---Renders-and-demo-runs-chromium/error-context.md
+
+
+[1A[2K  34) [chromium] › tests/visualizer.spec.js:268:5 › Data Structure Visualizer Full Suite › Design Patterns: Observer - Renders and demo runs 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="pattern-observer"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         await expect(card).toHaveAttribute('data-runtime-state', 'active');
+    > 12 |         return;
+         |                ^
+      13 |     }
+      14 |     throw new Error(`Method ${methodId} not found in menu`);
+      15 | }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:269:9
+
+    Error Context: test-results/visualizer-Data-Structure--70b91-ver---Renders-and-demo-runs-chromium/error-context.md
+
+
+[1A[2K  35) [chromium] › tests/visualizer.spec.js:275:5 › Data Structure Visualizer Full Suite › Design Patterns: Strategy - Renders and demo runs 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[data-method-section="pattern-strategy"]').locator('.method-load-btn')[22m
+
+
+      10 |         const card = page.locator(`[data-method-section="${methodId}"]`);
+      11 |         await expect(card).toHaveAttribute('data-runtime-state', 'active');
+    > 12 |         return;
+         |                ^
+      13 |     }
+      14 |     throw new Error(`Method ${methodId} not found in menu`);
+      15 | }
+        at loadMethod (/Users/skhuang/course/dsvisual/tests/visualizer.spec.js:12:52)
+        at /Users/skhuang/course/dsvisual/tests/visualizer.spec.js:276:9
+
+    Error Context: test-results/visualizer-Data-Structure--89355-egy---Renders-and-demo-runs-chromium/error-context.md
+
+
+[1A[2K  35 failed
+    [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-binary: method card loads and opens slides 
+    [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-binomial: method card loads and opens slides 
+    [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-fibonacci: method card loads and opens slides 
+    [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-leftist: method card loads and opens slides 
+    [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-skew: method card loads and opens slides 
+    [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-dary: method card loads and opens slides 
+    [chromium] › tests/heap_visualizer.spec.js:36:9 › Heap Visualizer Suite › heap-pairing: method card loads and opens slides 
+    [chromium] › tests/responsive_viewport.spec.js:35:3 › Responsive Viewport: iPhone 12 › loads default mode and keeps controls accessible on mobile 
+    [chromium] › tests/responsive_viewport.spec.js:47:3 › Responsive Viewport: iPhone 12 › can expand advanced group and execute sorting flow on mobile 
+    [chromium] › tests/responsive_viewport.spec.js:79:3 › Responsive Viewport: iPad Mini › can switch to tree mode and run trie insertion on tablet 
+    [chromium] › tests/responsive_viewport.spec.js:91:3 › Responsive Viewport: iPad Mini › can use heap mode after expanding advanced group on tablet 
+    [chromium] › tests/visualizer.spec.js:37:5 › Data Structure Visualizer Full Suite › Phase 1 category nav: renders six top-level groups and drives method sections 
+    [chromium] › tests/visualizer.spec.js:54:5 › Data Structure Visualizer Full Suite › Phase 2 method sections: renders selected category methods and loads a method 
+    [chromium] › tests/visualizer.spec.js:69:5 › Data Structure Visualizer Full Suite › Phase 3 runtime boundary: method sections track active and loaded states 
+    [chromium] › tests/visualizer.spec.js:109:5 › Data Structure Visualizer Full Suite › Trie Trees: Submits string prefix and generates character-marked edges 
+    [chromium] › tests/visualizer.spec.js:115:5 › Data Structure Visualizer Full Suite › Sorting Engine: Instantiates bars and manages states successfully 
+    [chromium] › tests/visualizer.spec.js:121:5 › Data Structure Visualizer Full Suite › Hash Tables: Explicitly verifies Collision Handlers catch overlaps 
+    [chromium] › tests/visualizer.spec.js:127:5 › Data Structure Visualizer Full Suite › Graph Kruskal: Builds MST from weighted edges 
+    [chromium] › tests/visualizer.spec.js:133:5 › Data Structure Visualizer Full Suite › Graph Dijkstra: Computes shortest paths from source 
+    [chromium] › tests/visualizer.spec.js:139:5 › Data Structure Visualizer Full Suite › Graph Topological Sort: Orders DAG nodes correctly 
+    [chromium] › tests/visualizer.spec.js:145:5 › Data Structure Visualizer Full Suite › Advanced Sort: Radix Sort completes execution properly 
+    [chromium] › tests/visualizer.spec.js:151:5 › Data Structure Visualizer Full Suite › Shaker Sort: Bidirectional bubble sort completes correctly 
+    [chromium] › tests/visualizer.spec.js:157:5 › Data Structure Visualizer Full Suite › Primary UI: active card owns runtime 
+    [chromium] › tests/visualizer.spec.js:163:5 › Data Structure Visualizer Full Suite › Primary UI: can select mode from different categories 
+    [chromium] › tests/visualizer.spec.js:175:5 › Data Structure Visualizer Full Suite › Primary UI: switching methods tracks active and loaded cards 
+    [chromium] › tests/visualizer.spec.js:193:5 › Data Structure Visualizer Full Suite › Primary UI: all sampled data structure modes are accessible from method cards 
+    [chromium] › tests/visualizer.spec.js:218:5 › Data Structure Visualizer Full Suite › OOP Inheritance: Renders hierarchy and completes demo flow 
+    [chromium] › tests/visualizer.spec.js:225:5 › Data Structure Visualizer Full Suite › OOP Polymorphism: Shows virtual dispatch model and demo run 
+    [chromium] › tests/visualizer.spec.js:232:5 › Data Structure Visualizer Full Suite › OOP Encapsulation: Shows access levels and demo run 
+    [chromium] › tests/visualizer.spec.js:240:5 › Data Structure Visualizer Full Suite › Design Patterns: Singleton - Renders and demo runs 
+    [chromium] › tests/visualizer.spec.js:247:5 › Data Structure Visualizer Full Suite › Design Patterns: Factory - Renders and demo runs 
+    [chromium] › tests/visualizer.spec.js:254:5 › Data Structure Visualizer Full Suite › Design Patterns: Adapter - Renders and demo runs 
+    [chromium] › tests/visualizer.spec.js:261:5 › Data Structure Visualizer Full Suite › Design Patterns: Decorator - Renders and demo runs 
+    [chromium] › tests/visualizer.spec.js:268:5 › Data Structure Visualizer Full Suite › Design Patterns: Observer - Renders and demo runs 
+    [chromium] › tests/visualizer.spec.js:275:5 › Data Structure Visualizer Full Suite › Design Patterns: Strategy - Renders and demo runs 
+  4 passed (3.6m)
+
+[36m  Serving HTML report at http://localhost:58348. Press Ctrl+C to quit.[39m
