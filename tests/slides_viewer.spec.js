@@ -8,13 +8,18 @@ async function openStackArraySlides(page) {
   const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
   const methodSelect = page.locator('[data-testid="method-select"]');
   const count = await categoryButtons.count();
+  let found = false;
   for (let i = 0; i < count; i++) {
     await categoryButtons.nth(i).click();
     if (await methodSelect.locator('option[value="stack-array"]').count()) {
       await methodSelect.selectOption('stack-array');
+      found = true;
       break;
     }
   }
+  if (!found) throw new Error('Method stack-array not found in method dropdown');
+  const card = page.locator('[data-method-section="stack-array"]');
+  await expect(card).toHaveAttribute('data-runtime-state', 'active');
   await page.locator('.method-slides-btn[data-method="stack-array"]').click();
   await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
 }
