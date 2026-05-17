@@ -25,7 +25,7 @@ title: "陣列串列"
 ## 運作流程
 
 1. 插入前檢查 `index` 範圍及 `size < capacity`。
-2. 從 `size-1` 向下至 `index`,逐一將元素右移:arr[i] = arr[i-1]。
+2. 從 `size` 向下至 `index+1`,逐一將元素右移:arr[i] = arr[i-1]。
 3. 在 `arr[index]` 寫入新值,遞增 `size`。
 4. 刪除時則反向:從 `index` 向右逐一左移,遞減 `size`。
 

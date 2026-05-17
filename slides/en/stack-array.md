@@ -44,8 +44,9 @@ The array implementation uses a fixed-size contiguous block of memory plus an in
 
 | Operation | Time | Space |
 | --- | --- | --- |
-| push | $O(1)$ | $O(N)$ |
+| push | $O(1)$ | $O(1)$ |
 | pop | $O(1)$ | $O(1)$ |
+| Total Space | — | $O(N)$ |
 
 $$T_{\text{push}}(n) = O(1)$$
 

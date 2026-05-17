@@ -45,9 +45,10 @@ title: "佇列(循環陣列)"
 
 | 操作 | 時間 | 空間 |
 | --- | --- | --- |
-| enqueue | $O(1)$ | $O(N)$ |
+| enqueue | $O(1)$ | $O(1)$ |
 | dequeue | $O(1)$ | $O(1)$ |
 | peek (front) | $O(1)$ | $O(1)$ |
+| 空間合計 | — | $O(N)$ |
 
 $$T_{\text{enqueue}}(n) = O(1)$$
 

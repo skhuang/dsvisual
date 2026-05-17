@@ -146,9 +146,10 @@ const SLIDES_DB = {
           { type: 'table',
             headers: [ { zh: '操作', en: 'Operation' }, { zh: '時間', en: 'Time' }, { zh: '空間', en: 'Space' } ],
             rows: [
-              [ { zh: 'enqueue', en: 'enqueue' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+              [ { zh: 'enqueue', en: 'enqueue' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
               [ { zh: 'dequeue', en: 'dequeue' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
               [ { zh: 'peek (front)', en: 'peek (front)' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
             ] },
           { type: 'math', tex: 'T_{\\text{enqueue}}(n) = O(1)', caption: {
             zh: 'enqueue 僅做一次取模和一次陣列寫入,與佇列長度無關。',
@@ -215,7 +216,7 @@ const SLIDES_DB = {
         blocks: [
           { type: 'steps', items: [
             { zh: '插入前檢查 `index` 範圍及 `size < capacity`。', en: 'Before inserting, validate `index` bounds and that `size < capacity`.' },
-            { zh: '從 `size-1` 向下至 `index`,逐一將元素右移:arr[i] = arr[i-1]。', en: 'Iterate from `size-1` down to `index`, shifting each element right: arr[i] = arr[i-1].' },
+            { zh: '從 `size` 向下至 `index+1`,逐一將元素右移:arr[i] = arr[i-1]。', en: 'Iterate from `size` down to `index+1`, shifting each element right: arr[i] = arr[i-1].' },
             { zh: '在 `arr[index]` 寫入新值,遞增 `size`。', en: 'Write the new value at `arr[index]` and increment `size`.' },
             { zh: '刪除時則反向:從 `index` 向右逐一左移,遞減 `size`。', en: 'For removal: shift elements left from `index` onward, decrement `size`.' },
           ] },
@@ -329,8 +330,9 @@ const SLIDES_DB = {
           { type: 'table',
             headers: [ { zh: '操作', en: 'Operation' }, { zh: '時間', en: 'Time' }, { zh: '空間', en: 'Space' } ],
             rows: [
-              [ { zh: 'push', en: 'push' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+              [ { zh: 'push', en: 'push' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
               [ { zh: 'pop', en: 'pop' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
             ] },
           { type: 'math', tex: 'T_{\\text{push}}(n) = O(1)', caption: {
             zh: '每次推入只做常數次運算,與堆疊大小無關。',

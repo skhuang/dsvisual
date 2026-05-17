@@ -25,7 +25,7 @@ Uses a dynamically allocated integer array; `size` tracks the current element co
 ## Operation Flow
 
 1. Before inserting, validate `index` bounds and that `size < capacity`.
-2. Iterate from `size-1` down to `index`, shifting each element right: arr[i] = arr[i-1].
+2. Iterate from `size` down to `index+1`, shifting each element right: arr[i] = arr[i-1].
 3. Write the new value at `arr[index]` and increment `size`.
 4. For removal: shift elements left from `index` onward, decrement `size`.
 

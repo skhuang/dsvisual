@@ -45,9 +45,10 @@ A fixed-size array is used with two pointers `front` and `rear` plus a `count` c
 
 | Operation | Time | Space |
 | --- | --- | --- |
-| enqueue | $O(1)$ | $O(N)$ |
+| enqueue | $O(1)$ | $O(1)$ |
 | dequeue | $O(1)$ | $O(1)$ |
 | peek (front) | $O(1)$ | $O(1)$ |
+| Total Space | — | $O(N)$ |
 
 $$T_{\text{enqueue}}(n) = O(1)$$
 
