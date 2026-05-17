@@ -90,3 +90,29 @@ test('svg block → markdown and html embed raw svg', () => {
   assert.equal(b.blockToMarkdown(block, 'zh', {}), '<svg id="t"></svg>');
   assert.equal(b.blockToHtml(block, 'zh', {}), '<div class="slide-figure"><svg id="t"></svg></div>');
 });
+
+test('collectMermaid returns unique sources', () => {
+  const db = {
+    t1: { slides: [{ heading: {}, blocks: [
+      { type: 'mermaid', code: 'graph A' },
+      { type: 'mermaid', code: 'graph A' },
+    ] }] },
+    t2: { slides: [{ heading: {}, blocks: [{ type: 'mermaid', code: 'graph B' }] }] },
+  };
+  assert.deepEqual(b.collectMermaid(db).sort(), ['graph A', 'graph B']);
+});
+
+test('mermaid block → markdown embeds pre-rendered svg', () => {
+  const ctx = { mermaidSvg: new Map([['graph A', '<svg id="m"></svg>']]) };
+  assert.equal(b.blockToMarkdown({ type: 'mermaid', code: 'graph A' }, 'zh', ctx), '<svg id="m"></svg>');
+});
+
+test('mermaid block → html wraps pre-rendered svg', () => {
+  const ctx = { mermaidSvg: new Map([['graph A', '<svg id="m"></svg>']]) };
+  assert.equal(b.blockToHtml({ type: 'mermaid', code: 'graph A' }, 'zh', ctx),
+    '<div class="slide-figure mermaid-figure"><svg id="m"></svg></div>');
+});
+
+test('mermaid block missing from ctx throws', () => {
+  assert.throws(() => b.blockToMarkdown({ type: 'mermaid', code: 'X' }, 'zh', { mermaidSvg: new Map() }));
+});

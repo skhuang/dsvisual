@@ -55,6 +55,8 @@ function blockToMarkdown(block, lang, ctx) {
       return '![' + pick(block.alt, lang) + '](../' + block.src + ')';
     case 'svg':
       return block.svg;
+    case 'mermaid':
+      return mermaidSvg(block, ctx);
     default:
       throw new Error('Unknown block type: ' + block.type);
   }
@@ -93,9 +95,29 @@ function blockToHtml(block, lang, ctx) {
     }
     case 'svg':
       return '<div class="slide-figure">' + block.svg + '</div>';
+    case 'mermaid':
+      return '<div class="slide-figure mermaid-figure">' + mermaidSvg(block, ctx) + '</div>';
     default:
       throw new Error('Unknown block type: ' + block.type);
   }
 }
 
-module.exports = { pick, escapeHtml, inlineHtml, blockToMarkdown, blockToHtml };
+function collectMermaid(slidesDb) {
+  const seen = new Set();
+  for (const id of Object.keys(slidesDb)) {
+    for (const slide of slidesDb[id].slides) {
+      for (const block of slide.blocks) {
+        if (block.type === 'mermaid') seen.add(block.code);
+      }
+    }
+  }
+  return Array.from(seen);
+}
+
+function mermaidSvg(block, ctx) {
+  const svg = ctx && ctx.mermaidSvg && ctx.mermaidSvg.get(block.code);
+  if (!svg) throw new Error('Mermaid source not pre-rendered: ' + block.code.slice(0, 40));
+  return svg;
+}
+
+module.exports = { pick, escapeHtml, inlineHtml, blockToMarkdown, blockToHtml, collectMermaid };
