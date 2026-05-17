@@ -51,7 +51,7 @@ test.describe('Responsive Viewport: iPhone 12', () => {
 
   test('can access method sections and slides on mobile', async ({ page }) => {
     await expect(page.locator('[data-testid="category-nav"]')).toBeVisible();
-    await expect(page.locator('[data-testid="method-sections"] [data-method-section]')).toHaveCount(4);
+    await expect(page.locator('[data-testid="method-sections"] [data-method-section]')).toHaveCount(1);
 
     await page.locator('[data-method-section="stack-array"] .method-slides-btn').click();
     await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();

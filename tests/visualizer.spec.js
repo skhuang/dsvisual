@@ -53,16 +53,18 @@ test.describe('Data Structure Visualizer Full Suite', () => {
 
         await categoryNav.getByRole('button', { name: 'Non-Linear Structures' }).click();
         await page.waitForSelector('[data-method-section]', { timeout: 5000 });
-        await expect(page.locator('[data-testid="method-sections"] [data-method-section="tree-trie"]')).toBeVisible();
+        await expect(page.locator('[data-testid="method-sections"] [data-method-section="tree-bst"]')).toBeVisible();
     });
 
     test('Phase 2 method sections: renders selected category methods and loads a method', async ({ page }) => {
         const methodSections = page.locator('[data-testid="method-sections"]');
         await expect(methodSections).toBeVisible();
-        await expect(methodSections.locator('[data-method-section]')).toHaveCount(4);
+        await expect(methodSections.locator('[data-method-section]')).toHaveCount(1);
         await expect(methodSections.locator('[data-method-section="stack-array"] .method-section-code')).toContainText('stack_array.cpp');
+        await expect(methodSections.locator('[data-method-section="queue"]')).toHaveCount(0);
 
         await loadMethod(page, 'sort-bubble');
+        await expect(methodSections.locator('[data-method-section]')).toHaveCount(1);
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toBeVisible();
         await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-code')).toContainText('sort_bubble.cpp');
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
@@ -71,11 +73,11 @@ test.describe('Data Structure Visualizer Full Suite', () => {
     test('Phase 3 runtime boundary: method sections track active and loaded states', async ({ page }) => {
         const methodSections = page.locator('[data-testid="method-sections"]');
         await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'active');
-        await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'idle');
+        await expect(methodSections.locator('[data-method-section="queue"]')).toHaveCount(0);
 
         await loadMethod(page, 'queue');
         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'active');
-        await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'loaded');
+        await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveCount(0);
     });
 
     test('Phase 4 slides viewer: opens method explanation and closes', async ({ page }) => {
@@ -92,19 +94,20 @@ test.describe('Data Structure Visualizer Full Suite', () => {
     });
 
     test('Phase 5 regression: every top-level category renders method sections', async ({ page }) => {
-        const expectedCounts = [
-            ['Basic Linear Structures', 4],
-            ['Linked Lists', 1],
-            ['Non-Linear Structures', 13],
-            ['Advanced & Application-Specific', 23],
-            ['OOP Concepts', 3],
-            ['Design Patterns', 6],
+        const expectedFirstMethods = [
+            ['Basic Linear Structures', 'stack-array'],
+            ['Linked Lists', 'list-linked'],
+            ['Non-Linear Structures', 'tree-bst'],
+            ['Advanced & Application-Specific', 'hash-chain'],
+            ['OOP Concepts', 'oop-inheritance'],
+            ['Design Patterns', 'pattern-singleton'],
         ];
 
-        for (const [category, count] of expectedCounts) {
+        for (const [category, methodId] of expectedFirstMethods) {
             await page.locator('[data-testid="category-nav"]').getByRole('button', { name: category }).click();
             await page.waitForSelector('[data-method-section]', { timeout: 5000 });
-            await expect(page.locator('[data-testid="method-sections"] [data-method-section]')).toHaveCount(count);
+            await expect(page.locator('[data-testid="method-sections"] [data-method-section]')).toHaveCount(1);
+            await expect(page.locator(`[data-method-section="${methodId}"]`)).toHaveAttribute('data-runtime-state', 'active');
         }
     });
 
@@ -190,7 +193,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         
         await loadMethod(page, 'queue');
         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'active');
-        await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'loaded');
+        await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveCount(0);
         
         await loadMethod(page, 'sort-bubble');
         await loadMethod(page, 'queue');
