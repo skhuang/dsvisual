@@ -1227,3 +1227,57 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
         color: #60a5fa;
     }
 }
+
+/* ----- Generated slide decks ----- */
+.slide-viewer-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.slide-lang-toggle {
+    border: 1px solid var(--border, #cbd5e1);
+    background: #fff;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.slide-lang-toggle:hover { background: #f1f5f9; }
+.slide-viewer-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 12px 0;
+}
+.slide-viewer-body th,
+.slide-viewer-body td {
+    border: 1px solid var(--border, #cbd5e1);
+    padding: 6px 10px;
+    text-align: left;
+}
+.slide-viewer-body .note {
+    border-left: 3px solid var(--primary, #2563eb);
+    background: #f1f5f9;
+    padding: 8px 12px;
+    margin: 12px 0;
+    border-radius: 4px;
+}
+.slide-viewer-body .slide-figure,
+.slide-viewer-body figure {
+    margin: 12px 0;
+    text-align: center;
+}
+.slide-viewer-body .slide-figure svg,
+.slide-viewer-body figure img {
+    max-width: 100%;
+    height: auto;
+}
+.slide-viewer-body figcaption,
+.slide-viewer-body .slide-caption {
+    font-size: 13px;
+    color: var(--muted, #64748b);
+    margin-top: 4px;
+}
+.slide-viewer-body .slide-math {
+    margin: 12px 0;
+    text-align: center;
+}
