@@ -88,8 +88,8 @@ test.describe('Data Structure Visualizer Full Suite', () => {
 
         await methodSections.locator('[data-method-section="stack-array"] .method-slides-btn').click();
         await expect(slideViewer).toBeVisible();
-        await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array)');
-        await expect(page.locator('#slide-viewer-body')).toContainText('Stack');
+        await expect(page.locator('#slide-viewer-title')).toHaveText('堆疊(陣列實作)');
+        await expect(page.locator('#slide-viewer-body')).toContainText('堆疊');
 
         await page.locator('.slide-viewer-close').click();
         await expect(slideViewer).not.toBeVisible();
