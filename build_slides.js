@@ -51,6 +51,10 @@ function blockToMarkdown(block, lang, ctx) {
       const formula = '$$' + block.tex + '$$';
       return block.caption ? formula + '\n\n' + pick(block.caption, lang) : formula;
     }
+    case 'image':
+      return '![' + pick(block.alt, lang) + '](../' + block.src + ')';
+    case 'svg':
+      return block.svg;
     default:
       throw new Error('Unknown block type: ' + block.type);
   }
@@ -81,6 +85,14 @@ function blockToHtml(block, lang, ctx) {
         ? formula + '<p class="slide-caption">' + inlineHtml(pick(block.caption, lang)) + '</p>'
         : formula;
     }
+    case 'image': {
+      const img = '<img src="slides/' + block.src + '" alt="' + escapeHtml(pick(block.alt, lang)) + '">';
+      return block.caption
+        ? '<figure>' + img + '<figcaption>' + inlineHtml(pick(block.caption, lang)) + '</figcaption></figure>'
+        : '<figure>' + img + '</figure>';
+    }
+    case 'svg':
+      return '<div class="slide-figure">' + block.svg + '</div>';
     default:
       throw new Error('Unknown block type: ' + block.type);
   }

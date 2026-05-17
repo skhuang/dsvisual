@@ -73,3 +73,20 @@ test('inline $...$ in paragraph → katex html', () => {
 test('plain text without $ is unaffected', () => {
   assert.equal(b.blockToHtml({ type: 'paragraph', text: { zh: 'x', en: 'plain' } }, 'en', {}), '<p>plain</p>');
 });
+
+test('image block → markdown', () => {
+  const block = { type: 'image', src: 'assets/x.png', alt: { zh: '圖', en: 'pic' } };
+  assert.equal(b.blockToMarkdown(block, 'en', {}), '![pic](../assets/x.png)');
+});
+
+test('image block with caption → html figure', () => {
+  const block = { type: 'image', src: 'assets/x.png', alt: { zh: '圖', en: 'pic' }, caption: { zh: '說', en: 'cap' } };
+  assert.equal(b.blockToHtml(block, 'en', {}),
+    '<figure><img src="slides/assets/x.png" alt="pic"><figcaption>cap</figcaption></figure>');
+});
+
+test('svg block → markdown and html embed raw svg', () => {
+  const block = { type: 'svg', svg: '<svg id="t"></svg>' };
+  assert.equal(b.blockToMarkdown(block, 'zh', {}), '<svg id="t"></svg>');
+  assert.equal(b.blockToHtml(block, 'zh', {}), '<div class="slide-figure"><svg id="t"></svg></div>');
+});
