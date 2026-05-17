@@ -294,23 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function mountActiveRuntime(section) {
         const visualHost = section.querySelector('.method-section-visual');
         if (!visualHost) return;
-        
-        // Get method info
-        const methodId = section.dataset.methodSection;
-        let method = null;
-        for (const group of METHOD_GROUPS) {
-            method = group.methods.find(m => m.id === methodId);
-            if (method) break;
-        }
-        
-        // For OOP and pattern visualizations (not yet implemented), just add the class
-        if (method && (method.visualizer === 'oop' || method.visualizer === 'pattern')) {
-            visualHost.classList.add('method-section-visual-live');
-            visualHost.setAttribute('aria-label', 'Active visualization');
-            return;
-        }
-        
-        // For other visualizations, mount the runtime components
         if (!runtimeControls || !runtimeVisualizer) return;
         visualHost.classList.add('method-section-visual-live');
         visualHost.setAttribute('aria-label', 'Active interactive visualization');
@@ -322,18 +305,24 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderMethodSections(groupId) {
         if (!methodSections) return;
         const group = getMethodGroupById(groupId);
+        const runtimeFragment = document.createDocumentFragment();
+        if (runtimeControls?.parentNode) runtimeFragment.appendChild(runtimeControls);
+        if (runtimeVisualizer?.parentNode) runtimeFragment.appendChild(runtimeVisualizer);
         methodSections.innerHTML = '';
         const heading = document.createElement('div');
         heading.className = 'method-sections-heading';
         heading.innerHTML = `<h2>${group.title}</h2><p>${group.methods.length} methods</p>`;
         methodSections.appendChild(heading);
 
-        // 允許傳入 activeMethodId，否則預設第一個 active
-        let activeMethodId = arguments[1];
-        group.methods.forEach((method, idx) => {
-            const isActive = (activeMethodId ? method.id === activeMethodId : idx === 0);
+        const activeMethodId = arguments[1] || (
+            group.methods.some((method) => method.id === visualizerRuntime.activeMode)
+                ? visualizerRuntime.activeMode
+                : group.methods[0]?.id
+        );
+        group.methods.forEach((method) => {
+            const isActive = method.id === activeMethodId;
             const runtimeState = isActive ? 'active' : (visualizerRuntime.loadedMethods.has(method.id) ? 'loaded' : 'idle');
-            if (isActive) visualizerRuntime.setMode(method.id);
+            if (isActive && visualizerRuntime.activeMode !== method.id) visualizerRuntime.setMode(method.id);
             const section = document.createElement('section');
             section.className = 'method-section-card';
             section.dataset.methodSection = method.id;
@@ -490,8 +479,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 if (groupId) {
                     setActiveCategory(groupId);
-                    visualizerRuntime.setMode(methodId);
-                    renderMethodSections(groupId, methodId);
+                    selectMethod(methodId);
                     scrollToCategory(groupId);
                 }
             });
@@ -521,8 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     methodBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         setActiveCategory(group.id);
-                        visualizerRuntime.setMode(method.id);
-                        renderMethodSections(group.id, method.id);
+                        selectMethod(method.id);
                         scrollToCategory(group.id);
                     });
                     submenu.appendChild(methodBtn);
@@ -534,8 +521,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 預設第一個 method active
                     const firstMethod = group.methods[0];
                     if (firstMethod) {
-                        visualizerRuntime.setMode(firstMethod.id);
-                        renderMethodSections(group.id, firstMethod.id);
+                        selectMethod(firstMethod.id);
                     }
                     scrollToCategory(group.id);
                 });
