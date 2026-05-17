@@ -434,90 +434,63 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderCategoryNav() {
         if (!categoryNav) return;
         categoryNav.innerHTML = '';
-        
-        // 檢查是否為行動版 (< 640px)
-        const isMobile = window.innerWidth < 640;
-        
-        if (isMobile) {
-            // 行動版：使用 <select> 下拉選單，包含分組方法
-            const select = document.createElement('select');
-            select.className = 'category-nav-select';
-            select.setAttribute('aria-label', 'Select data structure category and method');
-            
-            METHOD_GROUPS.forEach((group) => {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = group.title;
-                group.methods.forEach((method) => {
-                    const option = document.createElement('option');
-                    option.value = method.id;
-                    option.textContent = method.title;
-                    optgroup.appendChild(option);
-                });
-                select.appendChild(optgroup);
-            });
-            
-            select.addEventListener('change', (e) => {
-                const methodId = e.target.value;
-                // 找到方法所屬的分組
-                let groupId = null;
-                for (const group of METHOD_GROUPS) {
-                    if (group.methods.some(m => m.id === methodId)) {
-                        groupId = group.id;
-                        break;
-                    }
-                }
-                if (groupId) {
-                    setActiveCategory(groupId);
-                    selectMethod(methodId);
-                    scrollToCategory(groupId);
-                }
-            });
-            
-            categoryNav.appendChild(select);
-        } else {
-            // 桌機版：菜單導航 (按鈕 + 子選單)
-            METHOD_GROUPS.forEach((group) => {
-                const groupMenu = document.createElement('div');
-                groupMenu.className = 'category-nav-menu';
-                const groupBtn = document.createElement('button');
-                groupBtn.type = 'button';
-                groupBtn.className = 'category-nav-btn';
-                groupBtn.dataset.group = group.id;
-                groupBtn.textContent = group.title;
-                groupMenu.appendChild(groupBtn);
+        categoryButtons.clear();
 
-                // 子選單
-                const submenu = document.createElement('div');
-                submenu.className = 'category-nav-submenu';
-                group.methods.forEach((method, idx) => {
-                    const methodBtn = document.createElement('button');
-                    methodBtn.type = 'button';
-                    methodBtn.className = 'category-nav-method-btn';
-                    methodBtn.dataset.method = method.id;
-                    methodBtn.textContent = method.title;
-                    methodBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        setActiveCategory(group.id);
-                        selectMethod(method.id);
-                        scrollToCategory(group.id);
-                    });
-                    submenu.appendChild(methodBtn);
-                });
-                groupMenu.appendChild(submenu);
+        const methodSelect = document.createElement('select');
+        methodSelect.className = 'category-method-select';
+        methodSelect.dataset.testid = 'method-select';
+        methodSelect.setAttribute('aria-label', 'Select method');
 
-                groupBtn.addEventListener('click', () => {
-                    setActiveCategory(group.id);
-                    // 預設第一個 method active
-                    const firstMethod = group.methods[0];
-                    if (firstMethod) {
-                        selectMethod(firstMethod.id);
-                    }
-                    scrollToCategory(group.id);
-                });
-                categoryButtons.set(group.id, groupBtn);
-                categoryNav.appendChild(groupMenu);
+        function renderMethodDropdown(group, selectedMethodId) {
+            methodSelect.innerHTML = '';
+            group.methods.forEach((method) => {
+                const option = document.createElement('option');
+                option.value = method.id;
+                option.textContent = method.title;
+                methodSelect.appendChild(option);
             });
+            methodSelect.dataset.group = group.id;
+            const hasSelectedMethod = group.methods.some((method) => method.id === selectedMethodId);
+            methodSelect.value = hasSelectedMethod ? selectedMethodId : group.methods[0]?.id || '';
         }
+
+        function activateGroup(groupId, methodId) {
+            const group = getMethodGroupById(groupId);
+            if (!group) return;
+            const nextMethod = methodId || group.methods[0]?.id;
+            setActiveCategory(group.id);
+            renderMethodDropdown(group, nextMethod);
+            if (nextMethod) {
+                selectMethod(nextMethod);
+            }
+            scrollToCategory(group.id);
+        }
+
+        METHOD_GROUPS.forEach((group) => {
+            const groupBtn = document.createElement('button');
+            groupBtn.type = 'button';
+            groupBtn.className = 'category-nav-btn';
+            groupBtn.dataset.group = group.id;
+            groupBtn.textContent = group.title;
+            groupBtn.addEventListener('click', () => activateGroup(group.id));
+            categoryButtons.set(group.id, groupBtn);
+            categoryNav.appendChild(groupBtn);
+        });
+
+        methodSelect.addEventListener('change', (event) => {
+            const methodId = event.target.value;
+            const group = getMethodGroupForMode(methodId);
+            setActiveCategory(group.id);
+            renderMethodDropdown(group, methodId);
+            selectMethod(methodId);
+            scrollToCategory(group.id);
+        });
+
+        categoryNav.appendChild(methodSelect);
+
+        const initialGroup = getMethodGroupForMode('stack-array');
+        setActiveCategory(initialGroup.id);
+        renderMethodDropdown(initialGroup, 'stack-array');
     }
 
     function scrollToCategory(groupId) {

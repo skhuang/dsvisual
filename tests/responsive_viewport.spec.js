@@ -6,43 +6,22 @@ const { defaultBrowserType: _iphoneBrowser, ...iphone12 } = devices['iPhone 12']
 const { defaultBrowserType: _ipadBrowser, ...ipadMini } = devices['iPad Mini'];
 
 async function loadMethod(page, methodId) {
-  // 取得當前視口大小
-  const viewport = await page.viewportSize();
-  const isMobile = viewport.width < 640;
-  
-  if (isMobile) {
-    // 行動版：使用 <select> 選擇器（包含 optgroup）
-    const select = page.locator('.category-nav-select');
-    if (await select.count()) {
-      // 直接選擇方法 (option value = methodId)
-      await select.selectOption(methodId);
-      await page.waitForTimeout(500);
-      const methodCard = page.locator(`[data-method-section="${methodId}"]`);
-      if (await methodCard.count()) {
-        await methodCard.scrollIntoViewIfNeeded();
-        await expect(methodCard).toHaveAttribute('data-runtime-state', 'active');
-        return;
-      }
-      throw new Error(`Method ${methodId} card not found after selection`);
+  const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
+  const methodSelect = page.locator('[data-testid="method-select"]');
+  const count = await categoryButtons.count();
+
+  for (let i = 0; i < count; i++) {
+    await categoryButtons.nth(i).click();
+    const hasOption = await methodSelect.locator(`option[value="${methodId}"]`).count();
+    if (hasOption) {
+      await methodSelect.selectOption(methodId);
+      const card = page.locator(`[data-method-section="${methodId}"]`);
+      await card.scrollIntoViewIfNeeded();
+      await expect(card).toHaveAttribute('data-runtime-state', 'active');
+      return;
     }
-    throw new Error('Category select not found on mobile');
-  } else {
-    // 桌機版：使用菜單按鈕和子選單
-    const allMethodBtns = page.locator('button[data-method]');
-    const count = await allMethodBtns.count();
-    
-    for (let i = 0; i < count; i++) {
-      const method = await allMethodBtns.nth(i).getAttribute('data-method');
-      if (method === methodId) {
-        await allMethodBtns.nth(i).click();
-        await page.waitForTimeout(500);
-        const card = page.locator(`[data-method-section="${methodId}"]`);
-        await expect(card).toHaveAttribute('data-runtime-state', 'active');
-        return;
-      }
-    }
-    throw new Error(`Method ${methodId} not found in desktop menu`);
   }
+  throw new Error(`Method ${methodId} not found in method dropdown`);
 }
 
 test.describe('Responsive Viewport: iPhone 12', () => {
