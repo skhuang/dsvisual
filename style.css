@@ -255,6 +255,13 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     position: fixed;
     inset: 0;
     z-index: 300;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+.slide-viewer.open {
+    opacity: 1;
+    pointer-events: auto;
 }
 .slide-viewer[hidden] {
     display: none;
@@ -277,6 +284,17 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     box-shadow: 0 24px 70px rgba(15, 23, 42, 0.28);
     outline: none;
     overflow: hidden;
+    animation: slideInUp 0.3s ease;
+}
+@keyframes slideInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 .slide-viewer-header {
     display: flex;
@@ -307,6 +325,11 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     cursor: pointer;
     font-size: 1.35rem;
     line-height: 1;
+    transition: all 0.2s ease;
+}
+.slide-viewer-close:hover {
+    background: rgba(52, 152, 219, 0.1);
+    border-color: var(--primary-color);
 }
 .slide-viewer-body {
     flex: 1 1 auto;
@@ -344,6 +367,27 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     padding: 14px 20px;
     border-top: 1px solid var(--card-border);
     background: var(--surface-muted);
+}
+
+.slide-viewer-footer .btn {
+    position: relative;
+}
+
+.slide-viewer-footer .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.slide-viewer-footer .btn.primary::after {
+    content: ' (→ Space)';
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+.slide-viewer-footer .btn.secondary::after {
+    content: ' (←)';
+    font-size: 0.75rem;
+    opacity: 0.6;
 }
 
 .mode-toggle { display: flex; flex-wrap: wrap; gap: 4px; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 0.35rem; }
