@@ -44,8 +44,6 @@ async function loadMethod(page, methodId) {
     throw new Error(`Method ${methodId} not found in desktop menu`);
   }
 }
-}
-
 
 test.describe('Responsive Viewport: iPhone 12', () => {
   test.use(iphone12);
