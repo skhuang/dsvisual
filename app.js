@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
         methodSections.innerHTML = '';
         const heading = document.createElement('div');
         heading.className = 'method-sections-heading';
-        heading.innerHTML = `<h2>${group.title}</h2><p>${group.methods.length} methods</p>`;
+        heading.innerHTML = `<h2>${group.title}</h2><p>1 of ${group.methods.length} methods</p>`;
         methodSections.appendChild(heading);
 
         const activeMethodId = arguments[1] || (
@@ -310,40 +310,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? visualizerRuntime.activeMode
                 : group.methods[0]?.id
         );
-        group.methods.forEach((method) => {
-            const isActive = method.id === activeMethodId;
-            const runtimeState = isActive ? 'active' : (visualizerRuntime.loadedMethods.has(method.id) ? 'loaded' : 'idle');
-            if (isActive && visualizerRuntime.activeMode !== method.id) visualizerRuntime.setMode(method.id);
-            const section = document.createElement('section');
-            section.className = 'method-section-card';
-            section.dataset.methodSection = method.id;
-            section.dataset.runtimeState = runtimeState;
-            section.classList.toggle('active', isActive);
-            section.innerHTML = `
-                <div class="method-section-header">
-                    <div>
-                        <span class="method-section-kicker">${group.title}</span>
-                        <h3>${method.title}</h3>
-                    </div>
-                    <div class="method-section-actions">
-                        <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
-                    </div>
+        const method = group.methods.find((candidate) => candidate.id === activeMethodId) || group.methods[0];
+        if (!method) return;
+        if (visualizerRuntime.activeMode !== method.id) visualizerRuntime.setMode(method.id);
+        const section = document.createElement('section');
+        section.className = 'method-section-card active';
+        section.dataset.methodSection = method.id;
+        section.dataset.runtimeState = 'active';
+        section.innerHTML = `
+            <div class="method-section-header">
+                <div>
+                    <span class="method-section-kicker">${group.title}</span>
+                    <h3>${method.title}</h3>
                 </div>
-                <div class="method-section-grid">
-                    <div class="method-section-visual" aria-label="${method.title} visualization shell">
-                        <span>${method.visualizer}</span>
-                        <strong>${method.title}</strong>
-                    </div>
-                    <div class="method-section-code">
-                        <div class="method-code-title">${method.file}</div>
-                        <pre><code>${getEscapedCode(method.id)}</code></pre>
-                    </div>
+                <div class="method-section-actions">
+                    <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
                 </div>
-            `;
-            section.querySelector('.method-slides-btn').addEventListener('click', () => openSlides(method.id));
-            methodSections.appendChild(section);
-            if (isActive) mountActiveRuntime(section);
-        });
+            </div>
+            <div class="method-section-grid">
+                <div class="method-section-visual" aria-label="${method.title} visualization shell">
+                    <span>${method.visualizer}</span>
+                    <strong>${method.title}</strong>
+                </div>
+                <div class="method-section-code">
+                    <div class="method-code-title">${method.file}</div>
+                    <pre><code>${getEscapedCode(method.id)}</code></pre>
+                </div>
+            </div>
+        `;
+        section.querySelector('.method-slides-btn').addEventListener('click', () => openSlides(method.id));
+        methodSections.appendChild(section);
+        mountActiveRuntime(section);
     }
 
     function selectMethod(methodId) {
