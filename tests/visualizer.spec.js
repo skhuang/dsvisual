@@ -2,22 +2,21 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 async function loadMethod(page, methodId) {
-    // 首先找到包含此 method 的 group，通過在所有 submenu button 中搜尋
-    const allMethodBtns = page.locator('button[data-method]');
-    const count = await allMethodBtns.count();
-    
+    const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
+    const methodSelect = page.locator('[data-testid="method-select"]');
+    const count = await categoryButtons.count();
+
     for (let i = 0; i < count; i++) {
-        const method = await allMethodBtns.nth(i).getAttribute('data-method');
-        if (method === methodId) {
-            // 找到了，點擊它
-            await allMethodBtns.nth(i).click();
-            await page.waitForTimeout(500); // 等待 UI 更新
+        await categoryButtons.nth(i).click();
+        const hasOption = await methodSelect.locator(`option[value="${methodId}"]`).count();
+        if (hasOption) {
+            await methodSelect.selectOption(methodId);
             const card = page.locator(`[data-method-section="${methodId}"]`);
             await expect(card).toHaveAttribute('data-runtime-state', 'active');
             return;
         }
     }
-    throw new Error(`Method ${methodId} not found in menu`);
+    throw new Error(`Method ${methodId} not found in method dropdown`);
 }
 
 test.describe('Data Structure Visualizer Full Suite', () => {
@@ -41,11 +40,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const categoryNav = page.locator('[data-testid="category-nav"]');
         await expect(categoryNav).toBeVisible();
         await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(6);
+        await expect(categoryNav.locator('[data-testid="method-select"]')).toBeVisible();
         await expect(page.locator('[data-testid="method-sections"] [data-method-section="stack-array"]')).toBeVisible();
+        await expect(categoryNav.locator('button[data-method], .category-nav-submenu')).toHaveCount(0);
 
         await categoryNav.getByRole('button', { name: 'Advanced & Application-Specific' }).click();
         await page.waitForSelector('[data-method-section]', { timeout: 5000 });
+        await expect(categoryNav.locator('[data-testid="method-select"] option[value="sort-bubble"]')).toHaveCount(1);
+        await categoryNav.locator('[data-testid="method-select"]').selectOption('sort-bubble');
         await expect(page.locator('[data-testid="method-sections"] [data-method-section="sort-bubble"]')).toBeVisible();
+        await expect(page.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
 
         await categoryNav.getByRole('button', { name: 'Non-Linear Structures' }).click();
         await page.waitForSelector('[data-method-section]', { timeout: 5000 });
@@ -58,7 +62,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(methodSections.locator('[data-method-section]')).toHaveCount(4);
         await expect(methodSections.locator('[data-method-section="stack-array"] .method-section-code')).toContainText('stack_array.cpp');
 
-        await page.locator('[data-testid="category-nav"] button[data-method="sort-bubble"]').click();
+        await loadMethod(page, 'sort-bubble');
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toBeVisible();
         await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-code')).toContainText('sort_bubble.cpp');
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
@@ -69,7 +73,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'active');
         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'idle');
 
-        await page.locator('[data-testid="category-nav"] button[data-method="queue"]').click();
+        await loadMethod(page, 'queue');
         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'active');
         await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'loaded');
     });
@@ -175,8 +179,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
     test('Primary UI: can select mode from different categories', async ({ page }) => {
         const methodSections = page.locator('[data-testid="method-sections"]');
         
-        // Switch by menu method button
-        await page.locator('[data-testid="category-nav"] button[data-method="sort-bubble"]').click();
+        await loadMethod(page, 'sort-bubble');
         
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
         await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-code')).toContainText('sort_bubble.cpp');
@@ -185,14 +188,12 @@ test.describe('Data Structure Visualizer Full Suite', () => {
     test('Primary UI: switching methods tracks active and loaded cards', async ({ page }) => {
         const methodSections = page.locator('[data-testid="method-sections"]');
         
-        // Switch to queue directly from menu
-        await page.locator('[data-testid="category-nav"] button[data-method="queue"]').click();
+        await loadMethod(page, 'queue');
         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'active');
         await expect(methodSections.locator('[data-method-section="stack-array"]')).toHaveAttribute('data-runtime-state', 'loaded');
         
-        // Switch to a different method and back
-        await page.locator('[data-testid="category-nav"] button[data-method="sort-bubble"]').click();
-        await page.locator('[data-testid="category-nav"] button[data-method="queue"]').click();
+        await loadMethod(page, 'sort-bubble');
+        await loadMethod(page, 'queue');
         
         // Queue should still be active
         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveAttribute('data-runtime-state', 'active');

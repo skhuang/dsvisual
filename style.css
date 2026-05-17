@@ -62,6 +62,8 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 .app-category-nav {
     display: flex;
     justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 6px;
     padding: 10px 20px 8px;
     background: var(--card-bg);
@@ -95,6 +97,19 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     background: var(--primary-hover);
     border-color: var(--primary-hover);
     color: #fff;
+}
+.category-method-select {
+    flex: 0 1 320px;
+    min-width: 220px;
+    padding: 8px 12px;
+    border: 1px solid var(--card-border);
+    border-radius: var(--app-radius-md);
+    background: var(--card-bg);
+    color: var(--text-main);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
 }
 .glass-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--app-radius-lg); padding: 1.25rem; display: flex; flex-direction: column; box-shadow: var(--app-shadow-md); }
 .runtime-stage {
@@ -811,27 +826,14 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
     }
 }
 
-.category-nav-select {
-    display: none;
-    flex: 1;
-    padding: 8px 12px;
-    border: 1px solid var(--card-border);
-    border-radius: var(--app-radius-md);
-    background: var(--card-bg);
-    color: var(--text-main);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
 @media (max-width: 639px) {
-    .category-nav-select {
-        display: block;
+    .app-category-nav {
+        align-items: stretch;
     }
-    
-    .category-nav-btn,
-    .category-nav-submenu {
-        display: none;
+
+    .category-method-select {
+        flex: 1 0 100%;
+        width: 100%;
     }
 }
 

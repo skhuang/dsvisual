@@ -12,11 +12,21 @@ const heapModes = [
 ];
 
 async function loadMethod(page, methodId) {
-    const methodBtn = page.locator(`[data-testid="category-nav"] button[data-method="${methodId}"]`);
-    await expect(methodBtn).toHaveCount(1);
-    await methodBtn.click();
-    const card = page.locator(`[data-method-section="${methodId}"]`);
-    await expect(card).toHaveAttribute('data-runtime-state', 'active');
+    const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
+    const methodSelect = page.locator('[data-testid="method-select"]');
+    const count = await categoryButtons.count();
+
+    for (let i = 0; i < count; i++) {
+        await categoryButtons.nth(i).click();
+        const hasOption = await methodSelect.locator(`option[value="${methodId}"]`).count();
+        if (hasOption) {
+            await methodSelect.selectOption(methodId);
+            const card = page.locator(`[data-method-section="${methodId}"]`);
+            await expect(card).toHaveAttribute('data-runtime-state', 'active');
+            return;
+        }
+    }
+    throw new Error(`Method ${methodId} not found in method dropdown`);
 }
 
 test.describe('Heap Visualizer Suite', () => {
