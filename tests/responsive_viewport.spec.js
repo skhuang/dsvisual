@@ -57,7 +57,7 @@ test.describe('Responsive Viewport: iPhone 12', () => {
     const stackCard = page.locator('[data-method-section="stack-array"]');
     await expect(stackCard).toHaveAttribute('data-runtime-state', 'active');
     await expect(stackCard.locator('.method-code-title')).toHaveText('stack_array.cpp');
-    await expect(stackCard.locator('h3')).toHaveText('Stack (Array)');
+    await expect(stackCard.locator('.method-section-header h3')).toHaveText('Stack (Array)');
     await expect(stackCard.locator('.method-section-visual')).toBeVisible();
     await expect(stackCard.locator('.method-slides-btn')).toBeVisible();
   });
@@ -102,7 +102,7 @@ test.describe('Responsive Viewport: iPad Mini', () => {
     await loadMethod(page, 'heap-binary');
     const heapCard = page.locator('[data-method-section="heap-binary"]');
     await expect(heapCard).toHaveAttribute('data-runtime-state', 'active');
-    await expect(heapCard.locator('h3')).toContainText('Binary Heap');
+    await expect(heapCard.locator('.method-section-header h3')).toContainText('Binary Heap');
     await expect(heapCard.locator('.method-code-title')).toHaveText('heap_binary.cpp');
     await expect(heapCard.locator('.method-section-visual')).toBeVisible();
   });
