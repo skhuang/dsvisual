@@ -116,3 +116,19 @@ test('mermaid block → html wraps pre-rendered svg', () => {
 test('mermaid block missing from ctx throws', () => {
   assert.throws(() => b.blockToMarkdown({ type: 'mermaid', code: 'X' }, 'zh', { mermaidSvg: new Map() }));
 });
+
+test('deckToMarkdown emits frontmatter and slide separators', () => {
+  const deck = {
+    category: 'Cat', title: { zh: '標題', en: 'Title' },
+    slides: [
+      { heading: { zh: '一', en: 'One' }, blocks: [{ type: 'paragraph', text: { zh: 'a', en: 'a' } }] },
+      { heading: { zh: '二', en: 'Two' }, blocks: [{ type: 'paragraph', text: { zh: 'b', en: 'b' } }] },
+    ],
+  };
+  const md = b.deckToMarkdown('demo', deck, 'en', {});
+  assert.match(md, /^---\nmarp: true\n/);
+  assert.match(md, /math: katex\n/);
+  assert.match(md, /title: Title\n/);
+  assert.match(md, /\n## One\n\na\n/);
+  assert.match(md, /\n---\n\n## Two\n/);
+});

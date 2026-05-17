@@ -120,4 +120,25 @@ function mermaidSvg(block, ctx) {
   return svg;
 }
 
-module.exports = { pick, escapeHtml, inlineHtml, blockToMarkdown, blockToHtml, collectMermaid };
+function deckToMarkdown(id, deck, lang, ctx) {
+  const title = pick(deck.title, lang);
+  const frontmatter = [
+    '---',
+    'marp: true',
+    'theme: default',
+    'paginate: true',
+    'math: katex',
+    'title: ' + title,
+    '---',
+  ].join('\n');
+
+  const slides = deck.slides.map((slide) => {
+    const heading = '## ' + pick(slide.heading, lang);
+    const body = slide.blocks.map((blk) => blockToMarkdown(blk, lang, ctx)).join('\n\n');
+    return heading + '\n\n' + body;
+  });
+
+  return frontmatter + '\n\n' + slides.join('\n\n---\n\n') + '\n';
+}
+
+module.exports = { pick, escapeHtml, inlineHtml, blockToMarkdown, blockToHtml, collectMermaid, deckToMarkdown };
