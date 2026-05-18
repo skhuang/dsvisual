@@ -2640,6 +2640,931 @@ const SLIDES_DB = {
     ],
   },
 
+
+  'sort-bubble': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '泡沫排序法', en: 'Bubble Sort' },
+    slides: [
+      {
+        heading: { zh: '泡沫排序法', en: 'Bubble Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '泡沫排序法反覆比較相鄰元素,若順序錯誤則交換,每輪將當前未排序範圍中最大的元素「浮」至末端;加入提前結束機制後,最佳情況可達 $O(n)$。',
+            en: 'Bubble Sort repeatedly compares adjacent elements and swaps them if they are out of order, "bubbling" the largest unsorted element to the end each pass; with an early-exit flag, the best case reaches $O(n)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '外層迴圈控制輪數(最多 $n-1$ 輪);內層迴圈對 `[0, n-i-1]` 範圍做相鄰比較與交換。加入 `swapped` 旗標:若某輪未發生任何交換,代表陣列已有序,立即中止。',
+            en: 'The outer loop controls pass count (up to $n-1$ passes); the inner loop compares and swaps adjacent pairs in `[0, n-i-1]`. A `swapped` flag enables early exit: if no swap occurs in a pass, the array is already sorted.' } },
+          { type: 'bullets', items: [
+            { zh: '每輪結束後最右邊的元素確定就位,下一輪範圍縮短一格。', en: 'After each pass the rightmost element is in its final position; the next pass spans one fewer element.' },
+            { zh: 'stable:相等元素的相對順序不會改變(只在 arr[j] > arr[j+1] 時交換)。', en: 'stable: equal elements keep their relative order (swap only when arr[j] > arr[j+1]).' },
+            { zh: 'in-place:僅需 $O(1)$ 額外空間。', en: 'in-place: only $O(1)$ auxiliary space is needed.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '初始化 `swapped = false`。', en: 'Initialise `swapped = false`.' },
+            { zh: '對 `j = 0` 到 `n-i-2`:若 `arr[j] > arr[j+1]`,交換並設 `swapped = true`。', en: 'For `j = 0` to `n-i-2`: if `arr[j] > arr[j+1]`, swap and set `swapped = true`.' },
+            { zh: '本輪結束;若 `swapped == false` 則提前結束。', en: 'End of pass; if `swapped == false`, exit early.' },
+            { zh: '重複至所有元素就位(最多 $n-1$ 輪)。', en: 'Repeat until all elements are in place (at most $n-1$ passes).' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["[5,3,1,4]\\npass 1"] --> B["[3,1,4,5]\\nlargest=5 settled"]\n  B --> C["[1,3,4,5]\\npass 2 done"]\n  C --> D["[1,3,4,5]\\nno swap: exit early"]' },
+        ],
+      },
+      {
+        heading: { zh: '一輪交換示意', en: 'One Pass Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 90" width="360" height="90"><g font-family="sans-serif" font-size="13"><rect x="10" y="30" width="50" height="30" fill="#dbeafe" stroke="#2563eb"/><rect x="60" y="30" width="50" height="30" fill="#fef9c3" stroke="#ca8a04"/><rect x="110" y="30" width="50" height="30" fill="#fef9c3" stroke="#ca8a04"/><rect x="160" y="30" width="50" height="30" fill="#dbeafe" stroke="#2563eb"/><rect x="210" y="30" width="50" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="35" y="50" text-anchor="middle">1</text><text x="85" y="50" text-anchor="middle">5</text><text x="135" y="50" text-anchor="middle">3</text><text x="185" y="50" text-anchor="middle">2</text><text x="235" y="50" text-anchor="middle">4</text><text x="85" y="22" text-anchor="middle" fill="#ca8a04">j</text><text x="135" y="22" text-anchor="middle" fill="#ca8a04">j+1</text><text x="160" y="78" text-anchor="middle" fill="#dc2626">5 &gt; 3 → swap</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '黃色為當前比較的相鄰對;5 > 3 故交換。每輪最大值持續右移直至落入已排序區。',
+            en: 'Yellow cells are the current adjacent pair being compared; 5 > 3 so they swap. The maximum value migrates rightward each pass until it reaches the sorted region.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳(已排序)', en: 'Best (sorted)' }, { zh: '$O(n)$', en: '$O(n)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '平均', en: 'Average' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '最壞(逆序)', en: 'Worst (reverse)' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'stable / in-place', en: 'stable / in-place' }, { zh: '是', en: 'Yes' }, { zh: '輔助空間 $O(1)$', en: 'Auxiliary $O(1)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{worst}}(n) = \\sum_{i=1}^{n-1}(n-i) = \\frac{n(n-1)}{2} = O(n^2)', caption: {
+            zh: '最壞情況為逆序陣列:第 $i$ 輪需比較 $n-i$ 次,總計 $n(n-1)/2$ 次比較。',
+            en: 'Worst case is a reverse-sorted array: pass $i$ makes $n-i$ comparisons, totalling $n(n-1)/2$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void bubbleSort(int arr[], int n) {\n    for (int i = 0; i < n - 1; i++) {\n        bool swapped = false;\n        for (int j = 0; j < n - i - 1; j++) {\n            if (arr[j] > arr[j + 1]) {\n                int temp = arr[j];\n                arr[j] = arr[j + 1];\n                arr[j + 1] = temp;\n                swapped = true;\n            }\n        }\n        if (!swapped) break; // early exit\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:stable、in-place,實作最簡單。', en: 'Pro: stable, in-place, and trivially simple to implement.' },
+            { zh: '優點:加入提前結束後,幾乎有序資料可達 $O(n)$。', en: 'Pro: with early-exit, nearly sorted data completes in $O(n)$.' },
+            { zh: '缺點:平均與最壞均為 $O(n^2)$,大資料集效能差。', en: 'Con: average and worst case are $O(n^2)$; poor for large datasets.' },
+            { zh: '缺點:交換次數多,常數因子較 Insertion Sort 大。', en: 'Con: high swap count — larger constant factor than Insertion Sort.' },
+            { zh: '適用:教學示範或小型/幾乎已排序的資料集。', en: 'Use for teaching demonstrations or tiny / nearly-sorted datasets.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '每輪將最大值「泡」至末端;提前結束可偵測已排序。', en: 'Each pass "bubbles" the maximum to the end; early exit detects sorted state.' },
+            { zh: 'stable、in-place;最佳 $O(n)$,平均/最壞 $O(n^2)$。', en: 'stable, in-place; best $O(n)$, average/worst $O(n^2)$.' },
+            { zh: '主要價值在教學與極小資料集;大資料集請選用 Quick/Merge Sort。', en: 'Primary value is educational and for tiny datasets; choose Quick/Merge Sort for large inputs.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-select': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '選擇排序法', en: 'Selection Sort' },
+    slides: [
+      {
+        heading: { zh: '選擇排序法', en: 'Selection Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '選擇排序法每輪在未排序部分掃描一次,找出最小值並將其與該輪起始位置交換,逐步擴大已排序前綴;最多僅需 $n-1$ 次交換,但比較次數固定為 $O(n^2)$。',
+            en: 'Selection Sort scans the unsorted portion once per pass to find the minimum, then swaps it to the front of that portion, growing the sorted prefix one element at a time; at most $n-1$ swaps are made, though comparisons are always $O(n^2)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '外層迴圈 `i` 表示已排序前綴長度;內層迴圈從 `i+1` 掃描至末端,記錄最小值索引 `min_idx`。掃描結束後將 `arr[min_idx]` 與 `arr[i]` 交換。',
+            en: 'Outer loop index `i` marks the current sorted-prefix length; the inner loop scans from `i+1` to the end, tracking the minimum index `min_idx`. After scanning, swap `arr[min_idx]` with `arr[i]`.' } },
+          { type: 'bullets', items: [
+            { zh: '每輪恰好一次交換(或零次,若最小值已在正確位置)。', en: 'Each pass performs exactly one swap (zero if the minimum is already in place).' },
+            { zh: 'NOT stable:交換可能打亂相等元素的原始順序。', en: 'NOT stable: the swap can disrupt the original relative order of equal elements.' },
+            { zh: 'in-place:僅需 $O(1)$ 額外空間。', en: 'in-place: only $O(1)$ auxiliary space.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '令 `min_idx = i`。', en: 'Set `min_idx = i`.' },
+            { zh: '對 `j = i+1` 到 `n-1`:若 `arr[j] < arr[min_idx]`,更新 `min_idx = j`。', en: 'For `j = i+1` to `n-1`: if `arr[j] < arr[min_idx]`, update `min_idx = j`.' },
+            { zh: '交換 `arr[min_idx]` 與 `arr[i]`。', en: 'Swap `arr[min_idx]` with `arr[i]`.' },
+            { zh: '`i` 遞增,繼續下一輪,直至 `i == n-1`。', en: 'Increment `i` and start the next pass until `i == n-1`.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["[64,25,12,22,11]\\ni=0: find min"] --> B["min=11 at idx=4\\nswap with idx=0"]\n  B --> C["[11,25,12,22,64]\\ni=1: find min in [25,12,22,64]"]\n  C --> D["min=12 at idx=2\\nswap with idx=1"]\n  D --> E["[11,12,25,22,64]\\ncontinue..."]' },
+        ],
+      },
+      {
+        heading: { zh: '輪次示意', en: 'Pass Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 90" width="360" height="90"><g font-family="sans-serif" font-size="13"><rect x="10" y="30" width="50" height="30" fill="#dcfce7" stroke="#16a34a"/><rect x="60" y="30" width="50" height="30" fill="#dbeafe" stroke="#2563eb"/><rect x="110" y="30" width="50" height="30" fill="#dbeafe" stroke="#2563eb"/><rect x="160" y="30" width="50" height="30" fill="#dbeafe" stroke="#2563eb"/><rect x="210" y="30" width="50" height="30" fill="#fef9c3" stroke="#ca8a04"/><text x="35" y="50" text-anchor="middle">11</text><text x="85" y="50" text-anchor="middle">25</text><text x="135" y="50" text-anchor="middle">12</text><text x="185" y="50" text-anchor="middle">22</text><text x="235" y="50" text-anchor="middle">64</text><text x="35" y="22" text-anchor="middle" fill="#16a34a">i=0</text><text x="235" y="22" text-anchor="middle" fill="#ca8a04">min↑</text><text x="130" y="78" text-anchor="middle" fill="#64748b">green = sorted prefix</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '綠色區域為已排序前綴(i=0 完成後 11 就位);黃色為本輪找到的最小值(64 是 i=0 輪結束後的結果示意)。每輪僅做一次交換。',
+            en: 'Green region is the sorted prefix (11 is settled after pass 0); yellow marks the minimum found (illustrative). Only one swap occurs per pass.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳', en: 'Best' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '平均', en: 'Average' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '最壞', en: 'Worst' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'NOT stable / in-place', en: 'NOT stable / in-place' }, { zh: '—', en: '—' }, { zh: '輔助空間 $O(1)$', en: 'Auxiliary $O(1)$' } ],
+            ] },
+          { type: 'math', tex: 'T(n) = \\sum_{i=0}^{n-2}(n-1-i) = \\frac{n(n-1)}{2} = O(n^2)', caption: {
+            zh: '無論輸入為何,內層迴圈每次都從 i+1 掃描到 n-1,比較次數固定為 $n(n-1)/2$。',
+            en: 'Regardless of input, the inner loop always scans from i+1 to n-1, yielding exactly $n(n-1)/2$ comparisons.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void selectionSort(int arr[], int n) {\n    for (int i = 0; i < n - 1; i++) {\n        int min_idx = i;\n        for (int j = i + 1; j < n; j++) {\n            if (arr[j] < arr[min_idx])\n                min_idx = j;\n        }\n        // Swap minimum into sorted prefix\n        int temp = arr[min_idx];\n        arr[min_idx] = arr[i];\n        arr[i] = temp;\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:交換次數最少(最多 $n-1$ 次),適合寫入成本高的媒介。', en: 'Pro: minimal swaps (at most $n-1$); suitable for write-expensive media like EEPROM.' },
+            { zh: '優點:in-place,額外空間 $O(1)$。', en: 'Pro: in-place, $O(1)$ extra space.' },
+            { zh: '缺點:不論輸入狀態,比較次數固定 $O(n^2)$,無法提前結束。', en: 'Con: always $O(n^2)$ comparisons regardless of input — no early exit possible.' },
+            { zh: '缺點:NOT stable,相等元素可能亂序。', en: 'Con: NOT stable; equal elements may be reordered.' },
+            { zh: '適用:資料量極小,或寫入操作遠比讀取昂貴的場景。', en: 'Use when data is tiny, or when writes are far more expensive than reads.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '每輪從未排序部分找最小值,僅做一次交換。', en: 'Each pass finds the minimum of the unsorted part and performs exactly one swap.' },
+            { zh: '所有情況均為 $O(n^2)$;NOT stable、in-place。', en: 'All cases are $O(n^2)$; NOT stable, in-place.' },
+            { zh: '交換次數最少是其唯一亮點;大多數場合 Insertion Sort 更優。', en: 'Minimal swaps is its sole advantage; Insertion Sort outperforms it in most scenarios.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-insert': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '插入排序法', en: 'Insertion Sort' },
+    slides: [
+      {
+        heading: { zh: '插入排序法', en: 'Insertion Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '插入排序法模擬整理撲克牌的方式:逐一取出下一張牌(元素),將其插入左側已排好的手牌中的正確位置,直至所有牌有序。幾乎已排序的資料可達 $O(n)$。',
+            en: 'Insertion Sort mimics sorting a hand of cards: pick up the next card (element) one at a time and insert it into the correct position within the already-sorted left portion, until all cards are ordered. Nearly-sorted data achieves $O(n)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '外層迴圈從 `i=1` 開始,取出 `key = arr[i]`;內層迴圈將所有大於 `key` 的已排序元素向右移一格,再將 `key` 插入騰出的位置。',
+            en: 'The outer loop starts at `i=1` and extracts `key = arr[i]`; the inner loop shifts all sorted elements greater than `key` one position right, then inserts `key` into the vacated slot.' } },
+          { type: 'bullets', items: [
+            { zh: '已排序前綴 `arr[0..i-1]` 始終維持有序狀態。', en: 'The sorted prefix `arr[0..i-1]` is always maintained in order.' },
+            { zh: 'stable:相等元素不互換,原始順序保留。', en: 'stable: equal elements are never swapped — original order is preserved.' },
+            { zh: 'in-place:僅 $O(1)$ 額外空間。', en: 'in-place: only $O(1)$ extra space.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '取 `key = arr[i]`,令 `j = i - 1`。', en: 'Take `key = arr[i]`, set `j = i - 1`.' },
+            { zh: '當 `j >= 0` 且 `arr[j] > key`:令 `arr[j+1] = arr[j]`,`j--`(向右移位)。', en: 'While `j >= 0` and `arr[j] > key`: set `arr[j+1] = arr[j]`, `j--` (shift right).' },
+            { zh: '令 `arr[j+1] = key`(插入正確位置)。', en: 'Set `arr[j+1] = key` (insert at the correct position).' },
+            { zh: '`i` 遞增,繼續處理下一個元素。', en: 'Increment `i` and process the next element.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["[12,11,13,5,6]\\ni=1 key=11"] --> B["shift 12 right\\n[12,12,13,5,6]\\ninsert: [11,12,13,5,6]"]\n  B --> C["i=2 key=13\\n13>=12 no shift\\n[11,12,13,5,6]"]\n  C --> D["i=3 key=5\\nshift 13,12,11\\n[5,11,12,13,6]"]' },
+        ],
+      },
+      {
+        heading: { zh: '插入示意', en: 'Insertion Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 90" width="360" height="90"><g font-family="sans-serif" font-size="13"><rect x="10" y="30" width="50" height="30" fill="#dcfce7" stroke="#16a34a"/><rect x="60" y="30" width="50" height="30" fill="#dcfce7" stroke="#16a34a"/><rect x="110" y="30" width="50" height="30" fill="#fef9c3" stroke="#ca8a04"/><rect x="160" y="30" width="50" height="30" fill="#dbeafe" stroke="#2563eb"/><rect x="210" y="30" width="50" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="35" y="50" text-anchor="middle">5</text><text x="85" y="50" text-anchor="middle">11</text><text x="135" y="50" text-anchor="middle">13</text><text x="185" y="50" text-anchor="middle">6</text><text x="235" y="50" text-anchor="middle">12</text><text x="185" y="22" text-anchor="middle" fill="#2563eb">key=6 (i=3)</text><text x="80" y="78" text-anchor="middle" fill="#16a34a">sorted prefix</text><text x="235" y="78" text-anchor="middle" fill="#2563eb">unsorted</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '綠色為已排序前綴 [5,11,13];藍色框的 6 是當前取出的 key。6 < 13,13 右移;6 < 11,11 右移;6 > 5,停止,插入 arr[1]=6。',
+            en: 'Green is the sorted prefix [5,11,13]; the blue key=6 (at i=3) is extracted. 6 < 13 so 13 shifts right; 6 < 11 so 11 shifts right; 6 > 5 so stop, insert at arr[1]=6.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳(已排序)', en: 'Best (sorted)' }, { zh: '$O(n)$', en: '$O(n)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '平均', en: 'Average' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '最壞(逆序)', en: 'Worst (reverse)' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'stable / in-place', en: 'stable / in-place' }, { zh: '是', en: 'Yes' }, { zh: '輔助空間 $O(1)$', en: 'Auxiliary $O(1)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{best}}(n) = O(n),\\quad T_{\\text{worst}}(n) = O(n^2)', caption: {
+            zh: '最佳情況:已排序輸入每輪內層迴圈立即結束,共 $n-1$ 次比較;最壞情況為逆序,第 $i$ 輪需移位 $i$ 次。',
+            en: 'Best case: sorted input exits the inner loop immediately each pass — only $n-1$ comparisons total; worst case is reverse order, requiring $i$ shifts in pass $i$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void insertionSort(int arr[], int n) {\n    for (int i = 1; i < n; i++) {\n        int key = arr[i];\n        int j = i - 1;\n        // Shift elements greater than key one position right\n        while (j >= 0 && arr[j] > key) {\n            arr[j + 1] = arr[j];\n            j = j - 1;\n        }\n        arr[j + 1] = key; // insert\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:stable、in-place;幾乎排好的資料達 $O(n)$。', en: 'Pro: stable, in-place; $O(n)$ for nearly-sorted data.' },
+            { zh: '優點:小資料集優於 Quick/Merge Sort 的常數開銷。', en: 'Pro: lower constant overhead than Quick/Merge Sort for small datasets.' },
+            { zh: '優點:可線上運作(online):逐一接收元素並即時插入。', en: 'Pro: online algorithm — can insert elements one by one as they arrive.' },
+            { zh: '缺點:平均與最壞 $O(n^2)$,大資料集不適用。', en: 'Con: average and worst case $O(n^2)$; not suitable for large datasets.' },
+            { zh: '適用:小陣列、幾乎已排序的串流資料,或作為 Shell Sort 的最終 gap=1 階段。', en: 'Use for small arrays, nearly-sorted streaming data, or as the gap=1 final phase of Shell Sort.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '逐元素插入已排序前綴;stable、in-place。', en: 'Inserts each element into the sorted prefix one at a time; stable, in-place.' },
+            { zh: '最佳 $O(n)$,平均/最壞 $O(n^2)$。', en: 'Best $O(n)$, average/worst $O(n^2)$.' },
+            { zh: '小資料集和幾乎排序資料的最佳選擇之一。', en: 'One of the best choices for small or nearly-sorted datasets.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-quick': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '快速排序法', en: 'Quick Sort' },
+    slides: [
+      {
+        heading: { zh: '快速排序法', en: 'Quick Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '快速排序法選取一個 pivot 元素,將陣列分割成「小於 pivot」與「大於 pivot」兩部分,再對兩部分遞迴排序。平均情況 $O(n \\log n)$,為最常用的通用排序演算法。',
+            en: 'Quick Sort picks a pivot element, partitions the array into elements less than and greater than the pivot, then recursively sorts both parts. Average $O(n \\log n)$ — the most widely used general-purpose sorting algorithm.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`partition` 函式以 Lomuto 方案選取 `arr[high]` 為 pivot;使用指標 `i`(慢指標)與 `j`(快指標)。`j` 掃描時,若 `arr[j] < pivot` 則 `i++` 後交換 `arr[i]` 與 `arr[j]`。最後將 pivot 放至 `arr[i+1]`。',
+            en: '`partition` uses the Lomuto scheme with `arr[high]` as pivot; pointer `i` (slow) and `j` (fast). When `arr[j] < pivot`, increment `i` then swap `arr[i]` and `arr[j]`. Finally place the pivot at `arr[i+1]`.' } },
+          { type: 'bullets', items: [
+            { zh: 'divide-and-conquer:partition 後 pivot 在最終位置,左右子問題獨立。', en: 'divide-and-conquer: after partition the pivot is in its final position; left/right sub-problems are independent.' },
+            { zh: 'NOT stable:partition 的交換可改變相等元素的相對順序。', en: 'NOT stable: the swap during partition can reorder equal elements.' },
+            { zh: 'in-place:遞迴棧空間 $O(\\log n)$ 平均,$O(n)$ 最壞。', en: 'in-place: recursion stack uses $O(\\log n)$ average, $O(n)$ worst case.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '選取 `pivot = arr[high]`。', en: 'Choose `pivot = arr[high]`.' },
+            { zh: '`i = low - 1`;掃描 `j` 從 `low` 到 `high-1`。', en: 'Set `i = low - 1`; scan `j` from `low` to `high-1`.' },
+            { zh: '若 `arr[j] < pivot`:先 `i++` 再交換 `arr[i]` 與 `arr[j]`。', en: 'If `arr[j] < pivot`: increment `i`, then swap `arr[i]` and `arr[j]`.' },
+            { zh: '掃描結束後交換 `arr[i+1]` 與 `arr[high]`(pivot 就位),回傳 `i+1`。', en: 'After scanning, swap `arr[i+1]` with `arr[high]` (pivot lands), return `i+1`.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  A["quickSort(arr,0,5)\\npivot=arr[5]"] --> B["partition:\\nelements < pivot | pivot | elements > pivot"]\n  B --> C["quickSort(left)\\nrecurse"]\n  B --> D["quickSort(right)\\nrecurse"]\n  C --> E["base: low>=high\\nreturn"]\n  D --> E' },
+        ],
+      },
+      {
+        heading: { zh: 'partition 示意', en: 'Partition Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 90" width="380" height="90"><g font-family="sans-serif" font-size="12"><rect x="10" y="30" width="50" height="30" fill="#dcfce7" stroke="#16a34a"/><rect x="60" y="30" width="50" height="30" fill="#dcfce7" stroke="#16a34a"/><rect x="110" y="30" width="50" height="30" fill="#dcfce7" stroke="#16a34a"/><rect x="160" y="30" width="50" height="30" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/><rect x="210" y="30" width="50" height="30" fill="#fee2e2" stroke="#dc2626"/><rect x="260" y="30" width="50" height="30" fill="#fee2e2" stroke="#dc2626"/><text x="35" y="50" text-anchor="middle">1</text><text x="85" y="50" text-anchor="middle">5</text><text x="135" y="50" text-anchor="middle">7</text><text x="185" y="50" text-anchor="middle">10</text><text x="235" y="50" text-anchor="middle">11</text><text x="285" y="50" text-anchor="middle">12</text><text x="185" y="22" text-anchor="middle" fill="#ca8a04">pivot=10</text><text x="65" y="78" text-anchor="middle" fill="#16a34a">&lt; pivot</text><text x="245" y="78" text-anchor="middle" fill="#dc2626">&gt;= pivot</text></g></svg>' },
+          { type: 'note', text: {
+            zh: 'partition 結束後 pivot=10 落在最終位置(index 3);綠色區域 [1,5,7] 均 < 10,紅色區域 [11,12] 均 > 10。兩區域再各自遞迴排序。',
+            en: 'After partition, pivot=10 lands at its final position (index 3); green region [1,5,7] are all < 10, red region [11,12] are all > 10. Both regions are then sorted recursively.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度(棧)', en: 'Space (stack)' } ],
+            rows: [
+              [ { zh: '最佳(每次均分)', en: 'Best (balanced)' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(\\log n)$', en: '$O(\\log n)$' } ],
+              [ { zh: '平均', en: 'Average' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(\\log n)$', en: '$O(\\log n)$' } ],
+              [ { zh: '最壞(已排序/逆序)', en: 'Worst (sorted/reverse)' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(n)$', en: '$O(n)$' } ],
+              [ { zh: 'NOT stable / in-place', en: 'NOT stable / in-place' }, { zh: '—', en: '—' }, { zh: '輔助 $O(\\log n)$ 平均', en: 'Aux $O(\\log n)$ avg' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{avg}}(n) = 2T\\!\\left(\\frac{n}{2}\\right) + O(n) = O(n \\log n)', caption: {
+            zh: '每次 partition 均分時遞迴深度 $\\log n$,每層線性掃描,總計 $O(n \\log n)$。最壞情況(pivot 每次選到最大/最小值)退化為 $O(n^2)$。',
+            en: 'With balanced partitions, recursion depth is $\\log n$, each level scans $O(n)$, giving $O(n \\log n)$. Worst case (pivot always max/min) degrades to $O(n^2)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'int partition(int arr[], int low, int high) {\n    int pivot = arr[high]; // Lomuto: last element as pivot\n    int i = low - 1;\n    for (int j = low; j < high; j++) {\n        if (arr[j] < pivot) {\n            i++;\n            swap(arr[i], arr[j]);\n        }\n    }\n    swap(arr[i + 1], arr[high]); // place pivot\n    return i + 1;\n}\n\nvoid quickSort(int arr[], int low, int high) {\n    if (low < high) {\n        int pi = partition(arr, low, high);\n        quickSort(arr, low, pi - 1);\n        quickSort(arr, pi + 1, high);\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:平均 $O(n \\log n)$,快取友善,實際最快的通用排序之一。', en: 'Pro: average $O(n \\log n)$, cache-friendly — one of the fastest general-purpose sorts in practice.' },
+            { zh: '優點:in-place,記憶體開銷低於 Merge Sort。', en: 'Pro: in-place; lower memory overhead than Merge Sort.' },
+            { zh: '缺點:最壞 $O(n^2)$(已排序輸入+固定選 pivot);需隨機化或三數中值選 pivot 改善。', en: 'Con: worst case $O(n^2)$ (sorted input + fixed pivot); randomized or median-of-three pivot selection mitigates this.' },
+            { zh: '缺點:NOT stable。', en: 'Con: NOT stable.' },
+            { zh: '適用:通用陣列排序;C++ `std::sort` 通常採用 Introsort(Quick+Heap 混合)。', en: 'Use for general array sorting; C++ `std::sort` typically uses Introsort (Quick + Heap hybrid).' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'pivot 分割 + 遞迴排序;平均 $O(n \\log n)$,最壞 $O(n^2)$。', en: 'Pivot-based partition + recursive sort; average $O(n \\log n)$, worst $O(n^2)$.' },
+            { zh: 'NOT stable;in-place(棧空間 $O(\\log n)$ 平均)。', en: 'NOT stable; in-place (stack $O(\\log n)$ average).' },
+            { zh: '實際最快通用排序;隨機化選 pivot 可將最壞情況出現機率降至極低。', en: 'Fastest general-purpose sort in practice; randomized pivot makes worst case extremely unlikely.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-shell': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '希爾排序法', en: 'Shell Sort' },
+    slides: [
+      {
+        heading: { zh: '希爾排序法', en: 'Shell Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '希爾排序法是 Insertion Sort 的改良版:以遞減的「間距(gap)」分組，先讓遠距元素就位，最後 gap=1 時等同 Insertion Sort 但資料已幾乎有序，大幅降低移位次數。',
+            en: 'Shell Sort is an improved Insertion Sort: it uses a decreasing gap sequence to sort elements far apart first, so by the time gap=1 (standard Insertion Sort) the array is nearly sorted, dramatically reducing shifts.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '初始 gap = n/2;每次外層迴圈將 gap 減半。對每個 gap,從索引 `gap` 開始,把 `arr[i]` 與 `arr[i-gap]`、`arr[i-2*gap]`... 做類 Insertion Sort 的向後移位插入。',
+            en: 'Initial gap = n/2; each outer iteration halves the gap. For each gap, starting at index `gap`, perform Insertion-Sort-like backward shifts comparing `arr[i]` with `arr[i-gap]`, `arr[i-2*gap]`, etc.' } },
+          { type: 'bullets', items: [
+            { zh: 'gap 序列決定複雜度:Knuth 序列 $(3^k-1)/2$ 保證 $O(n^{1.3})$。', en: 'Gap sequence determines complexity: Knuth\'s $(3^k-1)/2$ sequence guarantees $O(n^{1.3})$.' },
+            { zh: 'NOT stable:遠距交換可改變相等元素的相對順序。', en: 'NOT stable: long-distance swaps can reorder equal elements.' },
+            { zh: 'in-place:僅 $O(1)$ 額外空間。', en: 'in-place: only $O(1)$ auxiliary space.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: 'gap = n/2;while gap > 0。', en: 'gap = n/2; while gap > 0.' },
+            { zh: '對 i 從 gap 到 n-1:令 `temp = arr[i]`,向左以步長 gap 移位直到找到正確位置。', en: 'For i from gap to n-1: set `temp = arr[i]`, shift left by gap until the correct position is found.' },
+            { zh: '將 `temp` 插入騰出的位置。', en: 'Insert `temp` at the vacated position.' },
+            { zh: 'gap /= 2;繼續下一輪直至 gap = 0。', en: 'gap /= 2; continue until gap = 0.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["[12,34,54,2,3]\\ngap=2"] --> B["gap=2 pass:\\n[12,3,54,2,34] partial"]\n  B --> C["[2,3,12,34,54]\\ngap=1 pass"]\n  C --> D["[2,3,12,34,54]\\nsorted"]' },
+        ],
+      },
+      {
+        heading: { zh: 'gap 分組示意', en: 'Gap Grouping Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 100" width="380" height="100"><g font-family="sans-serif" font-size="12"><text x="10" y="18" fill="#64748b">gap=2: compare elements 2 apart</text><rect x="10" y="28" width="50" height="26" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><rect x="60" y="28" width="50" height="26" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><rect x="110" y="28" width="50" height="26" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><rect x="160" y="28" width="50" height="26" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><rect x="210" y="28" width="50" height="26" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="35" y="46" text-anchor="middle">12</text><text x="85" y="46" text-anchor="middle">34</text><text x="135" y="46" text-anchor="middle">54</text><text x="185" y="46" text-anchor="middle">2</text><text x="235" y="46" text-anchor="middle">3</text><text x="35" y="78" text-anchor="middle" fill="#2563eb">group A</text><text x="135" y="78" text-anchor="middle" fill="#2563eb">group A</text><text x="235" y="78" text-anchor="middle" fill="#2563eb">group A</text><text x="85" y="78" text-anchor="middle" fill="#16a34a">group B</text><text x="185" y="78" text-anchor="middle" fill="#16a34a">group B</text></g></svg>' },
+          { type: 'note', text: {
+            zh: 'gap=2 時,藍色(idx 0,2,4)和綠色(idx 1,3)各自為一組進行 Insertion Sort;先讓遠距元素就位可減少最終 gap=1 的工作量。',
+            en: 'With gap=2, blue (idx 0,2,4) and green (idx 1,3) are sorted independently by Insertion Sort; pre-ordering distant elements reduces the work needed at gap=1.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳', en: 'Best' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '平均(Knuth gap)', en: 'Average (Knuth gap)' }, { zh: '$O(n^{1.3})$', en: '$O(n^{1.3})$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '最壞(n/2 gap)', en: 'Worst (n/2 gap)' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'NOT stable / in-place', en: 'NOT stable / in-place' }, { zh: '—', en: '—' }, { zh: '輔助空間 $O(1)$', en: 'Auxiliary $O(1)$' } ],
+            ] },
+          { type: 'math', tex: 'T(n) \\approx O(n^{1.3}) \\text{ with Knuth gap } g_k = \\frac{3^k-1}{2}', caption: {
+            zh: 'Knuth 間距序列(1,4,13,40,...)在實際測試中表現優異;理論複雜度介於 $O(n \\log^2 n)$ 與 $O(n^{4/3})$ 之間。',
+            en: 'Knuth\'s gap sequence (1,4,13,40,...) performs well in practice; theoretical complexity lies between $O(n \\log^2 n)$ and $O(n^{4/3})$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void shellSort(int arr[], int n) {\n    for (int gap = n / 2; gap > 0; gap /= 2) {\n        // Insertion sort with current gap\n        for (int i = gap; i < n; i++) {\n            int temp = arr[i];\n            int j;\n            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {\n                arr[j] = arr[j - gap]; // shift right by gap\n            }\n            arr[j] = temp; // insert\n        }\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:in-place,$O(1)$ 額外空間,實作簡單。', en: 'Pro: in-place, $O(1)$ extra space, simple to implement.' },
+            { zh: '優點:比 $O(n^2)$ 排序快得多,且不需額外記憶體(優於 Merge Sort)。', en: 'Pro: significantly faster than $O(n^2)$ sorts while requiring no extra memory (unlike Merge Sort).' },
+            { zh: '缺點:NOT stable;最佳 gap 序列仍是開放研究問題。', en: 'Con: NOT stable; the optimal gap sequence remains an open research question.' },
+            { zh: '缺點:大資料集不及 Quick Sort 或 Merge Sort。', en: 'Con: outperformed by Quick Sort or Merge Sort for large datasets.' },
+            { zh: '適用:嵌入式系統或記憶體受限環境,需要比 $O(n^2)$ 更快且無需額外空間的排序。', en: 'Use in embedded or memory-constrained environments needing something faster than $O(n^2)$ with no extra space.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '遞減 gap 的 Insertion Sort;先遠距就位再細部調整。', en: 'Insertion Sort with a decreasing gap; pre-sorts distant elements before fine-tuning.' },
+            { zh: 'NOT stable;in-place $O(1)$;複雜度取決於 gap 序列。', en: 'NOT stable; in-place $O(1)$; complexity depends on the gap sequence.' },
+            { zh: '記憶體受限場景中性價比高於 Merge Sort。', en: 'Better cost-performance than Merge Sort in memory-constrained scenarios.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-bucket': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '桶排序法', en: 'Bucket Sort' },
+    slides: [
+      {
+        heading: { zh: '桶排序法', en: 'Bucket Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '桶排序法將輸入元素依其值域分散至若干「桶」中,對各桶個別排序後再依序串接。當輸入均勻分佈時,平均時間複雜度達 $O(n+k)$,其中 $k$ 為桶數。',
+            en: 'Bucket Sort distributes input elements into a number of "buckets" by value range, sorts each bucket individually, then concatenates. With uniformly distributed input, average time complexity is $O(n+k)$, where $k$ is the number of buckets.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '建立 $n$ 個桶,將 $[0,1)$ 的浮點數以 `bucketIndex = floor(n * arr[i])` 分配。各桶以 Insertion Sort(或 `std::sort`)排序,最後按桶序串接回原陣列。',
+            en: 'Create $n$ buckets, assign each element (in $[0,1)$) via `bucketIndex = floor(n * arr[i])`. Sort each bucket with Insertion Sort (or `std::sort`), then concatenate in order.' } },
+          { type: 'bullets', items: [
+            { zh: '元素均勻分佈時,每桶平均含 $O(1)$ 個元素,各桶排序 $O(1)$,整體 $O(n)$。', en: 'With uniform distribution, each bucket has $O(1)$ elements on average; each sorts in $O(1)$, giving $O(n)$ overall.' },
+            { zh: '最壞情況:所有元素落入同一桶,退化為 $O(n^2)$(取決於桶內排序)。', en: 'Worst case: all elements fall into one bucket, degrading to $O(n^2)$ (depends on the intra-bucket sort).' },
+            { zh: 'NOT in-place:需 $O(n+k)$ 額外空間存放桶結構。', en: 'NOT in-place: $O(n+k)$ auxiliary space needed for the bucket structure.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '建立 $n$ 個空桶。', en: 'Create $n$ empty buckets.' },
+            { zh: '遍歷陣列,計算 `bucketIndex = (int)(n * arr[i])`,將元素推入對應桶。', en: 'Iterate the array, compute `bucketIndex = (int)(n * arr[i])`, push each element into its bucket.' },
+            { zh: '對每個桶內的元素排序(如 Insertion Sort)。', en: 'Sort the elements within each bucket (e.g. Insertion Sort).' },
+            { zh: '依桶序串接所有元素回原陣列。', en: 'Concatenate all buckets back into the original array in order.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["[0.78,0.17,0.39,0.26,0.72]\\nn=5 buckets"] --> B["bucket 0: [0.17]\\nbucket 1: [0.17] done"]\n  A --> C["bucket 1: [0.17]\\nbucket 2: [0.26]\\nbucket 3: [0.39]\\nbucket 3: [0.39] done"]\n  A --> D["bucket 3: [0.39]\\nbucket 7: [0.72,0.78]"]\n  D --> E["sort each bucket"]\n  E --> F["concat: [0.17,0.26,0.39,0.72,0.78]"]' },
+        ],
+      },
+      {
+        heading: { zh: '桶分配示意', en: 'Bucket Distribution Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 100" width="380" height="100"><g font-family="sans-serif" font-size="11"><rect x="10" y="20" width="50" height="60" fill="#f1f5f9" stroke="#94a3b8"/><rect x="70" y="20" width="50" height="60" fill="#f1f5f9" stroke="#94a3b8"/><rect x="130" y="20" width="50" height="60" fill="#dbeafe" stroke="#2563eb"/><rect x="190" y="20" width="50" height="60" fill="#f1f5f9" stroke="#94a3b8"/><rect x="250" y="20" width="50" height="60" fill="#fef9c3" stroke="#ca8a04"/><text x="35" y="14" text-anchor="middle" fill="#64748b">[0.0)</text><text x="95" y="14" text-anchor="middle" fill="#64748b">[0.2)</text><text x="155" y="14" text-anchor="middle" fill="#64748b">[0.4)</text><text x="215" y="14" text-anchor="middle" fill="#64748b">[0.6)</text><text x="275" y="14" text-anchor="middle" fill="#64748b">[0.8)</text><text x="35" y="55" text-anchor="middle">—</text><text x="95" y="48" text-anchor="middle">0.17</text><text x="95" y="64" text-anchor="middle">0.26</text><text x="155" y="55" text-anchor="middle">0.39</text><text x="215" y="55" text-anchor="middle">—</text><text x="275" y="48" text-anchor="middle">0.72</text><text x="275" y="64" text-anchor="middle">0.78</text><text x="320" y="55" fill="#64748b">→ sort →</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '5 個桶各覆蓋 0.2 的值域;0.17 和 0.26 落入第 0–1 桶,各桶分別排序後串接即得有序陣列。',
+            en: 'Five buckets each cover a 0.2 value range; 0.17 and 0.26 land in the first two buckets. Sorting each bucket then concatenating yields the sorted array.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳/平均(均勻分佈)', en: 'Best/Avg (uniform)' }, { zh: '$O(n+k)$', en: '$O(n+k)$' }, { zh: '$O(n+k)$', en: '$O(n+k)$' } ],
+              [ { zh: '最壞(全部落入一桶)', en: 'Worst (all in one bucket)' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(n+k)$', en: '$O(n+k)$' } ],
+              [ { zh: 'stable(取決於桶內排序)', en: 'stable (depends on intra-sort)' }, { zh: '—', en: '—' }, { zh: '輔助空間 $O(n+k)$', en: 'Auxiliary $O(n+k)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{avg}}(n,k) = O(n) + k \\cdot O\\!\\left(\\frac{n}{k}\\right)^2 = O\\!\\left(n + \\frac{n^2}{k}\\right)', caption: {
+            zh: '均勻分佈時每桶期望 $n/k$ 個元素,各桶 Insertion Sort 為 $O((n/k)^2)$;取 $k=n$ 使平均降至 $O(n)$。',
+            en: 'With uniform distribution each bucket has $n/k$ elements on average, each sorted in $O((n/k)^2)$; setting $k=n$ reduces average cost to $O(n)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void bucketSort(vector<float>& arr) {\n    int n = arr.size();\n    if (n <= 0) return;\n    // Create n empty buckets\n    vector<vector<float>> buckets(n);\n    // Distribute elements into buckets\n    for (int i = 0; i < n; i++) {\n        int bi = (int)(n * arr[i]);\n        if (bi >= n) bi = n - 1;\n        buckets[bi].push_back(arr[i]);\n    }\n    // Sort individual buckets\n    for (int i = 0; i < n; i++)\n        sort(buckets[i].begin(), buckets[i].end());\n    // Concatenate back\n    int index = 0;\n    for (int i = 0; i < n; i++)\n        for (float x : buckets[i])\n            arr[index++] = x;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:均勻分佈時達 $O(n+k)$,優於比較排序的 $O(n \\log n)$ 下界。', en: 'Pro: $O(n+k)$ for uniform input — beats the $O(n \\log n)$ comparison-sort lower bound.' },
+            { zh: '優點:可平行化:各桶獨立排序。', en: 'Pro: parallelizable — each bucket is sorted independently.' },
+            { zh: '缺點:效能高度依賴輸入分佈;非均勻時退化至 $O(n^2)$。', en: 'Con: performance highly depends on input distribution; degrades to $O(n^2)$ for skewed data.' },
+            { zh: '缺點:需要 $O(n+k)$ 額外空間。', en: 'Con: requires $O(n+k)$ extra space.' },
+            { zh: '適用:浮點數均勻分佈在 $[0,1)$ 的場景,如隨機數排序、分佈式系統。', en: 'Use when floats are uniformly distributed in $[0,1)$, e.g. random number sorting, distributed systems.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '分散 + 桶內排序 + 串接;非比較排序。', en: 'Distribute + intra-bucket sort + concatenate; non-comparison sort.' },
+            { zh: '均勻輸入平均 $O(n+k)$;最壞 $O(n^2)$。', en: 'Average $O(n+k)$ for uniform input; worst case $O(n^2)$.' },
+            { zh: '最適合值域已知且近乎均勻分佈的浮點數排序。', en: 'Best suited for sorting floats with a known range and near-uniform distribution.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-count': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '計數排序法', en: 'Counting Sort' },
+    slides: [
+      {
+        heading: { zh: '計數排序法', en: 'Counting Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '計數排序法不做元素間比較,而是統計每個鍵值出現次數,再由累積計數直接計算每個元素在輸出陣列中的位置。時間與空間均為 $O(n+k)$,其中 $k$ 為值域寬度。',
+            en: 'Counting Sort avoids element comparisons: it counts the frequency of each key, then uses cumulative counts to place each element directly at its correct output position. Both time and space are $O(n+k)$, where $k$ is the value range.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '三個步驟:①建立計數陣列 `count[k]` 統計頻率；②對 `count` 做前綴和,令 `count[i]` 表示 $\\leq i$ 的元素個數；③從後往前掃描原陣列,依 `count` 放至 `output`,並遞減計數(保證 stable)。',
+            en: 'Three steps: ① build count array `count[k]` for frequencies; ② prefix-sum `count` so `count[i]` is the number of elements $\\leq i$; ③ scan original array from back to front, place each element at `output[count[val]-1]` and decrement (ensuring stable).' } },
+          { type: 'bullets', items: [
+            { zh: '從後往前掃描保證 stable:相同鍵值後出現的元素置於後方。', en: 'Backward scan ensures stable: among equal keys, later elements are placed later.' },
+            { zh: '限制:僅適用整數(或可映射至整數鍵的資料);$k$ 過大時空間浪費。', en: 'Restriction: only for integers (or data mappable to integer keys); wastes space when $k$ is very large.' },
+            { zh: '$k \\ll n$ 時效率最高,如年齡、分數等有限值域排序。', en: 'Most efficient when $k \\ll n$, e.g. sorting ages, scores, or other bounded integer domains.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '找出最大值 max 與最小值 min;range = max - min + 1。', en: 'Find max and min; range = max - min + 1.' },
+            { zh: '建立 `count[range]`(初始化 0),統計各元素頻率:`count[arr[i]-min]++`。', en: 'Create `count[range]` (zero-init), count frequencies: `count[arr[i]-min]++`.' },
+            { zh: '前綴和:`count[i] += count[i-1]`。', en: 'Prefix sum: `count[i] += count[i-1]`.' },
+            { zh: '從後往前:`output[count[arr[i]-min]-1] = arr[i]; count[arr[i]-min]--`。', en: 'Back-to-front: `output[count[arr[i]-min]-1] = arr[i]; count[arr[i]-min]--`.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  A["input: [4,2,2,8,3,3,1]"] --> B["count freq:\\ncount[1]=1 count[2]=2\\ncount[3]=2 count[4]=1 count[8]=1"]\n  B --> C["prefix sum:\\ncount[1]=1 count[2]=3\\ncount[3]=5 count[4]=6 count[8]=7"]\n  C --> D["place back-to-front:\\noutput=[1,2,2,3,3,4,8]"]' },
+        ],
+      },
+      {
+        heading: { zh: '計數陣列示意', en: 'Count Array Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 100" width="380" height="100"><g font-family="sans-serif" font-size="11"><text x="10" y="18" fill="#64748b">count (after prefix sum, values 1-4 shown):</text><rect x="10" y="26" width="55" height="26" fill="#dbeafe" stroke="#2563eb"/><rect x="65" y="26" width="55" height="26" fill="#dbeafe" stroke="#2563eb"/><rect x="120" y="26" width="55" height="26" fill="#dbeafe" stroke="#2563eb"/><rect x="175" y="26" width="55" height="26" fill="#dbeafe" stroke="#2563eb"/><text x="37" y="44" text-anchor="middle">1</text><text x="92" y="44" text-anchor="middle">3</text><text x="147" y="44" text-anchor="middle">5</text><text x="202" y="44" text-anchor="middle">6</text><text x="37" y="66" text-anchor="middle" fill="#64748b">key=1</text><text x="92" y="66" text-anchor="middle" fill="#64748b">key=2</text><text x="147" y="66" text-anchor="middle" fill="#64748b">key=3</text><text x="202" y="66" text-anchor="middle" fill="#64748b">key=4</text><text x="10" y="90" fill="#374151">output[count[k]-1] = k → place at correct index</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '前綴和後 count[2]=3 表示 $\\leq 2$ 共有 3 個元素,故最後一個 2 應放在 output[2](0-indexed)。從後往前確保 stable。',
+            en: 'After prefix sum, count[2]=3 means there are 3 elements $\\leq 2$, so the last occurrence of 2 goes to output[2] (0-indexed). Back-to-front placement ensures stability.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳 / 平均 / 最壞', en: 'Best / Average / Worst' }, { zh: '$O(n+k)$', en: '$O(n+k)$' }, { zh: '$O(n+k)$', en: '$O(n+k)$' } ],
+              [ { zh: 'stable / NOT in-place', en: 'stable / NOT in-place' }, { zh: '—', en: '—' }, { zh: '輔助空間 $O(n+k)$', en: 'Auxiliary $O(n+k)$' } ],
+            ] },
+          { type: 'math', tex: 'T(n,k) = O(n + k)', caption: {
+            zh: '$n$ 為元素個數,$k$ 為值域寬度(max-min+1)。當 $k = O(n)$ 時整體為 $O(n)$,突破比較排序 $O(n \\log n)$ 下界。',
+            en: '$n$ = number of elements, $k$ = value range (max-min+1). When $k = O(n)$ the overall cost is $O(n)$, breaking the comparison-sort $O(n \\log n)$ lower bound.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void countingSort(vector<int>& arr) {\n    int maxV = *max_element(arr.begin(), arr.end());\n    int minV = *min_element(arr.begin(), arr.end());\n    int range = maxV - minV + 1;\n    vector<int> count(range, 0), output(arr.size());\n    // Count frequencies\n    for (int x : arr) count[x - minV]++;\n    // Cumulative sum\n    for (int i = 1; i < range; i++) count[i] += count[i - 1];\n    // Place back-to-front (stable)\n    for (int i = arr.size() - 1; i >= 0; i--) {\n        output[count[arr[i] - minV] - 1] = arr[i];\n        count[arr[i] - minV]--;\n    }\n    arr = output;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:stable,$O(n+k)$ 線性時間,可突破比較排序下界。', en: 'Pro: stable, $O(n+k)$ linear time — beats the comparison-sort lower bound.' },
+            { zh: '優點:Radix Sort 的子程序(LSD 逐位排序)。', en: 'Pro: used as a subroutine in Radix Sort (LSD digit-by-digit sort).' },
+            { zh: '缺點:僅適用有限整數鍵;$k$ 過大時空間浪費嚴重。', en: 'Con: only for bounded integer keys; space waste grows with $k$.' },
+            { zh: '缺點:NOT in-place,需 $O(n+k)$ 額外記憶體。', en: 'Con: NOT in-place, needs $O(n+k)$ extra memory.' },
+            { zh: '適用:排序年齡、分數、ASCII 字元等有限整數鍵的大量資料。', en: 'Use for large volumes of bounded integer keys like ages, scores, or ASCII characters.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '非比較排序:計數 → 前綴和 → 反向放置。', en: 'Non-comparison sort: count → prefix sum → backward placement.' },
+            { zh: 'stable;所有情況 $O(n+k)$;輔助空間 $O(n+k)$。', en: 'stable; $O(n+k)$ always; $O(n+k)$ auxiliary space.' },
+            { zh: '有限整數值域的最優線性排序;也是 Radix Sort 的核心。', en: 'Optimal linear sort for bounded integer domains; also the core of Radix Sort.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-radix': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '基數排序法', en: 'Radix Sort' },
+    slides: [
+      {
+        heading: { zh: '基數排序法', en: 'Radix Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '基數排序法從最低有效位(LSD)到最高有效位,對每一位數依序執行一次 stable 的 Counting Sort,最終完成整個整數序列的排序,總時間為 $O(d(n+k))$。',
+            en: 'Radix Sort performs one stable Counting Sort pass per digit, from the least significant digit (LSD) to the most significant, sorting the entire integer sequence in $O(d(n+k))$ total time.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '以 `exp = 1, 10, 100, ...` 逐位排序,每次 `countingSortDigit` 對 `(arr[i] / exp) % 10` 進行 Counting Sort。關鍵:每次子排序必須 stable,才能保證低位已建立的順序不被高位破壞。',
+            en: 'Sort digit by digit with `exp = 1, 10, 100, ...`; each `countingSortDigit` applies Counting Sort on `(arr[i] / exp) % 10`. Key: each sub-sort must be stable so lower-digit order established earlier is preserved when sorting higher digits.' } },
+          { type: 'bullets', items: [
+            { zh: '$d$ 為最大元素的位數;$k=10$(十進制)。總複雜度 $O(d(n+k))$。', en: '$d$ = number of digits in the maximum element; $k=10$ (decimal). Total: $O(d(n+k))$.' },
+            { zh: 'stable:每次 stable 子排序確保整體結果有序。', en: 'stable: stable sub-sorts guarantee the final result is correctly ordered.' },
+            { zh: 'NOT in-place:需 $O(n+k)$ 輔助空間存放 output 陣列。', en: 'NOT in-place: $O(n+k)$ auxiliary space for the output array.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '找出最大值 maxEl;決定位數(迴圈條件 `maxEl / exp > 0`)。', en: 'Find maxEl; determine digit count (loop condition `maxEl / exp > 0`).' },
+            { zh: '對 `exp = 1`:對個位數做 stable Counting Sort。', en: 'For `exp = 1`: stable Counting Sort on the units digit.' },
+            { zh: '對 `exp = 10`:對十位數做 stable Counting Sort(保持個位已排好的順序)。', en: 'For `exp = 10`: stable Counting Sort on the tens digit (preserving units-digit order).' },
+            { zh: '重複直至所有位數處理完畢。', en: 'Repeat until all digits have been processed.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["[170,45,75,90,802,24,2,66]"] --> B["sort by 1s:\\n[170,90,802,2,24,45,75,66]"]\n  B --> C["sort by 10s:\\n[802,2,24,45,66,170,75,90]"]\n  C --> D["sort by 100s:\\n[2,24,45,66,75,90,170,802]"]' },
+        ],
+      },
+      {
+        heading: { zh: 'LSD 位排序示意', en: 'LSD Digit-Sort Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 100" width="380" height="100"><g font-family="sans-serif" font-size="11"><text x="10" y="16" fill="#64748b">Pass 1 (exp=1, sort by units digit):</text><rect x="10" y="24" width="40" height="22" fill="#dbeafe" stroke="#2563eb"/><rect x="52" y="24" width="40" height="22" fill="#dbeafe" stroke="#2563eb"/><rect x="94" y="24" width="40" height="22" fill="#fef9c3" stroke="#ca8a04"/><rect x="136" y="24" width="40" height="22" fill="#dbeafe" stroke="#2563eb"/><rect x="178" y="24" width="40" height="22" fill="#dbeafe" stroke="#2563eb"/><text x="30" y="39" text-anchor="middle">170</text><text x="72" y="39" text-anchor="middle">45</text><text x="114" y="39" text-anchor="middle">75</text><text x="156" y="39" text-anchor="middle">90</text><text x="198" y="39" text-anchor="middle">802</text><text x="10" y="70" fill="#64748b">After sort by 1s: 170, 90, 802, 2, 24, 45, 75, 66</text><text x="10" y="90" fill="#374151">units: 0,0,2,2,4,5,5,6 → stable sort by 0→9</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '每輪只看一個位數;stable 保證相同位數值的元素保持前一輪排好的順序。三輪後全部有序。',
+            en: 'Each pass examines only one digit; stability ensures elements with the same digit value retain their order from the previous pass. Three passes yield a fully sorted array.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳 / 平均 / 最壞', en: 'Best / Average / Worst' }, { zh: '$O(d(n+k))$', en: '$O(d(n+k))$' }, { zh: '$O(n+k)$', en: '$O(n+k)$' } ],
+              [ { zh: 'stable / NOT in-place', en: 'stable / NOT in-place' }, { zh: '—', en: '—' }, { zh: '輔助空間 $O(n+k)$', en: 'Auxiliary $O(n+k)$' } ],
+            ] },
+          { type: 'math', tex: 'T(n,d,k) = O(d \\cdot (n+k))', caption: {
+            zh: '$d$ 為位數,$k$ 為基數(十進制 $k=10$)。對固定位數整數,$d$ 為常數,故整體為 $O(n)$。',
+            en: '$d$ = digit count, $k$ = radix (10 for decimal). For fixed-width integers $d$ is constant, making the overall cost $O(n)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void countingSortDigit(vector<int>& arr, int exp) {\n    int n = arr.size();\n    vector<int> output(n);\n    int count[10] = {0};\n    for (int i = 0; i < n; i++) count[(arr[i] / exp) % 10]++;\n    for (int i = 1; i < 10; i++) count[i] += count[i - 1];\n    // Back-to-front for stability\n    for (int i = n - 1; i >= 0; i--) {\n        output[count[(arr[i] / exp) % 10] - 1] = arr[i];\n        count[(arr[i] / exp) % 10]--;\n    }\n    for (int i = 0; i < n; i++) arr[i] = output[i];\n}\n\nvoid radixSort(vector<int>& arr) {\n    int maxEl = *max_element(arr.begin(), arr.end());\n    for (int exp = 1; maxEl / exp > 0; exp *= 10)\n        countingSortDigit(arr, exp);\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:stable,$O(d(n+k))$ 可在整數固定位數時達 $O(n)$。', en: 'Pro: stable, $O(d(n+k))$ — reduces to $O(n)$ for fixed-width integers.' },
+            { zh: '優點:適合多鍵排序(先排次要鍵再排主要鍵)。', en: 'Pro: suitable for multi-key sorting (sort secondary key first, then primary).' },
+            { zh: '缺點:僅適用整數(或可位元化的資料);浮點數需特殊處理。', en: 'Con: only for integers (or bitwise-representable data); floats need special handling.' },
+            { zh: '缺點:需 $O(n+k)$ 額外空間;$d$ 很大時(如長字串)效率下降。', en: 'Con: $O(n+k)$ extra space; efficiency drops when $d$ is large (e.g. long strings).' },
+            { zh: '適用:整數排序(如電話號碼、IP 位址、固定長度字串)。', en: 'Use for sorting integers (phone numbers, IP addresses, fixed-length strings).' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'LSD 逐位 stable Counting Sort;$O(d(n+k))$。', en: 'LSD digit-by-digit stable Counting Sort; $O(d(n+k))$.' },
+            { zh: 'stable;NOT in-place;輔助空間 $O(n+k)$。', en: 'stable; NOT in-place; $O(n+k)$ auxiliary space.' },
+            { zh: '整數固定位數時可達 $O(n)$,是大規模整數排序的高效選擇。', en: 'Achieves $O(n)$ for fixed-width integers — a highly efficient choice for large-scale integer sorting.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-shaker': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '搖晃排序法(雙向冒泡)', en: 'Shaker Sort (Cocktail Sort)' },
+    slides: [
+      {
+        heading: { zh: '搖晃排序法(雙向冒泡)', en: 'Shaker Sort (Cocktail Sort)' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '搖晃排序法(又稱雞尾酒排序)是 Bubble Sort 的雙向改良版:前向掃描將最大值移至右端,後向掃描將最小值移至左端,交替進行以縮短小元素移往左側所需的輪數。',
+            en: 'Shaker Sort (Cocktail Sort) is a bidirectional Bubble Sort: a forward pass bubbles the largest element to the right, then a backward pass sinks the smallest element to the left, alternating to speed up migration of small elements toward the start.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '維護 `left` 與 `right` 兩個邊界。每輪前向掃描後 `right--`,後向掃描後 `left++`。若某方向掃描無交換則提前結束。',
+            en: 'Maintain `left` and `right` boundaries. After each forward pass, `right--`; after each backward pass, `left++`. If either pass has no swaps, exit early.' } },
+          { type: 'bullets', items: [
+            { zh: '解決 Bubble Sort 的「turtle 問題」:小元素靠近末端時,單向冒泡需多輪才能移回頭部。', en: 'Solves Bubble Sort\'s "turtle problem": small elements near the end take many forward passes to reach the head.' },
+            { zh: 'stable:比較條件 `arr[i-1] > arr[i]` 嚴格大於,相等不交換。', en: 'stable: comparison `arr[i-1] > arr[i]` uses strict greater-than, equal elements are not swapped.' },
+            { zh: 'in-place:僅 $O(1)$ 額外空間。', en: 'in-place: only $O(1)$ auxiliary space.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '初始化 `left=0, right=n-1, swapped=false`。', en: 'Initialise `left=0, right=n-1, swapped=false`.' },
+            { zh: '前向掃描 `i` 從 `left` 到 `right-1`:若 `arr[i]>arr[i+1]` 則交換;`right--`。', en: 'Forward scan `i` from `left` to `right-1`: swap if `arr[i]>arr[i+1]`; then `right--`.' },
+            { zh: '若本輪無交換,跳出迴圈。', en: 'If no swap occurred in this direction, break.' },
+            { zh: '後向掃描 `i` 從 `right` 到 `left+1`:若 `arr[i-1]>arr[i]` 則交換;`left++`。', en: 'Backward scan `i` from `right` to `left+1`: swap if `arr[i-1]>arr[i]`; then `left++`.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["[3,5,1,4,2]\\nleft=0 right=4"] --> B["forward pass:\\n[3,1,4,2,5] right=3"]\n  B --> C["backward pass:\\n[1,3,2,4,5] left=1"]\n  C --> D["forward pass:\\n[1,2,3,4,5] right=2"]\n  D --> E["no swap: done"]' },
+        ],
+      },
+      {
+        heading: { zh: '雙向掃描示意', en: 'Bidirectional Scan Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 100" width="380" height="100"><g font-family="sans-serif" font-size="12"><rect x="10" y="30" width="50" height="28" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><rect x="60" y="30" width="50" height="28" fill="#dbeafe" stroke="#2563eb"/><rect x="110" y="30" width="50" height="28" fill="#dbeafe" stroke="#2563eb"/><rect x="160" y="30" width="50" height="28" fill="#dbeafe" stroke="#2563eb"/><rect x="210" y="30" width="50" height="28" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/><text x="35" y="49" text-anchor="middle">1</text><text x="85" y="49" text-anchor="middle">3</text><text x="135" y="49" text-anchor="middle">2</text><text x="185" y="49" text-anchor="middle">4</text><text x="235" y="49" text-anchor="middle">5</text><text x="35" y="22" text-anchor="middle" fill="#16a34a">left</text><text x="235" y="22" text-anchor="middle" fill="#dc2626">right</text><path d="M 40 72 L 220 72" stroke="#2563eb" fill="none" marker-end="url(#r)" stroke-width="2"/><path d="M 220 86 L 40 86" stroke="#dc2626" fill="none" stroke-width="2"/><text x="120" y="70" text-anchor="middle" fill="#2563eb" font-size="10">→ forward</text><text x="120" y="96" text-anchor="middle" fill="#dc2626" font-size="10">← backward</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '綠色為 left 邊界(最小已就位),紅色為 right 邊界(最大已就位)。每輪前向後兩個邊界各縮小一格,已就位元素不再參與掃描。',
+            en: 'Green marks the left boundary (smallest settled), red marks the right boundary (largest settled). Both boundaries shrink by one after each pair of passes, excluding already-sorted elements.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳(已排序)', en: 'Best (sorted)' }, { zh: '$O(n)$', en: '$O(n)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '平均', en: 'Average' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '最壞(逆序)', en: 'Worst (reverse)' }, { zh: '$O(n^2)$', en: '$O(n^2)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'stable / in-place', en: 'stable / in-place' }, { zh: '是', en: 'Yes' }, { zh: '輔助空間 $O(1)$', en: 'Auxiliary $O(1)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{best}}(n) = O(n),\\quad T_{\\text{avg/worst}}(n) = O(n^2)', caption: {
+            zh: '雙向掃描對「大部分已排序但末端有小元素」的資料比 Bubble Sort 快一倍;但漸近複雜度仍為 $O(n^2)$。',
+            en: 'Bidirectional scanning halves the number of passes for nearly-sorted data with small elements near the end, but the asymptotic complexity remains $O(n^2)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void shakerSort(vector<int>& arr) {\n    int left = 0, right = (int)arr.size() - 1;\n    bool swapped;\n    while (left < right) {\n        // Forward pass: bubble largest to right\n        swapped = false;\n        for (int i = left; i < right; i++) {\n            if (arr[i] > arr[i + 1]) {\n                swap(arr[i], arr[i + 1]);\n                swapped = true;\n            }\n        }\n        right--;\n        if (!swapped) break;\n        // Backward pass: sink smallest to left\n        swapped = false;\n        for (int i = right; i > left; i--) {\n            if (arr[i - 1] > arr[i]) {\n                swap(arr[i - 1], arr[i]);\n                swapped = true;\n            }\n        }\n        left++;\n        if (!swapped) break;\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:stable、in-place;比 Bubble Sort 更快處理「末端有小元素」的情形。', en: 'Pro: stable, in-place; faster than Bubble Sort for arrays with small elements near the end.' },
+            { zh: '優點:雙向掃描減少最壞情況下的輪數。', en: 'Pro: bidirectional scanning reduces the number of passes in many cases.' },
+            { zh: '缺點:平均與最壞仍為 $O(n^2)$,大資料集無法與 Quick/Merge Sort 競爭。', en: 'Con: average and worst case remain $O(n^2)$; cannot compete with Quick/Merge Sort for large datasets.' },
+            { zh: '適用:教學示範,或近乎有序且偶有小元素遠離正確位置的小型資料集。', en: 'Use for educational purposes or small nearly-sorted datasets where occasional small elements are far from their correct position.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '雙向冒泡:前向將最大值移右,後向將最小值移左。', en: 'Bidirectional bubble: forward moves the maximum right, backward moves the minimum left.' },
+            { zh: 'stable、in-place;最佳 $O(n)$,平均/最壞 $O(n^2)$。', en: 'stable, in-place; best $O(n)$, average/worst $O(n^2)$.' },
+            { zh: '改善 Bubble Sort 的 turtle 問題,但漸近複雜度不變;適合教學與小型幾乎排序資料。', en: 'Mitigates Bubble Sort\'s turtle problem, but asymptotic complexity is unchanged; suited for teaching and small nearly-sorted inputs.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'sort-merge': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '合併排序法', en: 'Merge Sort' },
+    slides: [
+      {
+        heading: { zh: '合併排序法', en: 'Merge Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '合併排序法採用 divide-and-conquer:將陣列遞迴對半分割至單元素,再將已排序的子陣列兩兩合併回去。所有情況均保證 $O(n \\log n)$,且為 stable。',
+            en: 'Merge Sort uses divide-and-conquer: recursively split the array into halves until single elements, then merge sorted sub-arrays back up. Guarantees $O(n \\log n)$ in all cases and is stable.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`mergeSort(arr, l, r)` 找到中點 `m = l + (r-l)/2`,遞迴排序 `[l,m]` 與 `[m+1,r]`,再呼叫 `merge` 將兩段合併。`merge` 建立臨時陣列 L、R,以雙指標逐一取較小值寫回原陣列。',
+            en: '`mergeSort(arr, l, r)` finds midpoint `m = l + (r-l)/2`, recursively sorts `[l,m]` and `[m+1,r]`, then calls `merge`. `merge` creates temporary arrays L and R, then uses two pointers to write the smaller element back one by one.' } },
+          { type: 'bullets', items: [
+            { zh: '合併時若 L[i] <= R[j],取 L[i],保證相等元素的相對順序不變(stable)。', en: 'During merge, taking L[i] when L[i] <= R[j] ensures equal elements keep their relative order (stable).' },
+            { zh: 'NOT in-place:merge 需 $O(n)$ 臨時空間。', en: 'NOT in-place: merge requires $O(n)$ auxiliary space.' },
+            { zh: '遞迴深度 $O(\\log n)$,每層合併共 $O(n)$,總計 $O(n \\log n)$。', en: 'Recursion depth is $O(\\log n)$; each level merges $O(n)$ total, giving $O(n \\log n)$ overall.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '若 `l >= r` 則回傳(基底情況:單一元素)。', en: 'If `l >= r`, return (base case: single element).' },
+            { zh: '計算 `m = l + (r-l)/2`,遞迴呼叫 `mergeSort(arr, l, m)` 與 `mergeSort(arr, m+1, r)`。', en: 'Compute `m = l + (r-l)/2`, recurse `mergeSort(arr, l, m)` and `mergeSort(arr, m+1, r)`.' },
+            { zh: '呼叫 `merge(arr, l, m, r)`:建立 L、R 副本,雙指標合併至 `arr[l..r]`。', en: 'Call `merge(arr, l, m, r)`: copy into L and R, use two pointers to merge back into `arr[l..r]`.' },
+            { zh: '剩餘未合併元素直接貼回。', en: 'Copy any remaining elements of L or R back.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  A["[12,11,13,5,6,7]"] --> B["[12,11,13]"]\n  A --> C["[5,6,7]"]\n  B --> D["[12,11]"]\n  B --> E["[13]"]\n  D --> F["[12]"]\n  D --> G["[11]"]\n  F --> H["merge: [11,12]"]\n  G --> H\n  H --> I["merge: [11,12,13]"]\n  E --> I\n  C --> J["merge: [5,6,7]"]\n  I --> K["merge: [5,6,7,11,12,13]"]\n  J --> K' },
+        ],
+      },
+      {
+        heading: { zh: '合併示意', en: 'Merge Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 100" width="380" height="100"><g font-family="sans-serif" font-size="12"><text x="10" y="20" fill="#64748b">L: sorted</text><rect x="10" y="28" width="45" height="26" fill="#dbeafe" stroke="#2563eb"/><rect x="55" y="28" width="45" height="26" fill="#dbeafe" stroke="#2563eb"/><rect x="100" y="28" width="45" height="26" fill="#dbeafe" stroke="#2563eb"/><text x="32" y="46" text-anchor="middle">5</text><text x="77" y="46" text-anchor="middle">11</text><text x="122" y="46" text-anchor="middle">13</text><text x="200" y="20" fill="#64748b">R: sorted</text><rect x="200" y="28" width="45" height="26" fill="#dcfce7" stroke="#16a34a"/><rect x="245" y="28" width="45" height="26" fill="#dcfce7" stroke="#16a34a"/><rect x="290" y="28" width="45" height="26" fill="#dcfce7" stroke="#16a34a"/><text x="222" y="46" text-anchor="middle">6</text><text x="267" y="46" text-anchor="middle">7</text><text x="312" y="46" text-anchor="middle">12</text><text x="190" y="80" fill="#64748b">merged:</text><text x="240" y="80" fill="#374151">5, 6, 7, 11, 12, 13</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '雙指標分別指向 L 與 R 的頭部;每次取較小者寫入結果,保證 stable(相等取 L 中元素優先)。',
+            en: 'Two pointers start at the head of L and R; always take the smaller element into the result, preserving stability (L wins ties).' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳', en: 'Best' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(n)$', en: '$O(n)$' } ],
+              [ { zh: '平均', en: 'Average' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(n)$', en: '$O(n)$' } ],
+              [ { zh: '最壞', en: 'Worst' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(n)$', en: '$O(n)$' } ],
+              [ { zh: 'stable / NOT in-place', en: 'stable / NOT in-place' }, { zh: '—', en: '—' }, { zh: '輔助空間 $O(n)$', en: 'Auxiliary $O(n)$' } ],
+            ] },
+          { type: 'math', tex: 'T(n) = 2T\\!\\left(\\frac{n}{2}\\right) + O(n) = O(n \\log n)', caption: {
+            zh: '遞迴樹深度 $\\log n$;每層合併需 $O(n)$;由主定理得 $T(n) = O(n \\log n)$,三種情況完全相同。',
+            en: 'Recursion tree has depth $\\log n$; each level merges $O(n)$; by master theorem $T(n) = O(n \\log n)$ in all cases.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void merge(int arr[], int l, int m, int r) {\n    int n1 = m - l + 1, n2 = r - m;\n    int L[n1], R[n2];\n    for (int i = 0; i < n1; i++) L[i] = arr[l + i];\n    for (int j = 0; j < n2; j++) R[j] = arr[m + 1 + j];\n    int i = 0, j = 0, k = l;\n    while (i < n1 && j < n2) {\n        if (L[i] <= R[j]) arr[k++] = L[i++];\n        else              arr[k++] = R[j++];\n    }\n    while (i < n1) arr[k++] = L[i++];\n    while (j < n2) arr[k++] = R[j++];\n}\n\nvoid mergeSort(int arr[], int l, int r) {\n    if (l >= r) return;\n    int m = l + (r - l) / 2;\n    mergeSort(arr, l, m);\n    mergeSort(arr, m + 1, r);\n    merge(arr, l, m, r);\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:stable,$O(n \\log n)$ 三種情況皆一致,無最壞情況退化。', en: 'Pro: stable, $O(n \\log n)$ in all cases — no worst-case degradation.' },
+            { zh: '優點:適合鏈結串列排序(merge 操作不需隨機存取)。', en: 'Pro: ideal for linked-list sorting (merge does not require random access).' },
+            { zh: '優點:適合外部排序(External Sort):可分批讀取磁碟區塊合併。', en: 'Pro: suitable for external sort: can read and merge disk blocks in batches.' },
+            { zh: '缺點:需 $O(n)$ 額外空間,記憶體開銷大於 Quick Sort。', en: 'Con: requires $O(n)$ auxiliary space — more memory overhead than Quick Sort.' },
+            { zh: '適用:需要 stable 排序、鏈結串列排序、外部排序,或對最壞情況有嚴格保證需求。', en: 'Use when stability is required, for linked-list sorting, external sort, or when worst-case guarantees are critical.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'divide-and-conquer:遞迴分割 + 線性合併。', en: 'divide-and-conquer: recursive split + linear merge.' },
+            { zh: 'stable;所有情況 $O(n \\log n)$;輔助空間 $O(n)$。', en: 'stable; $O(n \\log n)$ always; $O(n)$ auxiliary space.' },
+            { zh: '外部排序與鏈結串列排序的首選演算法。', en: 'The go-to algorithm for external sorting and linked-list sorting.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
 };
 
 module.exports = SLIDES_DB;
