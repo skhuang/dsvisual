@@ -1676,6 +1676,672 @@ const SLIDES_DB = {
     ],
   },
 
+  'heap-binary': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '二元堆積(Binary Heap)', en: 'Binary Heap' },
+    slides: [
+      {
+        heading: { zh: '二元堆積(Binary Heap)', en: 'Binary Heap' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '以連續陣列儲存的完全二元樹,透過 sift-up 與 sift-down 維持 heap 性質,提供 $O(\\log N)$ 插入與取出及 $O(1)$ 查看頂端元素。',
+            en: 'A complete binary tree stored in a contiguous array; heap property is maintained by sift-up and sift-down, giving $O(\\log N)$ insert/extract and $O(1)$ peek.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '索引 $i$ 的父節點為 $(i-1)/2$,左子為 $2i+1$,右子為 $2i+2$。Min-Heap 保證每個父節點的鍵值 $\\leq$ 所有子節點;Max-Heap 則相反。',
+            en: 'Node at index $i$ has parent $(i-1)/2$, left child $2i+1$, right child $2i+2$. A Min-Heap guarantees every parent key $\\leq$ its children; Max-Heap is the reverse.' } },
+          { type: 'bullets', items: [
+            { zh: 'insert:新增元素到陣列末端,執行 sift-up 向上修復。', en: 'insert: append to array tail, then sift-up to restore order.' },
+            { zh: 'extractTop:將根與末端元素互換後移除,執行 sift-down 向下修復。', en: 'extractTop: swap root with tail, remove tail, then sift-down to restore.' },
+            { zh: 'decreaseKey/increaseKey:原地修改鍵值後視情況執行 sift-up 或 sift-down。', en: 'decreaseKey / increaseKey: modify in place, then sift-up or sift-down as needed.' },
+            { zh: '陣列連續存取,快取命中率高。', en: 'Contiguous array layout yields excellent cache performance.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: 'insert(5):將 5 追加至陣列末端索引位置。', en: 'insert(5): append 5 at the last array position.' },
+            { zh: 'sift-up:比較 5 與父節點;若 5 較小(min-heap)則互換,重複直到根或不再違反。', en: 'sift-up: compare 5 with its parent; swap if 5 is smaller (min-heap); repeat until root or no violation.' },
+            { zh: 'extractTop:根(最小值)與末端互換後移除末端。', en: 'extractTop: swap root (minimum) with the last element, then remove the last.' },
+            { zh: 'sift-down:從根往下選較小的子節點互換,直到葉節點或不再違反。', en: 'sift-down: from root, swap with the smaller child until a leaf or no violation remains.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["insert(5)\\nappend to tail"] --> B["sift-up\\n(compare with parent)"]\n  B --> C{"parent > child\\n(min-heap)?"}\n  C -->|"yes"| D["swap & move up"]\n  D --> B\n  C -->|"no"| E["heap property\\nrestored"]' },
+        ],
+      },
+      {
+        heading: { zh: '陣列結構示意', en: 'Array Layout Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" width="360" height="120"><g font-family="sans-serif" font-size="12" text-anchor="middle"><rect x="10" y="10" width="40" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="30" y="30">1</text><text x="30" y="8" font-size="9" fill="#64748b">i=0</text><rect x="60" y="10" width="40" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="80" y="30">3</text><text x="80" y="8" font-size="9" fill="#64748b">i=1</text><rect x="110" y="10" width="40" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="130" y="30">2</text><text x="130" y="8" font-size="9" fill="#64748b">i=2</text><rect x="160" y="10" width="40" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="180" y="30">7</text><text x="180" y="8" font-size="9" fill="#64748b">i=3</text><rect x="210" y="10" width="40" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="30">8</text><text x="230" y="8" font-size="9" fill="#64748b">i=4</text><rect x="260" y="10" width="40" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="280" y="30">5</text><text x="280" y="8" font-size="9" fill="#64748b">i=5</text><rect x="310" y="10" width="40" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="330" y="30">9</text><text x="330" y="8" font-size="9" fill="#64748b">i=6</text><circle cx="80" cy="75" r="14" fill="#fef9c3" stroke="#ca8a04"/><text x="80" y="79">1</text><circle cx="40" cy="105" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="40" y="109">3</text><circle cx="120" cy="105" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="120" y="109">2</text><line x1="80" y1="89" x2="46" y2="92" stroke="#64748b"/><line x1="80" y1="89" x2="114" y2="92" stroke="#64748b"/><text x="180" y="79" font-size="10" fill="#64748b">root=data[0]</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '上方為陣列表示;下方樹形圖顯示 data[0](根)為最小值。節點 $i$ 的兩個子節點位於 $2i+1$ 與 $2i+2$。',
+            en: 'Top: flat array representation. Bottom: tree view where data[0] (root) is the minimum. Children of node $i$ are at $2i+1$ and $2i+2$.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '時間(最壞)', en: 'Time (Worst)' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'peek', en: 'peek' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'extractTop', en: 'extractTop' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'decreaseKey / increaseKey', en: 'decreaseKey / increaseKey' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'build-heap ($N$ 個元素)', en: 'build-heap ($N$ elements)' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{build}}(N) = O(N)', caption: {
+            zh: '從底部向上呼叫 sift-down 建堆的總代價為 $O(N)$,優於逐一 insert 的 $O(N \\log N)$。',
+            en: 'Building the heap bottom-up with sift-down costs $O(N)$ total — better than $N$ sequential inserts at $O(N \\log N)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void siftUp(int i) {\n    while (i > 0) {\n        int p = (i - 1) / 2;\n        if (!cmp(data[i], data[p])) break;\n        swap(data[i], data[p]);\n        i = p;\n    }\n}\n\nvoid siftDown(int i) {\n    int n = static_cast<int>(data.size());\n    while (true) {\n        int left = 2 * i + 1, right = 2 * i + 2, best = i;\n        if (left  < n && cmp(data[left],  data[best])) best = left;\n        if (right < n && cmp(data[right], data[best])) best = right;\n        if (best == i) break;\n        swap(data[i], data[best]);\n        i = best;\n    }\n}\n\nvoid insert(int x) {\n    data.push_back(x);\n    siftUp(static_cast<int>(data.size()) - 1);\n}\n\nint extractTop() {\n    int top = data[0];\n    data[0] = data.back(); data.pop_back();\n    if (!data.empty()) siftDown(0);\n    return top;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:陣列連續儲存,快取友好,常數因子小。', en: 'Pro: contiguous array storage is cache-friendly with small constant factors.' },
+            { zh: '優點:build-heap 為 $O(N)$,適合大量資料一次性建堆。', en: 'Pro: $O(N)$ build-heap is ideal for bulk construction from a large dataset.' },
+            { zh: '缺點:合併兩個堆積需 $O((N+M)\\log(N+M))$,不適合頻繁 merge。', en: 'Con: merging two heaps costs $O((N+M)\\log(N+M))$ — unsuitable when merges are frequent.' },
+            { zh: '缺點:decrease-key 需要知道元素的陣列索引,外部維護索引增加複雜度。', en: 'Con: decrease-key requires knowing the array index, adding bookkeeping overhead.' },
+            { zh: '適用:優先佇列、Dijkstra/Prim 演算法、Heap Sort、Top-K 問題。', en: 'Use for: priority queues, Dijkstra/Prim, Heap Sort, Top-K streaming.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '完全二元樹以陣列實作:父節點在 $(i-1)/2$,子節點在 $2i+1$/$2i+2$。', en: 'Complete binary tree in an array: parent at $(i-1)/2$, children at $2i+1$/$2i+2$.' },
+            { zh: 'insert/$O(\\log N)$ worst-case;extractTop/$O(\\log N)$ worst-case;peek/$O(1)$。', en: 'insert $O(\\log N)$ worst-case; extractTop $O(\\log N)$ worst-case; peek $O(1)$.' },
+            { zh: 'build-heap 為 $O(N)$;merge 效率低;快取性能優異。', en: '$O(N)$ build-heap; poor merge performance; excellent cache locality.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'heap-binomial': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '二項堆積(Binomial Heap)', en: 'Binomial Heap' },
+    slides: [
+      {
+        heading: { zh: '二項堆積(Binomial Heap)', en: 'Binomial Heap' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '以二項樹(Binomial Tree)森林組成的堆積結構,合併操作類比二進位加法,提供 $O(\\log N)$ 合併與 $O(1)$ 攤銷插入。',
+            en: 'A heap built from a forest of binomial trees; merging mimics binary addition over tree degrees, giving $O(\\log N)$ merge and $O(1)$ amortized insert.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '度數為 $k$ 的二項樹 $B_k$ 由兩棵 $B_{k-1}$ 連結而成,共有 $2^k$ 個節點。$N$ 個元素的二項堆積最多含 $\\lfloor\\log_2 N\\rfloor + 1$ 棵樹,每個度數至多出現一次,如同 $N$ 的二進位表示。',
+            en: 'Binomial tree $B_k$ is formed by linking two $B_{k-1}$ trees and has $2^k$ nodes. A binomial heap with $N$ elements has at most $\\lfloor\\log_2 N\\rfloor + 1$ trees — one per bit of $N$ set to 1.' } },
+          { type: 'bullets', items: [
+            { zh: 'insert:建立單節點 $B_0$ 堆積,再與主堆積合併($O(1)$ 攤銷)。', en: 'insert: create a single-node $B_0$ heap then merge with the main heap ($O(1)$ amortized).' },
+            { zh: 'merge:按度數升序合併根串列,相同度數的樹執行 link 操作(類似二進位加法進位)。', en: 'merge: combine root lists by degree; link trees of equal degree (like binary carry propagation).' },
+            { zh: 'extractTop:找出根串列中最小根,移除後將其子節點反轉為新堆積再合併。', en: 'extractTop: find the minimum root, remove it, reverse its children into a new heap, then merge.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '合併兩個二項堆積:將兩個根串列按度數升序排列後合併。', en: 'Merge two binomial heaps: interleave both root lists sorted by degree.' },
+            { zh: '掃描合併後根串列:若連續兩棵樹度數相同,執行 linkTrees (較小根成為父)。', en: 'Scan merged root list: if two consecutive trees share the same degree, call linkTrees (smaller root becomes parent).' },
+            { zh: '重複直到每個度數至多一棵樹為止。', en: 'Repeat until every degree appears at most once.' },
+            { zh: 'extractTop:線性掃描根串列找最小根;子樹反轉後執行上述合併。', en: 'extractTop: linear scan of root list for minimum; reverse children then apply the merge above.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  H1["H1: B0(3), B1(7)"] --> MERGE["mergeRootLists\\n+ link equal degrees"]\n  H2["H2: B0(1), B1(10)"] --> MERGE\n  MERGE --> OUT["Result: B0(3), B1(1), B2(...)\\n(carry-like linking)"]' },
+        ],
+      },
+      {
+        heading: { zh: '二項樹結構示意', en: 'Binomial Tree Structure' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 130" width="340" height="130"><g font-family="sans-serif" font-size="11" text-anchor="middle"><text x="30" y="12" font-size="10" fill="#64748b">B0</text><circle cx="30" cy="25" r="12" fill="#fef9c3" stroke="#ca8a04"/><text x="30" y="29">1</text><text x="110" y="12" font-size="10" fill="#64748b">B1</text><circle cx="110" cy="25" r="12" fill="#fef9c3" stroke="#ca8a04"/><text x="110" y="29">1</text><circle cx="80" cy="65" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="80" y="69">3</text><line x1="110" y1="37" x2="88" y2="53" stroke="#64748b"/><text x="230" y="12" font-size="10" fill="#64748b">B2</text><circle cx="230" cy="25" r="12" fill="#fef9c3" stroke="#ca8a04"/><text x="230" y="29">1</text><circle cx="195" cy="65" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="195" y="69">3</text><circle cx="255" cy="65" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="255" y="69">2</text><circle cx="230" cy="105" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="109">5</text><line x1="230" y1="37" x2="203" y2="53" stroke="#64748b"/><line x1="230" y1="37" x2="248" y2="53" stroke="#64748b"/><line x1="255" y1="77" x2="242" y2="93" stroke="#64748b"/></g></svg>' },
+          { type: 'note', text: {
+            zh: '$B_0$ 為單節點;$B_1$ 由兩棵 $B_0$ 連結;$B_2$ 由兩棵 $B_1$ 連結。每棵 $B_k$ 恰有 $2^k$ 節點,根的度數為 $k$。',
+            en: '$B_0$ is a single node; $B_1$ links two $B_0$ trees; $B_2$ links two $B_1$ trees. Each $B_k$ has exactly $2^k$ nodes and root degree $k$.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '時間', en: 'Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: 'insert (攤銷)', en: 'insert (amortized)' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'peek', en: 'peek' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'extractTop (最壞)', en: 'extractTop (worst)' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'merge (最壞)', en: 'merge (worst)' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'decreaseKey (最壞)', en: 'decreaseKey (worst)' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{merge}}(N) = O(\\log N)', caption: {
+            zh: '合併兩個大小為 $N$ 的二項堆積最多處理 $2\\lfloor\\log_2 N\\rfloor+2$ 棵樹,故為 $O(\\log N)$。',
+            en: 'Merging two size-$N$ binomial heaps processes at most $2\\lfloor\\log_2 N\\rfloor+2$ trees, giving $O(\\log N)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void linkTrees(BNode* rootY, BNode* rootZ) {\n    rootY->parent = rootZ;\n    rootY->sibling = rootZ->child;\n    rootZ->child = rootY;\n    rootZ->degree++;\n}\n\nBNode* unionHeaps(BNode* h1, BNode* h2) {\n    BNode* newHead = mergeRootLists(h1, h2);\n    if (!newHead) return nullptr;\n\n    BNode* prev = nullptr, *curr = newHead, *next = curr->sibling;\n    while (next) {\n        bool degreeDiff  = curr->degree != next->degree;\n        bool tripleSame  = next->sibling && next->sibling->degree == curr->degree;\n        if (degreeDiff || tripleSame) {\n            prev = curr; curr = next;\n        } else if (cmp(curr->key, next->key)) {\n            curr->sibling = next->sibling;\n            linkTrees(next, curr);\n        } else {\n            if (!prev) newHead = next; else prev->sibling = next;\n            linkTrees(curr, next);\n            curr = next;\n        }\n        next = curr->sibling;\n    }\n    return newHead;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:$O(\\log N)$ 合併,明顯優於 Binary Heap 的 $O((N+M)\\log(N+M))$。', en: 'Pro: $O(\\log N)$ merge — much better than Binary Heap\'s $O((N+M)\\log(N+M))$.' },
+            { zh: '優點:插入攤銷 $O(1)$,連續插入效率高。', en: 'Pro: $O(1)$ amortized insert; efficient for sequential insertions.' },
+            { zh: '缺點:指標結構,快取效能不如陣列式 Binary Heap。', en: 'Con: pointer-based; worse cache performance than array-based Binary Heap.' },
+            { zh: '缺點:peek 需要線性掃描根串列 $O(\\log N)$;不提供 $O(1)$ peek。', en: 'Con: peek requires a linear scan of the root list — $O(\\log N)$, not $O(1)$.' },
+            { zh: '適用:需要高效合併的優先佇列場景,如事件驅動模擬器、Prim 演算法的外部合併。', en: 'Use when efficient merges are critical: event-driven simulators, external-merge Prim MST.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '$N$ 個元素 → 至多 $\\lfloor\\log_2 N\\rfloor+1$ 棵樹,每個度數至多一棵。', en: '$N$ elements → at most $\\lfloor\\log_2 N\\rfloor+1$ trees; at most one tree per degree.' },
+            { zh: '合併 $O(\\log N)$,插入攤銷 $O(1)$,extractTop $O(\\log N)$ 最壞。', en: 'Merge $O(\\log N)$; insert $O(1)$ amortized; extractTop $O(\\log N)$ worst-case.' },
+            { zh: '結構類比二進位加法:相同度數的樹做 link 如同進位操作。', en: 'Structure mirrors binary addition: linking equal-degree trees is analogous to carrying.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'heap-fibonacci': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: 'Fibonacci Heap(費波那契堆積)', en: 'Fibonacci Heap' },
+    slides: [
+      {
+        heading: { zh: 'Fibonacci Heap(費波那契堆積)', en: 'Fibonacci Heap' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '以循環雙向鏈結根串列延遲合併,配合 cut 與 cascading-cut 維持攤銷界,提供 $O(1)$ 攤銷 insert/merge/decrease-key 及 $O(\\log N)$ 攤銷 extractTop,是理論上最優的優先佇列。',
+            en: 'A lazy-melding heap using a circular doubly-linked root list; cut and cascading-cut maintain amortized bounds: $O(1)$ amortized insert/merge/decrease-key and $O(\\log N)$ amortized extractTop — the theoretically optimal priority queue.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '所有樹根形成循環雙向鏈結串列(root list),`best` 指向最小根。consolidate 在 extractTop 時才整理結構。decrease-key 透過 cut 將節點移至根串列,再以 cascading-cut 確保父節點最多損失一個子節點。',
+            en: 'All tree roots form a circular doubly-linked list (root list); `best` points to the minimum root. Consolidation is deferred until extractTop. decrease-key uses cut to move a node to the root list, and cascading-cut ensures no parent loses more than one child.' } },
+          { type: 'bullets', items: [
+            { zh: 'insert:建立新節點加入根串列,若鍵值更小則更新 `best` — 純 $O(1)$。', en: 'insert: create node, splice into root list, update `best` if smaller — pure $O(1)$.' },
+            { zh: 'merge:將兩個根串列拼接,更新 `best` — $O(1)$ 攤銷。', en: 'merge: splice the two root lists, update `best` — $O(1)$ amortized.' },
+            { zh: 'consolidate:將根串列中度數相同的樹兩兩合併,使每個度數至多一棵(在 extractTop 中呼叫)。', en: 'consolidate: link trees of equal degree in the root list until each degree is unique (called inside extractTop).' },
+            { zh: 'cascading-cut:若父節點已失去一個子節點(mark=true),則繼續向上 cut。', en: 'cascading-cut: if a parent has already lost one child (mark=true), continue cutting upward.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: 'decrease-key(x, k):令 x.key = k;若 k < parent.key,執行 cut(x)。', en: 'decrease-key(x, k): set x.key = k; if k < parent.key, call cut(x).' },
+            { zh: 'cut(x):從父節點子串列移除 x,加入根串列,清除 mark。', en: 'cut(x): remove x from its parent\'s child list, add to root list, clear mark.' },
+            { zh: 'cascading-cut(parent):若 parent.mark=false 設為 true 並停止;若 true 繼續 cut(parent)。', en: 'cascading-cut(parent): if parent.mark is false set it true and stop; if true, cut(parent) and recurse.' },
+            { zh: 'extractTop:將 best 的子節點全部移至根串列,呼叫 consolidate 整理,更新 best。', en: 'extractTop: move all children of best to the root list, call consolidate, update best.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  INSERT["insert(x)\\nO(1) amortized"] --> ROOTLIST["add to root list\\nupdate best"]\n  EXTRACT["extractTop\\nO(log N) amortized"] --> PROMOTE["promote children\\nto root list"]\n  PROMOTE --> CONSOLIDATE["consolidate\\n(link equal-degree trees)"]\n  DKEY["decreaseKey\\nO(1) amortized"] --> CUT["cut node\\nto root list"]\n  CUT --> CCUT["cascading-cut\\n(parent chain)"]' },
+        ],
+      },
+      {
+        heading: { zh: 'Fibonacci 堆積根串列示意', en: 'Fibonacci Heap Root List Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" width="360" height="120"><g font-family="sans-serif" font-size="11" text-anchor="middle"><text x="180" y="14" font-size="10" fill="#64748b">root list (circular doubly-linked)</text><circle cx="60" cy="50" r="16" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/><text x="60" y="54">1</text><text x="60" y="38" font-size="9" fill="#ca8a04">best</text><circle cx="140" cy="50" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="54">5</text><circle cx="220" cy="50" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="220" y="54">3</text><circle cx="300" cy="50" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="300" y="54">8</text><line x1="76" y1="50" x2="124" y2="50" stroke="#64748b" marker-end="url(#arr)"/><line x1="156" y1="50" x2="204" y2="50" stroke="#64748b"/><line x1="236" y1="50" x2="284" y2="50" stroke="#64748b"/><path d="M 300 66 Q 180 110 60 66" stroke="#64748b" fill="none"/><circle cx="140" cy="90" r="12" fill="#dcfce7" stroke="#16a34a"/><text x="140" y="94">7</text><line x1="140" y1="66" x2="140" y2="78" stroke="#64748b"/><text x="180" y="115" font-size="9" fill="#64748b">circular link back to best</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '根串列為循環雙向鏈結;`best` 指向最小根(key=1)。子樹可掛在任意根節點下,consolidate 前不整理。',
+            en: 'The root list is circular and doubly-linked; `best` points to the minimum root (key=1). Subtrees hang under any root node and are not tidied until consolidate is called.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '攤銷時間', en: 'Amortized Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'peek', en: 'peek' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'merge', en: 'merge' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'decrease-key', en: 'decrease-key' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'extractTop', en: 'extractTop' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'delete', en: 'delete' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{decrease-key}} = O(1)\\text{ amortized}', caption: {
+            zh: '攤銷分析基於勢能函數 $\\Phi = t + 2m$($t$ 為根串列長度,$m$ 為有 mark 的節點數),保證 decrease-key 攤銷 $O(1)$。',
+            en: 'Amortized analysis uses potential $\\Phi = t + 2m$ (t = root-list size, m = marked nodes), proving decrease-key costs $O(1)$ amortized.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'FNode* insert(int key) {\n    FNode* x = new FNode(key);\n    addToRootList(x);\n    n++;\n    return x;\n}\n\nvoid cut(FNode* x, FNode* y) {      // x: child, y: parent\n    if (y->child == x)\n        y->child = (x->right != x) ? x->right : nullptr;\n    y->degree--;\n    removeNode(x);\n    addToRootList(x);\n}\n\nvoid cascadingCut(FNode* y) {\n    FNode* z = y->parent;\n    if (!z) return;\n    if (!y->mark) { y->mark = true; }\n    else { cut(y, z); cascadingCut(z); }\n}\n\nvoid decreaseOrIncreaseKey(FNode* x, int newKey) {\n    x->key = newKey;\n    FNode* y = x->parent;\n    if (y && cmp(x->key, y->key)) {\n        cut(x, y);\n        cascadingCut(y);\n    }\n    if (!best || cmp(x->key, best->key)) best = x;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:decrease-key $O(1)$ 攤銷是理論最優,使 Dijkstra 達 $O(E + V\\log V)$。', en: 'Pro: $O(1)$ amortized decrease-key is theoretically optimal, making Dijkstra run in $O(E + V\\log V)$.' },
+            { zh: '優點:insert 與 merge 皆為 $O(1)$,適合大量插入後集中 extract 的工作負載。', en: 'Pro: $O(1)$ insert and merge; ideal for insert-heavy then extract-heavy workloads.' },
+            { zh: '缺點:實作複雜,常數因子大,指標密集,實際效能常遜於 Binary Heap。', en: 'Con: complex implementation, large constant factors, pointer-intensive — often slower in practice than Binary Heap.' },
+            { zh: '缺點:consolidate 最壞單次 $O(N)$,但攤銷 $O(\\log N)$。', en: 'Con: consolidate is $O(N)$ worst-case single call, but $O(\\log N)$ amortized.' },
+            { zh: '適用:decrease-key 頻繁的演算法(Dijkstra、Prim、網路流)之理論研究與競賽。', en: 'Use for decrease-key-heavy algorithms (Dijkstra, Prim, network flow) in theory research and competitive programming.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '延遲合併根串列:insert/merge/decrease-key 皆 $O(1)$ 攤銷。', en: 'Lazy root-list merging: insert, merge, and decrease-key are all $O(1)$ amortized.' },
+            { zh: 'extractTop 觸發 consolidate:攤銷 $O(\\log N)$。', en: 'extractTop triggers consolidate: $O(\\log N)$ amortized.' },
+            { zh: '理論最優但實作複雜;適合以 decrease-key 為核心的圖演算法。', en: 'Theoretically optimal but complex; best suited to graph algorithms that rely heavily on decrease-key.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'heap-leftist': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '左傾堆積(Leftist Heap)', en: 'Leftist Heap' },
+    slides: [
+      {
+        heading: { zh: '左傾堆積(Leftist Heap)', en: 'Leftist Heap' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '以 null-path-length (NPL) 為依據保持右脊最短的二元堆積,所有操作皆以 merge 為原語,提供 $O(\\log N)$ 合併、插入與取出。',
+            en: 'A binary heap that keeps the right spine shortest by maintaining null-path-length (NPL) invariants; all operations are defined in terms of merge, giving $O(\\log N)$ meld, insert, and extract.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '節點的 NPL 定義為到達最近 null 子節點的最短路徑長度。左傾性質:對每個節點,左子節點的 NPL $\\geq$ 右子節點的 NPL,確保右脊長度 $\\leq \\log_2(N+1)$。',
+            en: 'NPL of a node is the length of the shortest path to a null descendant. Leftist property: for every node, NPL(left child) $\\geq$ NPL(right child), bounding the right-spine length to $\\leq \\log_2(N+1)$.' } },
+          { type: 'bullets', items: [
+            { zh: 'merge(a, b):較小根留下,其右子樹與另一棵堆積遞迴合併;若合併後右 NPL > 左 NPL,則交換左右子。', en: 'merge(a, b): keep the smaller root, recursively merge its right subtree with the other heap; swap children if NPL(right) > NPL(left) after merge.' },
+            { zh: 'insert(x):建立單節點堆積,與主堆積 merge。', en: 'insert(x): create a singleton heap, then merge with the main heap.' },
+            { zh: 'extractTop:移除根,merge 左右子樹。', en: 'extractTop: remove root, merge left and right subtrees.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: 'merge(a, b):若 a 為 null 回傳 b;若 b 為 null 回傳 a。', en: 'merge(a, b): if a is null return b; if b is null return a.' },
+            { zh: '比較 a.key 與 b.key,令 a 為鍵值較小者(min-heap)。', en: 'Compare a.key and b.key; let a be the smaller-key node (min-heap).' },
+            { zh: '遞迴:a.right = merge(a.right, b)。', en: 'Recurse: a.right = merge(a.right, b).' },
+            { zh: '維護左傾性質:若 NPL(a.left) < NPL(a.right),交換 a 的左右子;更新 a.npl = NPL(a.right) + 1。', en: 'Restore leftist: if NPL(a.left) < NPL(a.right), swap children; update a.npl = NPL(a.right) + 1.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  MA["merge(a, b)"] --> CMP{"a.key < b.key?"}\n  CMP -->|"yes"| REC["a.right = merge(a.right, b)"]\n  CMP -->|"no"| SWAP0["swap a and b, then recurse"]\n  REC --> NPL{"NPL(left) < NPL(right)?"}\n  NPL -->|"yes"| SWAPLR["swap children"]\n  NPL -->|"no"| UPD["update npl"]\n  SWAPLR --> UPD' },
+        ],
+      },
+      {
+        heading: { zh: '左傾樹結構示意', en: 'Leftist Tree Structure' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 130" width="300" height="130"><g font-family="sans-serif" font-size="11" text-anchor="middle"><circle cx="150" cy="20" r="14" fill="#fef9c3" stroke="#ca8a04"/><text x="150" y="24">1</text><text x="165" y="14" font-size="9" fill="#64748b">npl=1</text><circle cx="90" cy="60" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="90" y="64">3</text><text x="105" y="54" font-size="9" fill="#64748b">npl=1</text><circle cx="200" cy="60" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="200" y="64">2</text><text x="215" y="54" font-size="9" fill="#64748b">npl=0</text><circle cx="60" cy="100" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="60" y="104">6</text><text x="75" y="94" font-size="9" fill="#64748b">npl=0</text><circle cx="120" cy="100" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="120" y="104">5</text><text x="135" y="94" font-size="9" fill="#64748b">npl=0</text><line x1="150" y1="34" x2="100" y2="47" stroke="#64748b"/><line x1="150" y1="34" x2="190" y2="47" stroke="#64748b"/><line x1="90" y1="74" x2="68" y2="87" stroke="#64748b"/><line x1="90" y1="74" x2="112" y2="87" stroke="#64748b"/><text x="38" y="120" font-size="9" fill="#94a3b8">left spine</text><text x="220" y="75" font-size="9" fill="#94a3b8">right spine (short)</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '每個節點標示其 npl 值。左子 npl $\\geq$ 右子 npl;根的右脊極短,確保 merge 遞迴深度為 $O(\\log N)$。',
+            en: 'Each node shows its npl value. Left npl $\\geq$ right npl; the right spine is kept very short, bounding merge recursion depth to $O(\\log N)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '時間(最壞)', en: 'Time (Worst)' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: 'merge', en: 'merge' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' } ],
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' } ],
+              [ { zh: 'peek', en: 'peek' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'extractTop', en: 'extractTop' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{merge}}(N) = O(\\log N)', caption: {
+            zh: 'merge 只沿右脊遞迴,右脊長度 $\\leq \\log_2(N+1)$,故每次 merge 最多 $O(\\log N)$ 步。',
+            en: 'merge recurses only along the right spine, whose length is $\\leq \\log_2(N+1)$, so each merge takes at most $O(\\log N)$ steps.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'LNode* mergeNodes(LNode* a, LNode* b) {\n    if (!a) return b;\n    if (!b) return a;\n    if (!cmp(a->key, b->key)) swap(a, b); // ensure a has smaller key\n\n    a->right = mergeNodes(a->right, b);   // recurse along right spine\n\n    // restore leftist property\n    if (getNpl(a->left) < getNpl(a->right))\n        swap(a->left, a->right);\n    a->npl = getNpl(a->right) + 1;\n    return a;\n}\n\nvoid insert(int x) {\n    root = mergeNodes(root, new LNode(x));\n}\n\nint extractTop() {\n    int out = root->key;\n    LNode* l = root->left, *r = root->right;\n    delete root;\n    root = mergeNodes(l, r);\n    return out;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:$O(\\log N)$ merge,適合需要頻繁合併兩個獨立堆積的場景。', en: 'Pro: $O(\\log N)$ merge; ideal when merging two independent heaps frequently.' },
+            { zh: '優點:結構規律(NPL 保證右脊短),易於分析。', en: 'Pro: regular structure (NPL guarantees short right spine) — easy to analyze.' },
+            { zh: '缺點:需儲存 npl 欄位,且為指標結構,快取效能不如 Binary Heap。', en: 'Con: requires storing npl fields; pointer-based structure is less cache-friendly than Binary Heap.' },
+            { zh: '缺點:decrease-key 無法像 Fibonacci Heap 達到 $O(1)$ 攤銷。', en: 'Con: decrease-key cannot achieve $O(1)$ amortized as in Fibonacci Heap.' },
+            { zh: '適用:需要合併優先佇列的圖演算法、外部排序中的多路合併。', en: 'Use for graph algorithms with heap merges, and multi-way merge in external sorting.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'NPL 左傾性質保證右脊長度 $O(\\log N)$,所有操作皆以 merge 表達。', en: 'NPL leftist property bounds right-spine length to $O(\\log N)$; all operations expressed via merge.' },
+            { zh: 'merge/insert/extractTop 皆 $O(\\log N)$ 最壞;peek $O(1)$。', en: 'merge, insert, extractTop all $O(\\log N)$ worst-case; peek $O(1)$.' },
+            { zh: '相較 Skew Heap 多一個 npl 欄位,但提供嚴格最壞保證(非攤銷)。', en: 'Compared to Skew Heap, one extra npl field per node, but provides strict worst-case (not amortized) bounds.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'heap-skew': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '偏斜堆積(Skew Heap)', en: 'Skew Heap' },
+    slides: [
+      {
+        heading: { zh: '偏斜堆積(Skew Heap)', en: 'Skew Heap' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '自調整合併堆積:每次 merge 後無條件交換左右子節點,無需儲存 npl 欄位,以攤銷 $O(\\log N)$ 的代價完成 merge、insert 與 extractTop。',
+            en: 'A self-adjusting merge heap that unconditionally swaps left and right children on every merge step — no npl field needed — achieving $O(\\log N)$ amortized for merge, insert, and extractTop.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Skew Heap 是 Leftist Heap 的簡化版本:Leftist Heap 只在 NPL 違反時交換子節點,而 Skew Heap 每次都無條件交換,以攤銷分析保證 $O(\\log N)$ 效能而不維護任何平衡資訊。',
+            en: 'Skew Heap is a simplification of Leftist Heap: Leftist swaps children only when the NPL property is violated; Skew swaps unconditionally every time, relying on amortized analysis for $O(\\log N)$ performance without any balance bookkeeping.' } },
+          { type: 'bullets', items: [
+            { zh: 'merge(a, b):令較小根為 a;a.right = merge(a.right, b);然後無條件 swap(a.left, a.right)。', en: 'merge(a, b): let a be the smaller root; set a.right = merge(a.right, b); then unconditionally swap(a.left, a.right).' },
+            { zh: 'insert(x):建立單節點堆積,與主堆積 merge。', en: 'insert(x): create a singleton heap, then merge with the main heap.' },
+            { zh: 'extractTop:移除根,merge 左右子樹。', en: 'extractTop: remove root, merge left and right subtrees.' },
+            { zh: '無 npl 欄位,節點結構最小化。', en: 'No npl field — minimal node structure.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: 'merge(a, b):若任一為 null 回傳另一方。', en: 'merge(a, b): if either is null, return the other.' },
+            { zh: '令 a 的根鍵值 $\\leq$ b 的根鍵值(若否則 swap(a, b))。', en: 'Ensure a.key $\\leq$ b.key (swap a and b if not).' },
+            { zh: '遞迴:a.right = merge(a.right, b)。', en: 'Recurse: a.right = merge(a.right, b).' },
+            { zh: '無條件交換 a 的左右子:swap(a.left, a.right)。回傳 a。', en: 'Unconditionally swap a\'s children: swap(a.left, a.right). Return a.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  M["merge(a, b)"] --> NULL{"null check"}\n  NULL -->|"a or b null"| RET["return non-null"]\n  NULL -->|"both non-null"| CMP{"a.key <= b.key?"}\n  CMP -->|"no"| SWP["swap(a, b)"]\n  CMP -->|"yes"| REC\n  SWP --> REC["a.right = merge(a.right, b)"]\n  REC --> USWAP["swap(a.left, a.right)\\n(unconditional)"]\n  USWAP --> RETA["return a"]' },
+        ],
+      },
+      {
+        heading: { zh: '偏斜堆積結構示意', en: 'Skew Heap Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 140" width="280" height="140"><g font-family="sans-serif" font-size="11" text-anchor="middle"><circle cx="140" cy="20" r="14" fill="#fef9c3" stroke="#ca8a04"/><text x="140" y="24">2</text><circle cx="80" cy="60" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="80" y="64">5</text><circle cx="180" cy="60" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="180" y="64">7</text><circle cx="50" cy="100" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="50" y="104">12</text><circle cx="110" cy="100" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="110" y="104">18</text><circle cx="160" cy="100" r="14" fill="#dbeafe" stroke="#2563eb"/><text x="160" y="104">30</text><line x1="140" y1="34" x2="90" y2="47" stroke="#64748b"/><line x1="140" y1="34" x2="172" y2="47" stroke="#64748b"/><line x1="80" y1="74" x2="58" y2="87" stroke="#64748b"/><line x1="80" y1="74" x2="102" y2="87" stroke="#64748b"/><line x1="180" y1="74" x2="165" y2="87" stroke="#64748b"/><text x="140" y="135" font-size="9" fill="#64748b">no npl field; shape varies after merges</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '偏斜堆積無需維護 npl 欄位。每次 merge 後無條件交換子節點使樹形自然平衡,攤銷分析保證操作代價為 $O(\\log N)$。',
+            en: 'No npl field is stored. Unconditional child swaps after each merge naturally balance the tree shape; amortized analysis guarantees $O(\\log N)$ per operation.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '攤銷時間', en: 'Amortized Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: 'merge', en: 'merge' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' } ],
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' } ],
+              [ { zh: 'peek', en: 'peek' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'extractTop', en: 'extractTop' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{merge}} = O(\\log N)\\text{ amortized}', caption: {
+            zh: '以重 / 輕路徑勢能函數分析:無條件交換確保整個操作序列的平均代價為 $O(\\log N)$。',
+            en: 'Heavy/light path potential analysis shows unconditional swaps amortize to $O(\\log N)$ over any sequence of operations.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'SNode* mergeNodes(SNode* a, SNode* b) {\n    if (!a) return b;\n    if (!b) return a;\n    if (!cmp(a->key, b->key)) swap(a, b); // ensure a has smaller key\n\n    a->right = mergeNodes(a->right, b);   // recurse along right\n    swap(a->left, a->right);              // unconditional swap\n    return a;\n}\n\nvoid insert(int x) {\n    root = mergeNodes(root, new SNode(x));\n}\n\nint extractTop() {\n    int out = root->key;\n    SNode* l = root->left, *r = root->right;\n    delete root;\n    root = mergeNodes(l, r);\n    return out;\n}\n\nvoid merge(SkewHeap& other) {\n    root = mergeNodes(root, other.root);\n    other.root = nullptr;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:比 Leftist Heap 更簡單,無需 npl 欄位,程式碼最精簡。', en: 'Pro: simpler than Leftist Heap — no npl field; minimal code.' },
+            { zh: '優點:攤銷 $O(\\log N)$ merge,適合頻繁合併的場景。', en: 'Pro: $O(\\log N)$ amortized merge; suitable for frequent-merge scenarios.' },
+            { zh: '缺點:單次操作最壞可能退化至 $O(N)$,不適合嚴格延遲要求的系統。', en: 'Con: single-call worst case can degrade to $O(N)$ — unsuitable for strict latency requirements.' },
+            { zh: '缺點:指標結構,快取效能不如 Binary Heap。', en: 'Con: pointer-based; worse cache performance than Binary Heap.' },
+            { zh: '適用:快速原型、教學展示、以及需要 merge 但不需 decrease-key 的中等規模應用。', en: 'Use for rapid prototyping, teaching, and moderate-scale applications needing merge but not decrease-key.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Leftist Heap 的簡化:去掉 npl,每次 merge 無條件交換子節點。', en: 'Simplifies Leftist Heap: remove npl, swap children unconditionally on every merge.' },
+            { zh: 'merge/insert/extractTop 攤銷 $O(\\log N)$;peek $O(1)$。', en: 'merge, insert, extractTop: $O(\\log N)$ amortized; peek $O(1)$.' },
+            { zh: '自調整性質使其結構隨操作序列自然平衡,無需顯式平衡資訊。', en: 'Self-adjusting nature naturally balances the structure over operation sequences — no explicit balance info needed.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'heap-dary': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: 'D-ary 堆積(4-ary Heap)', en: 'D-ary Heap (4-ary)' },
+    slides: [
+      {
+        heading: { zh: 'D-ary 堆積(4-ary Heap)', en: 'D-ary Heap (4-ary)' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Binary Heap 的推廣:每個節點有 $d$ 個子節點($d=4$ 為 4-ary Heap),以更寬的樹減少 sift-up 次數,但 sift-down 每層需比較 $d$ 個子節點。',
+            en: 'A generalization of Binary Heap where each node has $d$ children (here $d=4$); the wider tree reduces sift-up depth but sift-down compares $d$ children per level.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '節點 $i$ 的父節點為 $(i-1)/d$;第 $j$ 個子節點為 $i \\cdot d + j + 1$($j = 0, \\ldots, d-1$)。高度為 $\\lfloor\\log_d N\\rfloor$,比 Binary Heap 矮。',
+            en: 'Node $i$ has parent $(i-1)/d$; its $j$-th child is $i \\cdot d + j + 1$ for $j = 0,\\ldots,d-1$. Tree height is $\\lfloor\\log_d N\\rfloor$ — shallower than Binary Heap.' } },
+          { type: 'bullets', items: [
+            { zh: 'sift-up:每層只有一次比較(與父節點),步數為 $O(\\log_d N)$,比 Binary Heap 少。', en: 'sift-up: one comparison per level (with parent); $O(\\log_d N)$ steps — fewer than Binary Heap.' },
+            { zh: 'sift-down:每層需比較 $d$ 個子節點;總代價 $O(d \\log_d N)$。', en: 'sift-down: compares $d$ children per level; total cost $O(d \\log_d N)$.' },
+            { zh: 'insert 優化:大量 insert 場景下 $d > 2$ 可顯著減少 sift-up 的層數。', en: 'insert speedup: for insert-heavy workloads, $d > 2$ significantly reduces sift-up levels.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: 'insert(x):追加至陣列末端,執行 sift-up。每步比較 data[i] 與父節點 data[(i-1)/d]。', en: 'insert(x): append to array, then sift-up. Each step compares data[i] with parent data[(i-1)/d].' },
+            { zh: 'extractTop:根與末端互換後移除末端。', en: 'extractTop: swap root with last element, pop the last.' },
+            { zh: 'sift-down:從根開始,在 $d$ 個子節點中找最小者(min-heap);若小於當前節點則互換並繼續。', en: 'sift-down: starting from root, find the minimum among $d$ children (min-heap); swap if it is smaller than current, then continue.' },
+            { zh: '重複直到葉節點或不再違反 heap 性質。', en: 'Repeat until a leaf or no heap-property violation remains.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["insert(x)\\nappend + sift-up"] --> B["compare with\\nparent (i-1)/d"]\n  B --> C{"parent > x?"}\n  C -->|"yes"| D["swap, move up"]\n  D --> B\n  C -->|"no"| E["done"]\n  F["extractTop\\nswap root + sift-down"] --> G["find min of\\nd children"]\n  G --> H{"min child < node?"}\n  H -->|"yes"| I["swap, move down"]\n  I --> G\n  H -->|"no"| E' },
+        ],
+      },
+      {
+        heading: { zh: '4-ary 堆積陣列示意', en: '4-ary Heap Array Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 130" width="380" height="130"><g font-family="sans-serif" font-size="11" text-anchor="middle"><rect x="10" y="10" width="40" height="28" fill="#fef9c3" stroke="#ca8a04"/><text x="30" y="28">1</text><text x="30" y="8" font-size="9" fill="#64748b">i=0</text><rect x="60" y="10" width="40" height="28" fill="#dbeafe" stroke="#2563eb"/><text x="80" y="28">3</text><text x="80" y="8" font-size="9" fill="#64748b">i=1</text><rect x="110" y="10" width="40" height="28" fill="#dbeafe" stroke="#2563eb"/><text x="130" y="28">5</text><text x="130" y="8" font-size="9" fill="#64748b">i=2</text><rect x="160" y="10" width="40" height="28" fill="#dbeafe" stroke="#2563eb"/><text x="180" y="28">7</text><text x="180" y="8" font-size="9" fill="#64748b">i=3</text><rect x="210" y="10" width="40" height="28" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="28">9</text><text x="230" y="8" font-size="9" fill="#64748b">i=4</text><rect x="260" y="10" width="40" height="28" fill="#e9d5ff" stroke="#7c3aed"/><text x="280" y="28">4</text><text x="280" y="8" font-size="9" fill="#64748b">i=5</text><rect x="310" y="10" width="40" height="28" fill="#e9d5ff" stroke="#7c3aed"/><text x="330" y="28">6</text><text x="330" y="8" font-size="9" fill="#64748b">i=6</text><circle cx="100" cy="80" r="14" fill="#fef9c3" stroke="#ca8a04"/><text x="100" y="84">1</text><circle cx="30" cy="115" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="30" y="119">3</text><circle cx="70" cy="115" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="70" y="119">5</text><circle cx="110" cy="115" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="110" y="119">7</text><circle cx="150" cy="115" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="150" y="119">9</text><line x1="100" y1="94" x2="38" y2="104" stroke="#64748b"/><line x1="100" y1="94" x2="72" y2="104" stroke="#64748b"/><line x1="100" y1="94" x2="108" y2="104" stroke="#64748b"/><line x1="100" y1="94" x2="142" y2="104" stroke="#64748b"/><text x="300" y="80" font-size="9" fill="#64748b">blue: children of root</text><text x="300" y="95" font-size="9" fill="#64748b">purple: grandchildren</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '4-ary Heap:根節點(i=0)有 4 個子節點(i=1..4),每個子節點再各有 4 個子節點(i=5..20...)。高度為 $\\lfloor\\log_4 N\\rfloor$。',
+            en: '4-ary Heap: the root (i=0) has 4 children (i=1..4); each child has 4 grandchildren (i=5..20...). Height is $\\lfloor\\log_4 N\\rfloor$.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '時間(最壞)', en: 'Time (Worst)' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(\\log_d N)$', en: '$O(\\log_d N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'peek', en: 'peek' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'extractTop', en: 'extractTop' }, { zh: '$O(d \\cdot \\log_d N)$', en: '$O(d \\cdot \\log_d N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'decreaseKey', en: 'decreaseKey' }, { zh: '$O(\\log_d N)$', en: '$O(\\log_d N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{siftDown}}(N) = O(d \\cdot \\log_d N)', caption: {
+            zh: 'sift-down 每層比較 $d$ 個子節點,樹高 $\\log_d N$,故總比較次數為 $d \\cdot \\log_d N$。對 $d=4$:每層 4 次比較,高度 $\\log_4 N \\approx 0.5 \\log_2 N$。',
+            en: 'sift-down compares $d$ children per level; height is $\\log_d N$, giving $d \\cdot \\log_d N$ comparisons total. For $d=4$: 4 compares per level, height $\\approx 0.5\\log_2 N$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'void siftUp(int index) {\n    while (index > 0) {\n        int p = (index - 1) / d;\n        if (!cmp(data[index], data[p])) break;\n        swap(data[index], data[p]);\n        index = p;\n    }\n}\n\nvoid siftDown(int index) {\n    while (true) {\n        int best = index;\n        for (int offset = 0; offset < d; ++offset) {\n            int c = index * d + offset + 1;\n            if (c < (int)data.size() && cmp(data[c], data[best]))\n                best = c;\n        }\n        if (best == index) break;\n        swap(data[index], data[best]);\n        index = best;\n    }\n}\n\nvoid insert(int value) {\n    data.push_back(value);\n    siftUp((int)data.size() - 1);\n}\n\nint extractTop() {\n    int top = data[0];\n    data[0] = data.back(); data.pop_back();\n    if (!data.empty()) siftDown(0);\n    return top;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:sift-up 步數為 $O(\\log_d N)$,大 $d$ 時顯著少於 Binary Heap。', en: 'Pro: sift-up takes $O(\\log_d N)$ steps — significantly fewer than Binary Heap for large $d$.' },
+            { zh: '優點:陣列連續儲存,快取友好。', en: 'Pro: contiguous array storage gives good cache performance.' },
+            { zh: '缺點:sift-down 每層比較 $d$ 個子節點,$d$ 大時單次 extract 比較次數多。', en: 'Con: sift-down compares $d$ children per level; large $d$ increases comparisons per extract.' },
+            { zh: '缺點:最佳 $d$ 取決於工作負載(insert vs extract 比例)及快取大小,需調參。', en: 'Con: optimal $d$ depends on workload (insert-to-extract ratio) and cache size — requires tuning.' },
+            { zh: '適用:insert 遠多於 extract 的場景(如 Dijkstra 在稀疏圖);$d=4$ 通常是實踐中的良好預設。', en: 'Use when inserts far outnumber extracts (e.g. Dijkstra on sparse graphs); $d=4$ is a good practical default.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '每節點有 $d$ 個子節點;父節點 $(i-1)/d$,第 $j$ 子 $id+j+1$。', en: 'Each node has $d$ children; parent is $(i-1)/d$, $j$-th child is $id+j+1$.' },
+            { zh: 'insert $O(\\log_d N)$;extractTop $O(d\\log_d N)$;peek $O(1)$。', en: 'insert $O(\\log_d N)$; extractTop $O(d\\log_d N)$; peek $O(1)$.' },
+            { zh: '$d=4$ 在 insert 密集的工作負載下通常優於 Binary Heap;$d=2$ 在 extract 密集時更佳。', en: '$d=4$ typically outperforms Binary Heap for insert-heavy workloads; $d=2$ is better for extract-heavy.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'heap-pairing': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '配對堆積(Pairing Heap)', en: 'Pairing Heap' },
+    slides: [
+      {
+        heading: { zh: '配對堆積(Pairing Heap)', en: 'Pairing Heap' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '以 meld(配對連結)為核心原語的多叉樹堆積:insert 與 merge 為 $O(1)$,extractTop 執行成對合併(two-pass pairing),攤銷 $O(\\log N)$,實際效能接近 Fibonacci Heap。',
+            en: 'A multiway-tree heap where meld is the core primitive: insert and merge cost $O(1)$; extractTop performs two-pass pairing of children, amortized $O(\\log N)$ — practical performance rivals Fibonacci Heap.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '每個節點儲存第一個子節點指標與下一個兄弟指標。meld 操作比較兩根的鍵值,鍵值較大者成為較小者的第一個子節點。extractTop 移除根後對其所有子節點執行 two-pass pairing:先左到右兩兩配對,再右到左合併。',
+            en: 'Each node stores a pointer to its first child and its next sibling. meld compares two roots; the larger-key root becomes the first child of the smaller-key root. extractTop removes the root, then performs two-pass pairing on all its children: first pair left-to-right, then merge right-to-left.' } },
+          { type: 'bullets', items: [
+            { zh: 'meld(a, b):令鍵值較小的根為 a;b.sibling = a.child;a.child = b;回傳 a — $O(1)$。', en: 'meld(a, b): let a be the smaller root; b.sibling = a.child; a.child = b; return a — $O(1)$.' },
+            { zh: 'insert(x):建立新節點,meld 至主堆積 — $O(1)$。', en: 'insert(x): create node, meld into main heap — $O(1)$.' },
+            { zh: 'extractTop:移除根,對子節點串列執行 mergePairs — 攤銷 $O(\\log N)$。', en: 'extractTop: remove root, call mergePairs on the child list — $O(\\log N)$ amortized.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: 'extractTop:根移除後取得其子節點串列(兄弟鏈)。', en: 'extractTop: after removing the root, obtain its child list (sibling chain).' },
+            { zh: 'mergePairs — 第一遍(左至右):取出前兩個子節點,meld 為一棵樹,繼續處理剩餘串列。', en: 'mergePairs pass 1 (left-to-right): take the first two children, meld them into one tree, continue with the rest.' },
+            { zh: 'mergePairs — 第二遍(右至左):將第一遍產生的成對樹從右到左依序 meld。', en: 'mergePairs pass 2 (right-to-left): meld the paired trees from right to left.' },
+            { zh: '最終得到一棵符合 heap 性質的樹,其根為新最小值。', en: 'The result is a single heap-ordered tree; its root is the new minimum.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  INSERT["insert(x)\\nmeld with root\\nO(1)"] --> ROOT["update root\\nif x.key < root.key"]\n  EXTRACT["extractTop\\nremove root"] --> P1["pass 1: pair children\\nleft-to-right"]\n  P1 --> P2["pass 2: meld pairs\\nright-to-left"]\n  P2 --> NEWROOT["new root = final meld"]' },
+        ],
+      },
+      {
+        heading: { zh: '配對堆積結構示意', en: 'Pairing Heap Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 130" width="300" height="130"><g font-family="sans-serif" font-size="11" text-anchor="middle"><circle cx="150" cy="18" r="14" fill="#fef9c3" stroke="#ca8a04"/><text x="150" y="22">2</text><circle cx="60" cy="58" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="60" y="62">5</text><circle cx="100" cy="58" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="100" y="62">7</text><circle cx="150" cy="58" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="150" y="62">12</text><circle cx="200" cy="58" r="12" fill="#dbeafe" stroke="#2563eb"/><text x="200" y="62">18</text><circle cx="50" cy="98" r="10" fill="#dcfce7" stroke="#16a34a"/><text x="50" y="102">30</text><circle cx="80" cy="98" r="10" fill="#dcfce7" stroke="#16a34a"/><text x="80" y="102">9</text><line x1="150" y1="32" x2="65" y2="47" stroke="#64748b"/><line x1="65" y1="47" x2="95" y2="47" stroke="#64748b" stroke-dasharray="4"/><line x1="95" y1="47" x2="145" y2="47" stroke="#64748b" stroke-dasharray="4"/><line x1="145" y1="47" x2="193" y2="47" stroke="#64748b" stroke-dasharray="4"/><line x1="60" y1="70" x2="52" y2="89" stroke="#64748b"/><line x1="52" y1="89" x2="75" y2="89" stroke="#64748b" stroke-dasharray="4"/><text x="150" y="120" font-size="9" fill="#64748b">solid: child link; dashed: sibling chain</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '根的所有子節點以兄弟鏈(sibling chain)相連,插入時只需改變頭部指標。extractTop 時對整條兄弟鏈進行兩遍配對合併。',
+            en: 'All children of a root are linked in a sibling chain; insert only modifies the head pointer. extractTop processes the entire sibling chain with two-pass pairing.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '攤銷時間', en: 'Amortized Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'peek', en: 'peek' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'merge', en: 'merge' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'extractTop', en: 'extractTop' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'decrease-key (近似)', en: 'decrease-key (approx.)' }, { zh: '$O(\\log N)$', en: '$O(\\log N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{extractTop}} = O(\\log N)\\text{ amortized}', caption: {
+            zh: 'Pairing Heap 的精確攤銷界尚未完全被證明達到 Fibonacci Heap 的 $O(1)$ decrease-key;extractTop 已被證明攤銷 $O(\\log N)$。',
+            en: 'The exact amortized bound for decrease-key in Pairing Heap has not been proven to match Fibonacci Heap\'s $O(1)$; extractTop is proven $O(\\log N)$ amortized.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'PNode* meld(PNode* a, PNode* b) {\n    if (!a) return b;\n    if (!b) return a;\n    if (!cmp(a->key, b->key)) swap(a, b); // a has smaller key\n    b->sibling = a->child;\n    a->child = b;\n    return a;\n}\n\nPNode* mergePairs(PNode* node) {\n    if (!node || !node->sibling) return node;\n    PNode* first  = node;\n    PNode* second = node->sibling;\n    PNode* rest   = second->sibling;\n    first->sibling  = nullptr;\n    second->sibling = nullptr;\n    return meld(meld(first, second), mergePairs(rest));\n}\n\nvoid insert(int value) {\n    root = meld(root, new PNode(value));\n}\n\nint extractTop() {\n    int top = root->key;\n    PNode* oldRoot = root;\n    root = mergePairs(root->child);\n    oldRoot->child = nullptr;\n    delete oldRoot;\n    return top;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:實作遠比 Fibonacci Heap 簡單,實際效能接近甚至超越後者。', en: 'Pro: far simpler to implement than Fibonacci Heap, with comparable or better practical performance.' },
+            { zh: '優點:insert 與 merge 均為 $O(1)$,extractTop 攤銷 $O(\\log N)$。', en: 'Pro: insert and merge are $O(1)$; extractTop is $O(\\log N)$ amortized.' },
+            { zh: '缺點:decrease-key 的精確攤銷界仍是開放問題(目前已知上界為 $O(2^{2\\sqrt{\\log \\log N}})$)。', en: 'Con: tight amortized bound for decrease-key is an open problem (currently known upper bound: $O(2^{2\\sqrt{\\log \\log N}})$).' },
+            { zh: '缺點:指標結構,快取效能不如陣列式堆積。', en: 'Con: pointer-based; worse cache performance than array-based heaps.' },
+            { zh: '適用:需要高效 insert/merge 的實際應用,是 Fibonacci Heap 更易實作的替代品。', en: 'Use for practical applications needing efficient insert/merge — a simpler drop-in alternative to Fibonacci Heap.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '多叉樹以兄弟鏈表示;meld 為 $O(1)$ 核心操作。', en: 'Multiway tree represented by sibling chain; meld is the $O(1)$ core operation.' },
+            { zh: 'insert/merge $O(1)$;extractTop 攤銷 $O(\\log N)$;實際效能優異。', en: 'insert/merge $O(1)$; extractTop $O(\\log N)$ amortized; excellent practical performance.' },
+            { zh: '比 Fibonacci Heap 更簡單,是業界首選的高效優先佇列實作之一。', en: 'Simpler than Fibonacci Heap; one of the preferred high-performance priority queue implementations in practice.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
 };
 
 module.exports = SLIDES_DB;
