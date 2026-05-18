@@ -314,7 +314,7 @@ const SLIDES_DB = {
             { zh: '令 `newNode->next = temp->next`,再令 `temp->next = newNode`。', en: 'Set `newNode->next = temp->next`, then set `temp->next = newNode`.' },
             { zh: '刪除:遍訪至前一節點,令 `temp->next = delNode->next`,再 `delete delNode`。', en: 'Remove: traverse to predecessor, set `temp->next = delNode->next`, then `delete delNode`.' },
           ] },
-          { type: 'mermaid', code: 'flowchart LR\n  H["head=null\\n(empty)"] -->|insert head 10| A["10 -> null"]\n  A -->|insert tail 20| B["10 -> 20 -> null"]\n  B -->|remove head| C["20 -> null"]' },
+          { type: 'mermaid', code: 'flowchart LR\n  H["head=null\\n(empty)"] -->|insert head 10| A["10 -> null"]\n  A -->|"insert(1, 20)"| B["10 -> 20 -> null"]\n  B -->|remove head| C["20 -> null"]' },
         ],
       },
       {
@@ -337,7 +337,7 @@ const SLIDES_DB = {
               [ { zh: '搜尋/隨機存取', en: 'search / random access' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
               [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
             ] },
-          { type: 'math', tex: 'T_{\\text{insert-head}}(n) = O(1)', caption: {
+          { type: 'math', tex: 'T_{\\text{insert-head}} = O(1)', caption: {
             zh: '頭部插入只需更新兩個指標,與串列長度無關。',
             en: 'Inserting at the head updates only two pointers — independent of list length.' } },
         ],
@@ -356,7 +356,7 @@ const SLIDES_DB = {
             { zh: '優點:中間插入/刪除只需調整指標,無需移動其餘元素。', en: 'Pro: mid-list insert/remove only rewires pointers — no element shifting needed.' },
             { zh: '缺點:不支援隨機存取,$O(N)$ 走訪才能到達任意索引。', en: 'Con: no random access — reaching an arbitrary index costs $O(N)$ traversal.' },
             { zh: '缺點:每個節點需額外一個 `next` 指標,記憶體不連續,快取效益低。', en: 'Con: each node carries an extra `next` pointer; non-contiguous memory makes it cache-unfriendly.' },
-            { zh: '適用:頻繁在頭部或已知位置插入/刪除,如 LRU 快取、任務佇列。', en: 'Use when frequent head or positional insertions/deletions are needed, e.g. LRU cache, task queues.' },
+            { zh: '適用:頻繁在頭部或已知位置插入/刪除,如任務佇列、前向迭代器。', en: 'Use when frequent head or positional insertions/deletions are needed, e.g. task queues, forward-only iterators.' },
           ] },
         ],
       },
