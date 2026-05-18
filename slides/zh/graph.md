@@ -35,9 +35,9 @@ title: "無向圖(鄰接矩陣)"
 
 ## 鄰接矩陣示意
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" width="320" height="140"><g font-family="sans-serif" font-size="12" text-anchor="middle"><circle cx="50" cy="70" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="50" y="75">0</text><circle cx="140" cy="20" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="25">1</text><circle cx="140" cy="120" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="125">4</text><circle cx="230" cy="20" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="25">2</text><circle cx="230" cy="120" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="125">3</text><line x1="68" y1="60" x2="122" y2="28" stroke="#475569"/><line x1="68" y1="80" x2="122" y2="112" stroke="#475569"/><line x1="158" y1="20" x2="212" y2="20" stroke="#475569"/><line x1="158" y1="30" x2="212" y2="110" stroke="#475569"/><line x1="140" y1="38" x2="140" y2="102" stroke="#475569"/><line x1="212" y1="30" x2="158" y2="110" stroke="#475569"/><line x1="140" y1="102" x2="212" y2="112" stroke="#475569"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" width="320" height="140"><g font-family="sans-serif" font-size="12" text-anchor="middle"><circle cx="50" cy="70" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="50" y="75">0</text><circle cx="140" cy="20" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="25">1</text><circle cx="140" cy="120" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="125">4</text><circle cx="230" cy="20" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="25">2</text><circle cx="230" cy="120" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="125">3</text><line x1="68" y1="60" x2="122" y2="28" stroke="#475569"/><line x1="68" y1="80" x2="122" y2="112" stroke="#475569"/><line x1="158" y1="20" x2="212" y2="20" stroke="#475569"/><line x1="158" y1="30" x2="212" y2="110" stroke="#475569"/><line x1="140" y1="38" x2="140" y2="102" stroke="#475569"/><line x1="230" y1="38" x2="230" y2="102" stroke="#475569"/><line x1="140" y1="102" x2="212" y2="112" stroke="#475569"/></g></svg>
 
-> 鄰接矩陣沿對角線對稱;左上角為頂點 0 到頂點 4 的 5×5 矩陣。查詢與新增邊均為 $O(1)$,但空間始終為 $O(V^2)$。
+> 鄰接矩陣沿對角線對稱;此圖共 5 個頂點,其鄰接矩陣為 5×5 的對稱方陣。查詢與新增邊均為 $O(1)$,但空間始終為 $O(V^2)$。
 
 ---
 
