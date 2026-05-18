@@ -2342,6 +2342,304 @@ const SLIDES_DB = {
     ],
   },
 
+  'hash-chain': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '雜湊表(分離鏈結法)', en: 'Hash Table (Separate Chaining)' },
+    slides: [
+      {
+        heading: { zh: '雜湊表(分離鏈結法)', en: 'Hash Table (Separate Chaining)' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '分離鏈結法以雜湊函數將 key 映射至索引,每個桶(bucket)維護一條獨立的鏈結串列以容納多筆碰撞(collision)元素,load factor 可超過 1.0。',
+            en: 'Separate Chaining maps each key to a bucket index via a hash function; each bucket holds an independent linked list of colliding entries, allowing the load factor to exceed 1.0.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '陣列的每個位置儲存一個指向鏈結串列頭節點的指標。當兩個 key 雜湊至相同索引時,新節點插入至該串列的頭端,時間為 $O(1)$。',
+            en: 'Each array slot stores a pointer to the head of a linked list. When two keys hash to the same index, the new node is prepended to that list in $O(1)$ time.' } },
+          { type: 'bullets', items: [
+            { zh: 'insert:計算 `key % TABLE_SIZE` 得索引,建立新節點插入鏈結串列頭端。', en: 'insert: compute `key % TABLE_SIZE` for the index, create a new node, and prepend it to the list.' },
+            { zh: 'search:雜湊至對應桶後,線性遍歷鏈結串列比對 key。', en: 'search: hash to the bucket, then linearly traverse the list to match the key.' },
+            { zh: 'load factor $\\alpha = n / m$($n$:元素數,$m$:桶數);平均鏈長為 $\\alpha$。', en: 'load factor $\\alpha = n / m$ ($n$: elements, $m$: buckets); average chain length equals $\\alpha$.' },
+            { zh: '碰撞不影響其他桶,且 load factor 可大於 1。', en: 'Collisions are contained within a single bucket; the load factor may exceed 1.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '計算雜湊索引:`idx = key % TABLE_SIZE`。', en: 'Compute hash index: `idx = key % TABLE_SIZE`.' },
+            { zh: '建立新節點,令其 `next` 指向 `table[idx]`。', en: 'Create a new node; set its `next` to `table[idx]`.' },
+            { zh: '更新 `table[idx]` 指向新節點(頭端插入)。', en: 'Update `table[idx]` to point to the new node (head insertion).' },
+            { zh: '搜尋時遍歷對應桶的串列直至找到 key 或抵達 null。', en: 'To search, traverse the corresponding bucket\'s list until the key is found or null is reached.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  K["key=43\\nhashIdx=43%5=3"] --> B3["Bucket[3] head"]\n  B3 --> N43["Node(43)->null"]\n  K2["key=33\\nhashIdx=33%5=3"] --> B3\n  B3 --> N33["Node(33)->Node(43)->null"]' },
+        ],
+      },
+      {
+        heading: { zh: '記憶體結構示意', en: 'Memory Layout Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 130" width="380" height="130"><g font-family="sans-serif" font-size="12"><rect x="10" y="10" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="26" text-anchor="middle">[0] null</text><rect x="10" y="35" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="51" text-anchor="middle">[1] null</text><rect x="10" y="60" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="76" text-anchor="middle">[2] null</text><rect x="10" y="85" width="60" height="22" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="40" y="101" text-anchor="middle" fill="#1d4ed8">[3] ──▶</text><rect x="10" y="110" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="126" text-anchor="middle">[4] null</text><rect x="90" y="85" width="60" height="22" fill="#dcfce7" stroke="#16a34a"/><text x="120" y="101" text-anchor="middle">33 ──▶</text><rect x="165" y="85" width="60" height="22" fill="#dcfce7" stroke="#16a34a"/><text x="195" y="101" text-anchor="middle">43 ──▶</text><text x="240" y="101" fill="#64748b">null</text><text x="40" y="8" text-anchor="middle" fill="#64748b">TABLE</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '桶 3 的鏈結串列依序存放 33 與 43(均滿足 `key % 5 == 3`)。其餘桶為 null。新碰撞元素插入串列頭端,不影響其他桶。',
+            en: 'Bucket 3\'s linked list holds 33 and 43 (both satisfy `key % 5 == 3`). Other buckets remain null. New colliding elements are prepended, leaving other buckets unaffected.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [
+              { zh: '操作', en: 'Operation' },
+              { zh: '平均時間', en: 'Avg Time' },
+              { zh: '最壞時間', en: 'Worst Time' },
+              { zh: '空間', en: 'Space' },
+            ],
+            rows: [
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'search', en: 'search' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'delete', en: 'delete' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '—', en: '—' }, { zh: '$O(N+M)$', en: '$O(N+M)$' } ],
+            ] },
+          { type: 'math', tex: 'E[\\text{chain length}] = \\alpha = \\frac{n}{m}', caption: {
+            zh: '平均鏈長等於 load factor $\\alpha$;當 $\\alpha$ 有界時 search 為 $O(1)$ 平均。最壞情況:所有 $N$ 個 key 雜湊至同一桶,退化為 $O(N)$。',
+            en: 'Average chain length equals load factor $\\alpha$; search is $O(1)$ average when $\\alpha$ is bounded. Worst case: all $N$ keys hash to one bucket, degrading to $O(N)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'struct Node {\n    int data;\n    Node* next;\n    Node(int val) : data(val), next(nullptr) {}\n};\n\nclass HashChaining {\n    int TABLE_SIZE;\n    Node** table;\npublic:\n    HashChaining(int size = 5) {\n        TABLE_SIZE = size;\n        table = new Node*[TABLE_SIZE];\n        for (int i = 0; i < TABLE_SIZE; i++) table[i] = nullptr;\n    }\n    int hashFunction(int key) { return key % TABLE_SIZE; }\n    void insert(int key) {\n        int hashIdx = hashFunction(key);\n        Node* newNode = new Node(key);\n        newNode->next = table[hashIdx];   // prepend\n        table[hashIdx] = newNode;\n    }\n    void display() {\n        for (int i = 0; i < TABLE_SIZE; i++) {\n            cout << "[" << i << "] --> ";\n            for (Node* t = table[i]; t; t = t->next)\n                cout << t->data << " -> ";\n            cout << "NULL\\n";\n        }\n    }\n};' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:load factor 可超過 1,不需預留充裕空間。', en: 'Pro: load factor may exceed 1 — no need to over-provision capacity.' },
+            { zh: '優點:碰撞僅影響該桶的串列,不引發全表位移。', en: 'Pro: collisions only affect the local bucket list; no table-wide displacement.' },
+            { zh: '優點:刪除簡單:直接從串列摘除節點即可。', en: 'Pro: deletion is straightforward — remove the node from the list.' },
+            { zh: '缺點:每個節點需額外指標空間,記憶體不連續,快取效能較差。', en: 'Con: each node carries a pointer overhead; non-contiguous memory reduces cache efficiency.' },
+            { zh: '缺點:雜湊函數分佈不均時,長鏈退化為 $O(N)$。', en: 'Con: a poorly distributed hash function produces long chains and degrades to $O(N)$.' },
+            { zh: '適用:無法預知元素數量、需要簡單刪除、或 load factor 高的場景。', en: 'Use when element count is unpredictable, simple deletion is needed, or a high load factor is expected.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '每個桶維護一條鏈結串列;碰撞在桶內就地解決。', en: 'Each bucket maintains a linked list; collisions are resolved locally within the bucket.' },
+            { zh: '平均操作 $O(1)$,最壞 $O(N)$;空間 $O(N+M)$。', en: 'Average $O(1)$ operations, worst-case $O(N)$; space $O(N+M)$.' },
+            { zh: 'load factor $\\alpha = n/m$ 決定平均鏈長;保持 $\\alpha \\le 1$ 可確保高效。', en: 'Load factor $\\alpha = n/m$ determines average chain length; keeping $\\alpha \\le 1$ ensures efficiency.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'hash-open': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '雜湊表(開放定址法)', en: 'Hash Table (Open Addressing)' },
+    slides: [
+      {
+        heading: { zh: '雜湊表(開放定址法)', en: 'Hash Table (Open Addressing)' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '開放定址法將所有元素儲存於陣列本身;碰撞時以線性探測(linear probing)依序尋找下一個空槽,load factor 不可超過 1.0。',
+            en: 'Open Addressing stores all elements inside the array itself; on collision, linear probing scans successive slots until an empty one is found, so the load factor must stay below 1.0.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '陣列每個槽僅存放一個元素(或哨兵值 -1 表示空)。碰撞時以 `(idx+1) % TABLE_SIZE` 線性遞增探索,直到找到空槽。',
+            en: 'Each array slot holds exactly one element (or sentinel -1 for empty). On collision, the probe sequence `(idx+1) % TABLE_SIZE` advances linearly until an empty slot is found.' } },
+          { type: 'bullets', items: [
+            { zh: 'insert:雜湊得初始索引;若槽已佔用則線性探測至空槽後寫入。', en: 'insert: hash to initial index; if occupied, probe linearly until an empty slot is found.' },
+            { zh: '陣列已滿(`curr_size >= TABLE_SIZE`)時拒絕插入。', en: 'Insertion is rejected when the array is full (`curr_size >= TABLE_SIZE`).' },
+            { zh: '主叢集(Primary Clustering):連續佔用的槽使後續探測路徑更長。', en: 'Primary Clustering: consecutive occupied slots lengthen the probe sequence for subsequent insertions.' },
+            { zh: 'load factor 必須小於 1(本實作在 `curr_size >= TABLE_SIZE` 時拒絕)。', en: 'The load factor must remain below 1 (this implementation rejects when `curr_size >= TABLE_SIZE`).' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '計算初始索引:`idx = key % TABLE_SIZE`。', en: 'Compute initial index: `idx = key % TABLE_SIZE`.' },
+            { zh: '若 `table[idx] != -1`(碰撞),令 `idx = (idx+1) % TABLE_SIZE` 並重複。', en: 'If `table[idx] != -1` (collision), set `idx = (idx+1) % TABLE_SIZE` and repeat.' },
+            { zh: '找到空槽後寫入 key,遞增 `curr_size`。', en: 'Once an empty slot is found, write the key and increment `curr_size`.' },
+            { zh: '若 `curr_size >= TABLE_SIZE` 則輸出「Hash Table Full!」並返回 false。', en: 'If `curr_size >= TABLE_SIZE`, print "Hash Table Full!" and return false.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  K1["insert 42\\nidx=42%5=2"] --> S2["slot[2]=42"]\n  K2["insert 12\\nidx=12%5=2\\ncollision!"] --> S2\n  S2 -->|"probe +1"| S3["slot[3]=12"]\n  K3["insert 32\\nidx=32%5=2\\ncollision!"] --> S2\n  S2 -->|"probe +1"| S3\n  S3 -->|"probe +1"| S4["slot[4]=32"]' },
+        ],
+      },
+      {
+        heading: { zh: '探測序列示意', en: 'Probe Sequence Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 90" width="360" height="90"><g font-family="sans-serif" font-size="12"><rect x="10" y="30" width="60" height="28" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="49" text-anchor="middle">[0] -1</text><rect x="75" y="30" width="60" height="28" fill="#e0f2fe" stroke="#0284c7"/><text x="105" y="49" text-anchor="middle">[1] -1</text><rect x="140" y="30" width="60" height="28" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="170" y="49" text-anchor="middle" fill="#92400e">[2] 42</text><rect x="205" y="30" width="60" height="28" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="235" y="49" text-anchor="middle" fill="#92400e">[3] 12</text><rect x="270" y="30" width="60" height="28" fill="#fef3c7" stroke="#d97706" stroke-width="2"/><text x="300" y="49" text-anchor="middle" fill="#92400e">[4] 32</text><text x="170" y="22" text-anchor="middle" fill="#d97706">hash(42,12,32)=2</text><path d="M170 58 L235 58" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arr)"/><path d="M235 58 L300 58" stroke="#dc2626" stroke-width="1.5" marker-end="url(#arr)"/><defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#dc2626"/></marker></defs><text x="185" y="80" text-anchor="middle" fill="#dc2626">linear probe +1</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '42、12、32 均雜湊至槽 2(均滿足 `key % 5 == 2`)。線性探測依序將 12 放入槽 3、32 放入槽 4。主叢集效應使後續插入探測距離更長。',
+            en: '42, 12, and 32 all hash to slot 2 (`key % 5 == 2`). Linear probing places 12 in slot 3 and 32 in slot 4. The primary clustering effect increases probe distances for subsequent insertions.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [
+              { zh: '操作', en: 'Operation' },
+              { zh: '平均時間', en: 'Avg Time' },
+              { zh: '最壞時間', en: 'Worst Time' },
+              { zh: '空間', en: 'Space' },
+            ],
+            rows: [
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'search', en: 'search' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '—', en: '—' }, { zh: '$O(M)$', en: '$O(M)$' } ],
+            ] },
+          { type: 'math', tex: 'E[\\text{probes}] \\approx \\frac{1}{1-\\alpha} \\quad (\\alpha < 1)', caption: {
+            zh: '線性探測的期望探測次數約為 $1/(1-\\alpha)$;$\\alpha$ 趨近 1 時探測代價急劇上升。最壞情況所有 key 擠在同一叢集,需掃描 $O(N)$ 個槽。',
+            en: 'Expected probes under linear probing is approximately $1/(1-\\alpha)$; cost spikes sharply as $\\alpha$ approaches 1. Worst case: all keys cluster together, requiring $O(N)$ probes.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class HashOpenAddressing {\n    int TABLE_SIZE;\n    int* table;\n    int curr_size;\npublic:\n    HashOpenAddressing(int size = 5) {\n        TABLE_SIZE = size;\n        table = new int[TABLE_SIZE];\n        for (int i = 0; i < TABLE_SIZE; i++) table[i] = -1;\n        curr_size = 0;\n    }\n    int hashFunction(int key) { return key % TABLE_SIZE; }\n    bool insert(int key) {\n        if (curr_size >= TABLE_SIZE) {\n            cout << "Hash Table Full!" << endl;\n            return false;\n        }\n        int idx = hashFunction(key);\n        // Linear Probing\n        while (table[idx] != -1) {\n            idx = (idx + 1) % TABLE_SIZE;\n        }\n        table[idx] = key;\n        curr_size++;\n        return true;\n    }\n};' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:所有資料存於連續陣列,快取效能佳(cache-friendly)。', en: 'Pro: all data stored in a contiguous array — excellent cache performance (cache-friendly).' },
+            { zh: '優點:無需額外指標;記憶體利用率高。', en: 'Pro: no pointer overhead; high memory utilization.' },
+            { zh: '缺點:主叢集(Primary Clustering)使高 load factor 下探測代價急增。', en: 'Con: Primary Clustering causes probe costs to rise sharply at high load factor.' },
+            { zh: '缺點:load factor 必須 < 1,表格最終會滿。', en: 'Con: load factor must remain below 1; the table will eventually fill up.' },
+            { zh: '缺點:刪除需「墓碑」標記以維持探測鏈的完整性。', en: 'Con: deletion requires a "tombstone" marker to preserve probe chain integrity.' },
+            { zh: '適用:元素數量已知、load factor 可控制在 0.7 以下的快取敏感場景。', en: 'Use when element count is known and load factor can be kept below 0.7 for cache-sensitive workloads.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '線性探測將碰撞解決於陣列內;load factor < 1 為必要條件。', en: 'Linear probing resolves collisions within the array itself; load factor < 1 is required.' },
+            { zh: '平均 $O(1)$,最壞 $O(N)$;$\\alpha$ 越高效能退化越快。', en: 'Average $O(1)$, worst-case $O(N)$; performance degrades rapidly as $\\alpha$ increases.' },
+            { zh: '快取友善且無指標開銷,但主叢集為其主要弱點。', en: 'Cache-friendly with no pointer overhead, but Primary Clustering is its main weakness.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'hash-bucket': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '雜湊表(桶定址法)', en: 'Hash Table (Bucket Hashing)' },
+    slides: [
+      {
+        heading: { zh: '雜湊表(桶定址法)', en: 'Hash Table (Bucket Hashing)' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '桶定址法將陣列劃分為若干固定容量的「桶」(bucket);每個桶可容納多個元素(本實作每桶 2 槽)。桶未滿時直接插入,桶滿則以線性探測溢位至相鄰桶。',
+            en: 'Bucket Hashing divides the array into fixed-capacity buckets; each bucket holds multiple elements (2 slots per bucket in this implementation). Insertions go directly into the bucket when space is available; a full bucket triggers linear probing to the next adjacent bucket.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '每個 `Bucket` 結構包含固定大小的槽陣列(`slots[2]`)與計數器 `count`。雜湊函數 `key % NUM_BUCKETS` 決定主桶索引;主桶已滿時依序探測下一桶。',
+            en: 'Each `Bucket` struct contains a fixed-size slot array (`slots[2]`) and a `count`. The hash function `key % NUM_BUCKETS` determines the primary bucket; when full, the next bucket is probed linearly.' } },
+          { type: 'bullets', items: [
+            { zh: '每桶容量固定為 2(本實作),提供少量碰撞緩衝。', en: 'Each bucket has a fixed capacity of 2 (this implementation), providing a small collision buffer.' },
+            { zh: '主桶未滿:直接插入至 `slots[count++]`,$O(1)$。', en: 'Primary bucket not full: insert directly at `slots[count++]`, $O(1)$.' },
+            { zh: '主桶已滿:線性探測(`idx = (idx+1) % NUM_BUCKETS`)直至找到有空槽的桶。', en: 'Primary bucket full: linear probe `idx = (idx+1) % NUM_BUCKETS` until a bucket with space is found.' },
+            { zh: '所有桶皆滿則插入失敗。', en: 'Insertion fails if all buckets are fully saturated.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '計算主桶索引:`idx = key % NUM_BUCKETS`。', en: 'Compute primary bucket index: `idx = key % NUM_BUCKETS`.' },
+            { zh: '若 `table[idx].count < 2`,寫入 `slots[count++]` 並返回。', en: 'If `table[idx].count < 2`, write to `slots[count++]` and return.' },
+            { zh: '否則令 `idx = (idx+1) % NUM_BUCKETS` 並重複步驟 2,直到找到有空間的桶。', en: 'Otherwise set `idx = (idx+1) % NUM_BUCKETS` and repeat step 2 until a bucket with space is found.' },
+            { zh: '若繞回原始索引仍未找到,輸出「Catastrophic Failure」。', en: 'If the probe wraps back to the start without finding space, print "Catastrophic Failure".' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  A["insert 10\\n10%4=2\\nBucket[2] empty"] --> B["Bucket[2]: slots=[10,-1] count=1"]\n  C["insert 14\\n14%4=2\\nBucket[2] has space"] --> B2["Bucket[2]: slots=[10,14] count=2"]\n  D["insert 22\\n22%4=2\\nBucket[2] FULL"] --> E["probe Bucket[3]"]\n  E --> F["Bucket[3]: slots=[22,-1] count=1"]' },
+        ],
+      },
+      {
+        heading: { zh: '桶結構示意', en: 'Bucket Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 110" width="380" height="110"><g font-family="sans-serif" font-size="12"><rect x="10" y="15" width="80" height="40" fill="#e0f2fe" stroke="#0284c7"/><text x="50" y="32" text-anchor="middle" font-weight="bold">Bucket[0]</text><text x="50" y="50" text-anchor="middle">[-1][-1]</text><rect x="105" y="15" width="80" height="40" fill="#e0f2fe" stroke="#0284c7"/><text x="145" y="32" text-anchor="middle" font-weight="bold">Bucket[1]</text><text x="145" y="50" text-anchor="middle">[-1][-1]</text><rect x="200" y="15" width="80" height="40" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="240" y="32" text-anchor="middle" font-weight="bold" fill="#1d4ed8">Bucket[2]</text><text x="240" y="50" text-anchor="middle" fill="#1d4ed8">[10][14]</text><rect x="295" y="15" width="80" height="40" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/><text x="335" y="32" text-anchor="middle" font-weight="bold" fill="#166534">Bucket[3]</text><text x="335" y="50" text-anchor="middle" fill="#166534">[22][-1]</text><text x="240" y="10" text-anchor="middle" fill="#2563eb">primary(10,14,22)</text><path d="M295 35 L295 65 L335 65 L335 55" stroke="#dc2626" stroke-width="1.5" marker-end="url(#a2)"/><defs><marker id="a2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#dc2626"/></marker></defs><text x="280" y="78" text-anchor="middle" fill="#dc2626">overflow probe</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '10 與 14 均雜湊至 Bucket[2](均為 `key%4==2`),填滿兩個槽。22 也雜湊至 Bucket[2] 但已滿,線性探測至 Bucket[3] 寫入。',
+            en: '10 and 14 both hash to Bucket[2] (`key%4==2`), filling its two slots. 22 also hashes to Bucket[2] but finds it full, so linear probing places it in Bucket[3].' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [
+              { zh: '操作', en: 'Operation' },
+              { zh: '平均時間', en: 'Avg Time' },
+              { zh: '最壞時間', en: 'Worst Time' },
+              { zh: '空間', en: 'Space' },
+            ],
+            rows: [
+              [ { zh: 'insert', en: 'insert' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(B)$', en: '$O(B)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'search', en: 'search' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(B)$', en: '$O(B)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '—', en: '—' }, { zh: '$O(B \\cdot K)$', en: '$O(B \\cdot K)$' } ],
+            ] },
+          { type: 'math', tex: '\\text{Capacity} = B \\times K', caption: {
+            zh: '$B$ 為桶數,$K$ 為每桶槽數(本實作 $K=2$)。平均 $O(1)$;最壞需探測全部 $B$ 個桶。',
+            en: '$B$ = number of buckets, $K$ = slots per bucket ($K=2$ in this implementation). Average $O(1)$; worst case probes all $B$ buckets.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'struct Bucket {\n    int slots[2];\n    int count;\n    Bucket() { slots[0] = -1; slots[1] = -1; count = 0; }\n};\n\nclass HashBucketing {\n    int NUM_BUCKETS;\n    Bucket* table;\npublic:\n    HashBucketing(int buckets = 4) {\n        NUM_BUCKETS = buckets;\n        table = new Bucket[NUM_BUCKETS];\n    }\n    int hashFunction(int key) { return key % NUM_BUCKETS; }\n    bool insert(int key) {\n        int idx = hashFunction(key);\n        if (table[idx].count < 2) {\n            table[idx].slots[table[idx].count++] = key;\n            return true;\n        }\n        int startIdx = idx;\n        idx = (idx + 1) % NUM_BUCKETS;\n        while (idx != startIdx) {\n            if (table[idx].count < 2) {\n                table[idx].slots[table[idx].count++] = key;\n                return true;\n            }\n            idx = (idx + 1) % NUM_BUCKETS;\n        }\n        return false;  // all buckets saturated\n    }\n};' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:每桶多槽提供少量碰撞緩衝,減少探測次數。', en: 'Pro: multiple slots per bucket provide a small collision buffer, reducing probe frequency.' },
+            { zh: '優點:資料存於連續陣列結構,具快取親和性。', en: 'Pro: data stored in a contiguous array structure — cache-friendly.' },
+            { zh: '優點:固定容量設計使記憶體用量可精確預估。', en: 'Pro: fixed capacity design makes memory usage precisely predictable.' },
+            { zh: '缺點:每桶容量固定,超出後仍需探測相鄰桶,在高負載時退化。', en: 'Con: fixed bucket capacity; overflow still requires adjacent-bucket probing, degrading at high load.' },
+            { zh: '缺點:桶容量固定可能浪費槽空間(桶內只存 1 個元素時另一槽閒置)。', en: 'Con: fixed slot count may waste space (a bucket with 1 element leaves 1 slot unused).' },
+            { zh: '適用:資料量有界、需要簡單可預測記憶體佔用的嵌入式或硬體映射場景。', en: 'Use for bounded datasets needing simple, predictable memory footprint, e.g. embedded systems or hardware-mapped address schemes.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '每桶固定 $K$ 槽;主桶未滿時 $O(1)$ 插入。', en: 'Each bucket has $K$ fixed slots; $O(1)$ insertion when the primary bucket has space.' },
+            { zh: '主桶滿則線性探測相鄰桶;最壞 $O(B)$。', en: 'A full primary bucket triggers linear probing to adjacent buckets; worst case $O(B)$.' },
+            { zh: '兼具快取友善與碰撞緩衝;總容量 $B \\times K$ 固定。', en: 'Combines cache-friendliness with a collision buffer; total capacity $B \\times K$ is fixed.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
 };
 
 module.exports = SLIDES_DB;
