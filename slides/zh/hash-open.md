@@ -50,9 +50,9 @@ title: "雜湊表(開放定址法)"
 | search | $O(1)$ | $O(N)$ | $O(1)$ |
 | 空間合計 | — | — | $O(M)$ |
 
-$$E[\text{probes}] \approx \frac{1}{1-\alpha} \quad (\alpha < 1)$$
+$$E[\text{probes}] \approx \frac{1}{2}\left(1 + \frac{1}{(1-\alpha)^2}\right) \quad (\alpha < 1)$$
 
-線性探測的期望探測次數約為 $1/(1-\alpha)$;$\alpha$ 趨近 1 時探測代價急劇上升。最壞情況所有 key 擠在同一叢集,需掃描 $O(N)$ 個槽。
+此為 Knuth 推導的線性探測不成功搜尋公式;由於主叢集(primary clustering)效應,線性探測的實際代價高於簡單的均勻雜湊近似式 $1/(1-\alpha)$。$\alpha$ 趨近 1 時探測代價急劇上升。最壞情況所有 key 擠在同一叢集,需掃描 $O(N)$ 個槽。
 
 ---
 

@@ -2377,16 +2377,16 @@ const SLIDES_DB = {
             { zh: '更新 `table[idx]` 指向新節點(頭端插入)。', en: 'Update `table[idx]` to point to the new node (head insertion).' },
             { zh: '搜尋時遍歷對應桶的串列直至找到 key 或抵達 null。', en: 'To search, traverse the corresponding bucket\'s list until the key is found or null is reached.' },
           ] },
-          { type: 'mermaid', code: 'flowchart TD\n  K["key=43\\nhashIdx=43%5=3"] --> B3["Bucket[3] head"]\n  B3 --> N43["Node(43)->null"]\n  K2["key=33\\nhashIdx=33%5=3"] --> B3\n  B3 --> N33["Node(33)->Node(43)->null"]' },
+          { type: 'mermaid', code: 'flowchart TD\n  K["key=33\\nhashIdx=33%5=3"] --> B3["Bucket[3] head"]\n  B3 --> N33["Node(33)->null"]\n  K2["key=43\\nhashIdx=43%5=3"] --> B3\n  B3 --> N43["Node(43)->Node(33)->null"]' },
         ],
       },
       {
         heading: { zh: '記憶體結構示意', en: 'Memory Layout Diagram' },
         blocks: [
-          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 130" width="380" height="130"><g font-family="sans-serif" font-size="12"><rect x="10" y="10" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="26" text-anchor="middle">[0] null</text><rect x="10" y="35" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="51" text-anchor="middle">[1] null</text><rect x="10" y="60" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="76" text-anchor="middle">[2] null</text><rect x="10" y="85" width="60" height="22" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="40" y="101" text-anchor="middle" fill="#1d4ed8">[3] ──▶</text><rect x="10" y="110" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="126" text-anchor="middle">[4] null</text><rect x="90" y="85" width="60" height="22" fill="#dcfce7" stroke="#16a34a"/><text x="120" y="101" text-anchor="middle">33 ──▶</text><rect x="165" y="85" width="60" height="22" fill="#dcfce7" stroke="#16a34a"/><text x="195" y="101" text-anchor="middle">43 ──▶</text><text x="240" y="101" fill="#64748b">null</text><text x="40" y="8" text-anchor="middle" fill="#64748b">TABLE</text></g></svg>' },
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 130" width="380" height="130"><g font-family="sans-serif" font-size="12"><rect x="10" y="10" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="26" text-anchor="middle">[0] null</text><rect x="10" y="35" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="51" text-anchor="middle">[1] null</text><rect x="10" y="60" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="76" text-anchor="middle">[2] null</text><rect x="10" y="85" width="60" height="22" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/><text x="40" y="101" text-anchor="middle" fill="#1d4ed8">[3] ──▶</text><rect x="10" y="110" width="60" height="22" fill="#e0f2fe" stroke="#0284c7"/><text x="40" y="126" text-anchor="middle">[4] null</text><rect x="90" y="85" width="60" height="22" fill="#dcfce7" stroke="#16a34a"/><text x="120" y="101" text-anchor="middle">43 ──▶</text><rect x="165" y="85" width="60" height="22" fill="#dcfce7" stroke="#16a34a"/><text x="195" y="101" text-anchor="middle">33 ──▶</text><text x="240" y="101" fill="#64748b">null</text><text x="40" y="8" text-anchor="middle" fill="#64748b">TABLE</text></g></svg>' },
           { type: 'note', text: {
-            zh: '桶 3 的鏈結串列依序存放 33 與 43(均滿足 `key % 5 == 3`)。其餘桶為 null。新碰撞元素插入串列頭端,不影響其他桶。',
-            en: 'Bucket 3\'s linked list holds 33 and 43 (both satisfy `key % 5 == 3`). Other buckets remain null. New colliding elements are prepended, leaving other buckets unaffected.' } },
+            zh: '桶 3 的鏈結串列頭端為最後插入的 43,其後接 33(均滿足 `key % 5 == 3`)。insert 採頭端插入,因此後插入的 43 位於鏈首。其餘桶為 null。',
+            en: 'Bucket 3\'s linked list has 43 at the head (most recently inserted) followed by 33 (both satisfy `key % 5 == 3`). Because insert prepends at the head, the last-inserted key 43 appears first.' } },
         ],
       },
       {
@@ -2435,7 +2435,7 @@ const SLIDES_DB = {
           { type: 'bullets', items: [
             { zh: '每個桶維護一條鏈結串列;碰撞在桶內就地解決。', en: 'Each bucket maintains a linked list; collisions are resolved locally within the bucket.' },
             { zh: '平均操作 $O(1)$,最壞 $O(N)$;空間 $O(N+M)$。', en: 'Average $O(1)$ operations, worst-case $O(N)$; space $O(N+M)$.' },
-            { zh: 'load factor $\\alpha = n/m$ 決定平均鏈長;保持 $\\alpha \\le 1$ 可確保高效。', en: 'Load factor $\\alpha = n/m$ determines average chain length; keeping $\\alpha \\le 1$ ensures efficiency.' },
+            { zh: 'load factor $\\alpha = n/m$ 決定平均鏈長;分離鏈結法允許 $\\alpha > 1$,但將 $\\alpha$ 維持在小常數可確保操作平均 $O(1)$。', en: 'Load factor $\\alpha = n/m$ determines average chain length; separate chaining allows $\\alpha > 1$, but keeping $\\alpha$ bounded by a small constant ensures $O(1)$ average operations.' },
           ] },
         ],
       },
@@ -2504,9 +2504,9 @@ const SLIDES_DB = {
               [ { zh: 'search', en: 'search' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
               [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '—', en: '—' }, { zh: '$O(M)$', en: '$O(M)$' } ],
             ] },
-          { type: 'math', tex: 'E[\\text{probes}] \\approx \\frac{1}{1-\\alpha} \\quad (\\alpha < 1)', caption: {
-            zh: '線性探測的期望探測次數約為 $1/(1-\\alpha)$;$\\alpha$ 趨近 1 時探測代價急劇上升。最壞情況所有 key 擠在同一叢集,需掃描 $O(N)$ 個槽。',
-            en: 'Expected probes under linear probing is approximately $1/(1-\\alpha)$; cost spikes sharply as $\\alpha$ approaches 1. Worst case: all keys cluster together, requiring $O(N)$ probes.' } },
+          { type: 'math', tex: 'E[\\text{probes}] \\approx \\frac{1}{2}\\left(1 + \\frac{1}{(1-\\alpha)^2}\\right) \\quad (\\alpha < 1)', caption: {
+            zh: '此為 Knuth 推導的線性探測不成功搜尋公式;由於主叢集(primary clustering)效應,線性探測的實際代價高於簡單的均勻雜湊近似式 $1/(1-\\alpha)$。$\\alpha$ 趨近 1 時探測代價急劇上升。最壞情況所有 key 擠在同一叢集,需掃描 $O(N)$ 個槽。',
+            en: 'This is Knuth\'s formula for expected probes on an unsuccessful search under linear probing. Due to primary clustering, linear probing is worse than the simple uniform-hashing approximation $1/(1-\\alpha)$. Cost spikes sharply as $\\alpha$ approaches 1. Worst case: all keys cluster together, requiring $O(N)$ probes.' } },
         ],
       },
       {

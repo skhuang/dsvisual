@@ -50,9 +50,9 @@ Each array slot holds exactly one element (or sentinel -1 for empty). On collisi
 | search | $O(1)$ | $O(N)$ | $O(1)$ |
 | Total Space | — | — | $O(M)$ |
 
-$$E[\text{probes}] \approx \frac{1}{1-\alpha} \quad (\alpha < 1)$$
+$$E[\text{probes}] \approx \frac{1}{2}\left(1 + \frac{1}{(1-\alpha)^2}\right) \quad (\alpha < 1)$$
 
-Expected probes under linear probing is approximately $1/(1-\alpha)$; cost spikes sharply as $\alpha$ approaches 1. Worst case: all keys cluster together, requiring $O(N)$ probes.
+This is Knuth's formula for expected probes on an unsuccessful search under linear probing. Due to primary clustering, linear probing is worse than the simple uniform-hashing approximation $1/(1-\alpha)$. Cost spikes sharply as $\alpha$ approaches 1. Worst case: all keys cluster together, requiring $O(N)$ probes.
 
 ---
 
