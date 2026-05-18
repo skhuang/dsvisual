@@ -3032,7 +3032,7 @@ const SLIDES_DB = {
             zh: '初始 gap = n/2;每次外層迴圈將 gap 減半。對每個 gap,從索引 `gap` 開始,把 `arr[i]` 與 `arr[i-gap]`、`arr[i-2*gap]`... 做類 Insertion Sort 的向後移位插入。',
             en: 'Initial gap = n/2; each outer iteration halves the gap. For each gap, starting at index `gap`, perform Insertion-Sort-like backward shifts comparing `arr[i]` with `arr[i-gap]`, `arr[i-2*gap]`, etc.' } },
           { type: 'bullets', items: [
-            { zh: 'gap 序列決定複雜度:Knuth 序列 $(3^k-1)/2$ 保證 $O(n^{1.3})$。', en: 'Gap sequence determines complexity: Knuth\'s $(3^k-1)/2$ sequence guarantees $O(n^{1.3})$.' },
+            { zh: 'gap 序列決定複雜度:Knuth 序列 $(3^k-1)/2$ 在實務中表現約 $O(n^{1.3})$,理論最壞上界約為 $O(n^{3/2})$。', en: 'Gap sequence determines complexity: Knuth\'s $(3^k-1)/2$ sequence gives strong empirical performance around $O(n^{1.3})$ in practice, with a proven worst-case bound of about $O(n^{3/2})$.' },
             { zh: 'NOT stable:遠距交換可改變相等元素的相對順序。', en: 'NOT stable: long-distance swaps can reorder equal elements.' },
             { zh: 'in-place:僅 $O(1)$ 額外空間。', en: 'in-place: only $O(1)$ auxiliary space.' },
           ] },
@@ -3047,7 +3047,7 @@ const SLIDES_DB = {
             { zh: '將 `temp` 插入騰出的位置。', en: 'Insert `temp` at the vacated position.' },
             { zh: 'gap /= 2;繼續下一輪直至 gap = 0。', en: 'gap /= 2; continue until gap = 0.' },
           ] },
-          { type: 'mermaid', code: 'flowchart LR\n  A["[12,34,54,2,3]\\ngap=2"] --> B["gap=2 pass:\\n[12,3,54,2,34] partial"]\n  B --> C["[2,3,12,34,54]\\ngap=1 pass"]\n  C --> D["[2,3,12,34,54]\\nsorted"]' },
+          { type: 'mermaid', code: 'flowchart LR\n  A["[12,34,54,2,3]\\ngap=2"] --> B["gap=2 pass:\\n[3,2,12,34,54]"]\n  B --> C["gap=1 pass:\\n[2,3,12,34,54]"]\n  C --> D["[2,3,12,34,54]\\nsorted"]' },
         ],
       },
       {
@@ -3140,16 +3140,16 @@ const SLIDES_DB = {
             { zh: '對每個桶內的元素排序(如 Insertion Sort)。', en: 'Sort the elements within each bucket (e.g. Insertion Sort).' },
             { zh: '依桶序串接所有元素回原陣列。', en: 'Concatenate all buckets back into the original array in order.' },
           ] },
-          { type: 'mermaid', code: 'flowchart LR\n  A["[0.78,0.17,0.39,0.26,0.72]\\nn=5 buckets"] --> B["bucket 0: [0.17]\\nbucket 1: [0.17] done"]\n  A --> C["bucket 1: [0.17]\\nbucket 2: [0.26]\\nbucket 3: [0.39]\\nbucket 3: [0.39] done"]\n  A --> D["bucket 3: [0.39]\\nbucket 7: [0.72,0.78]"]\n  D --> E["sort each bucket"]\n  E --> F["concat: [0.17,0.26,0.39,0.72,0.78]"]' },
+          { type: 'mermaid', code: 'flowchart LR\n  A["input: [0.78,0.17,0.39,0.26,0.72]\\nn=5 buckets (0..4)"] --> B["distribute\\n(bucketIndex = floor(5*v))"]\n  B --> C["bucket 0: [0.17]\\nbucket 1: [0.39,0.26]\\nbucket 2: []\\nbucket 3: [0.78,0.72]\\nbucket 4: []"]\n  C --> D["sort each bucket\\nbucket 1: [0.26,0.39]\\nbucket 3: [0.72,0.78]"]\n  D --> E["concat: [0.17,0.26,0.39,0.72,0.78]\\nsorted"]' },
         ],
       },
       {
         heading: { zh: '桶分配示意', en: 'Bucket Distribution Diagram' },
         blocks: [
-          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 100" width="380" height="100"><g font-family="sans-serif" font-size="11"><rect x="10" y="20" width="50" height="60" fill="#f1f5f9" stroke="#94a3b8"/><rect x="70" y="20" width="50" height="60" fill="#f1f5f9" stroke="#94a3b8"/><rect x="130" y="20" width="50" height="60" fill="#dbeafe" stroke="#2563eb"/><rect x="190" y="20" width="50" height="60" fill="#f1f5f9" stroke="#94a3b8"/><rect x="250" y="20" width="50" height="60" fill="#fef9c3" stroke="#ca8a04"/><text x="35" y="14" text-anchor="middle" fill="#64748b">[0.0)</text><text x="95" y="14" text-anchor="middle" fill="#64748b">[0.2)</text><text x="155" y="14" text-anchor="middle" fill="#64748b">[0.4)</text><text x="215" y="14" text-anchor="middle" fill="#64748b">[0.6)</text><text x="275" y="14" text-anchor="middle" fill="#64748b">[0.8)</text><text x="35" y="55" text-anchor="middle">—</text><text x="95" y="48" text-anchor="middle">0.17</text><text x="95" y="64" text-anchor="middle">0.26</text><text x="155" y="55" text-anchor="middle">0.39</text><text x="215" y="55" text-anchor="middle">—</text><text x="275" y="48" text-anchor="middle">0.72</text><text x="275" y="64" text-anchor="middle">0.78</text><text x="320" y="55" fill="#64748b">→ sort →</text></g></svg>' },
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 110" width="380" height="110"><g font-family="sans-serif" font-size="11"><rect x="10" y="25" width="60" height="65" fill="#dcfce7" stroke="#16a34a"/><rect x="78" y="25" width="60" height="65" fill="#dbeafe" stroke="#2563eb"/><rect x="146" y="25" width="60" height="65" fill="#f1f5f9" stroke="#94a3b8"/><rect x="214" y="25" width="60" height="65" fill="#fef9c3" stroke="#ca8a04"/><rect x="282" y="25" width="60" height="65" fill="#f1f5f9" stroke="#94a3b8"/><text x="40" y="18" text-anchor="middle" fill="#64748b">bkt 0</text><text x="108" y="18" text-anchor="middle" fill="#64748b">bkt 1</text><text x="176" y="18" text-anchor="middle" fill="#64748b">bkt 2</text><text x="244" y="18" text-anchor="middle" fill="#64748b">bkt 3</text><text x="312" y="18" text-anchor="middle" fill="#64748b">bkt 4</text><text x="40" y="14" text-anchor="middle" fill="#64748b"></text><text x="40" y="62" text-anchor="middle">0.17</text><text x="108" y="55" text-anchor="middle">0.26</text><text x="108" y="71" text-anchor="middle">0.39</text><text x="176" y="62" text-anchor="middle">—</text><text x="244" y="55" text-anchor="middle">0.72</text><text x="244" y="71" text-anchor="middle">0.78</text><text x="312" y="62" text-anchor="middle">—</text></g></svg>' },
           { type: 'note', text: {
-            zh: '5 個桶各覆蓋 0.2 的值域;0.17 和 0.26 落入第 0–1 桶,各桶分別排序後串接即得有序陣列。',
-            en: 'Five buckets each cover a 0.2 value range; 0.17 and 0.26 land in the first two buckets. Sorting each bucket then concatenating yields the sorted array.' } },
+            zh: '5 個桶索引 0–4,每桶覆蓋 0.2 的值域。bucketIndex = floor(5×v):0.17→桶0;0.26,0.39→桶1;0.72,0.78→桶3。各桶排序後依序串接得 [0.17,0.26,0.39,0.72,0.78]。',
+            en: '5 buckets (indices 0–4), each covering a 0.2 value range. bucketIndex = floor(5×v): 0.17→bucket 0; 0.26,0.39→bucket 1; 0.72,0.78→bucket 3. Sorting each bucket then concatenating yields [0.17,0.26,0.39,0.72,0.78].' } },
         ],
       },
       {
