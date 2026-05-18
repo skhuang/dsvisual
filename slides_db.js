@@ -279,6 +279,100 @@ const SLIDES_DB = {
     ],
   },
 
+  'list-linked': {
+    category: 'Linked Lists',
+    title: { zh: '單向鏈結串列', en: 'Singly Linked List' },
+    slides: [
+      {
+        heading: { zh: '單向鏈結串列', en: 'Singly Linked List' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '單向鏈結串列由動態配置的 `Node` 物件組成,每個節點含 `data` 欄位與指向下一節點的 `next` 指標,`head` 指向串列的第一個節點。',
+            en: 'A singly linked list consists of dynamically allocated `Node` objects, each holding a `data` field and a `next` pointer to the following node; `head` points to the first node in the list.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '節點散落於堆積記憶體中,僅靠 `next` 指標鏈接;無需預先宣告容量。插入或刪除只需改動少數指標,但隨機存取必須從 `head` 逐步遍訪。',
+            en: 'Nodes are scattered in heap memory and linked only by `next` pointers — no pre-declared capacity needed. Insertion or deletion changes just a few pointers, but random access requires sequential traversal from `head`.' } },
+          { type: 'bullets', items: [
+            { zh: '在頭部插入:新節點的 `next` 指向舊 `head`,再更新 `head`,$O(1)$。', en: 'Insert at head: set new node\'s `next` to old `head`, then update `head` — $O(1)$.' },
+            { zh: '在任意位置插入:先遍訪至前一節點,再調整兩個指標,$O(N)$。', en: 'Insert at arbitrary index: traverse to the predecessor, then rewire two pointers — $O(N)$.' },
+            { zh: '刪除節點:遍訪至前一節點,繞過目標節點並 `delete`,$O(N)$。', en: 'Remove a node: traverse to predecessor, bypass the target node and `delete` it — $O(N)$.' },
+            { zh: '不支援 $O(1)$ 隨機存取;需從 `head` 逐步走訪至目標索引。', en: 'No $O(1)$ random access — must traverse from `head` to the target index.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '頭部插入:配置新節點,令 `next = head`,再令 `head = newNode`。', en: 'Insert at head: allocate new node, set `next = head`, then set `head = newNode`.' },
+            { zh: '中間插入:從 `head` 遍訪至索引 `i-1` 的節點 `temp`。', en: 'Insert in middle: traverse from `head` to node `temp` at index `i-1`.' },
+            { zh: '令 `newNode->next = temp->next`,再令 `temp->next = newNode`。', en: 'Set `newNode->next = temp->next`, then set `temp->next = newNode`.' },
+            { zh: '刪除:遍訪至前一節點,令 `temp->next = delNode->next`,再 `delete delNode`。', en: 'Remove: traverse to predecessor, set `temp->next = delNode->next`, then `delete delNode`.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  H["head=null\\n(empty)"] -->|insert head 10| A["10 -> null"]\n  A -->|insert tail 20| B["10 -> 20 -> null"]\n  B -->|remove head| C["20 -> null"]' },
+        ],
+      },
+      {
+        heading: { zh: '記憶體結構', en: 'Memory Layout' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 80" width="380" height="80"><g font-family="sans-serif" font-size="12"><rect x="10" y="25" width="70" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="45" y="45" text-anchor="middle">data:10</text><rect x="80" y="25" width="60" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="110" y="45" text-anchor="middle">next ──▶</text><rect x="160" y="25" width="70" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="195" y="45" text-anchor="middle">data:20</text><rect x="230" y="25" width="60" height="30" fill="#dbeafe" stroke="#2563eb"/><text x="260" y="45" text-anchor="middle">next ──▶</text><rect x="310" y="25" width="55" height="30" fill="#f1f5f9" stroke="#94a3b8"/><text x="337" y="45" text-anchor="middle" fill="#64748b">null</text><text x="45" y="18" text-anchor="middle" fill="#2563eb">head</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '每個節點獨立散落於堆積記憶體,僅靠 `next` 指標串接;`head` 永遠指向第一個節點,尾端節點的 `next` 為 `nullptr`。',
+            en: 'Each node lives at an independent heap address, linked only by `next` pointers. `head` always points to the first node; the tail node\'s `next` is `nullptr`.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '時間', en: 'Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: '頭部插入/刪除', en: 'insert/remove at head' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '任意位置插入/刪除', en: 'insert/remove at index i' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '搜尋/隨機存取', en: 'search / random access' }, { zh: '$O(N)$', en: '$O(N)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(N)$', en: '$O(N)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{insert-head}}(n) = O(1)', caption: {
+            zh: '頭部插入只需更新兩個指標,與串列長度無關。',
+            en: 'Inserting at the head updates only two pointers — independent of list length.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'struct Node {\n    int data;\n    Node* next;\n    Node(int val) : data(val), next(nullptr) {}\n};\n\nvoid insert(int index, int val) {\n    Node* newNode = new Node(val);\n    if (index == 0) {\n        newNode->next = head;\n        head = newNode;\n        return;\n    }\n    Node* temp = head;\n    for (int i = 0; temp != nullptr && i < index - 1; i++)\n        temp = temp->next;\n    if (!temp) return;\n    newNode->next = temp->next;\n    temp->next = newNode;\n}\n\nvoid remove(int index) {\n    if (!head) return;\n    if (index == 0) {\n        Node* temp = head;\n        head = head->next;\n        delete temp;\n        return;\n    }\n    Node* temp = head;\n    for (int i = 0; temp != nullptr && i < index - 1; i++)\n        temp = temp->next;\n    if (!temp || !temp->next) return;\n    Node* delNode = temp->next;\n    temp->next = delNode->next;\n    delete delNode;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:頭部插入/刪除為 $O(1)$,動態擴縮無容量上限。', en: 'Pro: head insert/remove is $O(1)$; grows and shrinks dynamically with no capacity ceiling.' },
+            { zh: '優點:中間插入/刪除只需調整指標,無需移動其餘元素。', en: 'Pro: mid-list insert/remove only rewires pointers — no element shifting needed.' },
+            { zh: '缺點:不支援隨機存取,$O(N)$ 走訪才能到達任意索引。', en: 'Con: no random access — reaching an arbitrary index costs $O(N)$ traversal.' },
+            { zh: '缺點:每個節點需額外一個 `next` 指標,記憶體不連續,快取效益低。', en: 'Con: each node carries an extra `next` pointer; non-contiguous memory makes it cache-unfriendly.' },
+            { zh: '適用:頻繁在頭部或已知位置插入/刪除,如 LRU 快取、任務佇列。', en: 'Use when frequent head or positional insertions/deletions are needed, e.g. LRU cache, task queues.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '以 `head` 指標管理串列,`next` 鏈接所有節點。', en: 'Managed by a `head` pointer; `next` pointers chain all nodes together.' },
+            { zh: '頭部操作 $O(1)$;中間或尾端操作需 $O(N)$ 遍訪。', en: 'Head operations are $O(1)$; middle or tail operations require $O(N)$ traversal.' },
+            { zh: '與陣列串列相比:犧牲隨機存取換取高效的指標式插入/刪除。', en: 'Compared to array-based list: trades random access for efficient pointer-based insert/remove.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
   'stack-array': {
     category: 'Basic Linear Structures',
     title: { zh: '堆疊(陣列實作)', en: 'Stack (Array Implementation)' },
