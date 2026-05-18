@@ -19,7 +19,7 @@ Nodes do not store characters directly; the character is implicitly represented 
 - Insert: traverse character by character; allocate a new node on `nullptr`; set `isEndOfWord = true` at the last character.
 - Search: traverse all characters to the end; return the final node's `isEndOfWord`.
 - Prefix search: traverse only the prefix characters — no need to reach `isEndOfWord`.
-- High space cost: each node holds 26 pointers — worst case $O(26^L)$ space.
+- High space cost: each node holds 26 pointers — storing $N$ strings of length $L$ requires $O(N \cdot L)$ nodes.
 
 ---
 

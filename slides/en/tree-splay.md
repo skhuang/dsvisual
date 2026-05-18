@@ -75,7 +75,11 @@ Node* splay(Node* root, int key) {
         return root->left ? rightRotate(root) : root;
     } else {                        // key is in right subtree
         if (!root->right) return root;
-        if (root->right->key < key) { // Zig-Zig (right-right)
+        if (root->right->key > key) { // Zig-Zag (right-left)
+            root->right->left = splay(root->right->left, key);
+            if (root->right->left)
+                root->right = rightRotate(root->right);
+        } else if (root->right->key < key) { // Zig-Zig (right-right)
             root->right->right = splay(root->right->right, key);
             root = leftRotate(root);
         }

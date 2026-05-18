@@ -20,6 +20,7 @@ title: "紅黑樹"
 - 規則 2:根節點必為黑色。
 - 規則 3:紅色節點的兩個子節點必須為黑色(不能有連續兩個紅節點)。
 - 規則 4:從任一節點到其所有 null 後代,路徑中的黑色節點數相同(black-height)。
+- 規則 5:所有 NIL(葉哨兵)節點均為黑色。
 - 插入後透過重新著色(recoloring)與旋轉(rotation)修復違規。
 
 ---
@@ -38,7 +39,7 @@ title: "紅黑樹"
 
 ## 紅黑樹結構示意
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 130" width="300" height="130"><g font-family="sans-serif" font-size="12" text-anchor="middle"><circle cx="150" cy="20" r="16" fill="#1e293b" stroke="#1e293b"/><text x="150" y="25" fill="white">7</text><circle cx="80" cy="65" r="16" fill="#dc2626" stroke="#991b1b"/><text x="80" y="70" fill="white">3</text><circle cx="220" cy="65" r="16" fill="#dc2626" stroke="#991b1b"/><text x="220" y="70" fill="white">11</text><circle cx="45" cy="110" r="16" fill="#1e293b" stroke="#1e293b"/><text x="45" y="115" fill="white">1</text><circle cx="115" cy="110" r="16" fill="#1e293b" stroke="#1e293b"/><text x="115" y="115" fill="white">5</text><line x1="140" y1="34" x2="92" y2="51" stroke="#64748b"/><line x1="160" y1="34" x2="208" y2="51" stroke="#64748b"/><line x1="70" y1="79" x2="55" y2="96" stroke="#64748b"/><line x1="90" y1="79" x2="105" y2="96" stroke="#64748b"/></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 130" width="300" height="130"><g font-family="sans-serif" font-size="12" text-anchor="middle"><circle cx="150" cy="20" r="16" fill="#1e293b" stroke="#1e293b"/><text x="150" y="25" fill="white">7</text><circle cx="80" cy="65" r="16" fill="#dc2626" stroke="#991b1b"/><text x="80" y="70" fill="white">3</text><circle cx="220" cy="65" r="16" fill="#1e293b" stroke="#1e293b"/><text x="220" y="70" fill="white">11</text><circle cx="45" cy="110" r="16" fill="#1e293b" stroke="#1e293b"/><text x="45" y="115" fill="white">1</text><circle cx="115" cy="110" r="16" fill="#1e293b" stroke="#1e293b"/><text x="115" y="115" fill="white">5</text><line x1="140" y1="34" x2="92" y2="51" stroke="#64748b"/><line x1="160" y1="34" x2="208" y2="51" stroke="#64748b"/><line x1="70" y1="79" x2="55" y2="96" stroke="#64748b"/><line x1="90" y1="79" x2="105" y2="96" stroke="#64748b"/></g></svg>
 
 > 黑節點為深色,紅節點為紅色;根節點 7 為黑色,每條根至 null 路徑包含 2 個黑色節點(black-height=2)。
 
