@@ -1305,6 +1305,377 @@ const SLIDES_DB = {
     ],
   },
 
+  'graph': {
+    category: 'Non-Linear Structures',
+    title: { zh: '無向圖(鄰接矩陣)', en: 'Undirected Graph (Adjacency Matrix)' },
+    slides: [
+      {
+        heading: { zh: '無向圖(鄰接矩陣)', en: 'Undirected Graph (Adjacency Matrix)' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '無向圖以 $V \\times V$ 的二維陣列(鄰接矩陣)表示頂點間的連接關係;`adjMatrix[u][v] = 1` 代表邊 (u, v) 存在,且矩陣對稱確保雙向可達。',
+            en: 'An undirected graph uses a $V \\times V$ 2-D array (adjacency matrix) to represent vertex connections. `adjMatrix[u][v] = 1` means edge (u, v) exists; symmetry of the matrix guarantees bidirectional reachability.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '鄰接矩陣以整數 0/1 記錄每對頂點之間是否存在邊。無向圖中 `adjMatrix[u][v]` 與 `adjMatrix[v][u]` 始終同步更新。',
+            en: 'The adjacency matrix records 0/1 for every pair of vertices. In an undirected graph `adjMatrix[u][v]` and `adjMatrix[v][u]` are always updated together.' } },
+          { type: 'bullets', items: [
+            { zh: '`addEdge(u,v)`:同時設定 `adjMatrix[u][v] = adjMatrix[v][u] = 1`,保持對稱性。', en: '`addEdge(u,v)`: sets both `adjMatrix[u][v]` and `adjMatrix[v][u]` to 1, maintaining symmetry.' },
+            { zh: '邊存在查詢:直接讀取 `adjMatrix[u][v]`,時間 $O(1)$。', en: 'Edge existence query: read `adjMatrix[u][v]` directly — $O(1)$ time.' },
+            { zh: '空間代價:固定佔用 $O(V^2)$,稀疏圖會浪費大量空間。', en: 'Space cost: always $O(V^2)$, wasteful for sparse graphs.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '初始化:建立 $V \\times V$ 的矩陣,全部填 0。', en: 'Initialise: create a $V \\times V$ matrix filled with 0.' },
+            { zh: 'addEdge(u,v):設定 `adjMatrix[u][v] = 1` 及 `adjMatrix[v][u] = 1`。', en: 'addEdge(u,v): set `adjMatrix[u][v] = 1` and `adjMatrix[v][u] = 1`.' },
+            { zh: '邊查詢:讀取 `adjMatrix[u][v]`,若為 1 則邊存在。', en: 'Edge query: read `adjMatrix[u][v]`; if 1 the edge exists.' },
+            { zh: '鄰居遍歷:掃描第 u 列所有欄位,收集值為 1 的索引。', en: 'Neighbour traversal: scan entire row u, collect indices where the value is 1.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["init\\nV×V zeros"] -->|addEdge 0-1| B["M[0][1]=M[1][0]=1"]\n  B -->|addEdge 1-2| C["M[1][2]=M[2][1]=1"]\n  C -->|query 0-2| D["M[0][2]=0\\n(no edge)"]' },
+        ],
+      },
+      {
+        heading: { zh: '鄰接矩陣示意', en: 'Adjacency Matrix Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 140" width="320" height="140"><g font-family="sans-serif" font-size="12" text-anchor="middle"><circle cx="50" cy="70" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="50" y="75">0</text><circle cx="140" cy="20" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="25">1</text><circle cx="140" cy="120" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="140" y="125">4</text><circle cx="230" cy="20" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="25">2</text><circle cx="230" cy="120" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="230" y="125">3</text><line x1="68" y1="60" x2="122" y2="28" stroke="#475569"/><line x1="68" y1="80" x2="122" y2="112" stroke="#475569"/><line x1="158" y1="20" x2="212" y2="20" stroke="#475569"/><line x1="158" y1="30" x2="212" y2="110" stroke="#475569"/><line x1="140" y1="38" x2="140" y2="102" stroke="#475569"/><line x1="212" y1="30" x2="158" y2="110" stroke="#475569"/><line x1="140" y1="102" x2="212" y2="112" stroke="#475569"/></g></svg>' },
+          { type: 'note', text: {
+            zh: '鄰接矩陣沿對角線對稱;左上角為頂點 0 到頂點 4 的 5×5 矩陣。查詢與新增邊均為 $O(1)$,但空間始終為 $O(V^2)$。',
+            en: 'The adjacency matrix is symmetric along the diagonal. Edge queries and additions are both $O(1)$, but space is always $O(V^2)$ regardless of edge count.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '操作', en: 'Operation' }, { zh: '時間', en: 'Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: '新增邊 addEdge', en: 'addEdge' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '查詢邊', en: 'edge query' }, { zh: '$O(1)$', en: '$O(1)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '鄰居遍歷', en: 'neighbour traversal' }, { zh: '$O(V)$', en: '$O(V)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(V^2)$', en: '$O(V^2)$' } ],
+            ] },
+          { type: 'math', tex: 'S = O(V^2)', caption: {
+            zh: '無論邊數多少,鄰接矩陣固定佔用 $V^2$ 個整數空間,稠密圖最划算,稀疏圖則浪費嚴重。',
+            en: 'Regardless of edge count the matrix always uses $V^2$ integers — cost-efficient for dense graphs, wasteful for sparse ones.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class Graph {\n    int V;\n    vector<vector<int>> adjMatrix;\npublic:\n    Graph(int vertices) {\n        V = vertices;\n        adjMatrix.resize(V, vector<int>(V, 0));\n    }\n\n    void addEdge(int u, int v) {\n        if (u >= 0 && u < V && v >= 0 && v < V) {\n            adjMatrix[u][v] = 1;\n            adjMatrix[v][u] = 1; // undirected: symmetric\n        }\n    }\n\n    void printGraph() {\n        for (int i = 0; i < V; i++) {\n            for (int j = 0; j < V; j++)\n                cout << adjMatrix[i][j] << " ";\n            cout << endl;\n        }\n    }\n};' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:邊存在查詢為 $O(1)$,實作簡單直觀。', en: 'Pro: edge existence query is $O(1)$; implementation is simple and intuitive.' },
+            { zh: '優點:對稠密圖(邊數接近 $V^2$)空間利用率高。', en: 'Pro: space-efficient for dense graphs where edge count approaches $V^2$.' },
+            { zh: '缺點:空間固定 $O(V^2)$,稀疏圖浪費嚴重。', en: 'Con: fixed $O(V^2)$ space — highly wasteful for sparse graphs.' },
+            { zh: '缺點:鄰居遍歷需掃描整列,代價 $O(V)$,不如鄰接串列的 $O(deg)$。', en: 'Con: neighbour traversal scans the whole row at $O(V)$, worse than the $O(\\deg)$ of an adjacency list.' },
+            { zh: '適用:稠密圖、需要 $O(1)$ 邊查詢的場景,或圖規模小且實作優先考量簡單性時。', en: 'Use for dense graphs, $O(1)$ edge queries, or when graph is small and simplicity is preferred.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '以 $V \\times V$ 對稱矩陣表示無向圖;`adjMatrix[u][v] = adjMatrix[v][u]`。', en: 'A $V \\times V$ symmetric matrix represents the undirected graph; `adjMatrix[u][v] = adjMatrix[v][u]`.' },
+            { zh: '邊查詢 $O(1)$;鄰居遍歷 $O(V)$;空間 $O(V^2)$。', en: 'Edge query $O(1)$; neighbour traversal $O(V)$; space $O(V^2)$.' },
+            { zh: '稀疏圖建議改用鄰接串列以節省空間並加速遍歷。', en: 'For sparse graphs prefer adjacency lists to save space and speed up traversal.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'graph-kruskal': {
+    category: 'Non-Linear Structures',
+    title: { zh: 'Kruskal 最小生成樹', en: 'Kruskal Minimum Spanning Tree' },
+    slides: [
+      {
+        heading: { zh: 'Kruskal 最小生成樹', en: 'Kruskal Minimum Spanning Tree' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Kruskal 演算法貪心地依權重由小到大選取邊,並以 Disjoint Set Union(DSU / Union-Find)偵測環路,從而在 $O(E \\log E)$ 時間內建構最小生成樹(MST)。',
+            en: 'Kruskal\'s algorithm greedily picks edges in ascending weight order and uses Disjoint Set Union (DSU / Union-Find) to detect cycles, building a Minimum Spanning Tree (MST) in $O(E \\log E)$ time.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'MST 包含連通圖中所有頂點但邊數最少(恰好 $V-1$ 條)且總權重最小的子圖。Kruskal 的關鍵在於用 DSU 以近乎 $O(1)$ 的代價判斷兩頂點是否已連通。',
+            en: 'An MST spans all vertices with exactly $V-1$ edges and minimum total weight. Kruskal\'s key insight is using DSU to check connectivity of two vertices in near-$O(1)$ amortized time.' } },
+          { type: 'bullets', items: [
+            { zh: 'DSU `find(x)`:帶路徑壓縮,回傳 x 所在集合的根節點。', en: 'DSU `find(x)`: with path compression, returns the root of x\'s set.' },
+            { zh: 'DSU `unite(a,b)`:合併兩集合;若已在同一集合則回傳 false(代表環路)。', en: 'DSU `unite(a,b)`: merges two sets; returns false if already in the same set (cycle detected).' },
+            { zh: '邊依權重排序後依序嘗試加入 MST;取到 $V-1$ 條邊即完成。', en: 'Edges are sorted by weight and greedily accepted; stop when $V-1$ edges are collected.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '將所有邊依權重升冪排序。', en: 'Sort all edges by weight in ascending order.' },
+            { zh: '初始化 DSU:每個頂點各自為一個集合。', en: 'Initialise DSU: each vertex is its own set.' },
+            { zh: '依序取出最輕的邊 (u,v,w);若 u 與 v 不在同一集合,加入 MST 並合併集合。', en: 'Take the lightest edge (u,v,w); if u and v are in different sets, add it to MST and merge sets.' },
+            { zh: '重複直至 MST 包含 $V-1$ 條邊。', en: 'Repeat until MST has $V-1$ edges.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["Sort edges\\nby weight"] --> B["Init DSU\\n(V sets)"]\n  B --> C["Pick min edge\\n(u,v,w)"]\n  C --> D{"same set?"}\n  D -->|"yes (cycle)"| C\n  D -->|no| E["Add to MST\\nunite(u,v)"]\n  E --> F{"V-1 edges?"}\n  F -->|no| C\n  F -->|yes| G["MST complete"]' },
+        ],
+      },
+      {
+        heading: { zh: 'MST 示意圖', en: 'MST Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 160" width="300" height="160"><g font-family="sans-serif" font-size="11" text-anchor="middle"><circle cx="50" cy="80" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="50" y="85">0</text><circle cx="130" cy="30" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="130" y="35">1</text><circle cx="130" cy="130" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="130" y="135">2</text><circle cx="220" cy="80" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="220" y="85">3</text><circle cx="270" cy="130" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="270" y="135">4</text><line x1="65" y1="72" x2="115" y2="38" stroke="#16a34a" stroke-width="2.5"/><text x="82" y="48" fill="#16a34a" font-weight="bold">4</text><line x1="130" y1="46" x2="130" y2="114" stroke="#16a34a" stroke-width="2.5"/><text x="118" y="83" fill="#16a34a" font-weight="bold">1</text><line x1="145" y1="120" x2="205" y2="90" stroke="#16a34a" stroke-width="2.5"/><text x="183" y="99" fill="#16a34a" font-weight="bold">2</text><line x1="235" y1="90" x2="258" y2="118" stroke="#16a34a" stroke-width="2.5"/><text x="255" y="102" fill="#16a34a" font-weight="bold">5</text><text x="150" y="155" fill="#475569">MST weight = 1+2+4+5 = 12</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '綠色邊即 MST 的 4 條邊:(1,2,w=1),(2,3,w=2),(0,1,w=4),(3,4,w=5),總重 12。環路邊如 (1,3) 和 (0,2) 被 DSU 排除。',
+            en: 'Green edges form the MST: (1,2,w=1), (2,3,w=2), (0,1,w=4), (3,4,w=5), total weight 12. Cycle edges such as (1,3) and (0,2) are rejected by DSU.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '階段', en: 'Phase' }, { zh: '時間', en: 'Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: '排序邊', en: 'Sort edges' }, { zh: '$O(E \\log E)$', en: '$O(E \\log E)$' }, { zh: '$O(E)$', en: '$O(E)$' } ],
+              [ { zh: 'DSU 操作(E次)', en: 'DSU ops (E times)' }, { zh: '$O(E \\alpha(V))$', en: '$O(E \\alpha(V))$' }, { zh: '$O(V)$', en: '$O(V)$' } ],
+              [ { zh: '總時間', en: 'Total Time' }, { zh: '$O(E \\log E)$', en: '$O(E \\log E)$' }, { zh: '—', en: '—' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(V + E)$', en: '$O(V + E)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{Kruskal}} = O(E \\log E)', caption: {
+            zh: '排序主導整體複雜度;DSU 以反阿克曼函數 $\\alpha(V)$ 的均攤代價近似 $O(1)$,可忽略。',
+            en: 'Sorting dominates the total complexity; DSU operations are amortized $O(\\alpha(V)) \\approx O(1)$ per operation.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'struct DSU {\n    vector<int> p, r;\n    DSU(int n): p(n), r(n, 0) { for (int i = 0; i < n; i++) p[i] = i; }\n    int find(int x) { return p[x] == x ? x : p[x] = find(p[x]); }\n    bool unite(int a, int b) {\n        a = find(a); b = find(b);\n        if (a == b) return false;         // cycle\n        if (r[a] < r[b]) swap(a, b);\n        p[b] = a;\n        if (r[a] == r[b]) r[a]++;\n        return true;\n    }\n};\n\n// Kruskal MST\nsort(edges.begin(), edges.end(),\n     [](const Edge& a, const Edge& b){ return a.w < b.w; });\nDSU dsu(V);\nvector<Edge> mst;\nfor (const auto& e : edges) {\n    if (dsu.unite(e.u, e.v)) {\n        mst.push_back(e);\n        if ((int)mst.size() == V - 1) break;\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:以邊為中心,適合稀疏圖($E \\ll V^2$)。', en: 'Pro: edge-centric — well-suited for sparse graphs ($E \\ll V^2$).' },
+            { zh: '優點:DSU 實作簡單,可離線排序後批次處理。', en: 'Pro: DSU implementation is concise; edges can be sorted offline and processed in bulk.' },
+            { zh: '缺點:需事先知道所有邊才能排序,不適用動態邊插入場景。', en: 'Con: requires all edges upfront for sorting — unsuitable for dynamic edge insertions.' },
+            { zh: '缺點:相較 Prim 演算法,在稠密圖上效率較低。', en: 'Con: less efficient than Prim\'s algorithm on dense graphs.' },
+            { zh: '適用:稀疏加權連通圖的 MST,如網路佈線、電路設計。', en: 'Use for MST of sparse weighted connected graphs: network cabling, circuit design.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '排序邊 + DSU 偵測環路:$O(E \\log E)$ 時間建構 MST。', en: 'Sort edges + DSU cycle detection: MST built in $O(E \\log E)$ time.' },
+            { zh: 'MST 恰有 $V-1$ 條邊,覆蓋所有頂點且總權重最小。', en: 'MST has exactly $V-1$ edges, spans all vertices with minimum total weight.' },
+            { zh: '最佳用於稀疏圖;Prim 演算法在稠密圖上更佳。', en: 'Best for sparse graphs; Prim\'s algorithm is preferred for dense graphs.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'graph-dijkstra': {
+    category: 'Non-Linear Structures',
+    title: { zh: 'Dijkstra 最短路徑', en: 'Dijkstra Shortest Path' },
+    slides: [
+      {
+        heading: { zh: 'Dijkstra 最短路徑', en: 'Dijkstra Shortest Path' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Dijkstra 演算法以貪心策略從源點出發,每次選取距離最小的未訪問頂點並鬆弛(relax)其鄰邊,於 $O((V+E)\\log V)$ 時間(binary heap)內求得源點到所有頂點的最短路徑。',
+            en: 'Dijkstra\'s algorithm greedily selects the unvisited vertex with minimum distance, then relaxes its outgoing edges. With a binary heap it runs in $O((V+E)\\log V)$ and finds shortest paths from a source to all vertices.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '維護一個距離陣列 `dist[]`,初始源點為 0,其餘為 INF。優先佇列(min-heap)保證每次取出的頂點距離已是最短;一旦頂點被訪問,其距離不再更新。',
+            en: 'Maintain a distance array `dist[]` initialised to INF except the source (0). A min-heap priority queue ensures the next vertex popped has the smallest known distance; once visited, a vertex\'s distance is final.' } },
+          { type: 'bullets', items: [
+            { zh: 'relax:若 `dist[u] + w(u,v) < dist[v]`,更新 `dist[v]` 並將 (dist[v], v) 推入優先佇列。', en: 'relax: if `dist[u] + w(u,v) < dist[v]`, update `dist[v]` and push (dist[v], v) into the priority queue.' },
+            { zh: '惰性刪除:已訪問的頂點若再次從佇列彈出則直接跳過。', en: 'Lazy deletion: if a popped vertex is already visited, skip it.' },
+            { zh: '限制:邊權必須非負;負邊請改用 Bellman-Ford。', en: 'Limitation: edge weights must be non-negative; use Bellman-Ford for negative weights.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '初始化 `dist[source]=0`,其餘為 INF;源點推入優先佇列。', en: 'Initialise `dist[source]=0`, all others INF; push source into the priority queue.' },
+            { zh: '彈出距離最小的頂點 u;若已訪問則跳過。', en: 'Pop vertex u with minimum distance; skip if already visited.' },
+            { zh: '標記 u 為已訪問;對 u 的每條鄰邊 (u,v,w) 執行 relax。', en: 'Mark u as visited; relax each edge (u,v,w) of u.' },
+            { zh: '重複直至優先佇列為空;此時 `dist[]` 存有所有最短距離。', en: 'Repeat until the priority queue is empty; `dist[]` then holds all shortest distances.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["dist=INF\\npush source"] --> B["pop min u"]\n  B --> C{"visited?"}\n  C -->|yes| B\n  C -->|no| D["mark visited\\nrelax edges"]\n  D --> E{"PQ empty?"}\n  E -->|no| B\n  E -->|yes| F["dist final"]' },
+        ],
+      },
+      {
+        heading: { zh: '最短路徑示意圖', en: 'Shortest Path Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" width="320" height="160"><g font-family="sans-serif" font-size="11" text-anchor="middle"><circle cx="40" cy="80" r="16" fill="#fef9c3" stroke="#ca8a04"/><text x="40" y="85">0</text><text x="40" y="65" fill="#ca8a04" font-size="10">d=0</text><circle cx="130" cy="30" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="130" y="35">1</text><text x="130" y="18" fill="#2563eb" font-size="10">d=3</text><circle cx="130" cy="130" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="130" y="135">2</text><text x="130" y="150" fill="#2563eb" font-size="10">d=1</text><circle cx="220" cy="80" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="220" y="85">3</text><text x="220" y="68" fill="#2563eb" font-size="10">d=2</text><circle cx="290" cy="80" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="290" y="85">4</text><text x="290" y="68" fill="#2563eb" font-size="10">d=5</text><line x1="56" y1="70" x2="114" y2="38" stroke="#475569"/><text x="80" y="47" fill="#475569">4</text><line x1="56" y1="90" x2="114" y2="122" stroke="#16a34a" stroke-width="2.5"/><text x="80" y="113" fill="#16a34a" font-weight="bold">1</text><line x1="146" y1="120" x2="204" y2="90" stroke="#16a34a" stroke-width="2.5"/><text x="183" y="100" fill="#16a34a" font-weight="bold">1</text><line x1="130" y1="46" x2="130" y2="114" stroke="#16a34a" stroke-width="2.5"/><text x="118" y="83" fill="#16a34a" font-weight="bold">2</text><line x1="236" y1="80" x2="274" y2="80" stroke="#16a34a" stroke-width="2.5"/><text x="256" y="74" fill="#16a34a" font-weight="bold">3</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '從節點 0 出發的最短距離:d[0]=0, d[1]=3(0→2→1), d[2]=1(0→2), d[3]=2(0→2→3), d[4]=5(0→2→3→4)。綠色邊為最短路徑樹。',
+            en: 'Shortest distances from node 0: d[0]=0, d[1]=3 (0→2→1), d[2]=1 (0→2), d[3]=2 (0→2→3), d[4]=5 (0→2→3→4). Green edges form the shortest-path tree.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '階段', en: 'Phase' }, { zh: '時間', en: 'Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: '初始化', en: 'Initialisation' }, { zh: '$O(V)$', en: '$O(V)$' }, { zh: '$O(V)$', en: '$O(V)$' } ],
+              [ { zh: 'PQ 操作(V次)', en: 'PQ ops (V pops)' }, { zh: '$O(V \\log V)$', en: '$O(V \\log V)$' }, { zh: '$O(V)$', en: '$O(V)$' } ],
+              [ { zh: 'relax(E次)', en: 'relax (E pushes)' }, { zh: '$O(E \\log V)$', en: '$O(E \\log V)$' }, { zh: '$O(E)$', en: '$O(E)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(V + E)$', en: '$O(V + E)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{Dijkstra}} = O((V+E)\\log V)', caption: {
+            zh: '使用 binary heap 優先佇列時;Fibonacci heap 可降至 $O(E + V \\log V)$,但實作複雜。',
+            en: 'With a binary heap; using a Fibonacci heap reduces this to $O(E + V \\log V)$ at the cost of implementation complexity.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'const int INF = 1e9;\nvector<int> dist(V, INF);\nvector<bool> visited(V, false);\npriority_queue<pair<int,int>,\n               vector<pair<int,int>>,\n               greater<pair<int,int>>> pq;\n\ndist[source] = 0;\npq.push({0, source});\n\nwhile (!pq.empty()) {\n    auto [d, u] = pq.top(); pq.pop();\n    if (visited[u]) continue;\n    visited[u] = true;\n\n    for (auto [v, w] : adj[u]) {\n        if (!visited[v] && dist[u] + w < dist[v]) {\n            dist[v] = dist[u] + w;\n            pq.push({dist[v], v}); // relax\n        }\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:保證找到非負邊權圖的最短路徑;binary heap 實作效率佳。', en: 'Pro: guarantees shortest paths on graphs with non-negative edge weights; binary heap gives good practical performance.' },
+            { zh: '優點:一次執行可得源點到所有頂點的最短距離。', en: 'Pro: one run produces shortest distances from the source to all other vertices.' },
+            { zh: '缺點:無法處理負邊;需改用 Bellman-Ford($O(VE)$)或 SPFA。', en: 'Con: cannot handle negative edges; Bellman-Ford ($O(VE)$) or SPFA is needed.' },
+            { zh: '缺點:惰性刪除可能使優先佇列中積累冗餘項目,最壞為 $O(E)$。', en: 'Con: lazy deletion may accumulate $O(E)$ stale entries in the priority queue.' },
+            { zh: '適用:地圖導航、網路路由協定(OSPF)、遊戲 AI 尋路等。', en: 'Use for map navigation, network routing (OSPF), game AI pathfinding, etc.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Min-heap + relax:每次擴展距離最小的頂點,直至所有頂點確定最短距離。', en: 'Min-heap + relax: expand the vertex with minimum distance each time until all distances are finalised.' },
+            { zh: 'Binary heap 時間複雜度 $O((V+E)\\log V)$;僅適用非負邊權圖。', en: 'Binary heap complexity $O((V+E)\\log V)$; valid only for graphs with non-negative edge weights.' },
+            { zh: '廣泛應用於地圖導航、網路路由等需要單源最短路徑的場景。', en: 'Widely used in map navigation and network routing for single-source shortest path problems.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'graph-topo': {
+    category: 'Non-Linear Structures',
+    title: { zh: '拓樸排序(Kahn\'s 演算法)', en: 'Topological Sort (Kahn\'s Algorithm)' },
+    slides: [
+      {
+        heading: { zh: '拓樸排序(Kahn\'s 演算法)', en: 'Topological Sort (Kahn\'s Algorithm)' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '拓樸排序對有向無環圖(DAG)的頂點排列出線性順序,使每條有向邊 (u→v) 中 u 都排在 v 之前。Kahn\'s 演算法以 BFS 反覆移除入度為 0 的頂點,時間複雜度 $O(V+E)$。',
+            en: 'Topological Sort arranges the vertices of a Directed Acyclic Graph (DAG) so that for every directed edge u→v, u appears before v. Kahn\'s BFS-based algorithm repeatedly removes vertices with in-degree 0 in $O(V+E)$ time.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '入度(in-degree)是指向某頂點的邊數。入度為 0 的頂點沒有前置依賴,可安全地排在最前面。每移除一個頂點,其後繼節點的入度遞減,可能解鎖新的入度為 0 頂點。',
+            en: 'In-degree is the count of edges pointing into a vertex. A vertex with in-degree 0 has no prerequisites and can safely be placed first. Removing it decrements neighbors\' in-degrees, potentially unlocking new zero-in-degree vertices.' } },
+          { type: 'bullets', items: [
+            { zh: 'DAG 要求:拓樸排序僅對無環圖有效;若處理完的頂點數少於 V,代表圖含環。', en: 'DAG requirement: topological sort is only valid for acyclic graphs; if fewer than V vertices are processed, a cycle exists.' },
+            { zh: '非唯一性:若多個頂點同時入度為 0,排列順序不唯一。', en: 'Non-uniqueness: if multiple vertices have in-degree 0 simultaneously, the ordering is not unique.' },
+            { zh: '應用:任務排程、相依套件安裝、編譯器指令排序。', en: 'Applications: task scheduling, dependency resolution, instruction ordering in compilers.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '計算所有頂點的入度;將入度為 0 的頂點加入佇列。', en: 'Compute in-degrees of all vertices; enqueue all vertices with in-degree 0.' },
+            { zh: '從佇列取出頂點 u,加入拓樸排序結果。', en: 'Dequeue vertex u and append it to the topological order.' },
+            { zh: '對 u 的每個後繼 v 將 `inDegree[v]--`;若 `inDegree[v] == 0` 則入隊。', en: 'For each successor v of u, decrement `inDegree[v]`; if `inDegree[v] == 0` enqueue v.' },
+            { zh: '重複直至佇列為空;若結果長度等於 V 則排序成功,否則圖含環。', en: 'Repeat until the queue is empty; if result length equals V the sort succeeded, else a cycle exists.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  A["compute\\nin-degrees"] --> B["enqueue\\nin-degree=0"]\n  B --> C["dequeue u\\nappend to order"]\n  C --> D["decrement\\nneighbors"]\n  D --> E{"in-degree=0?"}\n  E -->|yes| F["enqueue v"]\n  E -->|no| G["skip"]\n  F --> H{"queue\\nempty?"}\n  G --> H\n  H -->|no| C\n  H -->|yes| I{"len=V?"}\n  I -->|yes| J["success"]\n  I -->|no| K["cycle!"]' },
+        ],
+      },
+      {
+        heading: { zh: 'DAG 拓樸排序示意', en: 'DAG Topological Sort Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 120" width="340" height="120"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#475569"/></marker></defs><g font-family="sans-serif" font-size="11" text-anchor="middle"><circle cx="30" cy="60" r="16" fill="#fef9c3" stroke="#ca8a04"/><text x="30" y="65">0</text><circle cx="110" cy="25" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="110" y="30">1</text><circle cx="110" cy="95" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="110" y="100">2</text><circle cx="220" cy="60" r="16" fill="#dbeafe" stroke="#2563eb"/><text x="220" y="65">3</text><circle cx="305" cy="60" r="16" fill="#dcfce7" stroke="#16a34a"/><text x="305" y="65">4</text><line x1="46" y1="52" x2="94" y2="32" stroke="#475569" marker-end="url(#arr)"/><line x1="46" y1="68" x2="94" y2="88" stroke="#475569" marker-end="url(#arr)"/><line x1="126" y1="25" x2="204" y2="55" stroke="#475569" marker-end="url(#arr)"/><line x1="110" y1="41" x2="110" y2="79" stroke="#475569" marker-end="url(#arr)"/><line x1="126" y1="95" x2="204" y2="65" stroke="#475569" marker-end="url(#arr)"/><line x1="236" y1="60" x2="289" y2="60" stroke="#475569" marker-end="url(#arr)"/><text x="170" y="112" fill="#475569">Topo order: 0 → 1 → 2 → 3 → 4</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '節點 0 入度為 0(黃色),率先加入結果。依序處理後,合法的拓樸序為 0→1→2→3→4。所有有向邊均由左指向右,符合拓樸排序定義。',
+            en: 'Node 0 has in-degree 0 (yellow) and is processed first. A valid topological order is 0→1→2→3→4. Every directed edge points left-to-right, consistent with the topological ordering.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '階段', en: 'Phase' }, { zh: '時間', en: 'Time' }, { zh: '空間', en: 'Space' } ],
+            rows: [
+              [ { zh: '入度計算', en: 'In-degree computation' }, { zh: '$O(V+E)$', en: '$O(V+E)$' }, { zh: '$O(V)$', en: '$O(V)$' } ],
+              [ { zh: 'BFS 處理', en: 'BFS processing' }, { zh: '$O(V+E)$', en: '$O(V+E)$' }, { zh: '$O(V)$', en: '$O(V)$' } ],
+              [ { zh: '空間合計', en: 'Total Space' }, { zh: '—', en: '—' }, { zh: '$O(V+E)$', en: '$O(V+E)$' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{Kahn}} = O(V + E)', caption: {
+            zh: '每個頂點入隊/出隊各一次,每條邊處理一次;線性時間是拓樸排序的理論最優。',
+            en: 'Each vertex is enqueued and dequeued exactly once; each edge is processed once — linear time is optimal for topological sort.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: '// Kahn\'s Algorithm (BFS-based topological sort)\nvector<int> inDegree(V, 0);\nfor (auto [u, v] : edges) {\n    adj[u].push_back(v);\n    inDegree[v]++;\n}\n\nqueue<int> q;\nfor (int i = 0; i < V; i++)\n    if (inDegree[i] == 0) q.push(i);\n\nvector<int> topoOrder;\nwhile (!q.empty()) {\n    int u = q.front(); q.pop();\n    topoOrder.push_back(u);\n    for (int v : adj[u]) {\n        if (--inDegree[v] == 0)\n            q.push(v);\n    }\n}\n\nif ((int)topoOrder.size() != V)\n    cout << "ERROR: Cycle detected!\\n";' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:線性時間 $O(V+E)$,同時免費偵測圖中的環(若有)。', en: 'Pro: linear $O(V+E)$ time; cycle detection comes for free.' },
+            { zh: '優點:Kahn\'s BFS 實作直觀,易於理解與調試。', en: 'Pro: Kahn\'s BFS approach is intuitive and easy to debug.' },
+            { zh: '缺點:僅適用 DAG;含環的有向圖無法產生有效的拓樸排序。', en: 'Con: only valid for DAGs; directed graphs with cycles produce no valid topological order.' },
+            { zh: '缺點:若有多個合法排序,結果取決於佇列順序,可能不唯一。', en: 'Con: when multiple valid orderings exist, the result depends on queue order and is not unique.' },
+            { zh: '適用:相依套件安裝、Makefile 編譯順序、課程先修要求排序等。', en: 'Use for dependency resolution, Makefile build order, course prerequisite scheduling, etc.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '反覆移除入度為 0 的頂點:$O(V+E)$ 線性時間完成拓樸排序。', en: 'Repeatedly removing in-degree-0 vertices achieves topological sort in $O(V+E)$ linear time.' },
+            { zh: '僅適用 DAG;若結果長度少於 V 則圖含環,可作為環偵測工具。', en: 'Only for DAGs; if result length is less than V a cycle exists — doubles as a cycle-detection tool.' },
+            { zh: '廣泛應用於任務排程、相依解析與編譯器前端的指令排序。', en: 'Widely applied in task scheduling, dependency resolution, and compiler front-end instruction ordering.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
 };
 
 module.exports = SLIDES_DB;
