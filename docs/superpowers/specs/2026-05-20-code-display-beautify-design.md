@@ -71,13 +71,18 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 
 ### `format_code.js`(新增 Node 腳本)
 
-職責:
+職責(按順序執行,前一步失敗則中止,不進下一步):
 
 1. `require('clang-format')` 取得執行檔路徑;對 repo 內每個 `*.cpp` 跑 clang-format,寫回原檔。
-2. 重跑 `build_db.js` 重生 `code_db.js`。
-3. 讀 `slides_db.js`,對每個 `{ type:'code', lang:'cpp', code:'...' }` 區塊把 `code` 字串
-   個別丟給 clang-format,寫回。
-4. 重跑 `npm run build:slides` 重生 `.md` 與 `slides_rendered.js`。
+2. **編譯驗證 gate**:對每個剛格式化的 `.cpp` 立即跑 `g++ -std=c++17 -fsyntax-only <file>.cpp`。
+   任何一個失敗就中止整個流程、印出失敗檔名與該檔的 git diff(對照格式化前後),
+   **不重生 `code_db.js`、不動 `slides_db.js`、不重跑簡報建構**。
+   這把「格式化後仍可編譯」從「相信工具」變成腳本內建的硬性檢查。
+3. 重跑 `build_db.js` 重生 `code_db.js`。
+4. 讀 `slides_db.js`,對每個 `{ type:'code', lang:'cpp', code:'...' }` 區塊把 `code` 字串
+   個別丟給 clang-format,寫回。簡報的 code 區塊是程式碼片段(非完整 .cpp),無法獨立編譯,
+   因此不對其執行 `-fsyntax-only` 檢查;依賴 `.cpp` 已通過編譯驗證的事實確保語法正確。
+5. 重跑 `npm run build:slides` 重生 `.md` 與 `slides_rendered.js`。
 
 可獨立執行 `node format_code.js`,也可透過 npm script `npm run format:code` 一次跑完所有步驟。
 
@@ -155,6 +160,9 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 
 ## 7. 測試
 
+- **編譯驗證(`format_code.js` 內建)**:每個 `.cpp` 在格式化後立即 `g++ -std=c++17 -fsyntax-only`;
+  任一失敗即中止流程。詳見 §3 步驟 2。這是格式化階段的硬性把關,確保 clang-format 後
+  全部 `.cpp` 仍可編譯。
 - `node --test tests/unit/build_slides.test.js` — `code` block 的測試斷言改為驗證輸出含
   Prism token span。
 - `npm run test:all` — 既有 Playwright 測試應全綠;若某些測試以 `toContainText` 比對程式碼字串中
@@ -179,3 +187,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
   逐一修正。
 - **Prism CDN 移除**:既有 `prism-c.min.js` 不再載入,僅留 cpp。所有目前展示的程式碼皆為 C++,
   此調整安全。
+- **格式化後仍可編譯**:clang-format 為純 whitespace 重寫器,token / AST / 語意不變,
+  理論上不會破壞編譯。即便如此,`format_code.js` 內建 `g++ -fsyntax-only` 編譯驗證 gate
+  作為硬性把關(見 §3 步驟 2、§7),任何一個 `.cpp` 編譯失敗即中止整個格式化流程,
+  確保不會把破損的程式碼帶進顯示。
