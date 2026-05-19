@@ -3943,6 +3943,582 @@ const SLIDES_DB = {
     ],
   },
 
+  'pattern-singleton': {
+    category: 'Design Patterns',
+    title: { zh: 'Singleton 模式', en: 'Singleton Pattern' },
+    slides: [
+      {
+        heading: { zh: 'Singleton 模式', en: 'Singleton Pattern' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Singleton 是一種 Creational 設計模式,確保一個類別在整個程式執行期間只存在唯一一個實例,並提供全域存取點。',
+            en: 'Singleton is a Creational design pattern that ensures a class has exactly one instance throughout the program\'s lifetime and provides a global access point to it.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '以 `private` 建構子防止外部直接建立物件;以 `static` 成員指標儲存唯一實例;透過 `static getInstance()` 實現延遲初始化(lazy initialization),並以 `mutex` 保護執行緒安全。',
+            en: 'A `private` constructor prevents external instantiation; a `static` member pointer holds the sole instance; `static getInstance()` implements lazy initialization, protected by a `mutex` for thread safety.' } },
+          { type: 'bullets', items: [
+            { zh: 'Private constructor:阻止外部以 `new` 或直接宣告建立物件。', en: 'Private constructor: blocks external `new` or direct declarations.' },
+            { zh: 'Copy constructor / assignment operator deleted:防止複製產生第二份實例。', en: 'Copy constructor / assignment operator deleted: prevents a second copy.' },
+            { zh: 'Static member pointer (`m_instance`):指向唯一實例,初始為 `nullptr`。', en: 'Static member pointer (`m_instance`): holds the unique instance, initially `nullptr`.' },
+            { zh: '`getInstance()` 搭配 `lock_guard`:雙重保護確保多執行緒安全。', en: '`getInstance()` with `lock_guard`: ensures thread-safe first-time creation.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '第一次呼叫 `Singleton::getInstance()`:進入臨界區,`m_instance == nullptr` 成立,建立唯一實例。', en: 'First call to `Singleton::getInstance()`: enters critical section, `m_instance == nullptr` holds, creates the unique instance.' },
+            { zh: '後續呼叫:同樣進入臨界區,但 `m_instance != nullptr`,直接回傳既有指標。', en: 'Subsequent calls: enter the critical section but `m_instance != nullptr`, so the existing pointer is returned.' },
+            { zh: '所有呼叫者持有相同指標,對實例的修改對全域可見。', en: 'All callers hold the same pointer; modifications to the instance are globally visible.' },
+            { zh: '程式結束時解構子被呼叫,清理單一實例資源。', en: 'The destructor is called at program termination, cleaning up the single instance.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  C1["Client 1"] -->|"getInstance()"| G{"m_instance\\n== nullptr?"}\n  C2["Client 2"] -->|"getInstance()"| G\n  G -->|"Yes: create"| I["Singleton\\nInstance"]\n  G -->|"No: return"| I' },
+        ],
+      },
+      {
+        heading: { zh: 'UML 結構示意', en: 'UML Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" width="320" height="160"><g font-family="sans-serif" font-size="12"><rect x="80" y="20" width="160" height="120" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="160" y="40" text-anchor="middle" font-weight="bold" fill="#1e3a8a">Singleton</text><line x1="80" y1="48" x2="240" y2="48" stroke="#2563eb" stroke-width="1"/><text x="90" y="65" font-size="11" fill="#374151">- static m_instance: Singleton*</text><text x="90" y="80" font-size="11" fill="#374151">- static m_mutex: mutex</text><text x="90" y="95" font-size="11" fill="#374151">- m_value: int</text><line x1="80" y1="100" x2="240" y2="100" stroke="#2563eb" stroke-width="1"/><text x="90" y="115" font-size="11" fill="#374151">+ static getInstance(): Singleton*</text><text x="90" y="130" font-size="11" fill="#374151">- Singleton() [private ctor]</text><text x="160" y="155" text-anchor="middle" font-size="10" fill="#6b7280">Copy ctor &amp; operator= deleted</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '`m_instance` 與 `m_mutex` 為 static 成員,儲存於靜態記憶體區,所有呼叫者共用。`getInstance()` 是唯一合法的建立/取得入口。',
+            en: '`m_instance` and `m_mutex` are static members in the static data segment, shared across all callers. `getInstance()` is the only legal creation/access point.' } },
+        ],
+      },
+      {
+        heading: { zh: '模式屬性', en: 'Pattern Properties' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '屬性', en: 'Property' }, { zh: '說明', en: 'Description' } ],
+            rows: [
+              [ { zh: 'GoF 分類', en: 'GoF Category' }, { zh: 'Creational(創建型)', en: 'Creational' } ],
+              [ { zh: '參與者', en: 'Participants' }, { zh: 'Singleton 類別本身', en: 'Singleton class itself' } ],
+              [ { zh: '意圖', en: 'Intent' }, { zh: '確保唯一實例並提供全域存取點', en: 'Ensure one instance and provide global access' } ],
+              [ { zh: '初始化時機', en: 'Initialization' }, { zh: '延遲初始化(首次呼叫時)', en: 'Lazy (on first call)' } ],
+              [ { zh: '執行緒安全', en: 'Thread Safety' }, { zh: '需以 mutex 保護', en: 'Requires mutex protection' } ],
+            ] },
+          { type: 'math', tex: '|\\{\\text{instances of } C\\}| = 1', caption: {
+            zh: 'Singleton 的核心不變式:類別 $C$ 的實例集合大小恆等於 1。',
+            en: 'Core Singleton invariant: the set of instances of class $C$ always has exactly one element.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class Singleton {\nprivate:\n    static Singleton* m_instance;\n    static mutex m_mutex;\n    int m_value;\n\n    Singleton() : m_value(0) {}\n\npublic:\n    Singleton(const Singleton&) = delete;\n    Singleton& operator=(const Singleton&) = delete;\n\n    static Singleton* getInstance() {\n        lock_guard<mutex> lock(m_mutex);\n        if (m_instance == nullptr) {\n            m_instance = new Singleton();\n        }\n        return m_instance;\n    }\n\n    void setValue(int val) { m_value = val; }\n    int getValue() const { return m_value; }\n};\n\nSingleton* Singleton::m_instance = nullptr;\nmutex Singleton::m_mutex;\n\nint main() {\n    Singleton* s1 = Singleton::getInstance();\n    s1->setValue(42);\n    Singleton* s2 = Singleton::getInstance();\n    cout << (s1 == s2 ? "Same" : "Different") << endl; // Same\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:保證全域唯一實例,避免多份物件的資源競爭或狀態不一致。', en: 'Pro: guarantees a single global instance, avoiding resource conflicts or inconsistent state from multiple objects.' },
+            { zh: '優點:延遲初始化節省資源,僅在真正需要時建立。', en: 'Pro: lazy initialization saves resources; the object is created only when first needed.' },
+            { zh: '缺點:全域狀態使單元測試困難,需注意測試間的狀態污染。', en: 'Con: global state makes unit testing harder; watch for state leakage between tests.' },
+            { zh: '缺點:隱藏依賴關係,違反顯式依賴原則(Explicit Dependency Principle)。', en: 'Con: hides dependencies, violating the Explicit Dependency Principle.' },
+            { zh: '適用:Logger、設定管理器(Configuration manager)、資料庫連線池等需唯一實例的場景。', en: 'Use for Logger, Configuration manager, Database connection pool — scenarios requiring a single shared instance.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Singleton 是 Creational 模式:以 private constructor + static getInstance() 確保唯一實例。', en: 'Singleton is a Creational pattern: private constructor + static getInstance() ensures a single instance.' },
+            { zh: '延遲初始化 + mutex 保護是多執行緒環境的標準做法。', en: 'Lazy initialization + mutex protection is the standard approach in multi-threaded environments.' },
+            { zh: '複製建構子與賦值運算子須明確 delete,防止意外複製。', en: 'Copy constructor and assignment operator must be explicitly deleted to prevent accidental copies.' },
+            { zh: '謹慎使用全域狀態;現代 C++ 推薦以 Meyers Singleton(static local variable)取代裸指標版本。', en: 'Use global state cautiously; modern C++ favours the Meyers Singleton (static local variable) over raw pointer.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'pattern-factory': {
+    category: 'Design Patterns',
+    title: { zh: 'Factory Method 模式', en: 'Factory Method Pattern' },
+    slides: [
+      {
+        heading: { zh: 'Factory Method 模式', en: 'Factory Method Pattern' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Factory Method 是一種 Creational 設計模式,定義一個建立物件的介面,但將實際建立哪個具體類別的決定交給工廠方法,讓客戶端依賴抽象而非具體型別。',
+            en: 'Factory Method is a Creational design pattern that defines an interface for creating objects but delegates the decision of which concrete class to instantiate to a factory method, keeping client code dependent on abstractions rather than concrete types.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`VehicleFactory::createVehicle()` 接受型別字串,回傳抽象 `Vehicle*`。客戶端只知道 `Vehicle` 介面,不知道 `Car`/`Truck`/`Bike` 的具體建構細節。',
+            en: '`VehicleFactory::createVehicle()` takes a type string and returns an abstract `Vehicle*`. The client knows only the `Vehicle` interface, not the concrete construction details of `Car`, `Truck`, or `Bike`.' } },
+          { type: 'bullets', items: [
+            { zh: 'Abstract Product(`Vehicle`):定義所有具體產品須實作的介面(`display()`)。', en: 'Abstract Product (`Vehicle`): defines the interface (`display()`) that all concrete products must implement.' },
+            { zh: 'Concrete Products(`Car`, `Truck`, `Bike`):各自實作 `display()`。', en: 'Concrete Products (`Car`, `Truck`, `Bike`): each implements `display()` differently.' },
+            { zh: 'Factory(`VehicleFactory`):提供靜態工廠方法,集中封裝建立邏輯。', en: 'Factory (`VehicleFactory`): provides a static factory method that centralises creation logic.' },
+            { zh: '`unique_ptr<Vehicle>`:確保資源安全、自動釋放。', en: '`unique_ptr<Vehicle>`: ensures resource safety and automatic deallocation.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '客戶端呼叫 `VehicleFactory::createVehicle("car")`。', en: 'Client calls `VehicleFactory::createVehicle("car")`.' },
+            { zh: '工廠方法根據型別字串決定實例化 `Car`、`Truck` 還是 `Bike`。', en: 'The factory method decides whether to instantiate `Car`, `Truck`, or `Bike` based on the type string.' },
+            { zh: '回傳 `unique_ptr<Vehicle>`,客戶端以 `Vehicle` 介面操作物件,呼叫 `display()`。', en: 'Returns `unique_ptr<Vehicle>`; the client operates on the object through the `Vehicle` interface, calling `display()`.' },
+            { zh: '新增產品時只需修改工廠方法,客戶端無需變動。', en: 'Adding a new product requires only modifying the factory method; client code stays unchanged.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  Client -->|"createVehicle(type)"| F["VehicleFactory"]\n  F -->|"type=car"| Car\n  F -->|"type=truck"| Truck\n  F -->|"type=bike"| Bike\n  Car -->|implements| V["Vehicle interface"]\n  Truck -->|implements| V\n  Bike -->|implements| V' },
+        ],
+      },
+      {
+        heading: { zh: 'UML 結構示意', en: 'UML Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 180" width="380" height="180"><g font-family="sans-serif" font-size="11"><rect x="140" y="10" width="110" height="40" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="195" y="27" text-anchor="middle" font-weight="bold" font-style="italic" fill="#1e3a8a">Vehicle</text><text x="195" y="43" text-anchor="middle" fill="#374151">+ display() = 0</text><rect x="20" y="100" width="90" height="35" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="65" y="121" text-anchor="middle" font-weight="bold" fill="#166534">Car</text><rect x="150" y="100" width="90" height="35" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="195" y="121" text-anchor="middle" font-weight="bold" fill="#166534">Truck</text><rect x="280" y="100" width="90" height="35" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="325" y="121" text-anchor="middle" font-weight="bold" fill="#166534">Bike</text><line x1="65" y1="100" x2="175" y2="52" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="195" y1="100" x2="195" y2="52" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="325" y1="100" x2="215" y2="52" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><rect x="130" y="155" width="130" height="20" rx="3" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/><text x="195" y="169" text-anchor="middle" fill="#92400e">VehicleFactory::createVehicle()</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '虛線箭頭表示「實作(implements)」關係:所有 Concrete Products 都實作 `Vehicle` 抽象介面。工廠方法封裝物件建立,客戶端僅依賴 `Vehicle`。',
+            en: 'Dashed arrows indicate the "implements" relationship: all Concrete Products implement the `Vehicle` abstract interface. The factory method encapsulates creation; the client depends only on `Vehicle`.' } },
+        ],
+      },
+      {
+        heading: { zh: '模式屬性', en: 'Pattern Properties' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '屬性', en: 'Property' }, { zh: '說明', en: 'Description' } ],
+            rows: [
+              [ { zh: 'GoF 分類', en: 'GoF Category' }, { zh: 'Creational(創建型)', en: 'Creational' } ],
+              [ { zh: '參與者', en: 'Participants' }, { zh: 'Product, ConcreteProduct, Creator (Factory)', en: 'Product, ConcreteProduct, Creator (Factory)' } ],
+              [ { zh: '意圖', en: 'Intent' }, { zh: '封裝物件建立邏輯,依賴抽象而非具體', en: 'Encapsulate object creation; depend on abstraction' } ],
+              [ { zh: '協作方式', en: 'Collaboration' }, { zh: 'Client → Factory → ConcreteProduct → Product interface', en: 'Client → Factory → ConcreteProduct → Product interface' } ],
+              [ { zh: '擴展性', en: 'Extensibility' }, { zh: '新增產品只改工廠,符合 Open/Closed Principle', en: 'New products only need factory changes; follows OCP' } ],
+            ] },
+          { type: 'math', tex: '\\text{Client} \\to \\text{Factory} \\xrightarrow{\\text{returns}} \\text{Product}^*', caption: {
+            zh: '客戶端透過 Factory 取得 Product 的抽象指標,實際型別在工廠內部決定,客戶端無感知。',
+            en: 'The client receives an abstract Product pointer from the Factory; the concrete type is decided inside the factory, invisible to the client.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class Vehicle {\npublic:\n    virtual ~Vehicle() {}\n    virtual void display() const = 0;\n};\n\nclass Car : public Vehicle {\npublic:\n    void display() const override {\n        cout << "[Car] V6 sedan" << endl;\n    }\n};\n\nclass Truck : public Vehicle {\npublic:\n    void display() const override {\n        cout << "[Truck] Diesel cargo" << endl;\n    }\n};\n\nclass VehicleFactory {\npublic:\n    static unique_ptr<Vehicle> createVehicle(const string& type) {\n        if (type == "car")   return make_unique<Car>();\n        if (type == "truck") return make_unique<Truck>();\n        return nullptr;\n    }\n};\n\nint main() {\n    auto v = VehicleFactory::createVehicle("car");\n    if (v) v->display(); // [Car] V6 sedan\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:客戶端與具體類別解耦,降低修改範圍。', en: 'Pro: client is decoupled from concrete classes, reducing the scope of changes.' },
+            { zh: '優點:新增產品只需修改工廠一處,符合 Open/Closed Principle。', en: 'Pro: adding a product requires only one change in the factory, following the Open/Closed Principle.' },
+            { zh: '優點:便於替換或模擬(mock)具體產品,提升可測試性。', en: 'Pro: easy to substitute or mock concrete products, improving testability.' },
+            { zh: '缺點:每新增一種產品都需要新的 ConcreteProduct 類別,類別數量增多。', en: 'Con: each new product requires a new ConcreteProduct class, increasing class count.' },
+            { zh: '適用:資料庫驅動程式選擇、UI 元件建立、外掛系統等需依型別動態建立物件的場景。', en: 'Use for database driver selection, UI element creation, plug-in systems — any scenario requiring type-based dynamic object creation.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Factory Method 是 Creational 模式:以工廠方法封裝 new,讓客戶端依賴抽象 Product 介面。', en: 'Factory Method is a Creational pattern: encapsulates `new` in a factory method so the client depends on the abstract Product interface.' },
+            { zh: '參與者:Product(抽象)、ConcreteProduct(具體)、Factory(工廠方法)。', en: 'Participants: Product (abstract), ConcreteProduct (concrete), Factory (factory method).' },
+            { zh: '使用 `unique_ptr` 回傳多型指標,兼顧安全與抽象。', en: 'Returning `unique_ptr` to a polymorphic pointer combines safety with abstraction.' },
+            { zh: '擴展時遵循 OCP:新增 ConcreteProduct,修改 Factory,其他程式碼不變。', en: 'Extension follows OCP: add a ConcreteProduct, modify the Factory, leave all other code unchanged.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'pattern-adapter': {
+    category: 'Design Patterns',
+    title: { zh: 'Adapter 模式', en: 'Adapter Pattern' },
+    slides: [
+      {
+        heading: { zh: 'Adapter 模式', en: 'Adapter Pattern' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Adapter 是一種 Structural 設計模式,將一個類別的介面轉換成客戶端期望的另一種介面,使原本因介面不相容而無法合作的類別能夠協同工作。',
+            en: 'Adapter is a Structural design pattern that converts the interface of a class into another interface clients expect, enabling classes with incompatible interfaces to work together.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`LegacyAdapter` 實作新的 `ModernDataInterface`,內部持有 `LegacyDataSource` 物件;將客戶端對 `fetch()` 的呼叫翻譯為對 `getDataLegacy()` 的呼叫,屏蔽舊介面的差異。',
+            en: '`LegacyAdapter` implements the new `ModernDataInterface` while holding a `LegacyDataSource` internally; it translates client calls to `fetch()` into `getDataLegacy()` calls, hiding the old interface\'s differences.' } },
+          { type: 'bullets', items: [
+            { zh: 'Target interface(`ModernDataInterface`):客戶端期望使用的介面。', en: 'Target interface (`ModernDataInterface`): the interface the client expects to use.' },
+            { zh: 'Adaptee(`LegacyDataSource`):存在不相容介面的既有類別。', en: 'Adaptee (`LegacyDataSource`): the existing class with the incompatible interface.' },
+            { zh: 'Adapter(`LegacyAdapter`):實作 Target,內部以組合(composition)持有 Adaptee。', en: 'Adapter (`LegacyAdapter`): implements Target and holds the Adaptee via composition.' },
+            { zh: '客戶端程式碼完全不知道 Adaptee 的存在,僅與 Target 介面互動。', en: 'Client code is entirely unaware of the Adaptee; it interacts only with the Target interface.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '客戶端持有 `ModernDataInterface*` 指標,呼叫 `fetch()`。', en: 'Client holds a `ModernDataInterface*` pointer and calls `fetch()`.' },
+            { zh: '`LegacyAdapter::fetch()` 被呼叫,內部呼叫 `m_legacy.getDataLegacy()`。', en: '`LegacyAdapter::fetch()` is called; internally it calls `m_legacy.getDataLegacy()`.' },
+            { zh: 'Adapter 對回傳值做必要的轉換(如格式轉換、前綴加工)後回傳。', en: 'The Adapter performs any necessary conversion (e.g. format transform, prefix processing) and returns the result.' },
+            { zh: '客戶端取得符合 Target 介面規格的資料,感知不到舊系統的存在。', en: 'The client receives data conforming to the Target interface spec, with no awareness of the legacy system.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  Client -->|"fetch()"| A["LegacyAdapter\\nimplements ModernDataInterface"]\n  A -->|"getDataLegacy()"| L["LegacyDataSource"]\n  L -->|"raw data"| A\n  A -->|"adapted data"| Client' },
+        ],
+      },
+      {
+        heading: { zh: 'UML 結構示意', en: 'UML Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" width="400" height="160"><g font-family="sans-serif" font-size="11"><rect x="10" y="55" width="80" height="35" rx="4" fill="#f3f4f6" stroke="#6b7280" stroke-width="1.5"/><text x="50" y="75" text-anchor="middle" font-weight="bold">Client</text><rect x="130" y="10" width="130" height="45" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="195" y="28" text-anchor="middle" font-weight="bold" font-style="italic" fill="#1e3a8a">ModernDataInterface</text><text x="195" y="44" text-anchor="middle" fill="#374151">+ fetch()</text><text x="195" y="55" text-anchor="middle" fill="#374151">+ getFormat()</text><rect x="130" y="95" width="130" height="55" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="195" y="113" text-anchor="middle" font-weight="bold" fill="#166534">LegacyAdapter</text><text x="195" y="128" text-anchor="middle" fill="#374151">+ fetch()</text><text x="195" y="143" text-anchor="middle" fill="#374151">+ getFormat()</text><rect x="300" y="55" width="90" height="35" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/><text x="345" y="72" text-anchor="middle" font-weight="bold" fill="#92400e">LegacyData</text><text x="345" y="84" text-anchor="middle" fill="#374151">Source</text><line x1="90" y1="72" x2="130" y2="35" stroke="#6b7280" stroke-width="1.5"/><line x1="195" y1="55" x2="195" y2="95" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="260" y1="122" x2="300" y2="72" stroke="#16a34a" stroke-width="1.5"/><text x="280" y="105" font-size="10" fill="#6b7280">uses</text></g></svg>' },
+          { type: 'note', text: {
+            zh: 'Adapter(Object Adapter 模式)以組合持有 Adaptee,比繼承更靈活。Adapter 實作 Target 介面,客戶端透過 Target 指標操作,完全不知 Adaptee 的存在。',
+            en: 'The Adapter (Object Adapter variant) holds the Adaptee via composition, which is more flexible than inheritance. The Adapter implements the Target interface; the client operates through the Target pointer with no knowledge of the Adaptee.' } },
+        ],
+      },
+      {
+        heading: { zh: '模式屬性', en: 'Pattern Properties' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '屬性', en: 'Property' }, { zh: '說明', en: 'Description' } ],
+            rows: [
+              [ { zh: 'GoF 分類', en: 'GoF Category' }, { zh: 'Structural(結構型)', en: 'Structural' } ],
+              [ { zh: '參與者', en: 'Participants' }, { zh: 'Target, Adaptee, Adapter, Client', en: 'Target, Adaptee, Adapter, Client' } ],
+              [ { zh: '意圖', en: 'Intent' }, { zh: '轉換介面以消除不相容', en: 'Convert interface to remove incompatibility' } ],
+              [ { zh: '組合形式', en: 'Composition Form' }, { zh: 'Object Adapter(組合) vs Class Adapter(多重繼承)', en: 'Object Adapter (composition) vs Class Adapter (multiple inheritance)' } ],
+              [ { zh: '執行期開銷', en: 'Runtime Cost' }, { zh: '一層額外的間接呼叫', en: 'One level of extra indirection' } ],
+            ] },
+          { type: 'math', tex: '\\text{Adapter}: \\text{Target}^* \\xrightarrow{\\text{wraps}} \\text{Adaptee}', caption: {
+            zh: 'Adapter 包裝(wrap)Adaptee,向外提供 Target 介面——一層薄薄的橋接轉換。',
+            en: 'The Adapter wraps the Adaptee and exposes the Target interface outward — a thin bridging transformation.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class LegacyDataSource {\npublic:\n    string getDataLegacy() const {\n        return "Legacy: Raw Binary Data [0x1A, 0x2B]";\n    }\n};\n\nclass ModernDataInterface {\npublic:\n    virtual ~ModernDataInterface() {}\n    virtual string fetch() = 0;\n    virtual string getFormat() = 0;\n};\n\nclass LegacyAdapter : public ModernDataInterface {\nprivate:\n    LegacyDataSource m_legacy;\npublic:\n    string fetch() override {\n        return "Adapted: " + m_legacy.getDataLegacy();\n    }\n    string getFormat() override {\n        return "Binary adapted to JSON";\n    }\n};\n\nint main() {\n    unique_ptr<ModernDataInterface> adapter = make_unique<LegacyAdapter>();\n    cout << adapter->fetch() << endl;\n    cout << adapter->getFormat() << endl;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:無需修改既有類別即可整合,對 Adaptee 零侵入。', en: 'Pro: integrates existing classes without modification — zero intrusion to the Adaptee.' },
+            { zh: '優點:有助於遺留系統整合、第三方函式庫接入,降低耦合。', en: 'Pro: facilitates legacy system integration and third-party library adoption, reducing coupling.' },
+            { zh: '缺點:如果需要適配的方法很多,Adapter 程式碼可能相當冗長。', en: 'Con: if many methods need adapting, the Adapter code can become quite verbose.' },
+            { zh: '缺點:額外增加一層間接呼叫,雖通常可忽略,但高頻路徑需注意。', en: 'Con: adds an extra indirection layer; usually negligible, but worth noting on hot paths.' },
+            { zh: '適用:整合舊系統或第三方函式庫、API 版本遷移、系統間橋接。', en: 'Use when integrating legacy systems or third-party libraries, migrating API versions, or bridging between systems.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Adapter 是 Structural 模式:以包裝(wrap)方式消除介面不相容,保護現有程式碼不被修改。', en: 'Adapter is a Structural pattern: eliminates interface incompatibility by wrapping, protecting existing code from modification.' },
+            { zh: '參與者:Target(期望介面)、Adaptee(既有介面)、Adapter(橋接包裝)、Client。', en: 'Participants: Target (desired interface), Adaptee (existing interface), Adapter (bridging wrapper), Client.' },
+            { zh: 'Object Adapter 以組合持有 Adaptee,靈活且不受 C++ 多重繼承的限制。', en: 'Object Adapter holds the Adaptee via composition — flexible and not constrained by C++ multiple inheritance.' },
+            { zh: '執行期代價僅一層間接呼叫,透明度高,是遺留整合的首選模式。', en: 'Runtime cost is just one indirection — highly transparent and the preferred pattern for legacy integration.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'pattern-decorator': {
+    category: 'Design Patterns',
+    title: { zh: 'Decorator 模式', en: 'Decorator Pattern' },
+    slides: [
+      {
+        heading: { zh: 'Decorator 模式', en: 'Decorator Pattern' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Decorator 是一種 Structural 設計模式,動態地為物件附加額外職責,提供比繼承更靈活的功能擴展方式——裝飾者與被裝飾者實作相同介面,可任意鏈式組合。',
+            en: 'Decorator is a Structural design pattern that dynamically attaches additional responsibilities to an object. By sharing the same interface between decorator and decorated object, responsibilities can be chained in any combination — more flexible than inheritance.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`Coffee` 介面是共用合約。`SimpleCoffee` 是基本實作。`CoffeeDecorator` 持有 `shared_ptr<Coffee>` 並實作相同介面,以組合包裝並委派呼叫,再疊加自己的行為。',
+            en: 'The `Coffee` interface is the shared contract. `SimpleCoffee` is the base implementation. `CoffeeDecorator` holds a `shared_ptr<Coffee>` and implements the same interface, delegating calls to the wrapped object while layering its own behaviour.' } },
+          { type: 'bullets', items: [
+            { zh: 'Component interface(`Coffee`):宣告 `getDescription()` 和 `getCost()`。', en: 'Component interface (`Coffee`): declares `getDescription()` and `getCost()`.' },
+            { zh: 'Concrete Component(`SimpleCoffee`):無裝飾的原始物件。', en: 'Concrete Component (`SimpleCoffee`): the original undecorated object.' },
+            { zh: 'Decorator base(`CoffeeDecorator`):實作 `Coffee`,持有被包裝物件的指標。', en: 'Decorator base (`CoffeeDecorator`): implements `Coffee` and holds a pointer to the wrapped object.' },
+            { zh: 'Concrete Decorators(`MilkDecorator`, `SugarDecorator`, `WhippedCreamDecorator`):各自疊加描述與費用。', en: 'Concrete Decorators (`MilkDecorator`, `SugarDecorator`, `WhippedCreamDecorator`): each layers its own description and cost.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '建立基本 `SimpleCoffee` 物件(描述:"Simple Coffee",費用:$2.00)。', en: 'Create a base `SimpleCoffee` object (description: "Simple Coffee", cost: $2.00).' },
+            { zh: '以 `MilkDecorator` 包裝,呼叫 `getDescription()` 回傳 "Simple Coffee + Milk",費用增加 $0.50。', en: 'Wrap with `MilkDecorator`: `getDescription()` returns "Simple Coffee + Milk", cost adds $0.50.' },
+            { zh: '再以 `SugarDecorator` 包裝,描述繼續追加 "+ Sugar",費用再加 $0.25。', en: 'Wrap with `SugarDecorator`: description appends "+ Sugar", cost adds another $0.25.' },
+            { zh: '可繼續疊加任意 Decorator;每次呼叫都透過鏈式委派累積結果。', en: 'Any number of decorators can be stacked; each call accumulates results through chained delegation.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  SC["SimpleCoffee\\n$2.00"] -->|wrapped by| M["MilkDecorator\\n+$0.50"]\n  M -->|wrapped by| S["SugarDecorator\\n+$0.25"]\n  S -->|wrapped by| W["WhippedCreamDecorator\\n+$0.75"]\n  W -->|"getCost() = $3.50"| R["Result"]' },
+        ],
+      },
+      {
+        heading: { zh: 'UML 結構示意', en: 'UML Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 190" width="400" height="190"><g font-family="sans-serif" font-size="11"><rect x="140" y="10" width="120" height="45" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="200" y="28" text-anchor="middle" font-weight="bold" font-style="italic" fill="#1e3a8a">Coffee</text><text x="200" y="43" text-anchor="middle" fill="#374151">+ getDescription()</text><text x="200" y="55" text-anchor="middle" fill="#374151">+ getCost()</text><rect x="30" y="95" width="110" height="35" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="85" y="116" text-anchor="middle" font-weight="bold" fill="#166534">SimpleCoffee</text><rect x="240" y="95" width="130" height="55" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/><text x="305" y="113" text-anchor="middle" font-weight="bold" fill="#92400e">CoffeeDecorator</text><text x="305" y="128" text-anchor="middle" fill="#374151">- m_coffee: Coffee*</text><text x="305" y="143" text-anchor="middle" fill="#374151">+ getDescription()</text><line x1="85" y1="95" x2="180" y2="57" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="305" y1="95" x2="220" y2="57" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="305" y1="57" x2="305" y2="95" stroke="#ca8a04" stroke-width="1" stroke-dasharray="2,2"/><rect x="160" y="165" width="90" height="20" rx="3" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/><text x="205" y="179" text-anchor="middle" font-size="10" fill="#92400e">MilkDecorator …</text><line x1="305" y1="150" x2="205" y2="165" stroke="#ca8a04" stroke-width="1.2"/></g></svg>' },
+          { type: 'note', text: {
+            zh: 'Decorator 與 Component 共用相同介面;Decorator base 持有 Component 指標形成自引用結構。具體裝飾者繼承 Decorator base,疊加行為後委派給內部物件。',
+            en: 'Decorator and Component share the same interface; the Decorator base holds a Component pointer forming a self-referential structure. Concrete decorators extend the Decorator base, adding behaviour before delegating to the inner object.' } },
+        ],
+      },
+      {
+        heading: { zh: '模式屬性', en: 'Pattern Properties' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '屬性', en: 'Property' }, { zh: '說明', en: 'Description' } ],
+            rows: [
+              [ { zh: 'GoF 分類', en: 'GoF Category' }, { zh: 'Structural(結構型)', en: 'Structural' } ],
+              [ { zh: '參與者', en: 'Participants' }, { zh: 'Component, ConcreteComponent, Decorator, ConcreteDecorator', en: 'Component, ConcreteComponent, Decorator, ConcreteDecorator' } ],
+              [ { zh: '意圖', en: 'Intent' }, { zh: '動態附加職責,比繼承更靈活', en: 'Dynamically attach responsibilities — more flexible than inheritance' } ],
+              [ { zh: '鏈式深度 $n$', en: 'Chain depth $n$' }, { zh: '呼叫時間 $O(n)$,空間 $O(n)$', en: 'Call time $O(n)$, space $O(n)$' } ],
+              [ { zh: '原則', en: 'Principle' }, { zh: 'Composition over Inheritance', en: 'Composition over Inheritance' } ],
+            ] },
+          { type: 'math', tex: '\\text{cost}(n) = \\text{cost}_0 + \\sum_{i=1}^{n} \\Delta_i', caption: {
+            zh: '鏈式 Decorator 的總成本等於基本元件成本加上所有裝飾者疊加的增量之和。',
+            en: 'The total cost of a decorator chain equals the base component cost plus the sum of all increments added by the decorators.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class Coffee {\npublic:\n    virtual ~Coffee() {}\n    virtual string getDescription() const = 0;\n    virtual double getCost() const = 0;\n};\n\nclass SimpleCoffee : public Coffee {\npublic:\n    string getDescription() const override { return "Simple Coffee"; }\n    double getCost() const override { return 2.00; }\n};\n\nclass CoffeeDecorator : public Coffee {\nprotected:\n    shared_ptr<Coffee> m_coffee;\npublic:\n    CoffeeDecorator(shared_ptr<Coffee> c) : m_coffee(c) {}\n};\n\nclass MilkDecorator : public CoffeeDecorator {\npublic:\n    MilkDecorator(shared_ptr<Coffee> c) : CoffeeDecorator(c) {}\n    string getDescription() const override {\n        return m_coffee->getDescription() + " + Milk";\n    }\n    double getCost() const override { return m_coffee->getCost() + 0.50; }\n};\n\nint main() {\n    shared_ptr<Coffee> c = make_shared<SimpleCoffee>();\n    c = make_shared<MilkDecorator>(c);\n    cout << c->getDescription() << " $" << c->getCost() << endl;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:執行期動態組合,比繼承子類別更靈活,避免類別爆炸。', en: 'Pro: dynamic runtime composition — more flexible than subclassing, avoiding class explosion.' },
+            { zh: '優點:遵循 Single Responsibility Principle,每個 Decorator 只負責一個附加功能。', en: 'Pro: follows Single Responsibility Principle — each Decorator handles exactly one added responsibility.' },
+            { zh: '優點:符合 Open/Closed Principle — 新增功能增加 Decorator,不修改既有類別。', en: 'Pro: follows Open/Closed Principle — add a new Decorator without modifying existing classes.' },
+            { zh: '缺點:大量小 Decorator 類別使系統結構複雜,除錯時難以追蹤呼叫鏈。', en: 'Con: many small Decorator classes complicate the structure and make call-chain tracing during debugging harder.' },
+            { zh: '適用:I/O 串流包裝(如 `BufferedReader`)、GUI 元件裝飾、計費/日誌/認證等橫切關注點。', en: 'Use for I/O stream wrapping (e.g. `BufferedReader`), GUI component decoration, billing/logging/auth as cross-cutting concerns.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Decorator 是 Structural 模式:Decorator 與 Component 共用介面,以組合實現動態職責附加。', en: 'Decorator is a Structural pattern: Decorator and Component share an interface; composition enables dynamic responsibility attachment.' },
+            { zh: '鏈式組合($n$ 個 Decorator)的呼叫時間為 $O(n)$。', en: 'A chain of $n$ Decorators incurs $O(n)$ call time.' },
+            { zh: '核心原則:Composition over Inheritance — 組合比繼承更靈活且不破壞封裝。', en: 'Core principle: Composition over Inheritance — composition is more flexible and preserves encapsulation.' },
+            { zh: '典型應用:C++ `std::istream`/`std::ostream` 家族的各層包裝均採用 Decorator 思想。', en: 'Classic use: C++ `std::istream`/`std::ostream` family wrappers all embody the Decorator idea.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'pattern-observer': {
+    category: 'Design Patterns',
+    title: { zh: 'Observer 模式', en: 'Observer Pattern' },
+    slides: [
+      {
+        heading: { zh: 'Observer 模式', en: 'Observer Pattern' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Observer 是一種 Behavioral 設計模式,定義物件之間的一對多依賴關係——當 Subject(被觀察者)改變狀態時,所有已登錄的 Observer(觀察者)都會自動收到通知並更新。',
+            en: 'Observer is a Behavioral design pattern that defines a one-to-many dependency between objects — when the Subject changes state, all registered Observers are automatically notified and updated.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`Subject` 維護一份 Observer 指標清單;狀態變更時呼叫 `notify()`,逐一觸發各 Observer 的 `update()` 方法。Subject 只知道 `Observer` 抽象介面,與具體觀察者鬆耦合。',
+            en: '`Subject` maintains a list of Observer pointers; on state change it calls `notify()`, which invokes each Observer\'s `update()` method in turn. The Subject knows only the abstract `Observer` interface — loosely coupled from concrete observers.' } },
+          { type: 'bullets', items: [
+            { zh: 'Subject:維護觀察者清單;提供 `attach()`/`detach()` 管理訂閱;以 `setState()` 觸發通知。', en: 'Subject: maintains the observer list; provides `attach()`/`detach()` for subscription management; triggers notification via `setState()`.' },
+            { zh: 'Observer interface:宣告 `update(message)` 方法,所有具體觀察者必須實作。', en: 'Observer interface: declares `update(message)`; all concrete observers must implement it.' },
+            { zh: 'Concrete Observers(`ConcreteObserverA/B/C`):各自定義收到通知後的行為。', en: 'Concrete Observers (`ConcreteObserverA/B/C`): each defines its own reaction to notifications.' },
+            { zh: '鬆耦合:Subject 不知具體 Observer 型別,可在執行期動態增減訂閱者。', en: 'Loose coupling: Subject is unaware of concrete Observer types; subscriptions can be added or removed at runtime.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '呼叫 `subject->attach(obs_a/b/c)`,將三個觀察者加入清單。', en: 'Call `subject->attach(obs_a/b/c)` to add the three observers to the list.' },
+            { zh: '呼叫 `subject->setState("Event1")`,觸發內部 `notify()`。', en: 'Call `subject->setState("Event1")`, which triggers internal `notify()`.' },
+            { zh: '`notify()` 依序呼叫 `ObserverA::update()`、`ObserverB::update()`、`ObserverC::update()`。', en: '`notify()` calls `ObserverA::update()`, `ObserverB::update()`, `ObserverC::update()` in sequence.' },
+            { zh: '可呼叫 `detach()` 移除訂閱,後續 `setState()` 不再通知已移除者。', en: '`detach()` removes a subscription; subsequent `setState()` calls no longer notify the removed observer.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  S["Subject\\nsetState()"] -->|"notify()"| A["ObserverA\\nupdate()"]\n  S -->|"notify()"| B["ObserverB\\nupdate()"]\n  S -->|"notify()"| C["ObserverC\\nupdate()"]' },
+        ],
+      },
+      {
+        heading: { zh: 'UML 結構示意', en: 'UML Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 190" width="380" height="190"><g font-family="sans-serif" font-size="11"><rect x="20" y="60" width="130" height="65" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="85" y="78" text-anchor="middle" font-weight="bold" fill="#1e3a8a">Subject</text><text x="85" y="93" text-anchor="middle" fill="#374151">- observers: list</text><text x="85" y="108" text-anchor="middle" fill="#374151">+ attach(Observer*)</text><text x="85" y="120" text-anchor="middle" fill="#374151">+ setState(string)</text><rect x="230" y="10" width="130" height="40" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="295" y="28" text-anchor="middle" font-weight="bold" font-style="italic" fill="#1e3a8a">Observer</text><text x="295" y="43" text-anchor="middle" fill="#374151">+ update(string) = 0</text><rect x="200" y="100" width="90" height="30" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="245" y="119" text-anchor="middle" font-weight="bold" fill="#166534">ObsA</text><rect x="300" y="100" width="70" height="30" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="335" y="119" text-anchor="middle" font-weight="bold" fill="#166534">ObsB …</text><line x1="150" y1="92" x2="230" y2="29" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="245" y1="100" x2="275" y2="52" stroke="#64748b" stroke-width="1.2" stroke-dasharray="3,3"/><line x1="335" y1="100" x2="310" y2="52" stroke="#64748b" stroke-width="1.2" stroke-dasharray="3,3"/><text x="155" y="75" font-size="10" fill="#6b7280">notifies</text></g></svg>' },
+          { type: 'note', text: {
+            zh: 'Subject 持有 `Observer` 抽象指標清單;具體觀察者實作 `Observer` 介面。Subject 與具體觀察者之間完全鬆耦合,可在執行期動態增減訂閱。',
+            en: 'Subject holds a list of abstract `Observer` pointers; concrete observers implement the `Observer` interface. Subject and concrete observers are fully loosely coupled — subscriptions can be managed dynamically at runtime.' } },
+        ],
+      },
+      {
+        heading: { zh: '模式屬性', en: 'Pattern Properties' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '屬性', en: 'Property' }, { zh: '說明', en: 'Description' } ],
+            rows: [
+              [ { zh: 'GoF 分類', en: 'GoF Category' }, { zh: 'Behavioral(行為型)', en: 'Behavioral' } ],
+              [ { zh: '參與者', en: 'Participants' }, { zh: 'Subject, Observer, ConcreteObserver', en: 'Subject, Observer, ConcreteObserver' } ],
+              [ { zh: '意圖', en: 'Intent' }, { zh: '一對多依賴:Subject 狀態變更自動通知所有 Observer', en: 'One-to-many dependency: Subject state change auto-notifies all Observers' } ],
+              [ { zh: 'notify() 時間', en: 'notify() Time' }, { zh: '$O(n)$ 其中 $n$ 為訂閱者數量', en: '$O(n)$ where $n$ is the number of subscribers' } ],
+              [ { zh: '空間', en: 'Space' }, { zh: '$O(n)$ 觀察者清單', en: '$O(n)$ observer list' } ],
+            ] },
+          { type: 'math', tex: '\\text{notify}: T(n) = O(n)', caption: {
+            zh: '`notify()` 線性走訪所有 $n$ 個觀察者並呼叫其 `update()`,時間複雜度為 $O(n)$。',
+            en: '`notify()` linearly traverses all $n$ observers and calls their `update()` — time complexity $O(n)$.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class Observer {\npublic:\n    virtual ~Observer() {}\n    virtual void update(const string& message) = 0;\n};\n\nclass Subject {\n    vector<shared_ptr<Observer>> m_observers;\n    string m_state;\npublic:\n    void attach(shared_ptr<Observer> obs) {\n        m_observers.push_back(obs);\n    }\n    void setState(const string& state) {\n        m_state = state;\n        notify();\n    }\nprivate:\n    void notify() {\n        for (auto& obs : m_observers)\n            obs->update(m_state);\n    }\n};\n\nclass ConcreteObserverA : public Observer {\npublic:\n    void update(const string& msg) override {\n        cout << "ObserverA received: " << msg << endl;\n    }\n};\n\nint main() {\n    auto subject = make_shared<Subject>();\n    subject->attach(make_shared<ConcreteObserverA>());\n    subject->setState("Event1"); // notifies all observers\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:Subject 與 Observer 鬆耦合,可獨立變動;支援廣播通訊。', en: 'Pro: Subject and Observer are loosely coupled, changeable independently; supports broadcast communication.' },
+            { zh: '優點:執行期動態增減訂閱者,靈活應對需求變化。', en: 'Pro: subscriptions can be added or removed at runtime, accommodating changing requirements flexibly.' },
+            { zh: '缺點:若觀察者眾多或通知鏈複雜,可能造成意外的連鎖更新與效能問題。', en: 'Con: many observers or complex notification chains may cause unexpected cascading updates and performance issues.' },
+            { zh: '缺點:觀察者間順序依賴難以控制,除錯可能困難。', en: 'Con: ordering dependencies among observers are hard to control and debug.' },
+            { zh: '適用:事件系統、MVC 模型通知 View 更新、即時通知推播、響應式程式設計。', en: 'Use for event systems, MVC model-to-view notifications, real-time push notifications, reactive programming.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Observer 是 Behavioral 模式:Subject 維護訂閱者清單,狀態變更時逐一廣播通知。', en: 'Observer is a Behavioral pattern: Subject maintains a subscriber list and broadcasts state changes to all of them.' },
+            { zh: '一對多依賴 + 鬆耦合:Subject 只依賴抽象 `Observer` 介面。', en: 'One-to-many dependency + loose coupling: Subject depends only on the abstract `Observer` interface.' },
+            { zh: '`notify()` 為 $O(n)$;可在執行期動態 `attach`/`detach`。', en: '`notify()` is $O(n)$; `attach`/`detach` can be called dynamically at runtime.' },
+            { zh: 'Observer 模式是事件驅動架構與 MVC、響應式框架的核心基礎。', en: 'Observer is the core foundation of event-driven architectures, MVC, and reactive frameworks.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'pattern-strategy': {
+    category: 'Design Patterns',
+    title: { zh: 'Strategy 模式', en: 'Strategy Pattern' },
+    slides: [
+      {
+        heading: { zh: 'Strategy 模式', en: 'Strategy Pattern' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Strategy 是一種 Behavioral 設計模式,定義一組可互換的演算法家族,將每種演算法封裝在獨立類別中,讓演算法的變動獨立於使用它的客戶端。',
+            en: 'Strategy is a Behavioral design pattern that defines a family of interchangeable algorithms, encapsulates each one in a separate class, and makes them interchangeable so the algorithm can vary independently from the clients that use it.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`PaymentStrategy` 是抽象策略介面;`CreditCardPayment`、`CryptoCurrencyPayment`、`PayPalPayment` 是具體策略;`PaymentProcessor` 是 Context,持有策略指標並委派 `pay()` 呼叫。',
+            en: '`PaymentStrategy` is the abstract strategy interface; `CreditCardPayment`, `CryptoCurrencyPayment`, and `PayPalPayment` are concrete strategies; `PaymentProcessor` is the Context, holding a strategy pointer and delegating `pay()` calls.' } },
+          { type: 'bullets', items: [
+            { zh: 'Strategy interface(`PaymentStrategy`):定義所有具體策略必須實作的 `pay(amount)` 方法。', en: 'Strategy interface (`PaymentStrategy`): defines `pay(amount)` that all concrete strategies must implement.' },
+            { zh: 'Concrete Strategies:各自封裝特定的支付邏輯,彼此可互換。', en: 'Concrete Strategies: each encapsulates a specific payment algorithm and is interchangeable with the others.' },
+            { zh: 'Context(`PaymentProcessor`):持有 `shared_ptr<PaymentStrategy>`;透過 `setStrategy()` 在執行期切換策略。', en: 'Context (`PaymentProcessor`): holds `shared_ptr<PaymentStrategy>`; switches strategy at runtime via `setStrategy()`.' },
+            { zh: 'Context 不知策略的內部邏輯,只呼叫介面方法 `pay()`,完全委派給具體策略。', en: 'Context does not know the strategy\'s internal logic; it calls only the interface method `pay()`, fully delegating to the concrete strategy.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '建立 `PaymentProcessor`(Context)。', en: 'Create a `PaymentProcessor` (Context).' },
+            { zh: '呼叫 `setStrategy(make_shared<CreditCardPayment>("..."))`,設定信用卡策略。', en: 'Call `setStrategy(make_shared<CreditCardPayment>("..."))` to set the credit card strategy.' },
+            { zh: '呼叫 `processPayment(99.99)`,Context 委派給 `CreditCardPayment::pay(99.99)`。', en: 'Call `processPayment(99.99)`; the Context delegates to `CreditCardPayment::pay(99.99)`.' },
+            { zh: '再呼叫 `setStrategy(...)` 切換為加密貨幣策略,後續 `processPayment` 自動使用新策略。', en: 'Call `setStrategy(...)` again to switch to the cryptocurrency strategy; subsequent `processPayment` calls use the new strategy.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  P["PaymentProcessor\\n(Context)"] -->|"setStrategy(s)"| SI["PaymentStrategy\\ninterface"]\n  SI -->|implements| CC["CreditCard\\nPayment"]\n  SI -->|implements| CR["CryptoCurrency\\nPayment"]\n  SI -->|implements| PP["PayPal\\nPayment"]' },
+        ],
+      },
+      {
+        heading: { zh: 'UML 結構示意', en: 'UML Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 190" width="400" height="190"><g font-family="sans-serif" font-size="11"><rect x="10" y="70" width="130" height="50" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="75" y="88" text-anchor="middle" font-weight="bold" fill="#1e3a8a">PaymentProcessor</text><text x="75" y="103" text-anchor="middle" fill="#374151">- strategy: Strategy*</text><text x="75" y="116" text-anchor="middle" fill="#374151">+ setStrategy()</text><rect x="200" y="10" width="150" height="40" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="275" y="28" text-anchor="middle" font-weight="bold" font-style="italic" fill="#1e3a8a">PaymentStrategy</text><text x="275" y="43" text-anchor="middle" fill="#374151">+ pay(amount) = 0</text><rect x="160" y="110" width="90" height="30" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="205" y="128" text-anchor="middle" font-weight="bold" fill="#166534">CreditCard</text><rect x="260" y="110" width="90" height="30" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="305" y="128" text-anchor="middle" font-weight="bold" fill="#166534">Crypto …</text><rect x="200" y="155" width="120" height="25" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1"/><text x="260" y="172" text-anchor="middle" font-size="10" fill="#92400e">PayPalPayment …</text><line x1="140" y1="93" x2="200" y2="29" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="205" y1="110" x2="255" y2="52" stroke="#64748b" stroke-width="1.2" stroke-dasharray="3,3"/><line x1="305" y1="110" x2="290" y2="52" stroke="#64748b" stroke-width="1.2" stroke-dasharray="3,3"/><text x="148" y="68" font-size="10" fill="#6b7280">uses</text></g></svg>' },
+          { type: 'note', text: {
+            zh: 'Context 持有抽象 Strategy 指標;具體策略實作 Strategy 介面。執行期可隨時透過 `setStrategy()` 替換策略,Context 程式碼不需任何修改。',
+            en: 'Context holds an abstract Strategy pointer; concrete strategies implement the Strategy interface. The strategy can be swapped at any time via `setStrategy()` without any modification to the Context code.' } },
+        ],
+      },
+      {
+        heading: { zh: '模式屬性', en: 'Pattern Properties' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '屬性', en: 'Property' }, { zh: '說明', en: 'Description' } ],
+            rows: [
+              [ { zh: 'GoF 分類', en: 'GoF Category' }, { zh: 'Behavioral(行為型)', en: 'Behavioral' } ],
+              [ { zh: '參與者', en: 'Participants' }, { zh: 'Strategy, ConcreteStrategy, Context', en: 'Strategy, ConcreteStrategy, Context' } ],
+              [ { zh: '意圖', en: 'Intent' }, { zh: '封裝可互換演算法,讓演算法獨立於使用者', en: 'Encapsulate interchangeable algorithms; decouple algorithm from its user' } ],
+              [ { zh: '切換時機', en: 'Switching' }, { zh: '執行期(runtime)動態切換', en: 'Dynamic switch at runtime' } ],
+              [ { zh: '原則', en: 'Principle' }, { zh: 'Open/Closed — 新增策略不改 Context', en: 'Open/Closed — new strategy does not change Context' } ],
+            ] },
+          { type: 'math', tex: '\\text{Context.execute()} \\equiv \\text{strategy}\\text{->pay}(\\cdot)', caption: {
+            zh: 'Context 的執行完全委派給注入的 Strategy 物件;切換策略等同切換整個演算法行為。',
+            en: 'Context execution fully delegates to the injected Strategy object; swapping the strategy swaps the entire algorithm behaviour.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class PaymentStrategy {\npublic:\n    virtual ~PaymentStrategy() {}\n    virtual void pay(double amount) const = 0;\n};\n\nclass CreditCardPayment : public PaymentStrategy {\n    string m_cardNumber;\npublic:\n    CreditCardPayment(const string& num) : m_cardNumber(num) {}\n    void pay(double amount) const override {\n        cout << "CreditCard: $" << amount << endl;\n    }\n};\n\nclass PaymentProcessor {\n    shared_ptr<PaymentStrategy> m_strategy;\npublic:\n    void setStrategy(shared_ptr<PaymentStrategy> s) {\n        m_strategy = s;\n    }\n    void processPayment(double amount) {\n        if (m_strategy) m_strategy->pay(amount);\n    }\n};\n\nint main() {\n    PaymentProcessor processor;\n    processor.setStrategy(make_shared<CreditCardPayment>("1234..."));\n    processor.processPayment(99.99);\n    // switch strategy at runtime:\n    // processor.setStrategy(make_shared<PayPalPayment>("x@y.com"));\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:消除大量 if-else/switch 判斷,以多型取代條件分支。', en: 'Pro: eliminates large if-else/switch chains; replaces conditional branching with polymorphism.' },
+            { zh: '優點:演算法可在執行期動態切換,靈活應對需求。', en: 'Pro: algorithms can be switched dynamically at runtime, accommodating changing requirements.' },
+            { zh: '優點:符合 Open/Closed Principle — 新增演算法只需新增 ConcreteStrategy。', en: 'Pro: follows Open/Closed Principle — adding a new algorithm only requires a new ConcreteStrategy.' },
+            { zh: '缺點:客戶端需了解各策略差異才能選擇合適的策略。', en: 'Con: the client must understand the differences between strategies to choose the right one.' },
+            { zh: '適用:排序演算法選擇、壓縮方法、支付方式、遊戲 AI 行為、路由策略等需執行期切換演算法的場景。', en: 'Use for sorting algorithm selection, compression methods, payment methods, game AI behaviour, routing strategies — any scenario requiring runtime algorithm switching.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Strategy 是 Behavioral 模式:封裝一族可互換演算法,以多型委派取代條件邏輯。', en: 'Strategy is a Behavioral pattern: encapsulates a family of interchangeable algorithms, replacing conditional logic with polymorphic delegation.' },
+            { zh: '參與者:Strategy(介面)、ConcreteStrategy(具體演算法)、Context(使用者)。', en: 'Participants: Strategy (interface), ConcreteStrategy (concrete algorithm), Context (user).' },
+            { zh: '執行期可透過 `setStrategy()` 切換演算法,Context 無需任何修改。', en: 'The algorithm can be switched at runtime via `setStrategy()` without any modification to the Context.' },
+            { zh: 'Strategy 是多型的典型應用,也是 Policy-based design 的核心思想之一。', en: 'Strategy is a canonical application of polymorphism and is central to policy-based design.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
   'oop-encapsulation': {
     category: 'OOP Concepts',
     title: { zh: '封裝與存取控制', en: 'Encapsulation & Access Control' },
