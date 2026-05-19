@@ -3795,10 +3795,10 @@ const SLIDES_DB = {
       {
         heading: { zh: '類別階層示意', en: 'Class Hierarchy Diagram' },
         blocks: [
-          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" width="320" height="160"><g font-family="sans-serif" font-size="12"><rect x="100" y="10" width="120" height="50" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="160" y="30" text-anchor="middle" font-weight="bold">Animal</text><text x="160" y="46" text-anchor="middle" font-size="11">+ speak() virtual</text><rect x="20" y="100" width="110" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="75" y="120" text-anchor="middle" font-weight="bold">Dog</text><text x="75" y="136" text-anchor="middle" font-size="11">+ speak() override</text><rect x="190" y="100" width="110" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="245" y="120" text-anchor="middle" font-weight="bold">Cat</text><text x="245" y="136" text-anchor="middle" font-size="11">+ speak() override</text><line x1="160" y1="60" x2="75" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/><line x1="160" y1="60" x2="245" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#64748b"/></marker></defs></g></svg>' },
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" width="320" height="160"><g font-family="sans-serif" font-size="12"><rect x="100" y="10" width="120" height="50" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="160" y="30" text-anchor="middle" font-weight="bold">Animal</text><text x="160" y="46" text-anchor="middle" font-size="11">+ speak() virtual</text><rect x="20" y="100" width="110" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="75" y="120" text-anchor="middle" font-weight="bold">Dog</text><text x="75" y="136" text-anchor="middle" font-size="11">+ speak() override</text><rect x="190" y="100" width="110" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="245" y="120" text-anchor="middle" font-weight="bold">Cat</text><text x="245" y="136" text-anchor="middle" font-size="11">+ speak() override</text><line x1="75" y1="100" x2="148" y2="63" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/><line x1="245" y1="100" x2="172" y2="63" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/><defs><marker id="arr" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L0,10 L9,5 z" fill="#ffffff" stroke="#64748b" stroke-width="1"/></marker></defs></g></svg>' },
           { type: 'note', text: {
-            zh: '空心箭頭代表「is-a」繼承關係。`Dog` 與 `Cat` 均為 `Animal`,可透過 `Animal*` 統一操作。',
-            en: 'The arrow denotes the "is-a" inheritance relationship. Both `Dog` and `Cat` are `Animal`s and can be handled uniformly through an `Animal*` pointer.' } },
+            zh: '空心三角形箭頭由 derived class 指向 base class,代表「is-a」繼承關係。`Dog` 與 `Cat` 均為 `Animal`,可透過 `Animal*` 統一操作。',
+            en: 'The hollow triangle arrowhead points from the derived class to the base class, denoting the "is-a" inheritance relationship. Both `Dog` and `Cat` are `Animal`s and can be handled uniformly through an `Animal*` pointer.' } },
         ],
       },
       {
@@ -3881,9 +3881,9 @@ const SLIDES_DB = {
             { zh: '宣告 base class `Shape` 含純虛擬函式 `draw()` 與 `area()`。', en: 'Declare abstract base class `Shape` with pure virtual `draw()` and `area()`.' },
             { zh: '`Circle` 和 `Rectangle` 繼承 `Shape` 並以 `override` 實作各自版本。', en: '`Circle` and `Rectangle` inherit `Shape` and implement their own versions with `override`.' },
             { zh: '透過 `Shape*` 指標儲存不同物件;迴圈呼叫 `shape->draw()` 自動分派。', en: 'Store different objects through `Shape*` pointers; the loop calls `shape->draw()`, dispatching automatically.' },
-            { zh: 'vtable 查找在執行期完成;每次虛擬呼叫僅增加一次指標間接存取的開銷。', en: 'vtable lookup happens at runtime; each virtual call adds just one pointer indirection overhead.' },
+            { zh: 'vtable 查找在執行期完成;每次虛擬呼叫增加兩次指標間接存取的開銷(讀 vptr,再查 vtable 槽)。', en: 'vtable lookup happens at runtime; each virtual call adds two pointer indirections overhead (read vptr, then read the vtable slot).' },
           ] },
-          { type: 'mermaid', code: 'flowchart LR\n  P["Shape ptr"] --> VP["vptr"]\n  VP --> VT["vtable\\n[draw][area]"]\n  VT -->|Circle| CD["Circle::draw()"]\n  VT -->|Rectangle| RD["Rectangle::draw()"]' },
+          { type: 'mermaid', code: 'flowchart LR\n  CO["Circle object"] --> CVP["vptr"]\n  CVP --> CVT["Circle vtable"]\n  CVT --> CD["Circle::draw()"]\n  RO["Rectangle object"] --> RVP["vptr"]\n  RVP --> RVT["Rectangle vtable"]\n  RVT --> RD["Rectangle::draw()"]' },
         ],
       },
       {
@@ -3902,7 +3902,7 @@ const SLIDES_DB = {
             headers: [ { zh: '特性', en: 'Property' }, { zh: '靜態分派(非virtual)', en: 'Static Dispatch (non-virtual)' }, { zh: '動態分派(virtual)', en: 'Dynamic Dispatch (virtual)' } ],
             rows: [
               [ { zh: '解析時機', en: 'Resolution time' }, { zh: '編譯期', en: 'Compile time' }, { zh: '執行期', en: 'Runtime' } ],
-              [ { zh: '額外開銷', en: 'Overhead' }, { zh: '無', en: 'None' }, { zh: '一次指標間接存取', en: 'One pointer indirection' } ],
+              [ { zh: '額外開銷', en: 'Overhead' }, { zh: '無', en: 'None' }, { zh: '兩次指標間接存取', en: 'Two pointer indirections' } ],
               [ { zh: '多型支援', en: 'Polymorphism' }, { zh: '否', en: 'No' }, { zh: '是', en: 'Yes' } ],
               [ { zh: '抽象類別', en: 'Abstract class' }, { zh: '不適用', en: 'N/A' }, { zh: '以 `= 0` 宣告', en: 'Declared with `= 0`' } ],
             ] },
@@ -3914,7 +3914,7 @@ const SLIDES_DB = {
       {
         heading: { zh: '程式碼', en: 'Source Code' },
         blocks: [
-          { type: 'code', lang: 'cpp', code: 'class Shape {\npublic:\n    virtual ~Shape() {}\n    virtual void draw() const = 0;   // pure virtual\n    virtual double area() const = 0; // pure virtual\n};\n\nclass Circle : public Shape {\n    double radius;\npublic:\n    explicit Circle(double r) : radius(r) {}\n    void draw() const override {\n        cout << "Drawing Circle(" << radius << ")" << endl;\n    }\n    double area() const override {\n        return 3.14159 * radius * radius;\n    }\n};\n\nint main() {\n    vector<Shape*> shapes;\n    shapes.push_back(new Circle(5.0));\n    shapes.push_back(new Rectangle(4.0, 6.0));\n\n    for (const auto* s : shapes) {\n        s->draw();  // dynamic dispatch via vtable\n        cout << "Area: " << s->area() << endl;\n    }\n    for (auto* s : shapes) delete s;\n}' },
+          { type: 'code', lang: 'cpp', code: 'class Shape {\npublic:\n    virtual ~Shape() {}\n    virtual void draw() const = 0;   // pure virtual\n    virtual double area() const = 0; // pure virtual\n};\n\nclass Circle : public Shape {\n    double radius;\npublic:\n    explicit Circle(double r) : radius(r) {}\n    void draw() const override {\n        cout << "Drawing Circle(" << radius << ")" << endl;\n    }\n    double area() const override {\n        return 3.14159 * radius * radius;\n    }\n};\n\nint main() {\n    vector<Shape*> shapes;\n    shapes.push_back(new Circle(5.0));\n    shapes.push_back(new Circle(3.0));\n\n    for (const auto* s : shapes) {\n        s->draw();  // dynamic dispatch via vtable\n        cout << "Area: " << s->area() << endl;\n    }\n    for (auto* s : shapes) delete s;\n}' },
         ],
       },
       {
@@ -3985,7 +3985,7 @@ const SLIDES_DB = {
       {
         heading: { zh: '封裝膠囊示意', en: 'Encapsulation Capsule Diagram' },
         blocks: [
-          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 170" width="320" height="170"><g font-family="sans-serif" font-size="11"><ellipse cx="160" cy="85" rx="150" ry="75" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="2"/><ellipse cx="160" cy="85" rx="100" ry="48" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/><ellipse cx="160" cy="85" rx="50" ry="24" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5"/><text x="160" y="89" text-anchor="middle" font-weight="bold" fill="#1e3a8a" font-size="12">private</text><text x="160" y="49" text-anchor="middle" fill="#075985" font-size="11">protected</text><text x="160" y="22" text-anchor="middle" fill="#0369a1" font-size="11">public interface</text><text x="270" y="89" text-anchor="middle" fill="#64748b" font-size="10">external</text><line x1="255" y1="86" x2="235" y2="86" stroke="#64748b" stroke-width="1" marker-end="url(#ext)"/><defs><marker id="ext" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#64748b"/></marker></defs></g></svg>' },
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 170" width="400" height="170"><g font-family="sans-serif" font-size="11"><ellipse cx="175" cy="85" rx="150" ry="75" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="2"/><ellipse cx="175" cy="85" rx="100" ry="48" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/><ellipse cx="175" cy="85" rx="50" ry="24" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5"/><text x="175" y="89" text-anchor="middle" font-weight="bold" fill="#1e3a8a" font-size="12">private</text><text x="175" y="49" text-anchor="middle" fill="#075985" font-size="11">protected</text><text x="175" y="22" text-anchor="middle" fill="#0369a1" font-size="11">public interface</text><text x="360" y="89" text-anchor="middle" fill="#64748b" font-size="10">external</text><line x1="345" y1="86" x2="328" y2="86" stroke="#64748b" stroke-width="1" marker-end="url(#ext)"/><defs><marker id="ext" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#64748b"/></marker></defs></g></svg>' },
           { type: 'note', text: {
             zh: '封裝如同一個膠囊:最外層 `public` 介面供外部呼叫;中層 `protected` 僅供繼承;最內層 `private` 資料與邏輯完全隱藏。',
             en: 'Encapsulation is like a capsule: the outermost `public` layer is the external interface; the middle `protected` layer is for subclasses; the innermost `private` core is fully hidden.' } },
