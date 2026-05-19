@@ -372,6 +372,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let slideDeck = [];
     let slideIndex = 0;
+    let slideLang = 'zh';
+    let slideMethodId = null;
+    const slideLangToggle = document.getElementById('slide-lang-toggle');
 
     function getMethodById(methodId) {
         for (const group of METHOD_GROUPS) {
@@ -382,11 +385,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function buildSlides(methodId) {
-        const method = getMethodById(methodId);
-        return [{
-            title: method ? method.title : 'Method slides',
-            body: descDB[methodId] || '<p>No explanation available.</p>',
-        }];
+        const entry = window.SLIDES_RENDERED && window.SLIDES_RENDERED[methodId];
+        if (!entry || !entry.slides[slideLang] || entry.slides[slideLang].length === 0) {
+            return [{ title: getMethodById(methodId)?.title || 'Slides',
+                      body: '<p>No slides available.</p>' }];
+        }
+        return entry.slides[slideLang];
     }
 
     function renderSlide() {
@@ -402,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openSlides(methodId) {
+        slideMethodId = methodId;
         slideDeck = buildSlides(methodId);
         slideIndex = 0;
         renderSlide();
@@ -450,6 +455,18 @@ document.addEventListener('DOMContentLoaded', () => {
             renderSlide();
         }
     });
+
+    if (slideLangToggle) {
+        slideLangToggle.addEventListener('click', () => {
+            slideLang = slideLang === 'zh' ? 'en' : 'zh';
+            slideLangToggle.setAttribute('data-lang', slideLang);
+            if (slideMethodId) {
+                slideDeck = buildSlides(slideMethodId);
+                if (slideIndex >= slideDeck.length) slideIndex = slideDeck.length - 1;
+                renderSlide();
+            }
+        });
+    }
 
     function renderCategoryNav() {
         if (!categoryNav) return;

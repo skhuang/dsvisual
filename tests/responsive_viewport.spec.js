@@ -55,7 +55,7 @@ test.describe('Responsive Viewport: iPhone 12', () => {
 
     await page.locator('[data-method-section="stack-array"] .method-slides-btn').click();
     await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
-    await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array)');
+    await expect(page.locator('#slide-viewer-title')).toHaveText('堆疊(陣列實作)');
 
     await page.locator('.slide-viewer-close').click();
     await expect(page.locator('[data-testid="slide-viewer"]')).toBeHidden();

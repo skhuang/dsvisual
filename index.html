@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="vendor/katex/katex.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 </head>
 <body>
@@ -288,7 +289,11 @@
                         <p id="slide-viewer-progress">Slide 1 / 1</p>
                         <h2 id="slide-viewer-title">Method slides</h2>
                     </div>
-                    <button type="button" class="slide-viewer-close" data-slide-close aria-label="Close slides">×</button>
+                    <div class="slide-viewer-header-actions">
+                        <button type="button" id="slide-lang-toggle" class="slide-lang-toggle"
+                                data-testid="slide-lang-toggle" aria-label="Switch slide language">中 / EN</button>
+                        <button type="button" class="slide-viewer-close" data-slide-close aria-label="Close slides">×</button>
+                    </div>
                 </header>
                 <div id="slide-viewer-body" class="slide-viewer-body"></div>
                 <footer class="slide-viewer-footer">
@@ -304,6 +309,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
     <script src="desc_db.js"></script>
     <script src="code_db.js"></script>
+    <script src="slides_rendered.js"></script>
     <script src="heap_models.js"></script>
     <script src="app.js"></script>
 </body>

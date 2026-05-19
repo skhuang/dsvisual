@@ -469,7 +469,7 @@ const descDB = {
         </ul>
         <div class="complexities">
             <span class="badge time">Search Time: O(L) [L = Word Length]</span>
-            <span class="badge exception">Space: Phenomenally high O(26^L)</span>
+            <span class="badge exception">Space: O(N·L) nodes (N strings, length L)</span>
         </div>
     `,
     'tree-radix': `
