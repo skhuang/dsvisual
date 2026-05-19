@@ -3565,6 +3565,101 @@ const SLIDES_DB = {
     ],
   },
 
+  'sort-heap': {
+    category: 'Advanced & Application-Specific',
+    title: { zh: '堆積排序法', en: 'Heap Sort' },
+    slides: [
+      {
+        heading: { zh: '堆積排序法', en: 'Heap Sort' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '堆積排序法利用 max-heap 資料結構進行排序:先以 $O(n)$ 建立 max-heap,再反覆將堆頂(最大值)交換至陣列末端並對縮減後的堆執行 sift-down(heapify),逐步將元素置入最終位置。所有情況均保證 $O(n \\log n)$,且為 in-place。',
+            en: 'Heap Sort exploits the max-heap data structure: first build a max-heap in $O(n)$, then repeatedly swap the root (maximum) to the end of the array and sift-down the reduced heap. All cases guarantee $O(n \\log n)$ and the algorithm is in-place.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`heapify(arr, n, i)` 以 sift-down 方式維護以節點 `i` 為根的子堆積:找出 `i`、左子 `2i+1`、右子 `2i+2` 中的最大值索引 `largest`;若 `largest != i` 則交換並遞迴 heapify 受影響的子樹。`heapSort` 分兩階段:①從 `n/2-1` 到 `0` 逐節點呼叫 heapify 建立 max-heap;②每次將 `arr[0]`(堆頂)與 `arr[i]` 交換後縮小堆並重新 heapify。',
+            en: '`heapify(arr, n, i)` restores the max-heap property rooted at `i` by sift-down: find the largest among `i`, left child `2i+1`, and right child `2i+2`; if `largest != i`, swap and recursively heapify the affected subtree. `heapSort` runs in two phases: ① build max-heap by calling heapify from `n/2-1` down to `0`; ② repeatedly swap `arr[0]` (heap root) with `arr[i]`, shrink the heap, and heapify the root.' } },
+          { type: 'bullets', items: [
+            { zh: 'Build-heap 階段:從最後一個非葉節點(索引 `n/2-1`)往上對每個節點呼叫 heapify,總時間 $O(n)$。', en: 'Build-heap phase: call heapify on every node from the last non-leaf (`n/2-1`) up to the root — total time $O(n)$.' },
+            { zh: '每次 sift-down 沿樹高下降,時間 $O(\\log n)$;共 $n-1$ 次提取,總計 $O(n \\log n)$。', en: 'Each sift-down descends the tree height, $O(\\log n)$; $n-1$ extractions give $O(n \\log n)$ total.' },
+            { zh: 'NOT stable:將堆頂交換至末端時可能改變相等元素的相對順序。', en: 'NOT stable: swapping the root to the end can change the relative order of equal elements.' },
+            { zh: 'in-place:僅需 $O(1)$ 額外空間(遞迴 heapify 棧深度為 $O(\\log n)$)。', en: 'in-place: only $O(1)$ auxiliary space (recursive heapify stack depth is $O(\\log n)$).' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '以 `for i = n/2-1 downto 0` 呼叫 `heapify(arr, n, i)`,將陣列整理成 max-heap。', en: 'Call `heapify(arr, n, i)` for `i` from `n/2-1` down to `0` to build a max-heap.' },
+            { zh: '交換 `arr[0]`(最大值)與 `arr[i]`(當前末端),堆大小縮減為 `i`。', en: 'Swap `arr[0]` (maximum) with `arr[i]` (current end); reduce heap size to `i`.' },
+            { zh: '對根節點呼叫 `heapify(arr, i, 0)`,恢復 max-heap 性質。', en: 'Call `heapify(arr, i, 0)` to restore the max-heap property at the root.' },
+            { zh: '重複步驟 2–3 直至堆大小為 1,陣列即為升序排列。', en: 'Repeat steps 2–3 until the heap size reaches 1; the array is then in ascending order.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  A["build max-heap\\n[13,11,12,5,6,7]"] --> B["swap root to end\\n[7,11,12,5,6,|13]"]\n  B --> C["heapify root\\n[12,11,7,5,6,|13]"]\n  C --> D["swap root to end\\n[6,11,7,5,|12,13]"]\n  D --> E["heapify root\\n[11,6,7,5,|12,13]"]\n  E --> F["repeat until\\nheap size=1"]' },
+        ],
+      },
+      {
+        heading: { zh: 'Heap 結構示意', en: 'Heap Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 140" width="360" height="140"><g font-family="sans-serif" font-size="12"><text x="10" y="16" fill="#64748b" font-size="11">max-heap after build-heap: [13, 11, 12, 5, 6, 7]</text><circle cx="180" cy="42" r="18" fill="#fef9c3" stroke="#ca8a04" stroke-width="2"/><text x="180" y="47" text-anchor="middle" font-weight="bold">13</text><circle cx="100" cy="88" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="100" y="93" text-anchor="middle">11</text><circle cx="260" cy="88" r="18" fill="#dbeafe" stroke="#2563eb"/><text x="260" y="93" text-anchor="middle">12</text><circle cx="55" cy="128" r="15" fill="#f1f5f9" stroke="#94a3b8"/><text x="55" y="133" text-anchor="middle">5</text><circle cx="140" cy="128" r="15" fill="#f1f5f9" stroke="#94a3b8"/><text x="140" y="133" text-anchor="middle">6</text><circle cx="310" cy="128" r="15" fill="#f1f5f9" stroke="#94a3b8"/><text x="310" y="133" text-anchor="middle">7</text><line x1="165" y1="56" x2="115" y2="74" stroke="#64748b"/><line x1="195" y1="56" x2="245" y2="74" stroke="#64748b"/><line x1="87" y1="102" x2="65" y2="115" stroke="#94a3b8"/><line x1="113" y1="102" x2="130" y2="115" stroke="#94a3b8"/><line x1="268" y1="102" x2="300" y2="115" stroke="#94a3b8"/><text x="10" y="118" fill="#64748b" font-size="10">arr: [13,  11,  12,   5,   6,   7]</text><text x="10" y="130" fill="#94a3b8" font-size="10">idx:  [0]   [1]   [2]  [3]  [4]  [5]</text></g></svg>' },
+          { type: 'note', text: {
+            zh: '黃色節點為堆頂(最大值 13),藍色為第二層。父節點 `i` 的左子為 `arr[2i+1]`,右子為 `arr[2i+2]`。每個父節點均大於等於其子節點,滿足 max-heap 性質。',
+            en: 'Yellow node is the heap root (max value 13); blue nodes are the second level. Parent `i` has left child `arr[2i+1]` and right child `arr[2i+2]`. Every parent is >= its children, satisfying the max-heap property.' } },
+        ],
+      },
+      {
+        heading: { zh: '複雜度分析', en: 'Complexity Analysis' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '情況', en: 'Case' }, { zh: '時間複雜度', en: 'Time' }, { zh: '空間複雜度', en: 'Space' } ],
+            rows: [
+              [ { zh: '最佳', en: 'Best' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '平均', en: 'Average' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: '最壞', en: 'Worst' }, { zh: '$O(n \\log n)$', en: '$O(n \\log n)$' }, { zh: '$O(1)$', en: '$O(1)$' } ],
+              [ { zh: 'NOT stable / in-place', en: 'NOT stable / in-place' }, { zh: 'Build-heap $O(n)$', en: 'Build-heap $O(n)$' }, { zh: '輔助空間 $O(1)$', en: 'Auxiliary $O(1)$' } ],
+            ] },
+          { type: 'math', tex: 'T(n) = \\underbrace{O(n)}_{\\text{build-heap}} + \\underbrace{(n-1) \\cdot O(\\log n)}_{\\text{sift-down extractions}} = O(n \\log n)', caption: {
+            zh: 'Build-heap 利用下界累加可證明為 $O(n)$(非直覺的 $O(n \\log n)$)。之後 $n-1$ 次提取各需 $O(\\log n)$ sift-down,三種情況複雜度完全相同。',
+            en: 'Build-heap is $O(n)$ (proved by summing lower-level work — counterintuitively not $O(n \\log n)$). The $n-1$ extractions each need $O(\\log n)$ sift-down; complexity is identical in all three cases.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: '// Sift-down: restore max-heap rooted at index i, heap size n\nvoid heapify(vector<int>& arr, int n, int i) {\n    int largest = i;\n    int left  = 2 * i + 1;\n    int right = 2 * i + 2;\n    if (left  < n && arr[left]  > arr[largest]) largest = left;\n    if (right < n && arr[right] > arr[largest]) largest = right;\n    if (largest != i) {\n        swap(arr[i], arr[largest]);\n        heapify(arr, n, largest); // recurse on affected subtree\n    }\n}\n\nvoid heapSort(vector<int>& arr) {\n    int n = arr.size();\n    // Phase 1: build max-heap in O(n)\n    for (int i = n / 2 - 1; i >= 0; i--)\n        heapify(arr, n, i);\n    // Phase 2: extract max one by one\n    for (int i = n - 1; i > 0; i--) {\n        swap(arr[0], arr[i]);   // move current max to sorted end\n        heapify(arr, i, 0);    // restore heap on reduced range\n    }\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:所有情況 $O(n \\log n)$,無最壞情況退化(優於 Quick Sort)。', en: 'Pro: $O(n \\log n)$ in all cases — no worst-case degradation (unlike Quick Sort).' },
+            { zh: '優點:in-place,$O(1)$ 輔助空間(優於 Merge Sort)。', en: 'Pro: in-place, $O(1)$ auxiliary space (unlike Merge Sort).' },
+            { zh: '優點:build-heap 僅需 $O(n)$,適合只需取 top-k 元素的場景。', en: 'Pro: build-heap costs only $O(n)$; excellent for top-k extraction use cases.' },
+            { zh: '缺點:NOT stable,相等元素的相對順序無法保證。', en: 'Con: NOT stable — relative order of equal elements is not preserved.' },
+            { zh: '缺點:快取效能差:sift-down 的記憶體存取模式不連續,常數因子大於 Quick Sort。', en: 'Con: poor cache performance — sift-down accesses memory non-sequentially; larger constant factor than Quick Sort.' },
+            { zh: '適用:需要嚴格最壞 $O(n \\log n)$ 且記憶體受限的場景;C++ `std::sort` 的 Introsort 在遞迴深度超限時切換至 Heap Sort。', en: 'Use when strict $O(n \\log n)$ worst-case is required with limited memory; C++ `std::sort` (Introsort) falls back to Heap Sort when recursion depth exceeds a threshold.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: 'Build max-heap $O(n)$ + 反覆提取堆頂 $O(n \\log n)$ = 總計 $O(n \\log n)$。', en: 'Build max-heap $O(n)$ + repeated root extraction $O(n \\log n)$ = total $O(n \\log n)$.' },
+            { zh: 'NOT stable;in-place $O(1)$ 輔助空間;三種情況複雜度完全相同。', en: 'NOT stable; in-place $O(1)$ auxiliary space; identical complexity in all three cases.' },
+            { zh: 'Introsort(C++ `std::sort`)在 Quick Sort 退化時切換至 Heap Sort,結合兩者優點。', en: 'Introsort (C++ `std::sort`) switches to Heap Sort when Quick Sort would degrade, combining the best of both.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
   'search-linear': {
     category: 'Advanced & Application-Specific',
     title: { zh: '線性搜尋', en: 'Linear Search' },
