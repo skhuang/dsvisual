@@ -8,7 +8,7 @@ title: "Factory Method Pattern"
 
 ## Factory Method Pattern
 
-Factory Method is a Creational design pattern that defines an interface for creating objects but delegates the decision of which concrete class to instantiate to a factory method, keeping client code dependent on abstractions rather than concrete types.
+This example demonstrates the Simple Factory variant — a single `VehicleFactory` class with a static `createVehicle()` method that centralises object creation by branching on a type string. Note: the canonical GoF Factory Method pattern is different — it defines an abstract `Creator` class with a factory method overridden by each `ConcreteCreator` subclass to decide which product to instantiate, with no if/else branching needed. Simple Factory is not among the GoF 23 patterns, but is a useful starting point for understanding the factory concept.
 
 ---
 
@@ -16,6 +16,7 @@ Factory Method is a Creational design pattern that defines an interface for crea
 
 `VehicleFactory::createVehicle()` takes a type string and returns an abstract `Vehicle*`. The client knows only the `Vehicle` interface, not the concrete construction details of `Car`, `Truck`, or `Bike`.
 
+- [Simple Factory] A single `VehicleFactory` holds all creation logic; a static method branches on a string — this is Simple Factory, not GoF Factory Method.
 - Abstract Product (`Vehicle`): defines the interface (`display()`) that all concrete products must implement.
 - Concrete Products (`Car`, `Truck`, `Bike`): each implements `display()` differently.
 - Factory (`VehicleFactory`): provides a static factory method that centralises creation logic.
@@ -47,7 +48,7 @@ Factory Method is a Creational design pattern that defines an interface for crea
 | Property | Description |
 | --- | --- |
 | GoF Category | Creational |
-| Participants | Product, ConcreteProduct, Creator (Factory) |
+| Participants | Product (`Vehicle`), ConcreteProduct (`Car`/`Truck`/`Bike`), Factory (`VehicleFactory`; Simple Factory — no ConcreteCreator subclass hierarchy as in GoF Factory Method) |
 | Intent | Encapsulate object creation; depend on abstraction |
 | Collaboration | Client → Factory → ConcreteProduct → Product interface |
 | Extensibility | New products only need factory changes; follows OCP |
@@ -81,18 +82,26 @@ public:
     }
 };
 
+class Bike : public Vehicle {
+public:
+    void display() const override {
+        cout << "[Bike] 2 wheels, Gasoline" << endl;
+    }
+};
+
 class VehicleFactory {
 public:
     static unique_ptr<Vehicle> createVehicle(const string& type) {
         if (type == "car")   return make_unique<Car>();
         if (type == "truck") return make_unique<Truck>();
+        if (type == "bike")  return make_unique<Bike>();
         return nullptr;
     }
 };
 
 int main() {
-    auto v = VehicleFactory::createVehicle("car");
-    if (v) v->display(); // [Car] V6 sedan
+    auto v = VehicleFactory::createVehicle("bike");
+    if (v) v->display(); // [Bike] 2 wheels, Gasoline
 }
 ```
 

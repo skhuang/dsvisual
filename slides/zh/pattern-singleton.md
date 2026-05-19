@@ -19,7 +19,7 @@ Singleton 是一種 Creational 設計模式,確保一個類別在整個程式執
 - Private constructor:阻止外部以 `new` 或直接宣告建立物件。
 - Copy constructor / assignment operator deleted:防止複製產生第二份實例。
 - Static member pointer (`m_instance`):指向唯一實例,初始為 `nullptr`。
-- `getInstance()` 搭配 `lock_guard`:雙重保護確保多執行緒安全。
+- `getInstance()` 搭配 `lock_guard`:以 mutex 鎖保護確保多執行緒首次建立的安全性。
 
 ---
 

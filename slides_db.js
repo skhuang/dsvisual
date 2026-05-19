@@ -3965,7 +3965,7 @@ const SLIDES_DB = {
             { zh: 'Private constructor:阻止外部以 `new` 或直接宣告建立物件。', en: 'Private constructor: blocks external `new` or direct declarations.' },
             { zh: 'Copy constructor / assignment operator deleted:防止複製產生第二份實例。', en: 'Copy constructor / assignment operator deleted: prevents a second copy.' },
             { zh: 'Static member pointer (`m_instance`):指向唯一實例,初始為 `nullptr`。', en: 'Static member pointer (`m_instance`): holds the unique instance, initially `nullptr`.' },
-            { zh: '`getInstance()` 搭配 `lock_guard`:雙重保護確保多執行緒安全。', en: '`getInstance()` with `lock_guard`: ensures thread-safe first-time creation.' },
+            { zh: '`getInstance()` 搭配 `lock_guard`:以 mutex 鎖保護確保多執行緒首次建立的安全性。', en: '`getInstance()` with `lock_guard`: ensures thread-safe first-time creation.' },
           ] },
         ],
       },
@@ -4047,8 +4047,8 @@ const SLIDES_DB = {
         heading: { zh: 'Factory Method 模式', en: 'Factory Method Pattern' },
         blocks: [
           { type: 'paragraph', text: {
-            zh: 'Factory Method 是一種 Creational 設計模式,定義一個建立物件的介面,但將實際建立哪個具體類別的決定交給工廠方法,讓客戶端依賴抽象而非具體型別。',
-            en: 'Factory Method is a Creational design pattern that defines an interface for creating objects but delegates the decision of which concrete class to instantiate to a factory method, keeping client code dependent on abstractions rather than concrete types.' } },
+            zh: '本範例示範的是 Simple Factory 變體——以一個 `VehicleFactory` 類別提供靜態方法 `createVehicle()`,根據型別字串集中建立物件。注意:GoF 正式的 Factory Method 模式不同:它定義抽象 `Creator` 類別並宣告工廠方法,由各 `ConcreteCreator` 子類別覆寫以決定實例化哪個產品,無需 if/else 分支。Simple Factory 雖不在 GoF 23 種之列,卻是入門理解工廠概念的好起點。',
+            en: 'This example demonstrates the Simple Factory variant — a single `VehicleFactory` class with a static `createVehicle()` method that centralises object creation by branching on a type string. Note: the canonical GoF Factory Method pattern is different — it defines an abstract `Creator` class with a factory method overridden by each `ConcreteCreator` subclass to decide which product to instantiate, with no if/else branching needed. Simple Factory is not among the GoF 23 patterns, but is a useful starting point for understanding the factory concept.' } },
         ],
       },
       {
@@ -4058,6 +4058,7 @@ const SLIDES_DB = {
             zh: '`VehicleFactory::createVehicle()` 接受型別字串,回傳抽象 `Vehicle*`。客戶端只知道 `Vehicle` 介面,不知道 `Car`/`Truck`/`Bike` 的具體建構細節。',
             en: '`VehicleFactory::createVehicle()` takes a type string and returns an abstract `Vehicle*`. The client knows only the `Vehicle` interface, not the concrete construction details of `Car`, `Truck`, or `Bike`.' } },
           { type: 'bullets', items: [
+            { zh: '【Simple Factory】單一 `VehicleFactory` 持有所有建立邏輯,以靜態方法根據字串分支建立產品——這是 Simple Factory,非 GoF Factory Method。', en: '[Simple Factory] A single `VehicleFactory` holds all creation logic; a static method branches on a string — this is Simple Factory, not GoF Factory Method.' },
             { zh: 'Abstract Product(`Vehicle`):定義所有具體產品須實作的介面(`display()`)。', en: 'Abstract Product (`Vehicle`): defines the interface (`display()`) that all concrete products must implement.' },
             { zh: 'Concrete Products(`Car`, `Truck`, `Bike`):各自實作 `display()`。', en: 'Concrete Products (`Car`, `Truck`, `Bike`): each implements `display()` differently.' },
             { zh: 'Factory(`VehicleFactory`):提供靜態工廠方法,集中封裝建立邏輯。', en: 'Factory (`VehicleFactory`): provides a static factory method that centralises creation logic.' },
@@ -4093,7 +4094,7 @@ const SLIDES_DB = {
             headers: [ { zh: '屬性', en: 'Property' }, { zh: '說明', en: 'Description' } ],
             rows: [
               [ { zh: 'GoF 分類', en: 'GoF Category' }, { zh: 'Creational(創建型)', en: 'Creational' } ],
-              [ { zh: '參與者', en: 'Participants' }, { zh: 'Product, ConcreteProduct, Creator (Factory)', en: 'Product, ConcreteProduct, Creator (Factory)' } ],
+              [ { zh: '參與者', en: 'Participants' }, { zh: 'Product(`Vehicle`), ConcreteProduct(`Car`/`Truck`/`Bike`), Factory(`VehicleFactory`，Simple Factory 無 ConcreteCreator 子類別層級)', en: 'Product (`Vehicle`), ConcreteProduct (`Car`/`Truck`/`Bike`), Factory (`VehicleFactory`; Simple Factory — no ConcreteCreator subclass hierarchy as in GoF Factory Method)' } ],
               [ { zh: '意圖', en: 'Intent' }, { zh: '封裝物件建立邏輯,依賴抽象而非具體', en: 'Encapsulate object creation; depend on abstraction' } ],
               [ { zh: '協作方式', en: 'Collaboration' }, { zh: 'Client → Factory → ConcreteProduct → Product interface', en: 'Client → Factory → ConcreteProduct → Product interface' } ],
               [ { zh: '擴展性', en: 'Extensibility' }, { zh: '新增產品只改工廠,符合 Open/Closed Principle', en: 'New products only need factory changes; follows OCP' } ],
@@ -4106,7 +4107,7 @@ const SLIDES_DB = {
       {
         heading: { zh: '程式碼', en: 'Source Code' },
         blocks: [
-          { type: 'code', lang: 'cpp', code: 'class Vehicle {\npublic:\n    virtual ~Vehicle() {}\n    virtual void display() const = 0;\n};\n\nclass Car : public Vehicle {\npublic:\n    void display() const override {\n        cout << "[Car] V6 sedan" << endl;\n    }\n};\n\nclass Truck : public Vehicle {\npublic:\n    void display() const override {\n        cout << "[Truck] Diesel cargo" << endl;\n    }\n};\n\nclass VehicleFactory {\npublic:\n    static unique_ptr<Vehicle> createVehicle(const string& type) {\n        if (type == "car")   return make_unique<Car>();\n        if (type == "truck") return make_unique<Truck>();\n        return nullptr;\n    }\n};\n\nint main() {\n    auto v = VehicleFactory::createVehicle("car");\n    if (v) v->display(); // [Car] V6 sedan\n}' },
+          { type: 'code', lang: 'cpp', code: 'class Vehicle {\npublic:\n    virtual ~Vehicle() {}\n    virtual void display() const = 0;\n};\n\nclass Car : public Vehicle {\npublic:\n    void display() const override {\n        cout << "[Car] V6 sedan" << endl;\n    }\n};\n\nclass Truck : public Vehicle {\npublic:\n    void display() const override {\n        cout << "[Truck] Diesel cargo" << endl;\n    }\n};\n\nclass Bike : public Vehicle {\npublic:\n    void display() const override {\n        cout << "[Bike] 2 wheels, Gasoline" << endl;\n    }\n};\n\nclass VehicleFactory {\npublic:\n    static unique_ptr<Vehicle> createVehicle(const string& type) {\n        if (type == "car")   return make_unique<Car>();\n        if (type == "truck") return make_unique<Truck>();\n        if (type == "bike")  return make_unique<Bike>();\n        return nullptr;\n    }\n};\n\nint main() {\n    auto v = VehicleFactory::createVehicle("bike");\n    if (v) v->display(); // [Bike] 2 wheels, Gasoline\n}' },
         ],
       },
       {
@@ -4272,7 +4273,7 @@ const SLIDES_DB = {
       {
         heading: { zh: 'UML 結構示意', en: 'UML Structure Diagram' },
         blocks: [
-          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 190" width="400" height="190"><g font-family="sans-serif" font-size="11"><rect x="140" y="10" width="120" height="45" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="200" y="28" text-anchor="middle" font-weight="bold" font-style="italic" fill="#1e3a8a">Coffee</text><text x="200" y="43" text-anchor="middle" fill="#374151">+ getDescription()</text><text x="200" y="55" text-anchor="middle" fill="#374151">+ getCost()</text><rect x="30" y="95" width="110" height="35" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="85" y="116" text-anchor="middle" font-weight="bold" fill="#166534">SimpleCoffee</text><rect x="240" y="95" width="130" height="55" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/><text x="305" y="113" text-anchor="middle" font-weight="bold" fill="#92400e">CoffeeDecorator</text><text x="305" y="128" text-anchor="middle" fill="#374151">- m_coffee: Coffee*</text><text x="305" y="143" text-anchor="middle" fill="#374151">+ getDescription()</text><line x1="85" y1="95" x2="180" y2="57" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="305" y1="95" x2="220" y2="57" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="305" y1="57" x2="305" y2="95" stroke="#ca8a04" stroke-width="1" stroke-dasharray="2,2"/><rect x="160" y="165" width="90" height="20" rx="3" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/><text x="205" y="179" text-anchor="middle" font-size="10" fill="#92400e">MilkDecorator …</text><line x1="305" y1="150" x2="205" y2="165" stroke="#ca8a04" stroke-width="1.2"/></g></svg>' },
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 190" width="400" height="190"><g font-family="sans-serif" font-size="11"><rect x="140" y="10" width="120" height="45" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="200" y="28" text-anchor="middle" font-weight="bold" font-style="italic" fill="#1e3a8a">Coffee</text><text x="200" y="43" text-anchor="middle" fill="#374151">+ getDescription()</text><text x="200" y="55" text-anchor="middle" fill="#374151">+ getCost()</text><rect x="30" y="95" width="110" height="35" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="85" y="116" text-anchor="middle" font-weight="bold" fill="#166534">SimpleCoffee</text><rect x="240" y="95" width="130" height="55" rx="4" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/><text x="305" y="113" text-anchor="middle" font-weight="bold" fill="#92400e">CoffeeDecorator</text><text x="305" y="128" text-anchor="middle" fill="#374151">- m_coffee: Coffee*</text><text x="305" y="143" text-anchor="middle" fill="#374151">+ getDescription()</text><line x1="85" y1="95" x2="180" y2="57" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="305" y1="95" x2="220" y2="57" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/><line x1="270" y1="95" x2="220" y2="57" stroke="#ca8a04" stroke-width="1.5" marker-end="url(#arr)"/><text x="225" y="78" font-size="9" fill="#92400e">holds</text><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ca8a04"/></marker></defs><rect x="160" y="165" width="90" height="20" rx="3" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/><text x="205" y="179" text-anchor="middle" font-size="10" fill="#92400e">MilkDecorator …</text><line x1="305" y1="150" x2="205" y2="165" stroke="#ca8a04" stroke-width="1.2"/></g></svg>' },
           { type: 'note', text: {
             zh: 'Decorator 與 Component 共用相同介面;Decorator base 持有 Component 指標形成自引用結構。具體裝飾者繼承 Decorator base,疊加行為後委派給內部物件。',
             en: 'Decorator and Component share the same interface; the Decorator base holds a Component pointer forming a self-referential structure. Concrete decorators extend the Decorator base, adding behaviour before delegating to the inner object.' } },
@@ -4458,7 +4459,7 @@ const SLIDES_DB = {
             { zh: '呼叫 `processPayment(99.99)`,Context 委派給 `CreditCardPayment::pay(99.99)`。', en: 'Call `processPayment(99.99)`; the Context delegates to `CreditCardPayment::pay(99.99)`.' },
             { zh: '再呼叫 `setStrategy(...)` 切換為加密貨幣策略,後續 `processPayment` 自動使用新策略。', en: 'Call `setStrategy(...)` again to switch to the cryptocurrency strategy; subsequent `processPayment` calls use the new strategy.' },
           ] },
-          { type: 'mermaid', code: 'flowchart LR\n  P["PaymentProcessor\\n(Context)"] -->|"setStrategy(s)"| SI["PaymentStrategy\\ninterface"]\n  SI -->|implements| CC["CreditCard\\nPayment"]\n  SI -->|implements| CR["CryptoCurrency\\nPayment"]\n  SI -->|implements| PP["PayPal\\nPayment"]' },
+          { type: 'mermaid', code: 'flowchart LR\n  P["PaymentProcessor\\n(Context)"] -->|"持有/使用"| SI["PaymentStrategy\\ninterface"]\n  SI -->|implements| CC["CreditCard\\nPayment"]\n  SI -->|implements| CR["CryptoCurrency\\nPayment"]\n  SI -->|implements| PP["PayPal\\nPayment"]' },
         ],
       },
       {
