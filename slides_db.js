@@ -4262,9 +4262,9 @@ const SLIDES_DB = {
         heading: { zh: '運作流程', en: 'Operation Flow' },
         blocks: [
           { type: 'steps', items: [
-            { zh: '建立基本 `SimpleCoffee` 物件(描述:"Simple Coffee",費用:$2.00)。', en: 'Create a base `SimpleCoffee` object (description: "Simple Coffee", cost: $2.00).' },
-            { zh: '以 `MilkDecorator` 包裝,呼叫 `getDescription()` 回傳 "Simple Coffee + Milk",費用增加 $0.50。', en: 'Wrap with `MilkDecorator`: `getDescription()` returns "Simple Coffee + Milk", cost adds $0.50.' },
-            { zh: '再以 `SugarDecorator` 包裝,描述繼續追加 "+ Sugar",費用再加 $0.25。', en: 'Wrap with `SugarDecorator`: description appends "+ Sugar", cost adds another $0.25.' },
+            { zh: '建立基本 `SimpleCoffee` 物件(描述:"Simple Coffee",費用:2.00 元)。', en: 'Create a base `SimpleCoffee` object (description: "Simple Coffee", cost: USD 2.00).' },
+            { zh: '以 `MilkDecorator` 包裝,呼叫 `getDescription()` 回傳 "Simple Coffee + Milk",費用增加 0.50 元。', en: 'Wrap with `MilkDecorator`: `getDescription()` returns "Simple Coffee + Milk", cost adds USD 0.50.' },
+            { zh: '再以 `SugarDecorator` 包裝,描述繼續追加 "+ Sugar",費用再加 0.25 元。', en: 'Wrap with `SugarDecorator`: description appends "+ Sugar", cost adds another USD 0.25.' },
             { zh: '可繼續疊加任意 Decorator;每次呼叫都透過鏈式委派累積結果。', en: 'Any number of decorators can be stacked; each call accumulates results through chained delegation.' },
           ] },
           { type: 'mermaid', code: 'flowchart LR\n  SC["SimpleCoffee\\n$2.00"] -->|wrapped by| M["MilkDecorator\\n+$0.50"]\n  M -->|wrapped by| S["SugarDecorator\\n+$0.25"]\n  S -->|wrapped by| W["WhippedCreamDecorator\\n+$0.75"]\n  W -->|"getCost() = $3.50"| R["Result"]' },
