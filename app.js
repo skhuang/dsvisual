@@ -312,11 +312,15 @@ document.addEventListener('DOMContentLoaded', () => {
         heading.className = 'method-sections-heading';
         const titleGroup = document.createElement('div');
         titleGroup.className = 'method-sections-title';
-        titleGroup.innerHTML = `<h2>${group.title}</h2><p>1 of ${group.methods.length} methods</p>`;
+        const titleRow = document.createElement('div');
+        titleRow.className = 'method-title-row';
+        const title = document.createElement('h2');
+        title.textContent = group.title;
         const methodSelect = document.createElement('select');
         methodSelect.className = 'category-method-select method-heading-select';
         methodSelect.dataset.testid = 'method-select';
         methodSelect.dataset.group = group.id;
+        methodSelect.id = `method-select-${group.id}`;
         methodSelect.setAttribute('aria-label', `Select ${group.title} method`);
         group.methods.forEach((candidate) => {
             const option = document.createElement('option');
@@ -331,8 +335,21 @@ document.addEventListener('DOMContentLoaded', () => {
             selectMethod(nextMethodId);
             scrollToCategory(getMethodGroupForMode(nextMethodId).id);
         });
+        const methodLabel = document.createElement('label');
+        methodLabel.className = 'method-select-label';
+        methodLabel.htmlFor = methodSelect.id;
+        methodLabel.textContent = 'Method';
+        const methodPicker = document.createElement('div');
+        methodPicker.className = 'method-heading-picker';
+        methodPicker.appendChild(methodLabel);
+        methodPicker.appendChild(methodSelect);
+        const countText = document.createElement('p');
+        countText.textContent = `${group.methods.length} methods available`;
+        titleRow.appendChild(title);
+        titleRow.appendChild(methodPicker);
+        titleGroup.appendChild(titleRow);
+        titleGroup.appendChild(countText);
         heading.appendChild(titleGroup);
-        heading.appendChild(methodSelect);
         methodSections.appendChild(heading);
 
         if (visualizerRuntime.activeMode !== method.id) visualizerRuntime.setMode(method.id);
