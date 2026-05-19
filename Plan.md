@@ -35,13 +35,32 @@
 
 ---
 
+## 当前 UI 状态更新 (2026-05-19)
+
+### ✅ 已完成
+
+- 顶部保留 6 大类导览。
+- 第二层方法选择改为 dropdown，并放在方法区标题旁边。
+- 选择方法后，只显示并启用该方法区块；其他方法区块隐藏。
+- 方法区块维持左侧视觉化、右侧 C++ 程式码，手机改为上下排列。
+- Slides 说明按钮保留在方法区块标题列。
+
+### ✅ 本次 UI polish
+
+- 手机版顶部分类导览改为单行横向滑动，降低首屏占用。
+- 方法标题列与 dropdown 更紧密排列，让「类别 + 方法」关系更清楚。
+- 降低 active card 装饰与 code panel 视觉重量，让视觉化成为主焦点。
+- 手机 controls 使用较紧凑的按钮排列，减少操作区高度。
+
+---
+
 ## 下阶段 UI 重构规划：stvisual 式章节与方法区块
 
 ### 🎯 目标
 将目前「单一 visualizer + 模式切换」改为更接近 `skhuang.github.io/stvisual` 的课程章节式界面：
 - 顶层显示 6 大类，类似 stvisual 顶部的方法分类导览。
-- 每个大类下方列出该类别的所有方法。
-- 每一种方法都是独立区块，左侧为可操作的视觉化，右侧为 C++ 程式码。
+- 每个大类下方使用 dropdown 选择该类别的方法。
+- 每次只显示一种方法的独立区块，左侧为可操作的视觉化，右侧为 C++ 程式码。
 - 原本 Explanation 说明区不再占用右侧 tab，改为「说明 / Slides」按钮，之后用简报 viewer 呈现。
 
 ### 🧭 建议版面
@@ -57,8 +76,8 @@ Header 下方新增 stvisual 风格的 top-level nav：
 
 桌机版使用横向 pill nav；手机版可改为 `<select>` 或横向滑动 tabs。
 
-#### 2. 每个方法独立区块
-每个 method section 采用固定结构：
+#### 2. 单一方法区块
+当前选中的 method section 采用固定结构：
 
 ```text
 [方法名称 / 类别标签]                              [说明 / Slides]
@@ -117,12 +136,12 @@ Header 下方新增 stvisual 风格的 top-level nav：
 - **Issue #27**: https://github.com/skhuang/dsvisual/issues/27
 - **PR #28**: https://github.com/skhuang/dsvisual/pull/28
 - **Branch**: `feature/ui-phase-2-method-sections`
-- 将选到的大类渲染为多个 method sections。
-- 每个 section 先呈现：
+- 将选到的大类渲染为一个 active method section，并通过 dropdown 切换同类别方法。
+- 选中的 section 呈现：
   - header + `说明 / Slides` 按钮
   - 左侧 visualizer 容器
   - 右侧 code panel
-- 初期可以只让当前 active method 具备完整互动，其余 section 先静态显示标题与程式码，逐步迁移。
+- 当前 active method 具备完整互动；其他 method section 不显示。
 
 #### Phase 3: 拆分 visualizer instance
 - **Status**: Merged
@@ -165,7 +184,7 @@ SLIDE_DB = {
 - **Branch**: `feature/ui-phase-5-regression-coverage`
 - 新增/更新 Playwright 测试：
   - 顶层 6 大类导览可切换。
-  - 每个大类下方显示对应方法区块。
+  - 每个大类下方显示 method dropdown 与当前选中方法区块。
   - 方法区块左侧 visualizer、右侧 C++ code panel 可见。
   - `Explanation / C++ Source` tab 不再出现在方法区块中。
   - `说明 / Slides` 按钮可开启并关闭 viewer。

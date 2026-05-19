@@ -133,6 +133,13 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 }
 .method-sections-title {
     min-width: 0;
+    width: 100%;
+}
+.method-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
 }
 .method-sections-heading h2 {
     font-size: 1.35rem;
@@ -144,7 +151,19 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     font-size: 0.82rem;
 }
 .method-heading-select {
-    flex: 0 1 360px;
+    flex: 0 1 320px;
+}
+.method-heading-picker {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: min(100%, 320px);
+}
+.method-select-label {
+    color: var(--text-subtle);
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
 }
 .method-section-card {
     background: var(--card-bg);
@@ -180,25 +199,8 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 /* 活躍狀態 - 藍色邊框 + 陰影 */
 .method-section-card.active {
     border-color: var(--primary-color);
-    box-shadow: var(--app-shadow-lg);
+    box-shadow: var(--app-shadow-md);
     background: linear-gradient(135deg, var(--card-bg) 0%, rgba(52, 152, 219, 0.02) 100%);
-}
-
-.method-section-card.active::before {
-    content: '✓';
-    position: absolute;
-    top: -8px;
-    right: 12px;
-    width: 20px;
-    height: 20px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 900;
 }
 .method-section-header {
     display: flex;
@@ -226,7 +228,7 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 }
 .method-section-grid {
     display: grid;
-    grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.1fr);
+    grid-template-columns: minmax(320px, 1.1fr) minmax(0, 0.9fr);
     gap: 16px;
 }
 .method-section-visual {
@@ -277,9 +279,9 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 }
 .method-section-code {
     min-width: 0;
-    border: 1px solid #1f2937;
+    border: 1px solid #263244;
     border-radius: var(--app-radius-md);
-    background: #0f172a;
+    background: #111827;
     overflow: hidden;
 }
 .method-code-title {
@@ -290,7 +292,7 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     font-size: 0.78rem;
 }
 .method-section-code pre {
-    max-height: 520px;
+    max-height: 440px;
     overflow: auto;
     padding: 12px;
     font-size: 0.78rem;
@@ -834,7 +836,15 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 
 @media (max-width: 639px) {
     .app-category-nav {
-        align-items: stretch;
+        align-items: center;
+        flex-wrap: nowrap;
+        padding: 8px 12px;
+        gap: 6px;
+    }
+
+    .category-nav-btn {
+        padding: 7px 11px;
+        font-size: 0.78rem;
     }
 
     .method-sections-heading {
@@ -842,8 +852,20 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
         flex-direction: column;
     }
 
+    .method-title-row {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .method-heading-picker {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 4px;
+        min-width: 0;
+    }
+
     .method-heading-select {
-        flex: 1 0 100%;
+        flex: 1 1 auto;
         width: 100%;
     }
 }
@@ -851,6 +873,10 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 @media (max-width: 720px) {
     body {
         padding: 0.75rem;
+    }
+
+    .app-header {
+        padding: 28px 18px 26px;
     }
 
     header h1 {
@@ -863,6 +889,7 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 
     .method-sections {
         width: min(100%, calc(100% - 24px));
+        margin-top: 22px;
         margin-bottom: 36px;
     }
 
@@ -901,10 +928,14 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 
     .actions input[type="number"],
     .actions input[type="text"],
-    .actions select,
-    .actions .btn {
+    .actions select {
         width: 100%;
         flex: 1 1 100%;
+    }
+
+    .actions .btn {
+        width: auto;
+        flex: 1 1 calc(50% - 6px);
     }
 
     #sort-actions > div {
