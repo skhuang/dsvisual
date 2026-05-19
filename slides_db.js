@@ -3754,6 +3754,291 @@ const SLIDES_DB = {
     ],
   },
 
+  'oop-inheritance': {
+    category: 'OOP Concepts',
+    title: { zh: '類別繼承', en: 'Class Inheritance' },
+    slides: [
+      {
+        heading: { zh: '類別繼承', en: 'Class Inheritance' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '繼承(Inheritance)是 OOP 的核心機制之一,允許 derived class(衍生類別)繼承 base class(基底類別)的成員與行為,以 `public` 繼承表達「is-a」關係並實現程式碼重用。',
+            en: 'Inheritance is a core OOP mechanism that lets a derived class acquire members and behaviour from a base class. A `public` inheritance expresses an "is-a" relationship and enables code reuse.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: 'Base class 定義共用介面(可含 `virtual` 方法);derived class 繼承後以 `override` 覆寫並擴充功能。建構順序為由上至下(base → derived),解構順序相反。',
+            en: 'The base class defines a shared interface (possibly with `virtual` methods); derived classes inherit it and use `override` to specialise behaviour. Construction order is top-down (base → derived); destruction is reversed.' } },
+          { type: 'bullets', items: [
+            { zh: '`public` 繼承:base class 的 `public`/`protected` 成員保持原存取層級。', en: '`public` inheritance: `public` and `protected` members of the base class retain their access level.' },
+            { zh: '`virtual` 解構子:透過 base pointer 刪除物件時確保 derived class 解構子被正確呼叫。', en: '`virtual` destructor: ensures the derived destructor is called correctly when deleting through a base pointer.' },
+            { zh: '建構子鏈結(constructor chaining):建立 derived 物件時先執行 base constructor。', en: 'Constructor chaining: the base constructor executes first when a derived object is created.' },
+            { zh: '`override` 關鍵字:在編譯期確認方法確實覆寫 base class 的 `virtual` 函式。', en: '`override` keyword: compile-time guarantee that the method actually overrides a `virtual` function in the base class.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '宣告 base class `Animal`,包含 `virtual speak()` 與 `virtual ~Animal()`。', en: 'Declare base class `Animal` with `virtual speak()` and `virtual ~Animal()`.' },
+            { zh: '宣告 derived class `Dog : public Animal`,以 `override` 覆寫 `speak()`。', en: 'Declare derived class `Dog : public Animal`, override `speak()` with `override`.' },
+            { zh: '透過 `Animal*` 指標建立 `Dog` 物件;呼叫 `speak()` 透過 vtable 動態分派。', en: 'Create a `Dog` object through an `Animal*` pointer; calling `speak()` dispatches dynamically via vtable.' },
+            { zh: '`delete` 時先執行 `Dog::~Dog()`,再執行 `Animal::~Animal()`。', en: 'On `delete`, `Dog::~Dog()` runs first, then `Animal::~Animal()`.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart TD\n  A["Animal\\n+ speak()\\n+ dtor"] --> B["Dog\\n+ speak() override\\n+ dtor override"]\n  A --> C["Cat\\n+ speak() override\\n+ dtor override"]' },
+        ],
+      },
+      {
+        heading: { zh: '類別階層示意', en: 'Class Hierarchy Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" width="320" height="160"><g font-family="sans-serif" font-size="12"><rect x="100" y="10" width="120" height="50" rx="4" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/><text x="160" y="30" text-anchor="middle" font-weight="bold">Animal</text><text x="160" y="46" text-anchor="middle" font-size="11">+ speak() virtual</text><rect x="20" y="100" width="110" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="75" y="120" text-anchor="middle" font-weight="bold">Dog</text><text x="75" y="136" text-anchor="middle" font-size="11">+ speak() override</text><rect x="190" y="100" width="110" height="50" rx="4" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/><text x="245" y="120" text-anchor="middle" font-weight="bold">Cat</text><text x="245" y="136" text-anchor="middle" font-size="11">+ speak() override</text><line x1="160" y1="60" x2="75" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/><line x1="160" y1="60" x2="245" y2="100" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr)"/><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#64748b"/></marker></defs></g></svg>' },
+          { type: 'note', text: {
+            zh: '空心箭頭代表「is-a」繼承關係。`Dog` 與 `Cat` 均為 `Animal`,可透過 `Animal*` 統一操作。',
+            en: 'The arrow denotes the "is-a" inheritance relationship. Both `Dog` and `Cat` are `Animal`s and can be handled uniformly through an `Animal*` pointer.' } },
+        ],
+      },
+      {
+        heading: { zh: '繼承存取規則', en: 'Inheritance Access Rules' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: 'Base 成員', en: 'Base Member' }, { zh: 'public 繼承', en: 'public Inheritance' }, { zh: 'protected 繼承', en: 'protected Inheritance' }, { zh: 'private 繼承', en: 'private Inheritance' } ],
+            rows: [
+              [ { zh: '`public`', en: '`public`' }, { zh: '`public`', en: '`public`' }, { zh: '`protected`', en: '`protected`' }, { zh: '`private`', en: '`private`' } ],
+              [ { zh: '`protected`', en: '`protected`' }, { zh: '`protected`', en: '`protected`' }, { zh: '`protected`', en: '`protected`' }, { zh: '`private`', en: '`private`' } ],
+              [ { zh: '`private`', en: '`private`' }, { zh: '不可存取', en: 'inaccessible' }, { zh: '不可存取', en: 'inaccessible' }, { zh: '不可存取', en: 'inaccessible' } ],
+            ] },
+          { type: 'math', tex: 'D \\subseteq B \\implies \\forall\\, b \\in B,\\; d \\in D :\\; d.\\text{is-a}(b)', caption: {
+            zh: '`public` 繼承嚴格滿足 Liskov Substitution Principle(LSP):derived 物件可在任何需要 base 物件之處替代使用。',
+            en: '`public` inheritance satisfies the Liskov Substitution Principle: a derived object may be used wherever a base object is expected.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class Animal {\npublic:\n    Animal() { cout << "Animal constructor" << endl; }\n    virtual ~Animal() { cout << "Animal destructor" << endl; }\n\n    virtual void speak() {\n        cout << "Animal sound" << endl;\n    }\n};\n\nclass Dog : public Animal {\npublic:\n    Dog() { cout << "Dog constructor" << endl; }\n    ~Dog() override { cout << "Dog destructor" << endl; }\n\n    void speak() override {\n        cout << "Woof" << endl;\n    }\n};\n\nint main() {\n    Animal* a = new Dog(); // is-a: Dog is an Animal\n    a->speak();            // calls Dog::speak via vtable\n    delete a;              // Dog::~Dog then Animal::~Animal\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:程式碼重用 — derived class 自動取得 base class 所有非私有成員。', en: 'Pro: code reuse — derived classes automatically acquire all non-private members of the base class.' },
+            { zh: '優點:多型基礎 — `virtual` 方法搭配繼承實現執行期動態分派。', en: 'Pro: foundation for polymorphism — `virtual` methods with inheritance enable runtime dynamic dispatch.' },
+            { zh: '缺點:深層繼承鏈(> 3 層)增加理解與維護難度,易形成脆弱基底類別問題。', en: 'Con: deep inheritance chains (>3 levels) increase complexity and lead to the fragile base class problem.' },
+            { zh: '缺點:濫用繼承可能違反 LSP;應優先考慮組合(composition over inheritance)。', en: 'Con: misusing inheritance can violate LSP; prefer composition over inheritance when in doubt.' },
+            { zh: '適用:確實存在「is-a」語意的場景,如 Animal/Dog/Cat、Shape/Circle/Rectangle。', en: 'Use when a genuine "is-a" relationship exists, e.g. Animal/Dog/Cat, Shape/Circle/Rectangle.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '繼承以「is-a」關係建立類別階層,實現程式碼重用與多型。', en: 'Inheritance establishes class hierarchies via the "is-a" relationship, enabling code reuse and polymorphism.' },
+            { zh: '`virtual` 解構子是使用 base pointer 管理 derived 物件的必要條件。', en: 'A `virtual` destructor is essential when managing derived objects through base pointers.' },
+            { zh: '`public` 繼承遵守 LSP;`protected`/`private` 繼承則為實作繼承。', en: '`public` inheritance satisfies LSP; `protected`/`private` inheritance is for implementation reuse only.' },
+            { zh: '建構順序 base → derived;解構順序 derived → base。', en: 'Construction is base → derived; destruction is derived → base.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'oop-polymorphism': {
+    category: 'OOP Concepts',
+    title: { zh: '多型(虛擬函式)', en: 'Polymorphism (Virtual Functions)' },
+    slides: [
+      {
+        heading: { zh: '多型(虛擬函式)', en: 'Polymorphism (Virtual Functions)' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '多型(Polymorphism)讓不同型別的物件能透過相同的介面操作;在 C++ 中以 `virtual` 函式搭配 vtable 機制實現執行期動態分派(dynamic dispatch)。',
+            en: 'Polymorphism lets objects of different types be operated on through a common interface. In C++, `virtual` functions together with the vtable mechanism implement runtime dynamic dispatch.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '每個含有 `virtual` 函式的類別都有一張 Virtual Method Table(vtable),紀錄該類別各 `virtual` 函式的實際位址。每個物件含一個隱藏的 vptr 指向其類別的 vtable。',
+            en: 'Every class with `virtual` functions has a Virtual Method Table (vtable) storing the actual addresses of its virtual functions. Each object carries a hidden vptr pointing to its class\'s vtable.' } },
+          { type: 'bullets', items: [
+            { zh: '`virtual` 函式:在 base class 宣告,允許 derived class 以 `override` 覆寫。', en: '`virtual` function: declared in the base class; derived classes may override it with `override`.' },
+            { zh: '`= 0` (pure virtual):使 base class 成為抽象類別,強制所有 derived class 實作。', en: '`= 0` (pure virtual): makes the base class abstract, forcing all derived classes to implement it.' },
+            { zh: '動態分派:呼叫 `ptr->draw()` 時,先取 vptr → 查 vtable → 跳轉到正確函式。', en: 'Dynamic dispatch: `ptr->draw()` follows vptr to vtable to the correct function address at runtime.' },
+            { zh: '靜態分派(非 `virtual`):函式位址在編譯期確定,無間接呼叫。', en: 'Static dispatch (non-`virtual`): function address resolved at compile time, no indirection.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '宣告 base class `Shape` 含純虛擬函式 `draw()` 與 `area()`。', en: 'Declare abstract base class `Shape` with pure virtual `draw()` and `area()`.' },
+            { zh: '`Circle` 和 `Rectangle` 繼承 `Shape` 並以 `override` 實作各自版本。', en: '`Circle` and `Rectangle` inherit `Shape` and implement their own versions with `override`.' },
+            { zh: '透過 `Shape*` 指標儲存不同物件;迴圈呼叫 `shape->draw()` 自動分派。', en: 'Store different objects through `Shape*` pointers; the loop calls `shape->draw()`, dispatching automatically.' },
+            { zh: 'vtable 查找在執行期完成;每次虛擬呼叫僅增加一次指標間接存取的開銷。', en: 'vtable lookup happens at runtime; each virtual call adds just one pointer indirection overhead.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  P["Shape ptr"] --> VP["vptr"]\n  VP --> VT["vtable\\n[draw][area]"]\n  VT -->|Circle| CD["Circle::draw()"]\n  VT -->|Rectangle| RD["Rectangle::draw()"]' },
+        ],
+      },
+      {
+        heading: { zh: 'vtable 結構示意', en: 'vtable Structure Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 170" width="360" height="170"><g font-family="sans-serif" font-size="11"><text x="20" y="16" font-weight="bold" fill="#1e40af">Circle object</text><rect x="20" y="22" width="80" height="26" fill="#dbeafe" stroke="#2563eb"/><text x="60" y="39" text-anchor="middle">vptr</text><line x1="100" y1="35" x2="150" y2="55" stroke="#2563eb" stroke-width="1.5" marker-end="url(#b)"/><text x="155" y="46" font-weight="bold" fill="#1e40af">Circle vtable</text><rect x="150" y="50" width="110" height="26" fill="#dbeafe" stroke="#2563eb"/><text x="205" y="67" text-anchor="middle">Circle::draw()</text><rect x="150" y="76" width="110" height="26" fill="#dbeafe" stroke="#2563eb"/><text x="205" y="93" text-anchor="middle">Circle::area()</text><text x="20" y="126" font-weight="bold" fill="#166534">Rectangle object</text><rect x="20" y="132" width="80" height="26" fill="#dcfce7" stroke="#16a34a"/><text x="60" y="149" text-anchor="middle">vptr</text><line x1="100" y1="145" x2="150" y2="125" stroke="#16a34a" stroke-width="1.5" marker-end="url(#g)"/><text x="155" y="116" font-weight="bold" fill="#166534">Rectangle vtable</text><rect x="150" y="120" width="120" height="26" fill="#dcfce7" stroke="#16a34a"/><text x="210" y="137" text-anchor="middle">Rectangle::draw()</text><rect x="150" y="146" width="120" height="20" fill="#dcfce7" stroke="#16a34a"/><text x="210" y="160" text-anchor="middle">Rectangle::area()</text><defs><marker id="b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"/></marker><marker id="g" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#16a34a"/></marker></defs></g></svg>' },
+          { type: 'note', text: {
+            zh: '每個物件有一個 vptr;每個類別有一張 vtable。vtable 由編譯器在編譯期建立並存於唯讀資料段,執行期只做指標間接存取。',
+            en: 'Each object has one vptr; each class has one vtable. The vtable is built by the compiler at compile time and stored in read-only data. At runtime only pointer indirection occurs.' } },
+        ],
+      },
+      {
+        heading: { zh: '靜態 vs 動態分派', en: 'Static vs Dynamic Dispatch' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '特性', en: 'Property' }, { zh: '靜態分派(非virtual)', en: 'Static Dispatch (non-virtual)' }, { zh: '動態分派(virtual)', en: 'Dynamic Dispatch (virtual)' } ],
+            rows: [
+              [ { zh: '解析時機', en: 'Resolution time' }, { zh: '編譯期', en: 'Compile time' }, { zh: '執行期', en: 'Runtime' } ],
+              [ { zh: '額外開銷', en: 'Overhead' }, { zh: '無', en: 'None' }, { zh: '一次指標間接存取', en: 'One pointer indirection' } ],
+              [ { zh: '多型支援', en: 'Polymorphism' }, { zh: '否', en: 'No' }, { zh: '是', en: 'Yes' } ],
+              [ { zh: '抽象類別', en: 'Abstract class' }, { zh: '不適用', en: 'N/A' }, { zh: '以 `= 0` 宣告', en: 'Declared with `= 0`' } ],
+            ] },
+          { type: 'math', tex: 'T_{\\text{virtual}} = T_{\\text{direct}} + 2 \\cdot T_{\\text{ptr-deref}}', caption: {
+            zh: '虛擬函式呼叫的額外開銷:一次存取 vptr + 一次查 vtable,共兩次指標間接存取。',
+            en: 'Virtual call overhead: one vptr access + one vtable lookup = two pointer indirections over a direct call.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class Shape {\npublic:\n    virtual ~Shape() {}\n    virtual void draw() const = 0;   // pure virtual\n    virtual double area() const = 0; // pure virtual\n};\n\nclass Circle : public Shape {\n    double radius;\npublic:\n    explicit Circle(double r) : radius(r) {}\n    void draw() const override {\n        cout << "Drawing Circle(" << radius << ")" << endl;\n    }\n    double area() const override {\n        return 3.14159 * radius * radius;\n    }\n};\n\nint main() {\n    vector<Shape*> shapes;\n    shapes.push_back(new Circle(5.0));\n    shapes.push_back(new Rectangle(4.0, 6.0));\n\n    for (const auto* s : shapes) {\n        s->draw();  // dynamic dispatch via vtable\n        cout << "Area: " << s->area() << endl;\n    }\n    for (auto* s : shapes) delete s;\n}' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:開放/封閉原則(OCP) — 新增 derived class 無需修改已有程式碼。', en: 'Pro: Open/Closed Principle — add new derived classes without modifying existing code.' },
+            { zh: '優點:統一介面 — 透過 base pointer/reference 操作異質物件集合。', en: 'Pro: uniform interface — operate on heterogeneous collections through base pointers/references.' },
+            { zh: '缺點:虛擬呼叫的 vptr 間接存取可能阻礙內聯優化,影響高頻路徑效能。', en: 'Con: vptr indirection may inhibit inlining, impacting performance on hot paths.' },
+            { zh: '缺點:每個物件增加一個 vptr(通常 8 bytes),每個類別有一張 vtable。', en: 'Con: each object grows by one vptr (typically 8 bytes); each class has one vtable.' },
+            { zh: '適用:需要以統一介面處理不同型別的場景,如 GUI widget 繪製、遊戲實體更新。', en: 'Use when a unified interface must handle different types, e.g. GUI widget rendering, game entity updates.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '`virtual` 函式 + vtable 實現執行期動態分派:vptr → vtable → 實際函式。', en: '`virtual` functions + vtable implement runtime dispatch: vptr → vtable → actual function.' },
+            { zh: '純虛擬函式(`= 0`)使類別成為抽象介面,強制衍生類別實作。', en: 'Pure virtual (`= 0`) makes the class an abstract interface, mandating implementation in derived classes.' },
+            { zh: '每次虛擬呼叫的額外成本僅為兩次指標間接存取,多數場景下微不足道。', en: 'Virtual call overhead is just two pointer indirections — negligible in most scenarios.' },
+            { zh: '多型是設計模式(Strategy、Template Method 等)的基礎機制。', en: 'Polymorphism underpins many design patterns such as Strategy and Template Method.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
+  'oop-encapsulation': {
+    category: 'OOP Concepts',
+    title: { zh: '封裝與存取控制', en: 'Encapsulation & Access Control' },
+    slides: [
+      {
+        heading: { zh: '封裝與存取控制', en: 'Encapsulation & Access Control' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '封裝(Encapsulation)將資料與操作資料的方法綁定在同一個類別中,以 `private`/`protected`/`public` 存取修飾子隱藏實作細節,僅對外暴露受控的 `public` 介面。',
+            en: 'Encapsulation bundles data and the methods that operate on that data into a single class. Access specifiers (`private`, `protected`, `public`) hide implementation details while exposing a controlled `public` interface.' } },
+        ],
+      },
+      {
+        heading: { zh: '核心概念', en: 'Core Concept' },
+        blocks: [
+          { type: 'paragraph', text: {
+            zh: '`BankAccount` 範例展示典型封裝:`balance` 設為 `private`,外部只能透過 `deposit()`/`withdraw()`/`getBalance()` 操作,確保不變式(invariant)始終成立。',
+            en: 'The `BankAccount` example demonstrates typical encapsulation: `balance` is `private`; external code can only interact via `deposit()`, `withdraw()`, and `getBalance()`, preserving all invariants.' } },
+          { type: 'bullets', items: [
+            { zh: '`public`:類別契約的一部分,任何程式碼均可存取。', en: '`public`: part of the class contract; accessible from anywhere.' },
+            { zh: '`protected`:僅允許類別本身及 derived class 存取;通常用於供子類別覆寫的 helper 方法。', en: '`protected`: accessible by the class and its derived classes; typically used for overridable helper methods.' },
+            { zh: '`private`:僅類別本身可存取;保護資料不受外部直接修改。', en: '`private`: accessible only within the class; protects data from direct external modification.' },
+            { zh: '`const` 成員函式:不可修改物件狀態,提供唯讀存取保證。', en: '`const` member function: cannot modify object state, providing a read-only access guarantee.' },
+            { zh: '`mutex` + `lock_guard`:在 `deposit`/`withdraw` 中保護共享狀態的執行緒安全。', en: '`mutex` + `lock_guard`: protect shared state for thread safety inside `deposit`/`withdraw`.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '運作流程', en: 'Operation Flow' },
+        blocks: [
+          { type: 'steps', items: [
+            { zh: '外部呼叫 `account.deposit(200)`;進入 `public` 方法,加上 `lock_guard` 鎖定。', en: 'Caller invokes `account.deposit(200)`; enters the `public` method, which acquires a `lock_guard`.' },
+            { zh: '方法內部直接存取 `private` 成員 `balance`,完成業務邏輯後釋放鎖。', en: 'Inside, the method directly accesses the `private` member `balance`, completing the logic before releasing the lock.' },
+            { zh: '`withdraw` 呼叫 `protected` 方法 `canWithdraw()` 及 `private` 方法 `log()`,外部無法直接呼叫。', en: '`withdraw` calls the `protected` method `canWithdraw()` and the `private` method `log()`, neither of which is directly callable externally.' },
+            { zh: '外部只能透過 `getBalance()` (`public const`) 讀取餘額,無法直接修改。', en: 'External code can only read the balance through `getBalance()` (a `public const` method), with no direct modification path.' },
+          ] },
+          { type: 'mermaid', code: 'flowchart LR\n  EXT["External Code"] -->|"deposit / withdraw / getBalance"| PUB["public interface"]\n  PUB -->|uses| PROT["protected: canWithdraw()"]\n  PUB -->|uses| PRIV["private: balance / log() / mutex"]' },
+        ],
+      },
+      {
+        heading: { zh: '封裝膠囊示意', en: 'Encapsulation Capsule Diagram' },
+        blocks: [
+          { type: 'svg', svg: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 170" width="320" height="170"><g font-family="sans-serif" font-size="11"><ellipse cx="160" cy="85" rx="150" ry="75" fill="#f0f9ff" stroke="#0ea5e9" stroke-width="2"/><ellipse cx="160" cy="85" rx="100" ry="48" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/><ellipse cx="160" cy="85" rx="50" ry="24" fill="#bfdbfe" stroke="#2563eb" stroke-width="1.5"/><text x="160" y="89" text-anchor="middle" font-weight="bold" fill="#1e3a8a" font-size="12">private</text><text x="160" y="49" text-anchor="middle" fill="#075985" font-size="11">protected</text><text x="160" y="22" text-anchor="middle" fill="#0369a1" font-size="11">public interface</text><text x="270" y="89" text-anchor="middle" fill="#64748b" font-size="10">external</text><line x1="255" y1="86" x2="235" y2="86" stroke="#64748b" stroke-width="1" marker-end="url(#ext)"/><defs><marker id="ext" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#64748b"/></marker></defs></g></svg>' },
+          { type: 'note', text: {
+            zh: '封裝如同一個膠囊:最外層 `public` 介面供外部呼叫;中層 `protected` 僅供繼承;最內層 `private` 資料與邏輯完全隱藏。',
+            en: 'Encapsulation is like a capsule: the outermost `public` layer is the external interface; the middle `protected` layer is for subclasses; the innermost `private` core is fully hidden.' } },
+        ],
+      },
+      {
+        heading: { zh: '存取層級與可見範圍', en: 'Access Levels & Visibility' },
+        blocks: [
+          { type: 'table',
+            headers: [ { zh: '存取修飾子', en: 'Access Specifier' }, { zh: '類別本身', en: 'Same Class' }, { zh: 'Derived Class', en: 'Derived Class' }, { zh: '外部程式碼', en: 'External Code' } ],
+            rows: [
+              [ { zh: '`public`', en: '`public`' }, { zh: '可', en: 'Yes' }, { zh: '可', en: 'Yes' }, { zh: '可', en: 'Yes' } ],
+              [ { zh: '`protected`', en: '`protected`' }, { zh: '可', en: 'Yes' }, { zh: '可', en: 'Yes' }, { zh: '否', en: 'No' } ],
+              [ { zh: '`private`', en: '`private`' }, { zh: '可', en: 'Yes' }, { zh: '否', en: 'No' }, { zh: '否', en: 'No' } ],
+              [ { zh: '`friend`', en: '`friend`' }, { zh: '可', en: 'Yes' }, { zh: '否(不繼承)', en: 'No (not inherited)' }, { zh: '例外授權', en: 'Explicitly granted' } ],
+            ] },
+          { type: 'math', tex: '\\text{Invariant preserved} \\iff \\forall\\, f \\in public(C) : \\text{post}(f) \\models \\text{inv}(C)', caption: {
+            zh: '封裝的核心目標:透過限制直接存取,確保每次 `public` 方法呼叫後物件狀態仍滿足所有不變式。',
+            en: 'The core goal of encapsulation: restricting direct access ensures every `public` method call leaves the object satisfying all class invariants.' } },
+        ],
+      },
+      {
+        heading: { zh: '程式碼', en: 'Source Code' },
+        blocks: [
+          { type: 'code', lang: 'cpp', code: 'class BankAccount {\npublic:\n    explicit BankAccount(double initialBalance) : balance(initialBalance) {}\n\n    void deposit(double amount) {\n        lock_guard<mutex> guard(accountLock);\n        if (amount > 0) { balance += amount; }\n    }\n\n    bool withdraw(double amount) {\n        lock_guard<mutex> guard(accountLock);\n        if (canWithdraw(amount)) {\n            balance -= amount;\n            log("withdraw", amount);\n            return true;\n        }\n        return false;\n    }\n\n    double getBalance() const { return balance; } // read-only\n\nprotected:\n    bool canWithdraw(double amount) const {\n        return amount > 0 && amount <= balance;\n    }\n\nprivate:\n    void log(const string& type, double amount) const {\n        cout << "Log: " << type << " " << amount << endl;\n    }\n    double balance;\n    mutable mutex accountLock;\n};' },
+        ],
+      },
+      {
+        heading: { zh: '優缺點與使用時機', en: 'Pros, Cons & When to Use' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '優點:不變式保護 — `private` 成員只能透過受控方法修改,防止非法狀態。', en: 'Pro: invariant protection — `private` members can only be modified through controlled methods, preventing invalid states.' },
+            { zh: '優點:介面穩定性 — 內部實作可自由重構,只要 `public` 介面不變就不影響呼叫端。', en: 'Pro: interface stability — internals can be freely refactored without affecting callers as long as the `public` interface is unchanged.' },
+            { zh: '優點:執行緒安全 — 可在 `public` 方法入口集中加鎖,外部無法繞過。', en: 'Pro: thread safety — locks can be centralised at `public` method entries; external code cannot bypass them.' },
+            { zh: '缺點:過度封裝可能導致冗長的 getter/setter,增加樣板程式碼。', en: 'Con: over-encapsulation can produce verbose getter/setter boilerplate.' },
+            { zh: '適用:任何需要保護內部狀態或確保執行緒安全的類別,如帳戶、快取、連線池。', en: 'Use whenever internal state must be protected or thread safety is needed, e.g. accounts, caches, connection pools.' },
+          ] },
+        ],
+      },
+      {
+        heading: { zh: '小結', en: 'Summary' },
+        blocks: [
+          { type: 'bullets', items: [
+            { zh: '封裝 = 資料隱藏 + 受控存取:以存取修飾子劃定邊界。', en: 'Encapsulation = data hiding + controlled access: access specifiers define the boundaries.' },
+            { zh: '`private` 保護不變式;`protected` 支援繼承擴充;`public` 定義契約。', en: '`private` guards invariants; `protected` supports inheritance extension; `public` defines the contract.' },
+            { zh: '存取控制在編譯期強制執行,執行期無額外開銷。', en: 'Access control is enforced at compile time with zero runtime overhead.' },
+            { zh: '良好封裝是可維護、可測試、執行緒安全程式碼的基礎。', en: 'Good encapsulation is the foundation of maintainable, testable, and thread-safe code.' },
+          ] },
+        ],
+      },
+    ],
+  },
+
 };
 
 module.exports = SLIDES_DB;

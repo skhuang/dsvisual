@@ -1,0 +1,112 @@
+---
+marp: true
+theme: default
+paginate: true
+math: katex
+title: "多型(虛擬函式)"
+---
+
+## 多型(虛擬函式)
+
+多型(Polymorphism)讓不同型別的物件能透過相同的介面操作;在 C++ 中以 `virtual` 函式搭配 vtable 機制實現執行期動態分派(dynamic dispatch)。
+
+---
+
+## 核心概念
+
+每個含有 `virtual` 函式的類別都有一張 Virtual Method Table(vtable),紀錄該類別各 `virtual` 函式的實際位址。每個物件含一個隱藏的 vptr 指向其類別的 vtable。
+
+- `virtual` 函式:在 base class 宣告,允許 derived class 以 `override` 覆寫。
+- `= 0` (pure virtual):使 base class 成為抽象類別,強制所有 derived class 實作。
+- 動態分派:呼叫 `ptr->draw()` 時,先取 vptr → 查 vtable → 跳轉到正確函式。
+- 靜態分派(非 `virtual`):函式位址在編譯期確定,無間接呼叫。
+
+---
+
+## 運作流程
+
+1. 宣告 base class `Shape` 含純虛擬函式 `draw()` 與 `area()`。
+2. `Circle` 和 `Rectangle` 繼承 `Shape` 並以 `override` 實作各自版本。
+3. 透過 `Shape*` 指標儲存不同物件;迴圈呼叫 `shape->draw()` 自動分派。
+4. vtable 查找在執行期完成;每次虛擬呼叫僅增加一次指標間接存取的開銷。
+
+<svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 794.312px; background-color: transparent;" viewBox="0 0 794.3125 174" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#my-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#my-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#my-svg .error-icon{fill:#552222;}#my-svg .error-text{fill:#552222;stroke:#552222;}#my-svg .edge-thickness-normal{stroke-width:1px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#333333;stroke:#333333;}#my-svg .marker.cross{stroke:#333333;}#my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#my-svg p{margin:0;}#my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#my-svg .cluster-label text{fill:#333;}#my-svg .cluster-label span{color:#333;}#my-svg .cluster-label span p{background-color:transparent;}#my-svg .label text,#my-svg span{fill:#333;color:#333;}#my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#my-svg .rough-node .label text,#my-svg .node .label text,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-anchor:middle;}#my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#my-svg .rough-node .label,#my-svg .node .label,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-align:center;}#my-svg .node.clickable{cursor:pointer;}#my-svg .root .anchor path{fill:#333333!important;stroke-width:0;stroke:#333333;}#my-svg .arrowheadPath{fill:#333333;}#my-svg .edgePath .path{stroke:#333333;stroke-width:1px;}#my-svg .flowchart-link{stroke:#333333;fill:none;}#my-svg .edgeLabel{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .edgeLabel p{background-color:rgba(232,232,232, 0.8);}#my-svg .edgeLabel rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#my-svg .cluster text{fill:#333;}#my-svg .cluster span{color:#333;}#my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#my-svg rect.text{fill:none;stroke-width:0;}#my-svg .icon-shape,#my-svg .image-shape{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .icon-shape p,#my-svg .image-shape p{background-color:rgba(232,232,232, 0.8);padding:2px;}#my-svg .icon-shape .label rect,#my-svg .image-shape .label rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#my-svg .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#my-svg .node .neo-node{stroke:#9370DB;}#my-svg [data-look="neo"].node rect,#my-svg [data-look="neo"].cluster rect,#my-svg [data-look="neo"].node polygon{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node path{stroke:#9370DB;stroke-width:1px;}#my-svg [data-look="neo"].node .outer-path{filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node .neo-line path{stroke:#9370DB;filter:none;}#my-svg [data-look="neo"].node circle{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node circle .state-start{fill:#000000;}#my-svg [data-look="neo"].icon-shape .icon{fill:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].icon-shape .icon-neo path{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker id="my-svg_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointEnd-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="11.5" refY="7" markerUnits="userSpaceOnUse" markerWidth="10.5" markerHeight="14" orient="auto"><path d="M 0 0 L 11.5 7 L 0 14 z" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="1" refY="7" markerUnits="userSpaceOnUse" markerWidth="11.5" markerHeight="14" orient="auto"><polygon points="0,7 11.5,14 11.5,0" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refY="5" refX="12.25" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-2" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="17.7" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5;"/></marker><marker id="my-svg_flowchart-v2-crossStart-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="-3.5" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5; stroke-dasharray: 1, 0;"/></marker><g class="root"><g class="clusters"/><g class="edgePaths"><path d="M136.781,87L140.948,87C145.115,87,153.448,87,161.115,87C168.781,87,175.781,87,179.281,87L182.781,87" id="my-svg-L_P_VP_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_P_VP_0" data-points="W3sieCI6MTM2Ljc4MTI1LCJ5Ijo4N30seyJ4IjoxNjEuNzgxMjUsInkiOjg3fSx7IngiOjE4Ni43ODEyNSwieSI6ODd9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M276.094,87L280.26,87C284.427,87,292.76,87,300.427,87C308.094,87,315.094,87,318.594,87L322.094,87" id="my-svg-L_VP_VT_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_VP_VT_0" data-points="W3sieCI6Mjc2LjA5Mzc1LCJ5Ijo4N30seyJ4IjozMDEuMDkzNzUsInkiOjg3fSx7IngiOjMyNi4wOTM3NSwieSI6ODd9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M476.797,58.081L486.82,54.234C496.844,50.387,516.891,42.694,538.651,38.847C560.411,35,583.885,35,595.622,35L607.359,35" id="my-svg-L_VT_CD_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_VT_CD_0" data-points="W3sieCI6NDc2Ljc5Njg3NSwieSI6NTguMDgxMTI3ODMyNTU0OTJ9LHsieCI6NTM2LjkzNzUsInkiOjM1fSx7IngiOjYxMS4zNTkzNzUsInkiOjM1fV0=" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M476.797,115.919L486.82,119.766C496.844,123.613,516.891,131.306,536.271,135.153C555.651,139,574.365,139,583.721,139L593.078,139" id="my-svg-L_VT_RD_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_VT_RD_0" data-points="W3sieCI6NDc2Ljc5Njg3NSwieSI6MTE1LjkxODg3MjE2NzQ0NTA3fSx7IngiOjUzNi45Mzc1LCJ5IjoxMzl9LHsieCI6NTk3LjA3ODEyNSwieSI6MTM5fV0=" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_P_VP_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_VP_VT_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(536.9375, 35)"><g class="label" data-id="L_VT_CD_0" transform="translate(-20.859375, -12)"><foreignObject width="41.71875" height="24"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"><p>Circle</p></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(536.9375, 139)"><g class="label" data-id="L_VT_RD_0" transform="translate(-35.140625, -12)"><foreignObject width="70.28125" height="24"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"><p>Rectangle</p></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="my-svg-flowchart-P-0" data-look="classic" transform="translate(72.390625, 87)"><rect class="basic label-container" style="" x="-64.390625" y="-27" width="128.78125" height="54"/><g class="label" style="" transform="translate(-34.390625, -12)"><rect/><foreignObject width="68.78125" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Shape ptr</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-VP-1" data-look="classic" transform="translate(231.4375, 87)"><rect class="basic label-container" style="" x="-44.65625" y="-27" width="89.3125" height="54"/><g class="label" style="" transform="translate(-14.65625, -12)"><rect/><foreignObject width="29.3125" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>vptr</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-VT-3" data-look="classic" transform="translate(401.4453125, 87)"><rect class="basic label-container" style="" x="-75.3515625" y="-39" width="150.703125" height="78"/><g class="label" style="" transform="translate(-45.3515625, -24)"><rect/><foreignObject width="90.703125" height="48"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>vtable<br />[draw][area]</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-CD-5" data-look="classic" transform="translate(691.6953125, 35)"><rect class="basic label-container" style="" x="-80.3359375" y="-27" width="160.671875" height="54"/><g class="label" style="" transform="translate(-50.3359375, -12)"><rect/><foreignObject width="100.671875" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Circle::draw()</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-RD-7" data-look="classic" transform="translate(691.6953125, 139)"><rect class="basic label-container" style="" x="-94.6171875" y="-27" width="189.234375" height="54"/><g class="label" style="" transform="translate(-64.6171875, -12)"><rect/><foreignObject width="129.234375" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Rectangle::draw()</p></span></div></foreignObject></g></g></g></g></g><defs><filter id="my-svg-drop-shadow" height="130%" width="130%"><feDropShadow dx="4" dy="4" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs><defs><filter id="my-svg-drop-shadow-small" height="150%" width="150%"><feDropShadow dx="2" dy="2" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs></svg>
+
+---
+
+## vtable 結構示意
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 170" width="360" height="170"><g font-family="sans-serif" font-size="11"><text x="20" y="16" font-weight="bold" fill="#1e40af">Circle object</text><rect x="20" y="22" width="80" height="26" fill="#dbeafe" stroke="#2563eb"/><text x="60" y="39" text-anchor="middle">vptr</text><line x1="100" y1="35" x2="150" y2="55" stroke="#2563eb" stroke-width="1.5" marker-end="url(#b)"/><text x="155" y="46" font-weight="bold" fill="#1e40af">Circle vtable</text><rect x="150" y="50" width="110" height="26" fill="#dbeafe" stroke="#2563eb"/><text x="205" y="67" text-anchor="middle">Circle::draw()</text><rect x="150" y="76" width="110" height="26" fill="#dbeafe" stroke="#2563eb"/><text x="205" y="93" text-anchor="middle">Circle::area()</text><text x="20" y="126" font-weight="bold" fill="#166534">Rectangle object</text><rect x="20" y="132" width="80" height="26" fill="#dcfce7" stroke="#16a34a"/><text x="60" y="149" text-anchor="middle">vptr</text><line x1="100" y1="145" x2="150" y2="125" stroke="#16a34a" stroke-width="1.5" marker-end="url(#g)"/><text x="155" y="116" font-weight="bold" fill="#166534">Rectangle vtable</text><rect x="150" y="120" width="120" height="26" fill="#dcfce7" stroke="#16a34a"/><text x="210" y="137" text-anchor="middle">Rectangle::draw()</text><rect x="150" y="146" width="120" height="20" fill="#dcfce7" stroke="#16a34a"/><text x="210" y="160" text-anchor="middle">Rectangle::area()</text><defs><marker id="b" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#2563eb"/></marker><marker id="g" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L7,3 z" fill="#16a34a"/></marker></defs></g></svg>
+
+> 每個物件有一個 vptr;每個類別有一張 vtable。vtable 由編譯器在編譯期建立並存於唯讀資料段,執行期只做指標間接存取。
+
+---
+
+## 靜態 vs 動態分派
+
+| 特性 | 靜態分派(非virtual) | 動態分派(virtual) |
+| --- | --- | --- |
+| 解析時機 | 編譯期 | 執行期 |
+| 額外開銷 | 無 | 一次指標間接存取 |
+| 多型支援 | 否 | 是 |
+| 抽象類別 | 不適用 | 以 `= 0` 宣告 |
+
+$$T_{\text{virtual}} = T_{\text{direct}} + 2 \cdot T_{\text{ptr-deref}}$$
+
+虛擬函式呼叫的額外開銷:一次存取 vptr + 一次查 vtable,共兩次指標間接存取。
+
+---
+
+## 程式碼
+
+```cpp
+class Shape {
+public:
+    virtual ~Shape() {}
+    virtual void draw() const = 0;   // pure virtual
+    virtual double area() const = 0; // pure virtual
+};
+
+class Circle : public Shape {
+    double radius;
+public:
+    explicit Circle(double r) : radius(r) {}
+    void draw() const override {
+        cout << "Drawing Circle(" << radius << ")" << endl;
+    }
+    double area() const override {
+        return 3.14159 * radius * radius;
+    }
+};
+
+int main() {
+    vector<Shape*> shapes;
+    shapes.push_back(new Circle(5.0));
+    shapes.push_back(new Rectangle(4.0, 6.0));
+
+    for (const auto* s : shapes) {
+        s->draw();  // dynamic dispatch via vtable
+        cout << "Area: " << s->area() << endl;
+    }
+    for (auto* s : shapes) delete s;
+}
+```
+
+---
+
+## 優缺點與使用時機
+
+- 優點:開放/封閉原則(OCP) — 新增 derived class 無需修改已有程式碼。
+- 優點:統一介面 — 透過 base pointer/reference 操作異質物件集合。
+- 缺點:虛擬呼叫的 vptr 間接存取可能阻礙內聯優化,影響高頻路徑效能。
+- 缺點:每個物件增加一個 vptr(通常 8 bytes),每個類別有一張 vtable。
+- 適用:需要以統一介面處理不同型別的場景,如 GUI widget 繪製、遊戲實體更新。
+
+---
+
+## 小結
+
+- `virtual` 函式 + vtable 實現執行期動態分派:vptr → vtable → 實際函式。
+- 純虛擬函式(`= 0`)使類別成為抽象介面,強制衍生類別實作。
+- 每次虛擬呼叫的額外成本僅為兩次指標間接存取,多數場景下微不足道。
+- 多型是設計模式(Strategy、Template Method 等)的基礎機制。
