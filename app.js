@@ -386,6 +386,13 @@ document.addEventListener('DOMContentLoaded', () => {
         methodSections.appendChild(section);
         mountActiveRuntime(section);
         if (window.Prism) Prism.highlightAllUnder(section);
+        // Wrap each line in .code-line so the CSS line-number gutter renders.
+        section.querySelectorAll('.code-panel-body > code').forEach((codeEl) => {
+          const lines = codeEl.innerHTML.split('\n');
+          codeEl.innerHTML = lines.map((line) =>
+            '<span class="code-line">' + line + '</span>'
+          ).join('\n');
+        });
     }
 
     function selectMethod(methodId) {
@@ -489,6 +496,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-code-copy]');
+      if (!btn) return;
+      const panel = btn.closest('.code-panel');
+      if (!panel) return;
+      const codeEl = panel.querySelector('code');
+      if (!codeEl) return;
+      navigator.clipboard.writeText(codeEl.textContent).then(() => {
+        btn.dataset.copied = '1';
+        const original = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(() => { btn.textContent = original; delete btn.dataset.copied; }, 1500);
+      });
+    });
 
     function renderCategoryNav() {
         if (!categoryNav) return;

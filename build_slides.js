@@ -65,6 +65,13 @@ function blockToMarkdown(block, lang, ctx) {
   }
 }
 
+function wrapHighlightedLines(highlighted) {
+  // Split the Prism-highlighted HTML on newline characters and wrap each line.
+  // Prism preserves newlines as literal '\n' between token spans.
+  const lines = highlighted.split('\n');
+  return lines.map((line) => '<span class="code-line">' + line + '</span>').join('\n');
+}
+
 function blockToHtml(block, lang, ctx) {
   switch (block.type) {
     case 'paragraph':
@@ -93,7 +100,7 @@ function blockToHtml(block, lang, ctx) {
             '<span class="code-panel-filename">' + filename + '</span>' +
             '<button type="button" class="code-panel-copy" data-code-copy aria-label="Copy code">⧉ Copy</button>' +
           '</div>' +
-          '<pre class="code-panel-body"><code class="language-cpp">' + highlighted + '</code></pre>' +
+          '<pre class="code-panel-body"><code class="language-cpp">' + wrapHighlightedLines(highlighted) + '</code></pre>' +
         '</div>'
       );
     }

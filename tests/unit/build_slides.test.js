@@ -49,6 +49,13 @@ test('code → fenced markdown and chrome-wrapped highlighted html', () => {
   assert.match(html, /class="token /);
 });
 
+test('code block html wraps each source line in .code-line', () => {
+  const block = { type: 'code', lang: 'cpp', code: 'int x = 1;\nint y = 2;' };
+  const html = b.blockToHtml(block, 'zh', {});
+  const matches = html.match(/<span class="code-line">/g);
+  assert.equal(matches && matches.length, 2);
+});
+
 test('note → blockquote markdown and div html', () => {
   const block = { type: 'note', text: { zh: '提示', en: 'Tip' } };
   assert.equal(b.blockToMarkdown(block, 'en', {}), '> Tip');
