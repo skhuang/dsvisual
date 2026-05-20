@@ -33,7 +33,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         
         await expect(methodSections).toBeVisible();
         await expect(stackArraySection).toHaveAttribute('data-runtime-state', 'active');
-        await expect(stackArraySection.locator('.method-section-code')).toContainText('stack_array.cpp');
+        await expect(stackArraySection.locator('.code-panel-filename')).toContainText('stack_array.cpp');
     });
 
     test('Phase 1 category nav: renders six top-level groups and drives method sections', async ({ page }) => {
@@ -62,13 +62,13 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const methodSections = page.locator('[data-testid="method-sections"]');
         await expect(methodSections).toBeVisible();
         await expect(methodSections.locator('[data-method-section]')).toHaveCount(1);
-        await expect(methodSections.locator('[data-method-section="stack-array"] .method-section-code')).toContainText('stack_array.cpp');
+        await expect(methodSections.locator('[data-method-section="stack-array"] .code-panel-filename')).toContainText('stack_array.cpp');
         await expect(methodSections.locator('[data-method-section="queue"]')).toHaveCount(0);
 
         await loadMethod(page, 'sort-bubble');
         await expect(methodSections.locator('[data-method-section]')).toHaveCount(1);
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toBeVisible();
-        await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-code')).toContainText('sort_bubble.cpp');
+        await expect(methodSections.locator('[data-method-section="sort-bubble"] .code-panel-filename')).toContainText('sort_bubble.cpp');
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
     });
 
@@ -117,56 +117,56 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await loadMethod(page, 'tree-trie');
         const trieCard = page.locator('[data-method-section="tree-trie"]');
         await expect(trieCard).toHaveAttribute('data-runtime-state', 'active');
-        await expect(trieCard.locator('.method-section-code')).toContainText('tree_trie.cpp');
+        await expect(trieCard.locator('.code-panel-filename')).toContainText('tree_trie.cpp');
     });
 
     test('Sorting Engine: Instantiates bars and manages states successfully', async ({ page }) => {
         await loadMethod(page, 'sort-bubble');
         const sortCard = page.locator('[data-method-section="sort-bubble"]');
         await expect(sortCard).toHaveAttribute('data-runtime-state', 'active');
-        await expect(sortCard.locator('.method-section-code')).toContainText('sort_bubble.cpp');
+        await expect(sortCard.locator('.code-panel-filename')).toContainText('sort_bubble.cpp');
     });
 
     test('Hash Tables: Explicitly verifies Collision Handlers catch overlaps', async ({ page }) => {
         await loadMethod(page, 'hash-open');
         const hashCard = page.locator('[data-method-section="hash-open"]');
         await expect(hashCard).toHaveAttribute('data-runtime-state', 'active');
-        await expect(hashCard.locator('.method-section-code')).toContainText('hash_open_address.cpp');
+        await expect(hashCard.locator('.code-panel-filename')).toContainText('hash_open_address.cpp');
     });
 
     test('Graph Kruskal: Builds MST from weighted edges', async ({ page }) => {
         await loadMethod(page, 'graph-kruskal');
         const graphCard = page.locator('[data-method-section="graph-kruskal"]');
         await expect(graphCard).toHaveAttribute('data-runtime-state', 'active');
-        await expect(graphCard.locator('.method-section-code')).toContainText('graph_kruskal.cpp');
+        await expect(graphCard.locator('.code-panel-filename')).toContainText('graph_kruskal.cpp');
     });
 
     test('Graph Dijkstra: Computes shortest paths from source', async ({ page }) => {
         await loadMethod(page, 'graph-dijkstra');
         const graphCard = page.locator('[data-method-section="graph-dijkstra"]');
         await expect(graphCard).toHaveAttribute('data-runtime-state', 'active');
-        await expect(graphCard.locator('.method-section-code')).toContainText('graph_dijkstra.cpp');
+        await expect(graphCard.locator('.code-panel-filename')).toContainText('graph_dijkstra.cpp');
     });
 
     test('Graph Topological Sort: Orders DAG nodes correctly', async ({ page }) => {
         await loadMethod(page, 'graph-topo');
         const graphCard = page.locator('[data-method-section="graph-topo"]');
         await expect(graphCard).toHaveAttribute('data-runtime-state', 'active');
-        await expect(graphCard.locator('.method-section-code')).toContainText('graph_topo.cpp');
+        await expect(graphCard.locator('.code-panel-filename')).toContainText('graph_topo.cpp');
     });
 
     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {
         await loadMethod(page, 'sort-radix');
         const sortCard = page.locator('[data-method-section="sort-radix"]');
         await expect(sortCard).toHaveAttribute('data-runtime-state', 'active');
-        await expect(sortCard.locator('.method-section-code')).toContainText('sort_radix.cpp');
+        await expect(sortCard.locator('.code-panel-filename')).toContainText('sort_radix.cpp');
     });
 
     test('Shaker Sort: Bidirectional bubble sort completes correctly', async ({ page }) => {
         await loadMethod(page, 'sort-shaker');
         const sortCard = page.locator('[data-method-section="sort-shaker"]');
         await expect(sortCard).toHaveAttribute('data-runtime-state', 'active');
-        await expect(sortCard.locator('.method-section-code')).toContainText('sort_shaker.cpp');
+        await expect(sortCard.locator('.code-panel-filename')).toContainText('sort_shaker.cpp');
     });
 
     test('Primary UI: active card owns runtime', async ({ page }) => {
@@ -176,7 +176,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
     });
 
     test('Primary UI: legacy interface DOM is removed', async ({ page }) => {
-        await expect(page.locator('.mode-groups, .mode-group, .code-panel, .panel-tabs, #tab-btn-desc, #tab-btn-code, #desc-view, #code-view')).toHaveCount(0);
+        await expect(page.locator('.mode-groups, .mode-group, .panel-tabs, #tab-btn-desc, #tab-btn-code, #desc-view, #code-view')).toHaveCount(0);
         await expect(page.locator('.runtime-stage')).toBeHidden();
         await expect(page.locator('[data-method-section="stack-array"] #visualizer-container')).toBeVisible();
     });
@@ -187,7 +187,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await loadMethod(page, 'sort-bubble');
         
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
-        await expect(methodSections.locator('[data-method-section="sort-bubble"] .method-section-code')).toContainText('sort_bubble.cpp');
+        await expect(methodSections.locator('[data-method-section="sort-bubble"] .code-panel-filename')).toContainText('sort_bubble.cpp');
     });
 
     test('Primary UI: switching methods tracks active and loaded cards', async ({ page }) => {

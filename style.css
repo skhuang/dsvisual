@@ -1398,3 +1398,6 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 .code-panel-body::-webkit-scrollbar-track { background: #0b1220; }
 .code-panel-body::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
 .code-panel-body::-webkit-scrollbar-thumb:hover { background: #475569; }
+.code-panel-body code[class*="language-"] {
+    font-family: 'Fira Code', monospace;
+}
