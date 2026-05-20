@@ -530,6 +530,58 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    const DENSITY_STORAGE_KEY = 'dsvisual.codeDensity';
+
+    function applySavedDensity() {
+        const v = localStorage.getItem(DENSITY_STORAGE_KEY);
+        if (v) document.documentElement.style.setProperty('--code-line-height', v);
+    }
+
+    function bindSettingsDrawer() {
+        const toggle = document.getElementById('settings-toggle');
+        const drawer = document.getElementById('settings-drawer');
+        if (!toggle || !drawer) return;
+        const closers = drawer.querySelectorAll('[data-settings-close]');
+        const panel = drawer.querySelector('.settings-drawer-panel');
+        function onKeydown(e) {
+            if (e.key === 'Escape') close();
+        }
+        function open() {
+            drawer.hidden = false;
+            drawer.classList.add('open');
+            panel.focus();
+            document.addEventListener('keydown', onKeydown);
+        }
+        function close() {
+            drawer.hidden = true;
+            drawer.classList.remove('open');
+            document.removeEventListener('keydown', onKeydown);
+        }
+        toggle.addEventListener('click', open);
+        closers.forEach((btn) => btn.addEventListener('click', close));
+    }
+
+    function bindDensitySlider() {
+        const slider = document.getElementById('code-density-slider');
+        const display = document.getElementById('code-density-value');
+        const resetBtn = document.getElementById('code-density-reset');
+        if (!slider || !display || !resetBtn) return;
+        const saved = localStorage.getItem(DENSITY_STORAGE_KEY) || '1.55';
+        slider.value = saved;
+        display.textContent = saved;
+        slider.addEventListener('input', () => {
+            document.documentElement.style.setProperty('--code-line-height', slider.value);
+            display.textContent = slider.value;
+            localStorage.setItem(DENSITY_STORAGE_KEY, slider.value);
+        });
+        resetBtn.addEventListener('click', () => {
+            slider.value = '1.55';
+            display.textContent = '1.55';
+            document.documentElement.style.removeProperty('--code-line-height');
+            localStorage.removeItem(DENSITY_STORAGE_KEY);
+        });
+    }
+
     function renderCategoryNav() {
         if (!categoryNav) return;
         categoryNav.innerHTML = '';
@@ -568,6 +620,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    applySavedDensity();
+    bindSettingsDrawer();
+    bindDensitySlider();
     renderCategoryNav();
 
     // Containers
