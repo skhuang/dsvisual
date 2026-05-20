@@ -300,6 +300,25 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/>/g, '&gt;');
     }
 
+    function bindZoomControls(visualHost) {
+        const scaled = visualHost.querySelector('.viz-body-scaled');
+        const controls = visualHost.querySelector('.viz-zoom-controls');
+        if (!scaled || !controls) return;
+        const resetBtn = controls.querySelector('[data-zoom="reset"]');
+        const inBtn = controls.querySelector('[data-zoom="in"]');
+        const outBtn = controls.querySelector('[data-zoom="out"]');
+        let zoom = 1.0;
+        function applyZoom(z) {
+            zoom = Math.max(0.5, Math.min(2.0, Math.round(z * 100) / 100));
+            scaled.style.setProperty('--viz-zoom', String(zoom));
+            resetBtn.textContent = Math.round(zoom * 100) + '%';
+        }
+        inBtn.addEventListener('click', () => applyZoom(zoom + 0.1));
+        outBtn.addEventListener('click', () => applyZoom(zoom - 0.1));
+        resetBtn.addEventListener('click', () => applyZoom(1.0));
+        applyZoom(1.0);
+    }
+
     function mountActiveRuntime(section) {
         const visualHost = section.querySelector('.method-section-visual');
         if (!visualHost) return;
@@ -325,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scaled.appendChild(runtimeControls);
         scaled.appendChild(runtimeVisualizer);
         visualHost.appendChild(scaled);
+        bindZoomControls(visualHost);
     }
 
     function renderMethodSections(groupId) {

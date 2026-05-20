@@ -73,3 +73,58 @@ test.describe('UX polish — code density slider', () => {
         expect(stored).toBeNull();
     });
 });
+
+test.describe('UX polish — visualizer zoom', () => {
+
+    test.beforeEach(async ({ page }) => {
+        await page.goto(FILE_URL);
+        await page.waitForSelector('.viz-body-scaled');
+    });
+
+    test('zoom in raises percentage and scale to 110%', async ({ page }) => {
+        const scaled = page.locator('.viz-body-scaled').first();
+        const reset = page.locator('.viz-zoom-controls button[data-zoom="reset"]').first();
+        await expect(reset).toHaveText('100%');
+        await page.locator('.viz-zoom-controls button[data-zoom="in"]').first().click();
+        await expect(reset).toHaveText('110%');
+        const t = await scaled.evaluate((el) => getComputedStyle(el).getPropertyValue('--viz-zoom'));
+        expect(parseFloat(t)).toBeCloseTo(1.1, 2);
+    });
+
+    test('zoom out drops to 90% and reset returns to 100%', async ({ page }) => {
+        const reset = page.locator('.viz-zoom-controls button[data-zoom="reset"]').first();
+        await page.locator('.viz-zoom-controls button[data-zoom="out"]').first().click();
+        await expect(reset).toHaveText('90%');
+        await reset.click();
+        await expect(reset).toHaveText('100%');
+    });
+
+    test('zoom in clamps at 200%', async ({ page }) => {
+        const reset = page.locator('.viz-zoom-controls button[data-zoom="reset"]').first();
+        const inBtn = page.locator('.viz-zoom-controls button[data-zoom="in"]').first();
+        for (let i = 0; i < 20; i++) await inBtn.click();
+        await expect(reset).toHaveText('200%');
+    });
+
+    test('zoom out clamps at 50%', async ({ page }) => {
+        const reset = page.locator('.viz-zoom-controls button[data-zoom="reset"]').first();
+        const outBtn = page.locator('.viz-zoom-controls button[data-zoom="out"]').first();
+        for (let i = 0; i < 20; i++) await outBtn.click();
+        await expect(reset).toHaveText('50%');
+    });
+
+    test('switching method resets zoom to 100%', async ({ page }) => {
+        const reset = page.locator('.viz-zoom-controls button[data-zoom="reset"]').first();
+        // First, set the current method's zoom to 150%
+        const inBtn = page.locator('.viz-zoom-controls button[data-zoom="in"]').first();
+        for (let i = 0; i < 5; i++) await inBtn.click();
+        await expect(reset).toHaveText('150%');
+
+        // Switch to a different method via the method-select dropdown
+        const methodSelect = page.locator('[data-testid="method-select"]').first();
+        await methodSelect.selectOption('queue');
+        await page.waitForSelector('[data-method-section="queue"][data-runtime-state="active"]');
+        const newReset = page.locator('[data-method-section="queue"] .viz-zoom-controls button[data-zoom="reset"]');
+        await expect(newReset).toHaveText('100%');
+    });
+});
