@@ -125,6 +125,7 @@ const METHOD_GROUPS = [
         title: 'Graphs',
         methods: [
             { id: 'graph', title: 'Undirected Graph', file: 'graph.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-adjlist', title: 'Adjacency List', file: 'graph_adjlist.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-kruskal', title: 'Kruskal MST', file: 'graph_kruskal.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-dijkstra', title: 'Dijkstra (Shortest Path)', file: 'graph_dijkstra.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-topo', title: 'Topological Sort', file: 'graph_topo.cpp', visualizer: 'graph', controls: 'graph' },
@@ -225,6 +226,7 @@ function getCodeForMethod(methodId) {
         'tree-btree': codeTreeBTree,
         'tree-bplus': codeTreeBPlus,
         graph: codeGraph,
+        'graph-adjlist': codeGraphAdjlist,
         'graph-kruskal': codeGraphKruskal,
         'graph-dijkstra': codeGraphDijkstra,
         'graph-topo': codeGraphTopo,
@@ -1580,9 +1582,15 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'queue') { codeTitle.textContent = 'queue.cpp'; codeDisplay.textContent = codeQueue; queueContainer.classList.remove('hidden'); stdActions.classList.remove('hidden'); btnStdAdd.textContent = 'Enqueue()'; btnStdRemove.textContent = 'Dequeue()'; }
         else if (currentMode === 'graph') {
             codeTitle.textContent = 'graph.cpp'; codeDisplay.textContent = codeGraph; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
-            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden'); 
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden');
             graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
             btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Edge';
+        }
+        else if (currentMode === 'graph-adjlist') {
+            codeTitle.textContent = 'graph_adjlist.cpp'; codeDisplay.textContent = codeGraphAdjlist; graphActions.classList.remove('hidden');
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden');
+            graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
+            btnGraphClear.classList.add('hidden'); btnGraphAdd.classList.add('hidden');
         }
         else if (currentMode === 'graph-kruskal') {
             codeTitle.textContent = 'graph_kruskal.cpp'; codeDisplay.textContent = codeGraphKruskal; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
@@ -1730,7 +1738,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
-        else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo') renderGraph();
+        else if (currentMode === 'graph' || currentMode === 'graph-adjlist' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo') renderGraph();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
@@ -2459,6 +2467,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGraph() {
+        if (currentMode === 'graph-adjlist') {
+            // Render the same 5-node graph but as a vertical list of adjacency rows:
+            // [0] -> 1 -> 4 -> null
+            // [1] -> 0 -> 2 -> 3 -> 4 -> null
+            // ... etc.
+            const adjacency = [
+                [1, 4],
+                [0, 2, 3, 4],
+                [1, 3],
+                [1, 2, 4],
+                [0, 1, 3],
+            ];
+            runtimeVisualizer.innerHTML = '';
+            const container = document.createElement('div');
+            container.className = 'adjlist-container';
+            for (let i = 0; i < adjacency.length; i++) {
+                const row = document.createElement('div');
+                row.className = 'adjlist-row';
+                const head = document.createElement('span');
+                head.className = 'adjlist-vertex';
+                head.textContent = '[' + i + ']';
+                row.appendChild(head);
+                for (const n of adjacency[i]) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'adjlist-arrow';
+                    arrow.textContent = '→';
+                    row.appendChild(arrow);
+                    const node = document.createElement('span');
+                    node.className = 'adjlist-node';
+                    node.textContent = String(n);
+                    row.appendChild(node);
+                }
+                const arrowEnd = document.createElement('span');
+                arrowEnd.className = 'adjlist-arrow';
+                arrowEnd.textContent = '→';
+                row.appendChild(arrowEnd);
+                const nullNode = document.createElement('span');
+                nullNode.className = 'adjlist-null';
+                nullNode.textContent = 'null';
+                row.appendChild(nullNode);
+                container.appendChild(row);
+            }
+            runtimeVisualizer.appendChild(container);
+            return;
+        }
         const svg = document.getElementById('graph-edges'); svg.innerHTML = '';
         const pos = [{x:150,y:30},{x:270,y:120},{x:225,y:255},{x:75,y:255},{x:30,y:120}];
         

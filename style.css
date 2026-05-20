@@ -1575,3 +1575,48 @@ pre.code-panel-body[class*="language-"] {
     .viz-zoom-controls button { color: #e2e8f0; }
     .viz-zoom-controls button:hover { background: rgba(226, 232, 240, 0.1); }
 }
+
+/* ----- Spec 2a: graph-adjlist visualizer ----- */
+.adjlist-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+}
+.adjlist-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.adjlist-vertex {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 28px;
+    padding: 0 10px;
+    background: var(--accent-soft, #dbeafe);
+    color: var(--accent, #1e40af);
+    border-radius: 6px;
+    font-weight: 600;
+}
+.adjlist-node {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 26px;
+    padding: 0 8px;
+    background: var(--card-bg, #f8fafc);
+    border: 1px solid var(--card-border, #cbd5e1);
+    border-radius: 4px;
+}
+.adjlist-arrow {
+    color: var(--muted, #64748b);
+}
+.adjlist-null {
+    color: var(--muted, #64748b);
+    font-style: italic;
+}

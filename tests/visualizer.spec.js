@@ -158,6 +158,14 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(graphCard.locator('.code-panel-filename')).toContainText('graph_topo.cpp');
     });
 
+    test('Graphs: Adjacency List renders 5 rows', async ({ page }) => {
+        await loadMethod(page, 'graph-adjlist');
+        const card = page.locator('[data-method-section="graph-adjlist"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_adjlist.cpp');
+        const rows = card.locator('.adjlist-row');
+        await expect(rows).toHaveCount(5);
+    });
+
     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {
         await loadMethod(page, 'sort-radix');
         const sortCard = page.locator('[data-method-section="sort-radix"]');
