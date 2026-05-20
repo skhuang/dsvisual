@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "希爾排序法"
+category: "Sorting"
 ---
 
 ## 希爾排序法

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Hash Table (Bucket Hashing)"
+category: "Hash & Probabilistic"
 ---
 
 ## Hash Table (Bucket Hashing)

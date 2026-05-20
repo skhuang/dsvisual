@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Dijkstra Shortest Path"
+category: "Graphs"
 ---
 
 ## Dijkstra Shortest Path

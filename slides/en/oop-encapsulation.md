@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Encapsulation & Access Control"
+category: "OOP Concepts"
 ---
 
 ## Encapsulation & Access Control

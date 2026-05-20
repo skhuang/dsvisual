@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Bubble Sort"
+category: "Sorting"
 ---
 
 ## Bubble Sort

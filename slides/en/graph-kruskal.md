@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Kruskal Minimum Spanning Tree"
+category: "Graphs"
 ---
 
 ## Kruskal Minimum Spanning Tree

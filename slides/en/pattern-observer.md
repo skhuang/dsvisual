@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Observer Pattern"
+category: "Design Patterns"
 ---
 
 ## Observer Pattern

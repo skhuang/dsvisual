@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Shaker Sort (Cocktail Sort)"
+category: "Sorting"
 ---
 
 ## Shaker Sort (Cocktail Sort)

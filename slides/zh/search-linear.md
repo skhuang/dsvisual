@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "線性搜尋"
+category: "Searching & String Matching"
 ---
 
 ## 線性搜尋

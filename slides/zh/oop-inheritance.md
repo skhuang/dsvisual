@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "類別繼承"
+category: "OOP Concepts"
 ---
 
 ## 類別繼承

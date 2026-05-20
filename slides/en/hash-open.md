@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Hash Table (Open Addressing)"
+category: "Hash & Probabilistic"
 ---
 
 ## Hash Table (Open Addressing)

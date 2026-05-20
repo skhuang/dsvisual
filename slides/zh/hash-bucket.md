@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "雜湊表(桶定址法)"
+category: "Hash & Probabilistic"
 ---
 
 ## 雜湊表(桶定址法)

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Binary Search Tree (BST)"
+category: "Trees"
 ---
 
 ## Binary Search Tree (BST)

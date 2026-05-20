@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "二元堆積(Binary Heap)"
+category: "Heaps / Priority Queues"
 ---
 
 ## 二元堆積(Binary Heap)

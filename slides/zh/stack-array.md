@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "堆疊(陣列實作)"
+category: "Linear Structures"
 ---
 
 ## 堆疊(陣列實作)

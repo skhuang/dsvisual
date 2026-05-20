@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Decorator 模式"
+category: "Design Patterns"
 ---
 
 ## Decorator 模式

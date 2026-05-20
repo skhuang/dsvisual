@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "費波那契堆積(Fibonacci Heap)"
+category: "Heaps / Priority Queues"
 ---
 
 ## 費波那契堆積(Fibonacci Heap)

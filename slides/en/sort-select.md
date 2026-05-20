@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Selection Sort"
+category: "Sorting"
 ---
 
 ## Selection Sort

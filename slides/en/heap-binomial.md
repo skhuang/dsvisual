@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Binomial Heap"
+category: "Heaps / Priority Queues"
 ---
 
 ## Binomial Heap

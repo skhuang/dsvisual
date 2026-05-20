@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Counting Sort"
+category: "Sorting"
 ---
 
 ## Counting Sort

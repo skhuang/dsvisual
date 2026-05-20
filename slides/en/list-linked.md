@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Singly Linked List"
+category: "Linear Structures"
 ---
 
 ## Singly Linked List

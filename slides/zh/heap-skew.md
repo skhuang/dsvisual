@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "偏斜堆積(Skew Heap)"
+category: "Heaps / Priority Queues"
 ---
 
 ## 偏斜堆積(Skew Heap)

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "堆積排序法"
+category: "Sorting"
 ---
 
 ## 堆積排序法

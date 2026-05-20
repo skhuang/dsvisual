@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "B+ 樹(資料庫索引標準)"
+category: "Trees"
 ---
 
 ## B+ 樹(資料庫索引標準)

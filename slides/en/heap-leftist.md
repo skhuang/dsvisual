@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Leftist Heap"
+category: "Heaps / Priority Queues"
 ---
 
 ## Leftist Heap

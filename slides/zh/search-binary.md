@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "二元搜尋"
+category: "Searching & String Matching"
 ---
 
 ## 二元搜尋

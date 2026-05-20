@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "B-Tree(多路平衡樹)"
+category: "Trees"
 ---
 
 ## B-Tree(多路平衡樹)

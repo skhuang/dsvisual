@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Array-Based List"
+category: "Linear Structures"
 ---
 
 ## Array-Based List

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "D-ary 堆積(4-ary Heap)"
+category: "Heaps / Priority Queues"
 ---
 
 ## D-ary 堆積(4-ary Heap)

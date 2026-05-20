@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Kruskal 最小生成樹"
+category: "Graphs"
 ---
 
 ## Kruskal 最小生成樹

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "封裝與存取控制"
+category: "OOP Concepts"
 ---
 
 ## 封裝與存取控制

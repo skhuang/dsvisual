@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "B-Tree (Multi-way Balanced Tree)"
+category: "Trees"
 ---
 
 ## B-Tree (Multi-way Balanced Tree)

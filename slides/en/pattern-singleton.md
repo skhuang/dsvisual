@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Singleton Pattern"
+category: "Design Patterns"
 ---
 
 ## Singleton Pattern

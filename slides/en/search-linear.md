@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Linear Search"
+category: "Searching & String Matching"
 ---
 
 ## Linear Search

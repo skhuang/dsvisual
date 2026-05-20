@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "合併排序法"
+category: "Sorting"
 ---
 
 ## 合併排序法

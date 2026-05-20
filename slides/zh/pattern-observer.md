@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Observer 模式"
+category: "Design Patterns"
 ---
 
 ## Observer 模式

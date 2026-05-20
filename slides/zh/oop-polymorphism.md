@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "多型(虛擬函式)"
+category: "OOP Concepts"
 ---
 
 ## 多型(虛擬函式)

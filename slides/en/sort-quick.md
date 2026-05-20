@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Quick Sort"
+category: "Sorting"
 ---
 
 ## Quick Sort

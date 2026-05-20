@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Topological Sort (Kahn's Algorithm)"
+category: "Graphs"
 ---
 
 ## Topological Sort (Kahn's Algorithm)

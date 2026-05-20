@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "佇列(循環陣列)"
+category: "Linear Structures"
 ---
 
 ## 佇列(循環陣列)

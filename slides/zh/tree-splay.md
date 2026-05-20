@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Splay 樹"
+category: "Trees"
 ---
 
 ## Splay 樹

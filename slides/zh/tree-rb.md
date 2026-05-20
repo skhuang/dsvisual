@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "紅黑樹"
+category: "Trees"
 ---
 
 ## 紅黑樹

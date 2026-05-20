@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Bucket Sort"
+category: "Sorting"
 ---
 
 ## Bucket Sort
