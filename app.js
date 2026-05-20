@@ -307,8 +307,24 @@ document.addEventListener('DOMContentLoaded', () => {
         visualHost.classList.add('method-section-visual-live');
         visualHost.setAttribute('aria-label', 'Active interactive visualization');
         visualHost.innerHTML = '';
-        visualHost.appendChild(runtimeControls);
-        visualHost.appendChild(runtimeVisualizer);
+
+        // Zoom controls (sibling, NOT scaled, sits above the scaled content)
+        const zoomControls = document.createElement('div');
+        zoomControls.className = 'viz-zoom-controls';
+        zoomControls.setAttribute('role', 'toolbar');
+        zoomControls.setAttribute('aria-label', 'Zoom controls');
+        zoomControls.innerHTML =
+            '<button type="button" data-zoom="out" aria-label="Zoom out">−</button>' +
+            '<button type="button" data-zoom="reset" aria-label="Reset zoom">100%</button>' +
+            '<button type="button" data-zoom="in" aria-label="Zoom in">+</button>';
+        visualHost.appendChild(zoomControls);
+
+        // Scaled wrapper holds the runtime controls + visualizer
+        const scaled = document.createElement('div');
+        scaled.className = 'viz-body-scaled';
+        scaled.appendChild(runtimeControls);
+        scaled.appendChild(runtimeVisualizer);
+        visualHost.appendChild(scaled);
     }
 
     function renderMethodSections(groupId) {

@@ -233,6 +233,8 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     gap: 16px;
 }
 .method-section-visual {
+    position: relative;
+    overflow: auto;
     min-height: 220px;
     display: flex;
     flex-direction: column;
@@ -1509,4 +1511,49 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
     .settings-drawer-panel { background: #0f172a; color: #e2e8f0; }
     .settings-drawer-header { border-bottom-color: #1e293b; }
     .settings-row-controls #code-density-reset { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+}
+
+/* ----- Visualizer zoom (UX polish) ----- */
+.viz-body-scaled {
+    transform: scale(var(--viz-zoom, 1));
+    transform-origin: top left;
+    transition: transform 0.2s ease;
+}
+.viz-zoom-controls {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    display: inline-flex;
+    gap: 2px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--border, #cbd5e1);
+    border-radius: 999px;
+    padding: 2px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+.viz-zoom-controls button {
+    border: 0;
+    background: transparent;
+    color: var(--text, #0f172a);
+    width: 28px;
+    height: 24px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.viz-zoom-controls button[data-zoom="reset"] {
+    width: auto;
+    padding: 0 8px;
+    font-variant-numeric: tabular-nums;
+}
+.viz-zoom-controls button:hover { background: rgba(15, 23, 42, 0.06); }
+@media (prefers-color-scheme: dark) {
+    .viz-zoom-controls { background: rgba(15, 23, 42, 0.85); border-color: #334155; }
+    .viz-zoom-controls button { color: #e2e8f0; }
+    .viz-zoom-controls button:hover { background: rgba(226, 232, 240, 0.1); }
 }
