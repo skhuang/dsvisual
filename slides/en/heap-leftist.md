@@ -61,11 +61,14 @@ merge recurses only along the right spine, whose length is $\leq \log_2(N+1)$, s
 
 ```cpp
 LNode* mergeNodes(LNode* a, LNode* b) {
-    if (!a) return b;
-    if (!b) return a;
-    if (!cmp(a->key, b->key)) swap(a, b); // ensure a has smaller key
+    if (!a)
+        return b;
+    if (!b)
+        return a;
+    if (!cmp(a->key, b->key))
+        swap(a, b); // ensure a has smaller key
 
-    a->right = mergeNodes(a->right, b);   // recurse along right spine
+    a->right = mergeNodes(a->right, b); // recurse along right spine
 
     // restore leftist property
     if (getNpl(a->left) < getNpl(a->right))
@@ -74,13 +77,11 @@ LNode* mergeNodes(LNode* a, LNode* b) {
     return a;
 }
 
-void insert(int x) {
-    root = mergeNodes(root, new LNode(x));
-}
+void insert(int x) { root = mergeNodes(root, new LNode(x)); }
 
 int extractTop() {
     int out = root->key;
-    LNode* l = root->left, *r = root->right;
+    LNode *l = root->left, *r = root->right;
     delete root;
     root = mergeNodes(l, r);
     return out;

@@ -62,12 +62,17 @@ $B$ = number of buckets, $K$ = slots per bucket ($K=2$ in this implementation). 
 struct Bucket {
     int slots[2];
     int count;
-    Bucket() { slots[0] = -1; slots[1] = -1; count = 0; }
+    Bucket() {
+        slots[0] = -1;
+        slots[1] = -1;
+        count = 0;
+    }
 };
 
 class HashBucketing {
     int NUM_BUCKETS;
     Bucket* table;
+
 public:
     HashBucketing(int buckets = 4) {
         NUM_BUCKETS = buckets;
@@ -89,7 +94,7 @@ public:
             }
             idx = (idx + 1) % NUM_BUCKETS;
         }
-        return false;  // all buckets saturated
+        return false; // all buckets saturated
     }
 };
 ```

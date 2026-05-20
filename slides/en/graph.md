@@ -62,6 +62,7 @@ Regardless of edge count the matrix always uses $V^2$ integers — cost-efficien
 class Graph {
     int V;
     vector<vector<int>> adjMatrix;
+
 public:
     Graph(int vertices) {
         V = vertices;

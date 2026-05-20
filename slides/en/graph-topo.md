@@ -67,11 +67,13 @@ for (auto [u, v] : edges) {
 
 queue<int> q;
 for (int i = 0; i < V; i++)
-    if (inDegree[i] == 0) q.push(i);
+    if (inDegree[i] == 0)
+        q.push(i);
 
 vector<int> topoOrder;
 while (!q.empty()) {
-    int u = q.front(); q.pop();
+    int u = q.front();
+    q.pop();
     topoOrder.push_back(u);
     for (int v : adj[u]) {
         if (--inDegree[v] == 0)

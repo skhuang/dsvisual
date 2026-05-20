@@ -1,6 +1,6 @@
 #include <iostream>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 using namespace std;
 
 class DAryHeap {
@@ -9,22 +9,17 @@ private:
     int d;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
-    int parent(int index) const {
-        return (index - 1) / d;
-    }
+    int parent(int index) const { return (index - 1) / d; }
 
-    int child(int index, int offset) const {
-        return index * d + offset + 1;
-    }
+    int child(int index, int offset) const { return index * d + offset + 1; }
 
     void siftUp(int index) {
         while (index > 0) {
             int p = parent(index);
-            if (!cmp(data[index], data[p])) break;
+            if (!cmp(data[index], data[p]))
+                break;
             swap(data[index], data[p]);
             index = p;
         }
@@ -39,7 +34,8 @@ private:
                     best = c;
                 }
             }
-            if (best == index) break;
+            if (best == index)
+                break;
             swap(data[index], data[best]);
             index = best;
         }
@@ -47,7 +43,8 @@ private:
 
 public:
     explicit DAryHeap(int arity = 4, bool minHeap = true) : d(arity), isMinHeap(minHeap) {
-        if (d < 2) throw runtime_error("Arity must be at least 2");
+        if (d < 2)
+            throw runtime_error("Arity must be at least 2");
     }
 
     void insert(int value) {
@@ -56,16 +53,19 @@ public:
     }
 
     int peek() const {
-        if (data.empty()) throw runtime_error("Heap is empty");
+        if (data.empty())
+            throw runtime_error("Heap is empty");
         return data[0];
     }
 
     int extractTop() {
-        if (data.empty()) throw runtime_error("Heap is empty");
+        if (data.empty())
+            throw runtime_error("Heap is empty");
         int top = data[0];
         data[0] = data.back();
         data.pop_back();
-        if (!data.empty()) siftDown(0);
+        if (!data.empty())
+            siftDown(0);
         return top;
     }
 
@@ -75,17 +75,21 @@ public:
         }
         int oldValue = data[index];
         data[index] = newValue;
-        if (cmp(newValue, oldValue)) siftUp(index);
-        else siftDown(index);
+        if (cmp(newValue, oldValue))
+            siftUp(index);
+        else
+            siftDown(index);
     }
 
     void mergeFrom(const vector<int>& other) {
-        for (int value : other) insert(value);
+        for (int value : other)
+            insert(value);
     }
 
     void print() const {
         cout << d << "-ary " << (isMinHeap ? "min" : "max") << " heap: ";
-        for (int value : data) cout << value << " ";
+        for (int value : data)
+            cout << value << " ";
         cout << "\n";
     }
 };

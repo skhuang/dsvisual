@@ -7,13 +7,15 @@ struct TSTNode {
     bool isEndOfWord;
     TSTNode *left, *eq, *right;
 
-    TSTNode(char data) : data(data), isEndOfWord(false), left(nullptr), eq(nullptr), right(nullptr) {}
+    TSTNode(char data)
+        : data(data), isEndOfWord(false), left(nullptr), eq(nullptr), right(nullptr) {}
 };
 
 class TernarySearchTree {
 private:
     TSTNode* insertRecursive(TSTNode* root, const string& word, int index) {
-        if (!root) root = new TSTNode(word[index]);
+        if (!root)
+            root = new TSTNode(word[index]);
 
         if (word[index] < root->data) {
             root->left = insertRecursive(root->left, word, index);

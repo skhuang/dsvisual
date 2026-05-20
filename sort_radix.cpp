@@ -31,7 +31,7 @@ void countingSortDigit(vector<int>& arr, int exp) {
 void radixSort(vector<int>& arr) {
     int maxEl = *max_element(arr.begin(), arr.end());
 
-    // Do counting sort for every digit. 
+    // Do counting sort for every digit.
     // exp is 10^i where i is current digit number
     for (int exp = 1; maxEl / exp > 0; exp *= 10) {
         countingSortDigit(arr, exp);

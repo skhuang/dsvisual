@@ -62,22 +62,23 @@ Heavy/light path potential analysis shows unconditional swaps amortize to $O(\lo
 
 ```cpp
 SNode* mergeNodes(SNode* a, SNode* b) {
-    if (!a) return b;
-    if (!b) return a;
-    if (!cmp(a->key, b->key)) swap(a, b); // ensure a has smaller key
+    if (!a)
+        return b;
+    if (!b)
+        return a;
+    if (!cmp(a->key, b->key))
+        swap(a, b); // ensure a has smaller key
 
-    a->right = mergeNodes(a->right, b);   // recurse along right
-    swap(a->left, a->right);              // unconditional swap
+    a->right = mergeNodes(a->right, b); // recurse along right
+    swap(a->left, a->right);            // unconditional swap
     return a;
 }
 
-void insert(int x) {
-    root = mergeNodes(root, new SNode(x));
-}
+void insert(int x) { root = mergeNodes(root, new SNode(x)); }
 
 int extractTop() {
     int out = root->key;
-    SNode* l = root->left, *r = root->right;
+    SNode *l = root->left, *r = root->right;
     delete root;
     root = mergeNodes(l, r);
     return out;

@@ -1,6 +1,6 @@
 #include <iostream>
-#include <string>
 #include <map>
+#include <string>
 using namespace std;
 
 class RadixNode {
@@ -17,11 +17,12 @@ public:
 
     void insert(string word) {
         // Warning: Simplified implementation for presentation
-        // Real Radix trees actively split existing string edges based on longest common prefix.
+        // Real Radix trees actively split existing string edges based on longest common
+        // prefix.
         RadixNode* curr = root;
-        
+
         // Simulating the compressed prefix routing:
-        if(curr->edges.find(word) == curr->edges.end()) {
+        if (curr->edges.find(word) == curr->edges.end()) {
             curr->edges[word] = new RadixNode();
         }
         curr->edges[word]->isEndOfWord = true;

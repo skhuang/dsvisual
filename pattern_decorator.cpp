@@ -13,13 +13,9 @@ public:
 // Concrete Component
 class SimpleCoffee : public Coffee {
 public:
-    string getDescription() const override {
-        return "Simple Coffee";
-    }
+    string getDescription() const override { return "Simple Coffee"; }
 
-    double getCost() const override {
-        return 2.00;
-    }
+    double getCost() const override { return 2.00; }
 };
 
 // Decorator base class
@@ -40,9 +36,7 @@ public:
         return m_coffee->getDescription() + " + Milk";
     }
 
-    double getCost() const override {
-        return m_coffee->getCost() + 0.50;
-    }
+    double getCost() const override { return m_coffee->getCost() + 0.50; }
 };
 
 class SugarDecorator : public CoffeeDecorator {
@@ -53,9 +47,7 @@ public:
         return m_coffee->getDescription() + " + Sugar";
     }
 
-    double getCost() const override {
-        return m_coffee->getCost() + 0.25;
-    }
+    double getCost() const override { return m_coffee->getCost() + 0.25; }
 };
 
 class WhippedCreamDecorator : public CoffeeDecorator {
@@ -66,9 +58,7 @@ public:
         return m_coffee->getDescription() + " + Whipped Cream";
     }
 
-    double getCost() const override {
-        return m_coffee->getCost() + 0.75;
-    }
+    double getCost() const override { return m_coffee->getCost() + 0.75; }
 };
 
 int main() {

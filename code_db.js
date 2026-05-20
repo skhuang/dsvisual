@@ -82,7 +82,8 @@ int main() {
     int arr[] = {64, 34, 25, 12, 22, 11, 90};
     int n = sizeof(arr) / sizeof(arr[0]);
     bubbleSort(arr, n);
-    for (int i=0; i<n; i++) cout << arr[i] << " ";
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << " ";
     cout << endl;
     return 0;
 }
@@ -108,7 +109,8 @@ int main() {
     int arr[] = {64, 25, 12, 22, 11};
     int n = sizeof(arr) / sizeof(arr[0]);
     selectionSort(arr, n);
-    for(int i=0; i<n; i++) cout << arr[i] << " ";
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << " ";
     cout << endl;
     return 0;
 }
@@ -133,7 +135,8 @@ int main() {
     int arr[] = {12, 11, 13, 5, 6};
     int n = sizeof(arr) / sizeof(arr[0]);
     insertionSort(arr, n);
-    for(int i=0; i<n; i++) cout << arr[i] << " ";
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << " ";
     cout << endl;
     return 0;
 }
@@ -167,7 +170,8 @@ int main() {
     int arr[] = {10, 7, 8, 9, 1, 5};
     int n = sizeof(arr) / sizeof(arr[0]);
     quickSort(arr, 0, n - 1);
-    for(int i=0; i<n; i++) cout << arr[i] << " ";
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << " ";
     cout << endl;
     return 0;
 }
@@ -180,8 +184,10 @@ void merge(int arr[], int l, int m, int r) {
     int n1 = m - l + 1;
     int n2 = r - m;
     int L[n1], R[n2];
-    for(int i=0; i<n1; i++) L[i] = arr[l + i];
-    for(int j=0; j<n2; j++) R[j] = arr[m + 1 + j];
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
 
     int i = 0, j = 0, k = l;
     while (i < n1 && j < n2) {
@@ -194,12 +200,21 @@ void merge(int arr[], int l, int m, int r) {
         }
         k++;
     }
-    while (i < n1) { arr[k] = L[i]; i++; k++; }
-    while (j < n2) { arr[k] = R[j]; j++; k++; }
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
 }
 
 void mergeSort(int arr[], int l, int r) {
-    if (l >= r) return;
+    if (l >= r)
+        return;
     int m = l + (r - l) / 2;
     mergeSort(arr, l, m);
     mergeSort(arr, m + 1, r);
@@ -210,7 +225,8 @@ int main() {
     int arr[] = {12, 11, 13, 5, 6, 7};
     int n = sizeof(arr) / sizeof(arr[0]);
     mergeSort(arr, 0, n - 1);
-    for(int i=0; i<n; i++) cout << arr[i] << " ";
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << " ";
     cout << endl;
     return 0;
 }
@@ -236,20 +252,22 @@ int main() {
     int arr[] = {12, 34, 54, 2, 3};
     int n = sizeof(arr) / sizeof(arr[0]);
     shellSort(arr, n);
-    for (int i=0; i<n; i++) cout << arr[i] << " ";
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << " ";
     cout << endl;
     return 0;
 }
 `;
 
-const codeSortBucket = `#include <iostream>
+const codeSortBucket = `#include <algorithm>
+#include <iostream>
 #include <vector>
-#include <algorithm>
 using namespace std;
 
 void bucketSort(vector<float>& arr) {
     int n = arr.size();
-    if (n <= 0) return;
+    if (n <= 0)
+        return;
 
     // 1. Create n empty buckets
     vector<vector<float>> buckets(n);
@@ -259,7 +277,8 @@ void bucketSort(vector<float>& arr) {
         // Elements are assumed to be normalized between 0.0 and 1.0!
         // For array [0.78, 0.17, 0.39, 0.26, 0.72]
         int bucketIndex = n * arr[i];
-        if(bucketIndex >= n) bucketIndex = n - 1; // Catch edge cases
+        if (bucketIndex >= n)
+            bucketIndex = n - 1; // Catch edge cases
         buckets[bucketIndex].push_back(arr[i]);
     }
 
@@ -358,7 +377,7 @@ void countingSortDigit(vector<int>& arr, int exp) {
 void radixSort(vector<int>& arr) {
     int maxEl = *max_element(arr.begin(), arr.end());
 
-    // Do counting sort for every digit. 
+    // Do counting sort for every digit.
     // exp is 10^i where i is current digit number
     for (int exp = 1; maxEl / exp > 0; exp *= 10) {
         countingSortDigit(arr, exp);
@@ -379,8 +398,8 @@ using namespace std;
 
 // To heapify a subtree rooted with node i
 void heapify(vector<int>& arr, int n, int i) {
-    int largest = i; // Initialize largest as root
-    int left = 2 * i + 1; // Left child relative offset
+    int largest = i;       // Initialize largest as root
+    int left = 2 * i + 1;  // Left child relative offset
     int right = 2 * i + 2; // Right child relative offset
 
     // If left child is larger than root
@@ -430,11 +449,11 @@ using namespace std;
 
 /*
  * Shaker Sort (Cocktail Sort)
- * 
+ *
  * Time Complexity:  O(n²) worst & average case, O(n) best case
  * Space Complexity: O(1) auxiliary space
  * Stability:        Stable
- * 
+ *
  * Description:
  * Shaker sort is a variation of bubble sort that alternates sorting direction.
  * After each pass, the largest unsorted element bubbles to the right (like bubble sort),
@@ -466,7 +485,7 @@ public:
             for (int i = left; i < right; i++) {
                 // Comparing step
                 events.push_back({i, -1, -1, "COMPARING"});
-                
+
                 if (arr[i] > arr[i + 1]) {
                     swap(arr[i], arr[i + 1]);
                     events.push_back({i, i, i + 1, "SWAPPING"});
@@ -477,14 +496,15 @@ public:
             right--;
 
             // If no swap occurred, array is sorted
-            if (!swapped) break;
+            if (!swapped)
+                break;
 
             // Backward pass (right to left)
             swapped = false;
             for (int i = right; i > left; i--) {
                 // Comparing step
                 events.push_back({i - 1, -1, -1, "COMPARING"});
-                
+
                 if (arr[i - 1] > arr[i]) {
                     swap(arr[i - 1], arr[i]);
                     events.push_back({i - 1, i - 1, i, "SWAPPING"});
@@ -495,7 +515,8 @@ public:
             left++;
 
             // If no swap occurred, array is sorted
-            if (!swapped) break;
+            if (!swapped)
+                break;
         }
 
         // Mark all as sorted at the end
@@ -506,7 +527,8 @@ public:
 
     void print() {
         cout << "Sorted array: ";
-        for (int x : arr) cout << x << " ";
+        for (int x : arr)
+            cout << x << " ";
         cout << endl;
     }
 };
@@ -515,11 +537,12 @@ public:
 int main() {
     vector<int> data = {64, 34, 25, 12, 22, 11, 90, 88, 45, 50};
     ShakerSorter sorter(data);
-    
+
     cout << "Original array: ";
-    for (int x : data) cout << x << " ";
+    for (int x : data)
+        cout << x << " ";
     cout << "\\n";
-    
+
     sorter.sort();
     sorter.print();
 
@@ -527,7 +550,8 @@ int main() {
     cout << "\\nEvent sequence for visualization:\\n";
     for (const auto& e : sorter.events) {
         cout << e.type << " at index " << e.index;
-        if (e.a >= 0) cout << " (swap " << e.a << " <-> " << e.b << ")";
+        if (e.a >= 0)
+            cout << " (swap " << e.a << " <-> " << e.b << ")";
         cout << endl;
     }
 
@@ -549,15 +573,19 @@ class BST {
 public:
     Node* root = nullptr;
     Node* insert(Node* node, int data) {
-        if (!node) return new Node(data);
-        if (data < node->data) node->left = insert(node->left, data);
-        else if (data > node->data) node->right = insert(node->right, data);
+        if (!node)
+            return new Node(data);
+        if (data < node->data)
+            node->left = insert(node->left, data);
+        else if (data > node->data)
+            node->right = insert(node->right, data);
         return node;
     }
     void insert(int data) { root = insert(root, data); }
-    
+
     void inorder(Node* node) {
-        if (!node) return;
+        if (!node)
+            return;
         inorder(node->left);
         cout << node->data << " ";
         inorder(node->right);
@@ -581,8 +609,8 @@ const codeTreeAVL = `#include <iostream>
 using namespace std;
 
 struct Node {
-    int key; 
-    Node *left, *right; 
+    int key;
+    Node *left, *right;
     int height;
     Node(int k) : key(k), left(nullptr), right(nullptr), height(1) {}
 };
@@ -591,40 +619,53 @@ class AVLTree {
     int height(Node* N) { return N ? N->height : 0; }
     int max(int a, int b) { return (a > b) ? a : b; }
     int getBalance(Node* N) { return N ? height(N->left) - height(N->right) : 0; }
-    
+
     Node* rightRotate(Node* y) {
-        Node* x = y->left; Node* T2 = x->right;
-        x->right = y; y->left = T2;
+        Node* x = y->left;
+        Node* T2 = x->right;
+        x->right = y;
+        y->left = T2;
         y->height = max(height(y->left), height(y->right)) + 1;
         x->height = max(height(x->left), height(x->right)) + 1;
         return x;
     }
-    
+
     Node* leftRotate(Node* x) {
-        Node* y = x->right; Node* T2 = y->left;
-        y->left = x; x->right = T2;
+        Node* y = x->right;
+        Node* T2 = y->left;
+        y->left = x;
+        x->right = T2;
         x->height = max(height(x->left), height(x->right)) + 1;
         y->height = max(height(y->left), height(y->right)) + 1;
         return y;
     }
+
 public:
     Node* root = nullptr;
     Node* insert(Node* node, int key) {
-        if (!node) return new Node(key);
-        if (key < node->key) node->left = insert(node->left, key);
-        else if (key > node->key) node->right = insert(node->right, key);
-        else return node;
+        if (!node)
+            return new Node(key);
+        if (key < node->key)
+            node->left = insert(node->left, key);
+        else if (key > node->key)
+            node->right = insert(node->right, key);
+        else
+            return node;
 
         node->height = 1 + max(height(node->left), height(node->right));
         int balance = getBalance(node);
 
-        if (balance > 1 && key < node->left->key) return rightRotate(node);
-        if (balance < -1 && key > node->right->key) return leftRotate(node);
+        if (balance > 1 && key < node->left->key)
+            return rightRotate(node);
+        if (balance < -1 && key > node->right->key)
+            return leftRotate(node);
         if (balance > 1 && key > node->left->key) {
-            node->left = leftRotate(node->left); return rightRotate(node);
+            node->left = leftRotate(node->left);
+            return rightRotate(node);
         }
         if (balance < -1 && key < node->right->key) {
-            node->right = rightRotate(node->right); return leftRotate(node);
+            node->right = rightRotate(node->right);
+            return leftRotate(node);
         }
         return node;
     }
@@ -646,7 +687,8 @@ using namespace std;
 enum Color { RED, BLACK };
 
 struct Node {
-    int data; bool color; 
+    int data;
+    bool color;
     Node *left, *right, *parent;
     Node(int d) : data(d), color(RED), left(nullptr), right(nullptr), parent(nullptr) {}
 };
@@ -658,46 +700,74 @@ public:
     void rotateLeft(Node*& root, Node*& pt) {
         Node* pt_right = pt->right;
         pt->right = pt_right->left;
-        if (pt->right != nullptr) pt->right->parent = pt;
+        if (pt->right != nullptr)
+            pt->right->parent = pt;
         pt_right->parent = pt->parent;
-        if (pt->parent == nullptr) root = pt_right;
-        else if (pt == pt->parent->left) pt->parent->left = pt_right;
-        else pt->parent->right = pt_right;
-        pt_right->left = pt; pt->parent = pt_right;
+        if (pt->parent == nullptr)
+            root = pt_right;
+        else if (pt == pt->parent->left)
+            pt->parent->left = pt_right;
+        else
+            pt->parent->right = pt_right;
+        pt_right->left = pt;
+        pt->parent = pt_right;
     }
 
     void rotateRight(Node*& root, Node*& pt) {
         Node* pt_left = pt->left;
         pt->left = pt_left->right;
-        if (pt->left != nullptr) pt->left->parent = pt;
+        if (pt->left != nullptr)
+            pt->left->parent = pt;
         pt_left->parent = pt->parent;
-        if (pt->parent == nullptr) root = pt_left;
-        else if (pt == pt->parent->left) pt->parent->left = pt_left;
-        else pt->parent->right = pt_left;
-        pt_left->right = pt; pt->parent = pt_left;
+        if (pt->parent == nullptr)
+            root = pt_left;
+        else if (pt == pt->parent->left)
+            pt->parent->left = pt_left;
+        else
+            pt->parent->right = pt_left;
+        pt_left->right = pt;
+        pt->parent = pt_left;
     }
 
     void fixViolation(Node*& root, Node*& pt) {
-        Node* parent_pt = nullptr; Node* grand_parent_pt = nullptr;
+        Node* parent_pt = nullptr;
+        Node* grand_parent_pt = nullptr;
         while ((pt != root) && (pt->color != BLACK) && (pt->parent->color == RED)) {
-            parent_pt = pt->parent; grand_parent_pt = pt->parent->parent;
+            parent_pt = pt->parent;
+            grand_parent_pt = pt->parent->parent;
             if (parent_pt == grand_parent_pt->left) {
                 Node* uncle_pt = grand_parent_pt->right;
                 if (uncle_pt != nullptr && uncle_pt->color == RED) {
-                    grand_parent_pt->color = RED; parent_pt->color = BLACK;
-                    uncle_pt->color = BLACK; pt = grand_parent_pt;
+                    grand_parent_pt->color = RED;
+                    parent_pt->color = BLACK;
+                    uncle_pt->color = BLACK;
+                    pt = grand_parent_pt;
                 } else {
-                    if (pt == parent_pt->right) { rotateLeft(root, parent_pt); pt = parent_pt; parent_pt = pt->parent; }
-                    rotateRight(root, grand_parent_pt); swap(parent_pt->color, grand_parent_pt->color); pt = parent_pt;
+                    if (pt == parent_pt->right) {
+                        rotateLeft(root, parent_pt);
+                        pt = parent_pt;
+                        parent_pt = pt->parent;
+                    }
+                    rotateRight(root, grand_parent_pt);
+                    swap(parent_pt->color, grand_parent_pt->color);
+                    pt = parent_pt;
                 }
             } else {
                 Node* uncle_pt = grand_parent_pt->left;
                 if ((uncle_pt != nullptr) && (uncle_pt->color == RED)) {
-                    grand_parent_pt->color = RED; parent_pt->color = BLACK;
-                    uncle_pt->color = BLACK; pt = grand_parent_pt;
+                    grand_parent_pt->color = RED;
+                    parent_pt->color = BLACK;
+                    uncle_pt->color = BLACK;
+                    pt = grand_parent_pt;
                 } else {
-                    if (pt == parent_pt->left) { rotateRight(root, parent_pt); pt = parent_pt; parent_pt = pt->parent; }
-                    rotateLeft(root, grand_parent_pt); swap(parent_pt->color, grand_parent_pt->color); pt = parent_pt;
+                    if (pt == parent_pt->left) {
+                        rotateRight(root, parent_pt);
+                        pt = parent_pt;
+                        parent_pt = pt->parent;
+                    }
+                    rotateLeft(root, grand_parent_pt);
+                    swap(parent_pt->color, grand_parent_pt->color);
+                    pt = parent_pt;
                 }
             }
         }
@@ -706,7 +776,11 @@ public:
 
     void insert(int data) {
         Node* pt = new Node(data);
-        if(root == nullptr) { root = pt; root->color = BLACK; return; }
+        if (root == nullptr) {
+            root = pt;
+            root->color = BLACK;
+            return;
+        }
         // ... Standard BST insertion, then fixViolation(root, pt);
     }
 };
@@ -722,46 +796,52 @@ const codeTreeSplay = `#include <iostream>
 using namespace std;
 
 struct Node {
-    int key; 
+    int key;
     Node *left, *right;
     Node(int k) : key(k), left(nullptr), right(nullptr) {}
 };
 
 class SplayTree {
     Node* rightRotate(Node* x) {
-        Node* y = x->left; 
-        x->left = y->right; 
-        y->right = x; 
+        Node* y = x->left;
+        x->left = y->right;
+        y->right = x;
         return y;
     }
-    
+
     Node* leftRotate(Node* x) {
-        Node* y = x->right; 
-        x->right = y->left; 
-        y->left = x; 
+        Node* y = x->right;
+        x->right = y->left;
+        y->left = x;
         return y;
     }
+
 public:
     Node* root = nullptr;
-    
+
     Node* splay(Node* root, int key) {
-        if (!root || root->key == key) return root;
+        if (!root || root->key == key)
+            return root;
 
         if (root->key > key) {
-            if (!root->left) return root;
+            if (!root->left)
+                return root;
             if (root->left->key > key) {
                 root->left->left = splay(root->left->left, key);
                 root = rightRotate(root);
             } else if (root->left->key < key) {
                 root->left->right = splay(root->left->right, key);
-                if (root->left->right) root->left = leftRotate(root->left);
+                if (root->left->right)
+                    root->left = leftRotate(root->left);
             }
             return (root->left == nullptr) ? root : rightRotate(root);
         } else {
-            if (!root->right) return root;
+            if (!root->right)
+                return root;
             if (root->right->key > key) {
                 root->right->left = splay(root->right->left, key);
-                if (root->right->left) root->right = rightRotate(root->right);
+                if (root->right->left)
+                    root->right = rightRotate(root->right);
             } else if (root->right->key < key) {
                 root->right->right = splay(root->right->right, key);
                 root = leftRotate(root);
@@ -769,23 +849,29 @@ public:
             return (root->right == nullptr) ? root : leftRotate(root);
         }
     }
-    
+
     void insert(int k) {
-        if (!root) { root = new Node(k); return; }
+        if (!root) {
+            root = new Node(k);
+            return;
+        }
         root = splay(root, k);
-        if (root->key == k) return;
+        if (root->key == k)
+            return;
         Node* n = new Node(k);
         if (root->key > k) {
-            n->right = root; n->left = root->left; root->left = nullptr;
+            n->right = root;
+            n->left = root->left;
+            root->left = nullptr;
         } else {
-            n->left = root; n->right = root->right; root->right = nullptr;
+            n->left = root;
+            n->right = root->right;
+            root->right = nullptr;
         }
         root = n;
     }
-    
-    void search(int k) {
-        root = splay(root, k);
-    }
+
+    void search(int k) { root = splay(root, k); }
 };
 
 int main() {
@@ -809,9 +895,7 @@ private:
     int topIndex;
 
 public:
-    StackArray() {
-        topIndex = -1;
-    }
+    StackArray() { topIndex = -1; }
 
     bool push(int val) {
         if (topIndex >= MAX_SIZE - 1) {
@@ -833,9 +917,7 @@ public:
         return val;
     }
 
-    bool isEmpty() {
-        return topIndex < 0;
-    }
+    bool isEmpty() { return topIndex < 0; }
 };
 
 int main() {
@@ -861,9 +943,7 @@ private:
     Node* topNode;
 
 public:
-    StackLinkedList() {
-        topNode = nullptr;
-    }
+    StackLinkedList() { topNode = nullptr; }
 
     void push(int val) {
         Node* newNode = new Node(val);
@@ -885,9 +965,7 @@ public:
         return val;
     }
 
-    bool isEmpty() {
-        return topNode == nullptr;
-    }
+    bool isEmpty() { return topNode == nullptr; }
 };
 
 int main() {
@@ -940,9 +1018,7 @@ public:
         return val;
     }
 
-    bool isEmpty() {
-        return count == 0;
-    }
+    bool isEmpty() { return count == 0; }
 };
 
 int main() {
@@ -961,7 +1037,7 @@ using namespace std;
 class Graph {
 private:
     int V;
-    vector<vector<int> > adjMatrix;
+    vector<vector<int>> adjMatrix;
 
 public:
     Graph(int vertices) {
@@ -1000,9 +1076,9 @@ int main() {
 }
 `;
 
-const codeGraphKruskal = `#include <iostream>
+const codeGraphKruskal = `#include <algorithm>
+#include <iostream>
 #include <vector>
-#include <algorithm>
 using namespace std;
 
 struct Edge {
@@ -1011,139 +1087,201 @@ struct Edge {
 
 struct DSU {
     vector<int> p, r;
-    DSU(int n): p(n), r(n, 0) { for (int i = 0; i < n; i++) p[i] = i; }
+    DSU(int n) : p(n), r(n, 0) {
+        for (int i = 0; i < n; i++)
+            p[i] = i;
+    }
     int find(int x) { return p[x] == x ? x : p[x] = find(p[x]); }
     bool unite(int a, int b) {
-        a = find(a); b = find(b);
-        if (a == b) return false;
-        if (r[a] < r[b]) swap(a, b);
+        a = find(a);
+        b = find(b);
+        if (a == b)
+            return false;
+        if (r[a] < r[b])
+            swap(a, b);
         p[b] = a;
-        if (r[a] == r[b]) r[a]++;
+        if (r[a] == r[b])
+            r[a]++;
         return true;
     }
 };
 
 int main() {
     int V = 5;
-    vector<Edge> edges = {
-        {0, 1, 4}, {0, 2, 7}, {1, 2, 1},
-        {1, 3, 3}, {2, 3, 2}, {3, 4, 6}, {2, 4, 5}
-    };
+    vector<Edge> edges = {{0, 1, 4}, {0, 2, 7}, {1, 2, 1}, {1, 3, 3},
+                          {2, 3, 2}, {3, 4, 6}, {2, 4, 5}};
 
-    sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {
-        return a.w < b.w;
-    });
+    sort(edges.begin(), edges.end(),
+         [](const Edge& a, const Edge& b) { return a.w < b.w; });
 
     DSU dsu(V);
-    int totalWeight = 0;
     vector<Edge> mst;
+    int totalWeight = 0;
 
     for (const auto& e : edges) {
         if (dsu.unite(e.u, e.v)) {
             mst.push_back(e);
             totalWeight += e.w;
-            if ((int)mst.size() == V - 1) break;
+            if ((int)mst.size() == V - 1)
+                break;
         }
     }
 
-    cout << "MST edges:\n";
+    cout << "MST edges:\\n";
     for (const auto& e : mst) {
-        cout << e.u << " - " << e.v << " (w=" << e.w << ")\n";
+        cout << e.u << " - " << e.v << " (w=" << e.w << ")\\n";
     }
-    cout << "Total weight = " << totalWeight << "\n";
+    cout << "Total weight = " << totalWeight << "\\n";
     return 0;
 }
 `;
 
 const codeGraphDijkstra = `#include <iostream>
-#include <vector>
-#include <queue>
 #include <limits>
+#include <queue>
+#include <vector>
 using namespace std;
 
 const int INF = 1e9;
 
 int main() {
     int V = 5;
-    vector<vector<pair<int,int>>> adj(V); // adjacency list with weights
-    
-    // Build graph
-    adj[0].push_back({1, 4}); adj[0].push_back({2, 1});
-    adj[1].push_back({0, 4}); adj[1].push_back({2, 2});
-    adj[2].push_back({0, 1}); adj[2].push_back({1, 2});
-    adj[2].push_back({3, 1}); adj[3].push_back({2, 1});
-    adj[3].push_back({4, 3}); adj[4].push_back({3, 3});
-    
+    vector<vector<pair<int, int>>> adj(V); // adjacency list: {neighbor, weight}
+
+    // Build undirected weighted graph
+    auto addEdge = [&](int u, int v, int w) {
+        adj[u].push_back({v, w});
+        adj[v].push_back({u, w});
+    };
+
+    addEdge(0, 1, 4);
+    addEdge(0, 2, 1);
+    addEdge(1, 2, 2);
+    addEdge(1, 3, 3);
+    addEdge(2, 3, 1);
+    addEdge(3, 4, 3);
+    addEdge(2, 4, 5);
+
     int source = 0;
     vector<int> dist(V, INF);
-    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<>> pq;
-    
+    vector<bool> visited(V, false);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
     dist[source] = 0;
     pq.push({0, source});
-    
+
+    cout << "Dijkstra's Shortest Path from node " << source << ":\\n";
+    cout << "======================================\\n\\n";
+
     while (!pq.empty()) {
-        auto [d, u] = pq.top(); pq.pop();
-        if (d > dist[u]) continue;
-        
+        auto [d, u] = pq.top();
+        pq.pop();
+
+        if (visited[u])
+            continue;
+        visited[u] = true;
+
+        cout << "Processing node " << u << " (distance = " << d << ")\\n";
+
         for (auto [v, w] : adj[u]) {
-            if (dist[u] + w < dist[v]) {
-                dist[v] = dist[u] + w;
-                pq.push({dist[v], v});
+            if (!visited[v]) {
+                if (dist[u] + w < dist[v]) {
+                    dist[v] = dist[u] + w;
+                    pq.push({dist[v], v});
+                    cout << "  Updated distance to node " << v << ": " << dist[v] << "\\n";
+                }
             }
         }
+        cout << "\\n";
     }
-    
-    cout << "Shortest distances from node " << source << ":\n";
+
+    cout << "Final shortest distances from node " << source << ":\\n";
     for (int i = 0; i < V; i++) {
         cout << "Node " << i << ": ";
-        if (dist[i] == INF) cout << "INF\n";
-        else cout << dist[i] << "\n";
+        if (dist[i] == INF) {
+            cout << "INF (unreachable)\\n";
+        } else {
+            cout << dist[i] << "\\n";
+        }
     }
+
     return 0;
 }
 `;
 
 const codeGraphTopo = `#include <iostream>
-#include <vector>
 #include <queue>
+#include <vector>
 using namespace std;
 
 int main() {
     int V = 5;
     vector<vector<int>> adj(V);
     vector<int> inDegree(V, 0);
-    
-    // Build directed graph
-    vector<pair<int,int>> edges = {{0,1}, {0,2}, {1,2}, {1,3}, {2,3}, {3,4}};
+
+    // Build directed acyclic graph (DAG)
+    vector<pair<int, int>> edges = {{0, 1}, {0, 2}, {1, 2}, {1, 3}, {2, 3}, {3, 4}};
+
+    cout << "Building DAG with edges:\\n";
     for (auto [u, v] : edges) {
+        cout << u << " → " << v << "\\n";
         adj[u].push_back(v);
         inDegree[v]++;
     }
-    
-    // Kahn's Algorithm
+    cout << "\\n";
+
+    // Kahn's Algorithm (BFS-based topological sort)
     queue<int> q;
+
+    cout << "In-degrees: ";
     for (int i = 0; i < V; i++) {
-        if (inDegree[i] == 0) q.push(i);
-    }
-    
-    vector<int> topoOrder;
-    while (!q.empty()) {
-        int u = q.front(); q.pop();
-        topoOrder.push_back(u);
-        
-        for (int v : adj[u]) {
-            inDegree[v]--;
-            if (inDegree[v] == 0) q.push(v);
+        cout << i << ":" << inDegree[i] << " ";
+        if (inDegree[i] == 0) {
+            q.push(i);
         }
     }
-    
-    if (topoOrder.size() != V) {
-        cout << "Cycle detected!\n";
-    } else {
-        cout << "Topological order: ";
-        for (int node : topoOrder) cout << node << " ";
-        cout << "\n";
+    cout << "\\n\\n";
+
+    vector<int> topoOrder;
+    cout << "Processing:\\n";
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        topoOrder.push_back(u);
+
+        cout << "Visit node " << u << "\\n";
+
+        // Reduce in-degree for all neighbors
+        for (int v : adj[u]) {
+            inDegree[v]--;
+            cout << "  Reduce in-degree of " << v << " to " << inDegree[v] << "\\n";
+
+            if (inDegree[v] == 0) {
+                cout << "  Node " << v << " now has in-degree 0, add to queue\\n";
+                q.push(v);
+            }
+        }
+        cout << "\\n";
     }
+
+    cout << "\\n";
+
+    // Check for cycle
+    if ((int)topoOrder.size() != V) {
+        cout << "ERROR: Cycle detected in graph!\\n";
+        cout << "Only " << topoOrder.size() << " nodes processed out of " << V << "\\n";
+    } else {
+        cout << "Topological Sort (Kahn's Algorithm):\\n";
+        cout << "====================================\\n";
+        for (int i = 0; i < (int)topoOrder.size(); i++) {
+            cout << topoOrder[i];
+            if (i < (int)topoOrder.size() - 1)
+                cout << " → ";
+        }
+        cout << "\\n";
+    }
+
     return 0;
 }
 `;
@@ -1166,7 +1304,8 @@ public:
     ~ArrayList() { delete[] arr; }
 
     void insert(int index, int val) {
-        if (index < 0 || index > size || size >= capacity) return;
+        if (index < 0 || index > size || size >= capacity)
+            return;
         for (int i = size; i > index; i--) {
             arr[i] = arr[i - 1]; // Shift right
         }
@@ -1175,7 +1314,8 @@ public:
     }
 
     void remove(int index) {
-        if (index < 0 || index >= size) return;
+        if (index < 0 || index >= size)
+            return;
         for (int i = index; i < size - 1; i++) {
             arr[i] = arr[i + 1]; // Shift left
         }
@@ -1219,13 +1359,15 @@ public:
         for (int i = 0; temp != nullptr && i < index - 1; i++) {
             temp = temp->next;
         }
-        if (!temp) return; // Out of bounds
+        if (!temp)
+            return; // Out of bounds
         newNode->next = temp->next;
         temp->next = newNode;
     }
 
     void remove(int index) {
-        if (!head) return;
+        if (!head)
+            return;
         if (index == 0) {
             Node* temp = head;
             head = head->next;
@@ -1236,7 +1378,8 @@ public:
         for (int i = 0; temp != nullptr && i < index - 1; i++) {
             temp = temp->next;
         }
-        if (!temp || !temp->next) return;
+        if (!temp || !temp->next)
+            return;
         Node* delNode = temp->next;
         temp->next = delNode->next;
         delete delNode;
@@ -1270,12 +1413,11 @@ public:
     HashChaining(int size = 5) {
         TABLE_SIZE = size;
         table = new Node*[TABLE_SIZE];
-        for (int i = 0; i < TABLE_SIZE; i++) table[i] = nullptr;
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = nullptr;
     }
 
-    int hashFunction(int key) {
-        return key % TABLE_SIZE;
-    }
+    int hashFunction(int key) { return key % TABLE_SIZE; }
 
     void insert(int key) {
         int hashIdx = hashFunction(key);
@@ -1322,28 +1464,27 @@ public:
     HashOpenAddressing(int size = 5) {
         TABLE_SIZE = size;
         table = new int[TABLE_SIZE];
-        for (int i = 0; i < TABLE_SIZE; i++) table[i] = -1; // -1 indicates empty
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = -1; // -1 indicates empty
         curr_size = 0;
     }
 
-    int hashFunction(int key) {
-        return key % TABLE_SIZE;
-    }
+    int hashFunction(int key) { return key % TABLE_SIZE; }
 
     bool insert(int key) {
         if (curr_size >= TABLE_SIZE) {
             cout << "Hash Table Full!" << endl;
             return false;
         }
-        
+
         int idx = hashFunction(key);
-        
+
         // Linear Probing
         while (table[idx] != -1) {
             cout << "Collision at index " << idx << "! Probing next..." << endl;
             idx = (idx + 1) % TABLE_SIZE;
         }
-        
+
         table[idx] = key;
         curr_size++;
         cout << "Inserted " << key << " securely at index " << idx << endl;
@@ -1352,8 +1493,10 @@ public:
 
     void display() {
         for (int i = 0; i < TABLE_SIZE; i++) {
-            if (table[i] != -1) cout << "[" << i << "] --> " << table[i] << endl;
-            else cout << "[" << i << "] --> Empty" << endl;
+            if (table[i] != -1)
+                cout << "[" << i << "] --> " << table[i] << endl;
+            else
+                cout << "[" << i << "] --> Empty" << endl;
         }
     }
 };
@@ -1375,7 +1518,8 @@ struct Bucket {
     int slots[2];
     int count;
     Bucket() {
-        slots[0] = -1; slots[1] = -1;
+        slots[0] = -1;
+        slots[1] = -1;
         count = 0;
     }
 };
@@ -1391,35 +1535,35 @@ public:
         table = new Bucket[NUM_BUCKETS];
     }
 
-    int hashFunction(int key) {
-        return key % NUM_BUCKETS;
-    }
+    int hashFunction(int key) { return key % NUM_BUCKETS; }
 
     bool insert(int key) {
         int idx = hashFunction(key);
-        
+
         // Try filling primary physical bucket block
         if (table[idx].count < 2) {
             table[idx].slots[table[idx].count++] = key;
             cout << "Inserted " << key << " directly into Bucket Index " << idx << endl;
             return true;
         }
-        cout << "Bucket " << idx << " is full. Probing to next bucket overflow..." << endl;
-        
+        cout << "Bucket " << idx << " is full. Probing to next bucket overflow..."
+             << endl;
+
         // Primary bucket is full; Linear Probing to next adjacent block
         int startIdx = idx;
         idx = (idx + 1) % NUM_BUCKETS;
         while (idx != startIdx) {
             if (table[idx].count < 2) {
                 table[idx].slots[table[idx].count++] = key;
-                cout << "Overflow Inserted " << key << " into Bucket Index " << idx << endl;
+                cout << "Overflow Inserted " << key << " into Bucket Index " << idx
+                     << endl;
                 return true;
             }
             idx = (idx + 1) % NUM_BUCKETS;
         }
-        
+
         cout << "Catastrophic Failure: All Hash Buckets completely saturated!" << endl;
-        return false; 
+        return false;
     }
 };
 
@@ -1433,8 +1577,8 @@ int main() {
 `;
 
 const codeHeapBinary = `#include <iostream>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 using namespace std;
 
 class BinaryHeap {
@@ -1442,14 +1586,13 @@ private:
     vector<int> data;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     void siftUp(int i) {
         while (i > 0) {
             int p = (i - 1) / 2;
-            if (!cmp(data[i], data[p])) break;
+            if (!cmp(data[i], data[p]))
+                break;
             swap(data[i], data[p]);
             i = p;
         }
@@ -1462,9 +1605,12 @@ private:
             int right = 2 * i + 2;
             int best = i;
 
-            if (left < n && cmp(data[left], data[best])) best = left;
-            if (right < n && cmp(data[right], data[best])) best = right;
-            if (best == i) break;
+            if (left < n && cmp(data[left], data[best]))
+                best = left;
+            if (right < n && cmp(data[right], data[best]))
+                best = right;
+            if (best == i)
+                break;
 
             swap(data[i], data[best]);
             i = best;
@@ -1480,16 +1626,19 @@ public:
     }
 
     int peek() const {
-        if (data.empty()) throw runtime_error("Heap is empty");
+        if (data.empty())
+            throw runtime_error("Heap is empty");
         return data[0];
     }
 
     int extractTop() {
-        if (data.empty()) throw runtime_error("Heap is empty");
+        if (data.empty())
+            throw runtime_error("Heap is empty");
         int top = data[0];
         data[0] = data.back();
         data.pop_back();
-        if (!data.empty()) siftDown(0);
+        if (!data.empty())
+            siftDown(0);
         return top;
     }
 
@@ -1499,8 +1648,10 @@ public:
         }
         int oldVal = data[idx];
         data[idx] = newVal;
-        if (cmp(newVal, oldVal)) siftUp(idx);
-        else siftDown(idx);
+        if (cmp(newVal, oldVal))
+            siftUp(idx);
+        else
+            siftDown(idx);
     }
 
     void eraseAt(int idx) {
@@ -1516,12 +1667,14 @@ public:
     }
 
     void mergeFrom(const vector<int>& other) {
-        for (int v : other) insert(v);
+        for (int v : other)
+            insert(v);
     }
 
     void printArray() const {
         cout << (isMinHeap ? "MinHeap" : "MaxHeap") << " array: ";
-        for (int v : data) cout << v << " ";
+        for (int v : data)
+            cout << v << " ";
         cout << "\\n";
     }
 };
@@ -1550,9 +1703,9 @@ int main() {
 }
 `;
 
-const codeHeapBinomial = `#include <iostream>
+const codeHeapBinomial = `#include <climits>
+#include <iostream>
 #include <vector>
-#include <climits>
 using namespace std;
 
 struct BNode {
@@ -1561,7 +1714,8 @@ struct BNode {
     BNode* parent;
     BNode* child;
     BNode* sibling;
-    explicit BNode(int k) : key(k), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) {}
+    explicit BNode(int k)
+        : key(k), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) {}
 };
 
 class BinomialHeap {
@@ -1569,13 +1723,13 @@ private:
     BNode* head = nullptr;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     BNode* mergeRootLists(BNode* h1, BNode* h2) {
-        if (!h1) return h2;
-        if (!h2) return h1;
+        if (!h1)
+            return h2;
+        if (!h2)
+            return h1;
 
         BNode* newHead = nullptr;
         BNode* tail = nullptr;
@@ -1610,7 +1764,8 @@ private:
 
     BNode* unionHeaps(BNode* h1, BNode* h2) {
         BNode* newHead = mergeRootLists(h1, h2);
-        if (!newHead) return nullptr;
+        if (!newHead)
+            return nullptr;
 
         BNode* prev = nullptr;
         BNode* curr = newHead;
@@ -1627,8 +1782,10 @@ private:
                 curr->sibling = next->sibling;
                 linkTrees(next, curr);
             } else {
-                if (!prev) newHead = next;
-                else prev->sibling = next;
+                if (!prev)
+                    newHead = next;
+                else
+                    prev->sibling = next;
                 linkTrees(curr, next);
                 curr = next;
             }
@@ -1647,16 +1804,19 @@ public:
     }
 
     int peek() const {
-        if (!head) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!head)
+            return isMinHeap ? INT_MAX : INT_MIN;
         BNode* best = head;
         for (BNode* p = head->sibling; p; p = p->sibling) {
-            if (cmp(p->key, best->key)) best = p;
+            if (cmp(p->key, best->key))
+                best = p;
         }
         return best->key;
     }
 
     int extractTop() {
-        if (!head) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!head)
+            return isMinHeap ? INT_MAX : INT_MIN;
 
         BNode* prevBest = nullptr;
         BNode* best = head;
@@ -1670,8 +1830,10 @@ public:
             prev = p;
         }
 
-        if (prevBest) prevBest->sibling = best->sibling;
-        else head = best->sibling;
+        if (prevBest)
+            prevBest->sibling = best->sibling;
+        else
+            head = best->sibling;
 
         BNode* child = best->child;
         BNode* rev = nullptr;
@@ -1705,8 +1867,12 @@ public:
 
 int main() {
     BinomialHeap h1(true), h2(true);
-    h1.insert(10); h1.insert(3); h1.insert(18);
-    h2.insert(7); h2.insert(1); h2.insert(25);
+    h1.insert(10);
+    h1.insert(3);
+    h1.insert(18);
+    h2.insert(7);
+    h2.insert(1);
+    h2.insert(25);
 
     h1.printRoots();
     h2.printRoots();
@@ -1721,10 +1887,10 @@ int main() {
 }
 `;
 
-const codeHeapFibonacci = `#include <iostream>
-#include <vector>
+const codeHeapFibonacci = `#include <climits>
+#include <iostream>
 #include <unordered_map>
-#include <climits>
+#include <vector>
 using namespace std;
 
 struct FNode {
@@ -1737,7 +1903,8 @@ struct FNode {
     FNode* right;
 
     explicit FNode(int k)
-        : key(k), degree(0), mark(false), parent(nullptr), child(nullptr), left(this), right(this) {}
+        : key(k), degree(0), mark(false), parent(nullptr), child(nullptr), left(this),
+          right(this) {}
 };
 
 class FibonacciHeap {
@@ -1747,9 +1914,7 @@ private:
     int n = 0;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     static void spliceRight(FNode* a, FNode* b) {
         b->left = a;
@@ -1773,7 +1938,8 @@ private:
             return;
         }
         spliceRight(root, x);
-        if (cmp(x->key, best->key)) best = x;
+        if (cmp(x->key, best->key))
+            best = x;
     }
 
     void link(FNode* y, FNode* x) {
@@ -1789,7 +1955,8 @@ private:
     }
 
     void consolidate() {
-        if (!root) return;
+        if (!root)
+            return;
 
         vector<FNode*> roots;
         FNode* p = root;
@@ -1804,7 +1971,8 @@ private:
             int d = x->degree;
             while (A[d]) {
                 FNode* y = A[d];
-                if (cmp(y->key, x->key)) swap(x, y);
+                if (cmp(y->key, x->key))
+                    swap(x, y);
                 link(y, x);
                 A[d] = nullptr;
                 d++;
@@ -1815,19 +1983,22 @@ private:
         root = nullptr;
         best = nullptr;
         for (FNode* x : A) {
-            if (!x) continue;
+            if (!x)
+                continue;
             x->left = x->right = x;
             if (!root) {
                 root = best = x;
             } else {
                 spliceRight(root, x);
-                if (cmp(x->key, best->key)) best = x;
+                if (cmp(x->key, best->key))
+                    best = x;
             }
         }
     }
 
     void cut(FNode* x, FNode* y) {
-        if (y->child == x) y->child = (x->right != x) ? x->right : nullptr;
+        if (y->child == x)
+            y->child = (x->right != x) ? x->right : nullptr;
         y->degree--;
         removeNode(x);
         addToRootList(x);
@@ -1835,7 +2006,8 @@ private:
 
     void cascadingCut(FNode* y) {
         FNode* z = y->parent;
-        if (!z) return;
+        if (!z)
+            return;
         if (!y->mark) {
             y->mark = true;
         } else {
@@ -1855,12 +2027,14 @@ public:
     }
 
     int peek() const {
-        if (!best) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!best)
+            return isMinHeap ? INT_MAX : INT_MIN;
         return best->key;
     }
 
     int extractTop() {
-        if (!best) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!best)
+            return isMinHeap ? INT_MAX : INT_MIN;
         FNode* z = best;
 
         if (z->child) {
@@ -1881,7 +2055,8 @@ public:
         if (z->right == z) {
             root = best = nullptr;
         } else {
-            if (root == z) root = z->right;
+            if (root == z)
+                root = z->right;
             removeNode(z);
             best = root;
             consolidate();
@@ -1894,7 +2069,8 @@ public:
     }
 
     void decreaseOrIncreaseKey(FNode* x, int newKey) {
-        if (!x) return;
+        if (!x)
+            return;
         int old = x->key;
         x->key = newKey;
         FNode* y = x->parent;
@@ -1905,18 +2081,21 @@ public:
             cascadingCut(y);
         }
 
-        if (!best || cmp(x->key, best->key)) best = x;
+        if (!best || cmp(x->key, best->key))
+            best = x;
         (void)old;
     }
 
     void erase(FNode* x) {
-        if (!x) return;
+        if (!x)
+            return;
         decreaseOrIncreaseKey(x, isMinHeap ? INT_MIN : INT_MAX);
         extractTop();
     }
 
     void merge(FibonacciHeap& other) {
-        if (!other.root) return;
+        if (!other.root)
+            return;
         if (!root) {
             root = other.root;
             best = other.best;
@@ -1928,7 +2107,8 @@ public:
             other.root->left = root;
             aRight->left = bLeft;
             bLeft->right = aRight;
-            if (cmp(other.best->key, best->key)) best = other.best;
+            if (cmp(other.best->key, best->key))
+                best = other.best;
             n += other.n;
         }
         other.root = other.best = nullptr;
@@ -1936,8 +2116,10 @@ public:
     }
 
     void printTop() const {
-        if (!best) cout << "Heap empty\\n";
-        else cout << (isMinHeap ? "Min" : "Max") << " top: " << best->key << "\\n";
+        if (!best)
+            cout << "Heap empty\\n";
+        else
+            cout << (isMinHeap ? "Min" : "Max") << " top: " << best->key << "\\n";
     }
 };
 
@@ -1967,8 +2149,8 @@ int main() {
 }
 `;
 
-const codeHeapLeftist = `#include <iostream>
-#include <climits>
+const codeHeapLeftist = `#include <climits>
+#include <iostream>
 using namespace std;
 
 struct LNode {
@@ -1984,21 +2166,21 @@ private:
     LNode* root = nullptr;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
-    static int getNpl(LNode* n) {
-        return n ? n->npl : -1;
-    }
+    static int getNpl(LNode* n) { return n ? n->npl : -1; }
 
     LNode* mergeNodes(LNode* a, LNode* b) {
-        if (!a) return b;
-        if (!b) return a;
-        if (!cmp(a->key, b->key)) swap(a, b);
+        if (!a)
+            return b;
+        if (!b)
+            return a;
+        if (!cmp(a->key, b->key))
+            swap(a, b);
 
         a->right = mergeNodes(a->right, b);
-        if (getNpl(a->left) < getNpl(a->right)) swap(a->left, a->right);
+        if (getNpl(a->left) < getNpl(a->right))
+            swap(a->left, a->right);
         a->npl = getNpl(a->right) + 1;
         return a;
     }
@@ -2006,17 +2188,17 @@ private:
 public:
     explicit LeftistHeap(bool minHeap = true) : isMinHeap(minHeap) {}
 
-    void insert(int x) {
-        root = mergeNodes(root, new LNode(x));
-    }
+    void insert(int x) { root = mergeNodes(root, new LNode(x)); }
 
     int peek() const {
-        if (!root) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!root)
+            return isMinHeap ? INT_MAX : INT_MIN;
         return root->key;
     }
 
     int extractTop() {
-        if (!root) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!root)
+            return isMinHeap ? INT_MAX : INT_MIN;
         int out = root->key;
         LNode* l = root->left;
         LNode* r = root->right;
@@ -2031,7 +2213,8 @@ public:
     }
 
     void clearNode(LNode* n) {
-        if (!n) return;
+        if (!n)
+            return;
         clearNode(n->left);
         clearNode(n->right);
         delete n;
@@ -2040,7 +2223,8 @@ public:
     ~LeftistHeap() { clearNode(root); }
 
     void printPreorder(LNode* n) const {
-        if (!n) return;
+        if (!n)
+            return;
         cout << "(" << n->key << ",npl=" << n->npl << ") ";
         printPreorder(n->left);
         printPreorder(n->right);
@@ -2055,8 +2239,12 @@ public:
 
 int main() {
     LeftistHeap h1(true), h2(true);
-    h1.insert(10); h1.insert(3); h1.insert(17);
-    h2.insert(8); h2.insert(1); h2.insert(6);
+    h1.insert(10);
+    h1.insert(3);
+    h1.insert(17);
+    h2.insert(8);
+    h2.insert(1);
+    h2.insert(6);
 
     h1.print();
     h2.print();
@@ -2071,8 +2259,8 @@ int main() {
 }
 `;
 
-const codeHeapSkew = `#include <iostream>
-#include <climits>
+const codeHeapSkew = `#include <climits>
+#include <iostream>
 using namespace std;
 
 struct SNode {
@@ -2087,14 +2275,15 @@ private:
     SNode* root = nullptr;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     SNode* mergeNodes(SNode* a, SNode* b) {
-        if (!a) return b;
-        if (!b) return a;
-        if (!cmp(a->key, b->key)) swap(a, b);
+        if (!a)
+            return b;
+        if (!b)
+            return a;
+        if (!cmp(a->key, b->key))
+            swap(a, b);
 
         a->right = mergeNodes(a->right, b);
         swap(a->left, a->right);
@@ -2102,7 +2291,8 @@ private:
     }
 
     void clearNode(SNode* n) {
-        if (!n) return;
+        if (!n)
+            return;
         clearNode(n->left);
         clearNode(n->right);
         delete n;
@@ -2111,17 +2301,17 @@ private:
 public:
     explicit SkewHeap(bool minHeap = true) : isMinHeap(minHeap) {}
 
-    void insert(int x) {
-        root = mergeNodes(root, new SNode(x));
-    }
+    void insert(int x) { root = mergeNodes(root, new SNode(x)); }
 
     int peek() const {
-        if (!root) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!root)
+            return isMinHeap ? INT_MAX : INT_MIN;
         return root->key;
     }
 
     int extractTop() {
-        if (!root) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!root)
+            return isMinHeap ? INT_MAX : INT_MIN;
         int out = root->key;
         SNode* l = root->left;
         SNode* r = root->right;
@@ -2138,7 +2328,8 @@ public:
     ~SkewHeap() { clearNode(root); }
 
     void printPreorder(SNode* n) const {
-        if (!n) return;
+        if (!n)
+            return;
         cout << n->key << " ";
         printPreorder(n->left);
         printPreorder(n->right);
@@ -2153,8 +2344,12 @@ public:
 
 int main() {
     SkewHeap h1(true), h2(true);
-    h1.insert(12); h1.insert(5); h1.insert(30);
-    h2.insert(7); h2.insert(2); h2.insert(18);
+    h1.insert(12);
+    h1.insert(5);
+    h1.insert(30);
+    h2.insert(7);
+    h2.insert(2);
+    h2.insert(18);
 
     h1.print();
     h2.print();
@@ -2170,8 +2365,8 @@ int main() {
 `;
 
 const codeHeapDary = `#include <iostream>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 using namespace std;
 
 class DAryHeap {
@@ -2180,22 +2375,17 @@ private:
     int d;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
-    int parent(int index) const {
-        return (index - 1) / d;
-    }
+    int parent(int index) const { return (index - 1) / d; }
 
-    int child(int index, int offset) const {
-        return index * d + offset + 1;
-    }
+    int child(int index, int offset) const { return index * d + offset + 1; }
 
     void siftUp(int index) {
         while (index > 0) {
             int p = parent(index);
-            if (!cmp(data[index], data[p])) break;
+            if (!cmp(data[index], data[p]))
+                break;
             swap(data[index], data[p]);
             index = p;
         }
@@ -2210,7 +2400,8 @@ private:
                     best = c;
                 }
             }
-            if (best == index) break;
+            if (best == index)
+                break;
             swap(data[index], data[best]);
             index = best;
         }
@@ -2218,7 +2409,8 @@ private:
 
 public:
     explicit DAryHeap(int arity = 4, bool minHeap = true) : d(arity), isMinHeap(minHeap) {
-        if (d < 2) throw runtime_error("Arity must be at least 2");
+        if (d < 2)
+            throw runtime_error("Arity must be at least 2");
     }
 
     void insert(int value) {
@@ -2227,16 +2419,19 @@ public:
     }
 
     int peek() const {
-        if (data.empty()) throw runtime_error("Heap is empty");
+        if (data.empty())
+            throw runtime_error("Heap is empty");
         return data[0];
     }
 
     int extractTop() {
-        if (data.empty()) throw runtime_error("Heap is empty");
+        if (data.empty())
+            throw runtime_error("Heap is empty");
         int top = data[0];
         data[0] = data.back();
         data.pop_back();
-        if (!data.empty()) siftDown(0);
+        if (!data.empty())
+            siftDown(0);
         return top;
     }
 
@@ -2246,17 +2441,21 @@ public:
         }
         int oldValue = data[index];
         data[index] = newValue;
-        if (cmp(newValue, oldValue)) siftUp(index);
-        else siftDown(index);
+        if (cmp(newValue, oldValue))
+            siftUp(index);
+        else
+            siftDown(index);
     }
 
     void mergeFrom(const vector<int>& other) {
-        for (int value : other) insert(value);
+        for (int value : other)
+            insert(value);
     }
 
     void print() const {
         cout << d << "-ary " << (isMinHeap ? "min" : "max") << " heap: ";
-        for (int value : data) cout << value << " ";
+        for (int value : data)
+            cout << value << " ";
         cout << "\\n";
     }
 };
@@ -2278,9 +2477,9 @@ int main() {
     return 0;
 }`;
 
-const codeHeapPairing = `#include <iostream>
+const codeHeapPairing = `#include <climits>
+#include <iostream>
 #include <vector>
-#include <climits>
 using namespace std;
 
 struct PNode {
@@ -2295,21 +2494,23 @@ private:
     PNode* root = nullptr;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     PNode* meld(PNode* a, PNode* b) {
-        if (!a) return b;
-        if (!b) return a;
-        if (!cmp(a->key, b->key)) swap(a, b);
+        if (!a)
+            return b;
+        if (!b)
+            return a;
+        if (!cmp(a->key, b->key))
+            swap(a, b);
         b->sibling = a->child;
         a->child = b;
         return a;
     }
 
     PNode* mergePairs(PNode* node) {
-        if (!node || !node->sibling) return node;
+        if (!node || !node->sibling)
+            return node;
         PNode* first = node;
         PNode* second = node->sibling;
         PNode* rest = second->sibling;
@@ -2319,7 +2520,8 @@ private:
     }
 
     void clearNode(PNode* node) {
-        if (!node) return;
+        if (!node)
+            return;
         clearNode(node->child);
         clearNode(node->sibling);
         delete node;
@@ -2329,16 +2531,13 @@ public:
     explicit PairingHeap(bool minHeap = true) : isMinHeap(minHeap) {}
     ~PairingHeap() { clearNode(root); }
 
-    void insert(int value) {
-        root = meld(root, new PNode(value));
-    }
+    void insert(int value) { root = meld(root, new PNode(value)); }
 
-    int peek() const {
-        return root ? root->key : (isMinHeap ? INT_MAX : INT_MIN);
-    }
+    int peek() const { return root ? root->key : (isMinHeap ? INT_MAX : INT_MIN); }
 
     int extractTop() {
-        if (!root) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!root)
+            return isMinHeap ? INT_MAX : INT_MIN;
         int top = root->key;
         PNode* oldRoot = root;
         root = mergePairs(root->child);
@@ -2353,8 +2552,10 @@ public:
     }
 
     void printRoot() const {
-        if (!root) cout << "Pairing heap empty\\n";
-        else cout << (isMinHeap ? "Min" : "Max") << " pairing root: " << root->key << "\\n";
+        if (!root)
+            cout << "Pairing heap empty\\n";
+        else
+            cout << (isMinHeap ? "Min" : "Max") << " pairing root: " << root->key << "\\n";
     }
 };
 
@@ -2384,7 +2585,8 @@ public:
     bool isEndOfWord;
     TrieNode() {
         isEndOfWord = false;
-        for (int i = 0; i < 26; i++) children[i] = nullptr;
+        for (int i = 0; i < 26; i++)
+            children[i] = nullptr;
     }
 };
 
@@ -2412,7 +2614,8 @@ public:
         TrieNode* curr = root;
         for (char c : word) {
             int index = c - 'A';
-            if (curr->children[index] == nullptr) return false;
+            if (curr->children[index] == nullptr)
+                return false;
             curr = curr->children[index];
         }
         return curr->isEndOfWord;
@@ -2430,8 +2633,8 @@ int main() {
 `;
 
 const codeTreeRadix = `#include <iostream>
-#include <string>
 #include <map>
+#include <string>
 using namespace std;
 
 class RadixNode {
@@ -2448,11 +2651,12 @@ public:
 
     void insert(string word) {
         // Warning: Simplified implementation for presentation
-        // Real Radix trees actively split existing string edges based on longest common prefix.
+        // Real Radix trees actively split existing string edges based on longest common
+        // prefix.
         RadixNode* curr = root;
-        
+
         // Simulating the compressed prefix routing:
-        if(curr->edges.find(word) == curr->edges.end()) {
+        if (curr->edges.find(word) == curr->edges.end()) {
             curr->edges[word] = new RadixNode();
         }
         curr->edges[word]->isEndOfWord = true;
@@ -2477,13 +2681,15 @@ struct TSTNode {
     bool isEndOfWord;
     TSTNode *left, *eq, *right;
 
-    TSTNode(char data) : data(data), isEndOfWord(false), left(nullptr), eq(nullptr), right(nullptr) {}
+    TSTNode(char data)
+        : data(data), isEndOfWord(false), left(nullptr), eq(nullptr), right(nullptr) {}
 };
 
 class TernarySearchTree {
 private:
     TSTNode* insertRecursive(TSTNode* root, const string& word, int index) {
-        if (!root) root = new TSTNode(word[index]);
+        if (!root)
+            root = new TSTNode(word[index]);
 
         if (word[index] < root->data) {
             root->left = insertRecursive(root->left, word, index);
@@ -2540,10 +2746,12 @@ public:
             }
             keys[i + 1] = k;
         } else {
-            while (i >= 0 && keys[i] > k) i--;
+            while (i >= 0 && keys[i] > k)
+                i--;
             if (children[i + 1]->keys.size() == 2 * t - 1) {
                 splitChild(i + 1, children[i + 1]);
-                if (keys[i + 1] < k) i++;
+                if (keys[i + 1] < k)
+                    i++;
             }
             children[i + 1]->insertNonFull(k);
         }
@@ -2551,9 +2759,11 @@ public:
 
     void splitChild(int i, BTreeNode* y) {
         BTreeNode* z = new BTreeNode(y->t, y->leaf);
-        for (int j = 0; j < t - 1; j++) z->keys.push_back(y->keys[j + t]);
+        for (int j = 0; j < t - 1; j++)
+            z->keys.push_back(y->keys[j + t]);
         if (!y->leaf) {
-            for (int j = 0; j < t; j++) z->children.push_back(y->children[j + t]);
+            for (int j = 0; j < t; j++)
+                z->children.push_back(y->children[j + t]);
             y->children.resize(t); // Cut children
         }
         keys.insert(keys.begin() + i, y->keys[t - 1]);
@@ -2565,6 +2775,7 @@ public:
 class BTree {
     BTreeNode* root;
     int t;
+
 public:
     BTree(int t) : root(nullptr), t(t) {}
 
@@ -2590,7 +2801,11 @@ public:
 
 int main() {
     BTree t(3); // Order 5 typically, max 5 children, 4 keys
-    t.insert(10); t.insert(20); t.insert(5); t.insert(6); t.insert(12);
+    t.insert(10);
+    t.insert(20);
+    t.insert(5);
+    t.insert(6);
+    t.insert(12);
     // As it hits capacity, blocks split!
     return 0;
 }
@@ -2607,24 +2822,26 @@ public:
     BPlusNode* nextLeaf; // Critical difference: Horizontal chain
     bool isLeaf;
     int MAX;
-    
-    BPlusNode(int maxKeys, bool isLeaf) : MAX(maxKeys), isLeaf(isLeaf), nextLeaf(nullptr) {}
+
+    BPlusNode(int maxKeys, bool isLeaf)
+        : MAX(maxKeys), isLeaf(isLeaf), nextLeaf(nullptr) {}
 };
 
 class BPlusTree {
     BPlusNode* root;
     int MAX;
+
 public:
     BPlusTree(int maxKeys = 3) : root(nullptr), MAX(maxKeys) {}
-    
+
     // Core theory of B+ Trees:
     // 1. All actual data resides strictly at the leaf level.
     // 2. Internal nodes strictly act as index routing guides.
     // 3. Leaves are chained together via \`nextLeaf\` pointer for rapid range queries.
-    
+
     void insert(int k) {
         // Warning: Precise splitting algorithm omitted to maintain focus on structure.
-        // A true B+Tree copies the median key UP when a leaf splits, 
+        // A true B+Tree copies the median key UP when a leaf splits,
         // but pushes the median UP when an internal routing node splits.
         if (!root) {
             root = new BPlusNode(MAX, true);
@@ -2650,101 +2867,93 @@ using namespace std;
 
 class Animal {
 public:
-    Animal() { cout << "Animal constructor called" << endl; }
-    virtual ~Animal() { cout << "Animal destructor called" << endl; }
+    Animal() { cout << "Animal constructor" << endl; }
+    virtual ~Animal() { cout << "Animal destructor" << endl; }
 
-    virtual void speak() {
-        cout << "Animal speaks..." << endl;
-    }
-
-    void move() { cout << "Moving..." << endl; }
+    virtual void speak() { cout << "Animal sound" << endl; }
 };
 
 class Dog : public Animal {
 public:
-    Dog() { cout << "Dog constructor called" << endl; }
-    ~Dog() override { cout << "Dog destructor called" << endl; }
+    Dog() { cout << "Dog constructor" << endl; }
+    ~Dog() override { cout << "Dog destructor" << endl; }
 
-    void speak() override {
-        cout << "Woof! Woof!" << endl;
-    }
+    void speak() override { cout << "Woof" << endl; }
 };
 
 class Cat : public Animal {
 public:
-    Cat() { cout << "Cat constructor called" << endl; }
-    ~Cat() override { cout << "Cat destructor called" << endl; }
+    Cat() { cout << "Cat constructor" << endl; }
+    ~Cat() override { cout << "Cat destructor" << endl; }
 
-    void speak() override {
-        cout << "Meow! Meow!" << endl;
-    }
+    void speak() override { cout << "Meow" << endl; }
 };
 
 int main() {
-    Dog dog;        // Constructor: Dog -> Animal
-    Cat cat;        // Constructor: Cat -> Animal
+    Animal* animals[2];
+    animals[0] = new Dog();
+    animals[1] = new Cat();
 
-    dog.speak();    // Output: Woof!
-    cat.speak();    // Output: Meow!
-    dog.move();     // Inherited: Moving...
+    for (int i = 0; i < 2; i++) {
+        animals[i]->speak();
+        delete animals[i];
+    }
 
     return 0;
-}  // Destructors: ~Dog, ~Animal, ~Cat, ~Animal
+}
 `;
 
 const codeOOPPolymorphism = `#include <iostream>
+#include <vector>
 using namespace std;
 
 class Shape {
 public:
     virtual ~Shape() {}
 
-    virtual void draw() {
-        cout << "Drawing generic shape" << endl;
-    }
-
-    virtual double area() = 0;
+    virtual void draw() const = 0;
+    virtual double area() const = 0;
 };
 
 class Circle : public Shape {
 private:
     double radius;
+
 public:
-    Circle(double r) : radius(r) {}
+    explicit Circle(double r) : radius(r) {}
 
-    void draw() override {
-        cout << "Drawing circle with radius " << radius << endl;
-    }
+    void draw() const override { cout << "Drawing Circle(" << radius << ")" << endl; }
 
-    double area() override {
-        return 3.14159 * radius * radius;
-    }
+    double area() const override { return 3.14159 * radius * radius; }
 };
 
 class Rectangle : public Shape {
 private:
-    double width, height;
+    double width;
+    double height;
+
 public:
     Rectangle(double w, double h) : width(w), height(h) {}
 
-    void draw() override {
-        cout << "Drawing rectangle " << width << "x" << height << endl;
+    void draw() const override {
+        cout << "Drawing Rectangle(" << width << ", " << height << ")" << endl;
     }
 
-    double area() override {
-        return width * height;
-    }
+    double area() const override { return width * height; }
 };
 
 int main() {
-    Shape* shapes[2];
-    shapes[0] = new Circle(5.0);
-    shapes[1] = new Rectangle(4.0, 6.0);
+    vector<Shape*> shapes;
+    shapes.push_back(new Circle(5.0));
+    shapes.push_back(new Rectangle(4.0, 6.0));
 
-    // Polymorphic dispatch: calls overridden methods
-    for (int i = 0; i < 2; i++) {
-        shapes[i]->draw();
-        cout << "Area: " << shapes[i]->area() << endl;
+    for (const auto* shape : shapes) {
+        shape->draw();
+        cout << "Area: " << shape->area() << endl;
+    }
+
+    for (auto* shape : shapes) {
+        delete shape;
     }
 
     return 0;
@@ -2757,96 +2966,102 @@ using namespace std;
 
 class BankAccount {
 public:
-    BankAccount(double initial) : m_balance(initial) {}
+    explicit BankAccount(double initialBalance) : balance(initialBalance) {}
 
     void deposit(double amount) {
-        lock_guard<mutex> lock(m_lock);
+        lock_guard<mutex> guard(accountLock);
         if (amount > 0) {
-            m_balance += amount;
-            cout << "Deposited: $" << amount << endl;
+            balance += amount;
+            cout << "Deposited: " << amount << endl;
         }
     }
 
     bool withdraw(double amount) {
-        lock_guard<mutex> lock(m_lock);
-        if (validate(amount)) {
-            m_balance -= amount;
-            log_transaction("withdraw", amount);
+        lock_guard<mutex> guard(accountLock);
+        if (canWithdraw(amount)) {
+            balance -= amount;
+            log("withdraw", amount);
             return true;
         }
         return false;
     }
 
-    double getBalance() const {
-        return m_balance;
-    }
+    double getBalance() const { return balance; }
 
 protected:
-    bool validate(double amount) {
-        return amount > 0 && amount <= m_balance;
-    }
-
-    void log_transaction(const string& type, double amount) {
-        cout << "LOG: " << type << " amount=" << amount << endl;
-    }
+    bool canWithdraw(double amount) const { return amount > 0 && amount <= balance; }
 
 private:
-    double m_balance;
-    mutable mutex m_lock;
+    void log(const string& type, double amount) const {
+        cout << "Log: " << type << " " << amount << endl;
+    }
+
+    double balance;
+    mutable mutex accountLock;
 };
 
 int main() {
-    BankAccount account(1000);
+    BankAccount account(1000.0);
 
-    account.deposit(500);        // public: OK
-    account.withdraw(200);       // public: OK
-    // account.m_balance = 999;  // ERROR: private!
-    // account.validate(100);    // ERROR: protected!
+    account.deposit(200.0);
+    if (account.withdraw(150.0)) {
+        cout << "Withdraw success" << endl;
+    }
 
-    cout << "Balance: $" << account.getBalance() << endl;
+    cout << "Final balance: " << account.getBalance() << endl;
     return 0;
 }
 `;
 
-// Design Patterns - Creational
 const codePatternSingleton = `#include <iostream>
+#include <mutex>
 using namespace std;
 
 class Singleton {
 private:
     static Singleton* m_instance;
+    static mutex m_mutex;
     int m_value;
 
-    // Private constructor
-    Singleton() : m_value(0) {}
+    // Private constructor - prevents external instantiation
+    Singleton() : m_value(0) { cout << "Singleton constructor called" << endl; }
 
 public:
     // Prevent copying
     Singleton(const Singleton&) = delete;
-    void operator=(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
 
-    // Get singleton instance
+    // Get singleton instance with thread-safe lazy initialization
     static Singleton* getInstance() {
+        lock_guard<mutex> lock(m_mutex);
         if (m_instance == nullptr) {
             m_instance = new Singleton();
+            cout << "Created new Singleton instance" << endl;
+        } else {
+            cout << "Returning existing Singleton instance" << endl;
         }
         return m_instance;
     }
 
     void setValue(int val) { m_value = val; }
-    int getValue() { return m_value; }
+
+    int getValue() const { return m_value; }
+
+    ~Singleton() { cout << "Singleton destructor called" << endl; }
 };
 
 // Static member initialization
 Singleton* Singleton::m_instance = nullptr;
+mutex Singleton::m_mutex;
 
 int main() {
     Singleton* s1 = Singleton::getInstance();
-    Singleton* s2 = Singleton::getInstance();
-
     s1->setValue(42);
     cout << "s1 value: " << s1->getValue() << endl;
+
+    Singleton* s2 = Singleton::getInstance();
     cout << "s2 value: " << s2->getValue() << endl;
+
     cout << "Same object: " << (s1 == s2 ? "YES" : "NO") << endl;
 
     return 0;
@@ -2854,246 +3069,366 @@ int main() {
 `;
 
 const codePatternFactory = `#include <iostream>
+#include <memory>
 using namespace std;
 
-// Product interface
+// Abstract Product
 class Vehicle {
 public:
     virtual ~Vehicle() {}
-    virtual void display() = 0;
+    virtual void display() const = 0;
 };
 
-// Concrete products
+// Concrete Products
 class Car : public Vehicle {
 public:
-    void display() override {
-        cout << "[Car] 4 wheels, sedan" << endl;
+    void display() const override { cout << "[Car] 4 wheels, sedan, engine: V6" << endl; }
+};
+
+class Truck : public Vehicle {
+public:
+    void display() const override {
+        cout << "[Truck] 4 wheels, cargo bed, engine: Diesel" << endl;
     }
 };
 
 class Bike : public Vehicle {
 public:
-    void display() override {
-        cout << "[Bike] 2 wheels, fast" << endl;
+    void display() const override {
+        cout << "[Bike] 2 wheels, lightweight, engine: Gasoline" << endl;
     }
 };
 
-// Factory
+// Factory Method
 class VehicleFactory {
 public:
-    static Vehicle* createVehicle(string type) {
+    static unique_ptr<Vehicle> createVehicle(const string& type) {
         if (type == "car")
-            return new Car();
+            return make_unique<Car>();
+        else if (type == "truck")
+            return make_unique<Truck>();
         else if (type == "bike")
-            return new Bike();
+            return make_unique<Bike>();
         return nullptr;
     }
 };
 
 int main() {
-    Vehicle* v1 = VehicleFactory::createVehicle("car");
-    Vehicle* v2 = VehicleFactory::createVehicle("bike");
+    // Client code doesn't know concrete classes, only uses factory
+    unique_ptr<Vehicle> v1 = VehicleFactory::createVehicle("car");
+    unique_ptr<Vehicle> v2 = VehicleFactory::createVehicle("truck");
+    unique_ptr<Vehicle> v3 = VehicleFactory::createVehicle("bike");
 
-    v1->display();
-    v2->display();
+    if (v1)
+        v1->display();
+    if (v2)
+        v2->display();
+    if (v3)
+        v3->display();
 
-    delete v1;
-    delete v2;
     return 0;
 }
 `;
 
-// Design Patterns - Structural
 const codePatternAdapter = `#include <iostream>
 using namespace std;
 
-// Old interface
-class LegacyData {
+// Existing/Legacy system with incompatible interface
+class LegacyDataSource {
 public:
-    string getData() {
-        return "Legacy: [DATA]";
-    }
+    string getDataLegacy() const { return "Legacy: Raw Binary Data [0x1A, 0x2B, 0x3C]"; }
 };
 
-// Target interface
-class ModernInterface {
+// Target interface that modern code expects
+class ModernDataInterface {
 public:
-    virtual ~ModernInterface() {}
+    virtual ~ModernDataInterface() {}
     virtual string fetch() = 0;
+    virtual string getFormat() = 0;
 };
 
-// Adapter
-class DataAdapter : public ModernInterface {
+// Adapter: Bridges the gap
+class LegacyAdapter : public ModernDataInterface {
 private:
-    LegacyData m_legacy;
+    LegacyDataSource m_legacy;
 
 public:
     string fetch() override {
-        return m_legacy.getData();
+        // Adapt legacy method call to modern interface
+        return "Adapted: " + m_legacy.getDataLegacy();
     }
+
+    string getFormat() override { return "Binary Format Adapted to JSON"; }
 };
 
 int main() {
-    ModernInterface* adapter = new DataAdapter();
-    cout << adapter->fetch() << endl;
+    // Modern code expects ModernDataInterface
+    unique_ptr<ModernDataInterface> adapter = make_unique<LegacyAdapter>();
 
-    delete adapter;
+    cout << "Fetching data: " << adapter->fetch() << endl;
+    cout << "Format: " << adapter->getFormat() << endl;
+
+    // Adapter allows using legacy system with modern code without modification
     return 0;
 }
 `;
 
 const codePatternDecorator = `#include <iostream>
+#include <memory>
 using namespace std;
 
-// Component
+// Component interface
 class Coffee {
 public:
     virtual ~Coffee() {}
-    virtual string getDescription() = 0;
-    virtual double getCost() = 0;
+    virtual string getDescription() const = 0;
+    virtual double getCost() const = 0;
 };
 
-// Concrete component
+// Concrete Component
 class SimpleCoffee : public Coffee {
 public:
-    string getDescription() override { return "Coffee"; }
-    double getCost() override { return 2.0; }
+    string getDescription() const override { return "Simple Coffee"; }
+
+    double getCost() const override { return 2.00; }
 };
 
-// Decorator
+// Decorator base class
 class CoffeeDecorator : public Coffee {
 protected:
-    Coffee* m_coffee;
+    shared_ptr<Coffee> m_coffee;
 
 public:
-    CoffeeDecorator(Coffee* coffee) : m_coffee(coffee) {}
+    CoffeeDecorator(shared_ptr<Coffee> coffee) : m_coffee(coffee) {}
 };
 
-// Concrete decorators
-class Milk : public CoffeeDecorator {
+// Concrete Decorators
+class MilkDecorator : public CoffeeDecorator {
 public:
-    Milk(Coffee* coffee) : CoffeeDecorator(coffee) {}
-    string getDescription() override {
+    MilkDecorator(shared_ptr<Coffee> coffee) : CoffeeDecorator(coffee) {}
+
+    string getDescription() const override {
         return m_coffee->getDescription() + " + Milk";
     }
-    double getCost() override {
-        return m_coffee->getCost() + 0.5;
+
+    double getCost() const override { return m_coffee->getCost() + 0.50; }
+};
+
+class SugarDecorator : public CoffeeDecorator {
+public:
+    SugarDecorator(shared_ptr<Coffee> coffee) : CoffeeDecorator(coffee) {}
+
+    string getDescription() const override {
+        return m_coffee->getDescription() + " + Sugar";
     }
+
+    double getCost() const override { return m_coffee->getCost() + 0.25; }
+};
+
+class WhippedCreamDecorator : public CoffeeDecorator {
+public:
+    WhippedCreamDecorator(shared_ptr<Coffee> coffee) : CoffeeDecorator(coffee) {}
+
+    string getDescription() const override {
+        return m_coffee->getDescription() + " + Whipped Cream";
+    }
+
+    double getCost() const override { return m_coffee->getCost() + 0.75; }
 };
 
 int main() {
-    Coffee* coffee = new SimpleCoffee();
-    coffee = new Milk(coffee);
+    // Create base coffee
+    shared_ptr<Coffee> coffee = make_shared<SimpleCoffee>();
+    cout << coffee->getDescription() << " => \$" << coffee->getCost() << endl;
 
-    cout << coffee->getDescription() << endl;
-    cout << "Cost: $" << coffee->getCost() << endl;
+    // Decorate with milk
+    coffee = make_shared<MilkDecorator>(coffee);
+    cout << coffee->getDescription() << " => \$" << coffee->getCost() << endl;
+
+    // Add sugar
+    coffee = make_shared<SugarDecorator>(coffee);
+    cout << coffee->getDescription() << " => \$" << coffee->getCost() << endl;
+
+    // Add whipped cream
+    coffee = make_shared<WhippedCreamDecorator>(coffee);
+    cout << coffee->getDescription() << " => \$" << coffee->getCost() << endl;
 
     return 0;
 }
 `;
 
-// Design Patterns - Behavioral
 const codePatternObserver = `#include <iostream>
+#include <memory>
 #include <vector>
 using namespace std;
 
+// Observer interface
 class Observer {
 public:
     virtual ~Observer() {}
-    virtual void update(string msg) = 0;
+    virtual void update(const string& message) = 0;
 };
 
+// Subject
 class Subject {
 private:
-    vector<Observer*> m_observers;
+    vector<shared_ptr<Observer>> m_observers;
+    string m_state;
 
 public:
-    void attach(Observer* obs) {
-        m_observers.push_back(obs);
+    void attach(shared_ptr<Observer> observer) { m_observers.push_back(observer); }
+
+    void detach(shared_ptr<Observer> observer) {
+        // Remove observer from list (implementation omitted for brevity)
     }
 
-    void notify(string msg) {
-        for (auto obs : m_observers) {
-            obs->update(msg);
+    void setState(const string& state) {
+        m_state = state;
+        notify();
+    }
+
+    string getState() const { return m_state; }
+
+private:
+    void notify() {
+        cout << "Subject state changed to: " << m_state << endl;
+        for (auto observer : m_observers) {
+            observer->update(m_state);
         }
     }
 };
 
-class ConcreteObserver : public Observer {
-private:
-    string m_name;
-
+// Concrete Observers
+class ConcreteObserverA : public Observer {
 public:
-    ConcreteObserver(string name) : m_name(name) {}
+    void update(const string& message) override {
+        cout << "ObserverA received update: " << message << endl;
+    }
+};
 
-    void update(string msg) override {
-        cout << m_name << " received: " << msg << endl;
+class ConcreteObserverB : public Observer {
+public:
+    void update(const string& message) override {
+        cout << "ObserverB received update: " << message << endl;
+    }
+};
+
+class ConcreteObserverC : public Observer {
+public:
+    void update(const string& message) override {
+        cout << "ObserverC received update: " << message << endl;
     }
 };
 
 int main() {
-    Subject subject;
-    ConcreteObserver obs1("Observer1");
-    ConcreteObserver obs2("Observer2");
+    auto subject = make_shared<Subject>();
 
-    subject.attach(&obs1);
-    subject.attach(&obs2);
-    subject.notify("Event occurred!");
+    auto obs_a = make_shared<ConcreteObserverA>();
+    auto obs_b = make_shared<ConcreteObserverB>();
+    auto obs_c = make_shared<ConcreteObserverC>();
+
+    subject->attach(obs_a);
+    subject->attach(obs_b);
+    subject->attach(obs_c);
+
+    cout << "--- Setting state to 'Event1' ---" << endl;
+    subject->setState("Event1");
+
+    cout << "\\n--- Setting state to 'Event2' ---" << endl;
+    subject->setState("Event2");
 
     return 0;
 }
 `;
 
 const codePatternStrategy = `#include <iostream>
+#include <memory>
 using namespace std;
 
 // Strategy interface
 class PaymentStrategy {
 public:
     virtual ~PaymentStrategy() {}
-    virtual void pay(double amount) = 0;
+    virtual void pay(double amount) const = 0;
 };
 
-// Concrete strategies
+// Concrete Strategies
 class CreditCardPayment : public PaymentStrategy {
+private:
+    string m_cardNumber;
+
 public:
-    void pay(double amount) override {
-        cout << "Paying $" << amount << " with Credit Card" << endl;
+    CreditCardPayment(const string& cardNumber) : m_cardNumber(cardNumber) {}
+
+    void pay(double amount) const override {
+        cout << "Processing credit card payment: \$" << amount << " with card "
+             << m_cardNumber.substr(m_cardNumber.length() - 4) << endl;
     }
 };
 
 class CryptoCurrencyPayment : public PaymentStrategy {
+private:
+    string m_walletAddress;
+
 public:
-    void pay(double amount) override {
-        cout << "Paying " << amount << " BTC via Crypto" << endl;
+    CryptoCurrencyPayment(const string& walletAddr) : m_walletAddress(walletAddr) {}
+
+    void pay(double amount) const override {
+        cout << "Processing cryptocurrency payment: " << amount << " BTC to wallet "
+             << m_walletAddress.substr(0, 8) << "..." << endl;
+    }
+};
+
+class PayPalPayment : public PaymentStrategy {
+private:
+    string m_email;
+
+public:
+    PayPalPayment(const string& email) : m_email(email) {}
+
+    void pay(double amount) const override {
+        cout << "Processing PayPal payment: \$" << amount << " from " << m_email << endl;
     }
 };
 
 // Context
 class PaymentProcessor {
 private:
-    PaymentStrategy* m_strategy;
+    shared_ptr<PaymentStrategy> m_strategy;
 
 public:
-    void setStrategy(PaymentStrategy* strategy) {
-        m_strategy = strategy;
-    }
+    void setStrategy(shared_ptr<PaymentStrategy> strategy) { m_strategy = strategy; }
 
     void processPayment(double amount) {
-        m_strategy->pay(amount);
+        if (m_strategy) {
+            m_strategy->pay(amount);
+        } else {
+            cout << "No payment strategy set!" << endl;
+        }
     }
 };
 
 int main() {
     PaymentProcessor processor;
 
-    CreditCardPayment cc;
-    processor.setStrategy(&cc);
-    processor.processPayment(100);
+    // Strategy 1: Credit Card
+    cout << "--- Using Credit Card ---" << endl;
+    auto cc = make_shared<CreditCardPayment>("1234567890123456");
+    processor.setStrategy(cc);
+    processor.processPayment(99.99);
 
-    CryptoCurrencyPayment crypto;
-    processor.setStrategy(&crypto);
+    // Strategy 2: Cryptocurrency
+    cout << "\\n--- Using Cryptocurrency ---" << endl;
+    auto crypto =
+        make_shared<CryptoCurrencyPayment>("1A1z7agoat2wtQW6wvV8x4L3yzH2Xkq68R");
+    processor.setStrategy(crypto);
     processor.processPayment(0.005);
+
+    // Strategy 3: PayPal
+    cout << "\\n--- Using PayPal ---" << endl;
+    auto paypal = make_shared<PayPalPayment>("user@example.com");
+    processor.setStrategy(paypal);
+    processor.processPayment(50.00);
 
     return 0;
 }

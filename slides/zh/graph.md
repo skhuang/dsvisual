@@ -62,6 +62,7 @@ $$S = O(V^2)$$
 class Graph {
     int V;
     vector<vector<int>> adjMatrix;
+
 public:
     Graph(int vertices) {
         V = vertices;

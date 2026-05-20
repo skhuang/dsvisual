@@ -65,7 +65,8 @@ Building the heap bottom-up with sift-down costs $O(N)$ total — better than $N
 void siftUp(int i) {
     while (i > 0) {
         int p = (i - 1) / 2;
-        if (!cmp(data[i], data[p])) break;
+        if (!cmp(data[i], data[p]))
+            break;
         swap(data[i], data[p]);
         i = p;
     }
@@ -75,9 +76,12 @@ void siftDown(int i) {
     int n = static_cast<int>(data.size());
     while (true) {
         int left = 2 * i + 1, right = 2 * i + 2, best = i;
-        if (left  < n && cmp(data[left],  data[best])) best = left;
-        if (right < n && cmp(data[right], data[best])) best = right;
-        if (best == i) break;
+        if (left < n && cmp(data[left], data[best]))
+            best = left;
+        if (right < n && cmp(data[right], data[best]))
+            best = right;
+        if (best == i)
+            break;
         swap(data[i], data[best]);
         i = best;
     }
@@ -90,8 +94,10 @@ void insert(int x) {
 
 int extractTop() {
     int top = data[0];
-    data[0] = data.back(); data.pop_back();
-    if (!data.empty()) siftDown(0);
+    data[0] = data.back();
+    data.pop_back();
+    if (!data.empty())
+        siftDown(0);
     return top;
 }
 ```

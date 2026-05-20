@@ -4,9 +4,7 @@ using namespace std;
 // Existing/Legacy system with incompatible interface
 class LegacyDataSource {
 public:
-    string getDataLegacy() const {
-        return "Legacy: Raw Binary Data [0x1A, 0x2B, 0x3C]";
-    }
+    string getDataLegacy() const { return "Legacy: Raw Binary Data [0x1A, 0x2B, 0x3C]"; }
 };
 
 // Target interface that modern code expects
@@ -28,9 +26,7 @@ public:
         return "Adapted: " + m_legacy.getDataLegacy();
     }
 
-    string getFormat() override {
-        return "Binary Format Adapted to JSON";
-    }
+    string getFormat() override { return "Binary Format Adapted to JSON"; }
 };
 
 int main() {

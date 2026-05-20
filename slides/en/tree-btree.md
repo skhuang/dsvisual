@@ -71,7 +71,7 @@ void splitChild(int i, BTreeNode* y) {
             z->children.push_back(y->children[j + t]);
     // Push median key up to this (parent) node
     keys.insert(keys.begin() + i, y->keys[t - 1]);
-    y->keys.resize(t - 1);  // trim y to lower half
+    y->keys.resize(t - 1); // trim y to lower half
     children.insert(children.begin() + i + 1, z);
 }
 

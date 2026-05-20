@@ -67,8 +67,7 @@ public:
     BPlusNode* nextLeaf; // leaf-level linked list
     bool isLeaf;
     int MAX;
-    BPlusNode(int maxKeys, bool leaf)
-        : MAX(maxKeys), isLeaf(leaf), nextLeaf(nullptr) {}
+    BPlusNode(int maxKeys, bool leaf) : MAX(maxKeys), isLeaf(leaf), nextLeaf(nullptr) {}
 };
 
 // B+ Tree theory:
@@ -80,7 +79,8 @@ public:
 void insert(int k) {
     if (!root) {
         root = new BPlusNode(MAX, true);
-        root->keys.push_back(k); return;
+        root->keys.push_back(k);
+        return;
     }
     // descend to leaf, insert in sorted order,
     // split and propagate upward if full

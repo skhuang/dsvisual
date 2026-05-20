@@ -5,7 +5,7 @@ using namespace std;
 class Graph {
 private:
     int V;
-    vector<vector<int> > adjMatrix;
+    vector<vector<int>> adjMatrix;
 
 public:
     Graph(int vertices) {

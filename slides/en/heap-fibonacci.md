@@ -70,7 +70,7 @@ FNode* insert(int key) {
     return x;
 }
 
-void cut(FNode* x, FNode* y) {      // x: child, y: parent
+void cut(FNode* x, FNode* y) { // x: child, y: parent
     if (y->child == x)
         y->child = (x->right != x) ? x->right : nullptr;
     y->degree--;
@@ -80,9 +80,14 @@ void cut(FNode* x, FNode* y) {      // x: child, y: parent
 
 void cascadingCut(FNode* y) {
     FNode* z = y->parent;
-    if (!z) return;
-    if (!y->mark) { y->mark = true; }
-    else { cut(y, z); cascadingCut(z); }
+    if (!z)
+        return;
+    if (!y->mark) {
+        y->mark = true;
+    } else {
+        cut(y, z);
+        cascadingCut(z);
+    }
 }
 
 void decreaseOrIncreaseKey(FNode* x, int newKey) {
@@ -92,7 +97,8 @@ void decreaseOrIncreaseKey(FNode* x, int newKey) {
         cut(x, y);
         cascadingCut(y);
     }
-    if (!best || cmp(x->key, best->key)) best = x;
+    if (!best || cmp(x->key, best->key))
+        best = x;
 }
 ```
 

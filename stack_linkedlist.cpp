@@ -12,9 +12,7 @@ private:
     Node* topNode;
 
 public:
-    StackLinkedList() {
-        topNode = nullptr;
-    }
+    StackLinkedList() { topNode = nullptr; }
 
     void push(int val) {
         Node* newNode = new Node(val);
@@ -36,9 +34,7 @@ public:
         return val;
     }
 
-    bool isEmpty() {
-        return topNode == nullptr;
-    }
+    bool isEmpty() { return topNode == nullptr; }
 };
 
 int main() {

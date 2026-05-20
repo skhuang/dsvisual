@@ -60,7 +60,8 @@ $$T_{\text{insert-mid}}(n) = O(N)$$
 
 ```cpp
 void insert(int index, int val) {
-    if (index < 0 || index > size || size >= capacity) return;
+    if (index < 0 || index > size || size >= capacity)
+        return;
     for (int i = size; i > index; i--) {
         arr[i] = arr[i - 1]; // Shift right
     }
@@ -69,7 +70,8 @@ void insert(int index, int val) {
 }
 
 void remove(int index) {
-    if (index < 0 || index >= size) return;
+    if (index < 0 || index >= size)
+        return;
     for (int i = index; i < size - 1; i++) {
         arr[i] = arr[i + 1]; // Shift left
     }

@@ -9,9 +9,7 @@ private:
     int topIndex;
 
 public:
-    StackArray() {
-        topIndex = -1;
-    }
+    StackArray() { topIndex = -1; }
 
     bool push(int val) {
         if (topIndex >= MAX_SIZE - 1) {
@@ -33,9 +31,7 @@ public:
         return val;
     }
 
-    bool isEmpty() {
-        return topIndex < 0;
-    }
+    bool isEmpty() { return topIndex < 0; }
 };
 
 int main() {

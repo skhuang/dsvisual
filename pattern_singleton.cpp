@@ -9,9 +9,7 @@ private:
     int m_value;
 
     // Private constructor - prevents external instantiation
-    Singleton() : m_value(0) {
-        cout << "Singleton constructor called" << endl;
-    }
+    Singleton() : m_value(0) { cout << "Singleton constructor called" << endl; }
 
 public:
     // Prevent copying
@@ -30,17 +28,11 @@ public:
         return m_instance;
     }
 
-    void setValue(int val) { 
-        m_value = val; 
-    }
+    void setValue(int val) { m_value = val; }
 
-    int getValue() const { 
-        return m_value; 
-    }
+    int getValue() const { return m_value; }
 
-    ~Singleton() {
-        cout << "Singleton destructor called" << endl;
-    }
+    ~Singleton() { cout << "Singleton destructor called" << endl; }
 };
 
 // Static member initialization

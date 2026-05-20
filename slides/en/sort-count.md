@@ -63,9 +63,11 @@ void countingSort(vector<int>& arr) {
     int range = maxV - minV + 1;
     vector<int> count(range, 0), output(arr.size());
     // Count frequencies
-    for (int x : arr) count[x - minV]++;
+    for (int x : arr)
+        count[x - minV]++;
     // Cumulative sum
-    for (int i = 1; i < range; i++) count[i] += count[i - 1];
+    for (int i = 1; i < range; i++)
+        count[i] += count[i - 1];
     // Place back-to-front (stable)
     for (int i = arr.size() - 1; i >= 0; i--) {
         output[count[arr[i] - minV] - 1] = arr[i];

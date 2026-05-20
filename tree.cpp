@@ -5,7 +5,7 @@ struct TreeNode {
     int data;
     TreeNode* left;
     TreeNode* right;
-    
+
     TreeNode(int val) {
         data = val;
         left = nullptr;
@@ -22,7 +22,7 @@ private:
             cout << "Inserted " << value << endl;
             return new TreeNode(value);
         }
-        
+
         if (value < node->data) {
             node->left = insertRecursive(node->left, value);
         } else if (value > node->data) {
@@ -44,9 +44,7 @@ private:
 public:
     BinarySearchTree() { root = nullptr; }
 
-    void insert(int value) {
-        root = insertRecursive(root, value);
-    }
+    void insert(int value) { root = insertRecursive(root, value); }
 
     void printInOrder() {
         cout << "Inorder Traversal: ";

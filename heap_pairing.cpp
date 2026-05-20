@@ -1,6 +1,6 @@
+#include <climits>
 #include <iostream>
 #include <vector>
-#include <climits>
 using namespace std;
 
 struct PNode {
@@ -15,21 +15,23 @@ private:
     PNode* root = nullptr;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     PNode* meld(PNode* a, PNode* b) {
-        if (!a) return b;
-        if (!b) return a;
-        if (!cmp(a->key, b->key)) swap(a, b);
+        if (!a)
+            return b;
+        if (!b)
+            return a;
+        if (!cmp(a->key, b->key))
+            swap(a, b);
         b->sibling = a->child;
         a->child = b;
         return a;
     }
 
     PNode* mergePairs(PNode* node) {
-        if (!node || !node->sibling) return node;
+        if (!node || !node->sibling)
+            return node;
         PNode* first = node;
         PNode* second = node->sibling;
         PNode* rest = second->sibling;
@@ -39,7 +41,8 @@ private:
     }
 
     void clearNode(PNode* node) {
-        if (!node) return;
+        if (!node)
+            return;
         clearNode(node->child);
         clearNode(node->sibling);
         delete node;
@@ -49,16 +52,13 @@ public:
     explicit PairingHeap(bool minHeap = true) : isMinHeap(minHeap) {}
     ~PairingHeap() { clearNode(root); }
 
-    void insert(int value) {
-        root = meld(root, new PNode(value));
-    }
+    void insert(int value) { root = meld(root, new PNode(value)); }
 
-    int peek() const {
-        return root ? root->key : (isMinHeap ? INT_MAX : INT_MIN);
-    }
+    int peek() const { return root ? root->key : (isMinHeap ? INT_MAX : INT_MIN); }
 
     int extractTop() {
-        if (!root) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!root)
+            return isMinHeap ? INT_MAX : INT_MIN;
         int top = root->key;
         PNode* oldRoot = root;
         root = mergePairs(root->child);
@@ -73,8 +73,10 @@ public:
     }
 
     void printRoot() const {
-        if (!root) cout << "Pairing heap empty\n";
-        else cout << (isMinHeap ? "Min" : "Max") << " pairing root: " << root->key << "\n";
+        if (!root)
+            cout << "Pairing heap empty\n";
+        else
+            cout << (isMinHeap ? "Min" : "Max") << " pairing root: " << root->key << "\n";
     }
 };
 

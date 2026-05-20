@@ -22,6 +22,9 @@ const mappings = {
     'stack_linkedlist.cpp': 'codeLinkedList',
     'queue.cpp': 'codeQueue',
     'graph.cpp': 'codeGraph',
+    'graph_kruskal.cpp': 'codeGraphKruskal',
+    'graph_dijkstra.cpp': 'codeGraphDijkstra',
+    'graph_topo.cpp': 'codeGraphTopo',
     'list_array.cpp': 'codeListArray',
     'list_linked.cpp': 'codeListLinked',
     'hash_chaining.cpp': 'codeHashChain',
@@ -38,7 +41,16 @@ const mappings = {
     'tree_radix.cpp': 'codeTreeRadix',
     'tree_ternary.cpp': 'codeTreeTST',
     'tree_btree.cpp': 'codeTreeBTree',
-    'tree_bplus.cpp': 'codeTreeBPlus'
+    'tree_bplus.cpp': 'codeTreeBPlus',
+    'oop_inheritance.cpp': 'codeOOPInheritance',
+    'oop_polymorphism.cpp': 'codeOOPPolymorphism',
+    'oop_encapsulation.cpp': 'codeOOPEncapsulation',
+    'pattern_singleton.cpp': 'codePatternSingleton',
+    'pattern_factory.cpp': 'codePatternFactory',
+    'pattern_adapter.cpp': 'codePatternAdapter',
+    'pattern_decorator.cpp': 'codePatternDecorator',
+    'pattern_observer.cpp': 'codePatternObserver',
+    'pattern_strategy.cpp': 'codePatternStrategy'
 };
 
 let out = '// Auto-generated code DB for visualization\n';

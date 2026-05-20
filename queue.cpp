@@ -39,9 +39,7 @@ public:
         return val;
     }
 
-    bool isEmpty() {
-        return count == 0;
-    }
+    bool isEmpty() { return count == 0; }
 };
 
 int main() {

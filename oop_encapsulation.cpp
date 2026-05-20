@@ -24,14 +24,10 @@ public:
         return false;
     }
 
-    double getBalance() const {
-        return balance;
-    }
+    double getBalance() const { return balance; }
 
 protected:
-    bool canWithdraw(double amount) const {
-        return amount > 0 && amount <= balance;
-    }
+    bool canWithdraw(double amount) const { return amount > 0 && amount <= balance; }
 
 private:
     void log(const string& type, double amount) const {

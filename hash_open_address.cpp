@@ -11,28 +11,27 @@ public:
     HashOpenAddressing(int size = 5) {
         TABLE_SIZE = size;
         table = new int[TABLE_SIZE];
-        for (int i = 0; i < TABLE_SIZE; i++) table[i] = -1; // -1 indicates empty
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = -1; // -1 indicates empty
         curr_size = 0;
     }
 
-    int hashFunction(int key) {
-        return key % TABLE_SIZE;
-    }
+    int hashFunction(int key) { return key % TABLE_SIZE; }
 
     bool insert(int key) {
         if (curr_size >= TABLE_SIZE) {
             cout << "Hash Table Full!" << endl;
             return false;
         }
-        
+
         int idx = hashFunction(key);
-        
+
         // Linear Probing
         while (table[idx] != -1) {
             cout << "Collision at index " << idx << "! Probing next..." << endl;
             idx = (idx + 1) % TABLE_SIZE;
         }
-        
+
         table[idx] = key;
         curr_size++;
         cout << "Inserted " << key << " securely at index " << idx << endl;
@@ -41,8 +40,10 @@ public:
 
     void display() {
         for (int i = 0; i < TABLE_SIZE; i++) {
-            if (table[i] != -1) cout << "[" << i << "] --> " << table[i] << endl;
-            else cout << "[" << i << "] --> Empty" << endl;
+            if (table[i] != -1)
+                cout << "[" << i << "] --> " << table[i] << endl;
+            else
+                cout << "[" << i << "] --> Empty" << endl;
         }
     }
 };

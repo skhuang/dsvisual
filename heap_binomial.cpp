@@ -1,6 +1,6 @@
+#include <climits>
 #include <iostream>
 #include <vector>
-#include <climits>
 using namespace std;
 
 struct BNode {
@@ -9,7 +9,8 @@ struct BNode {
     BNode* parent;
     BNode* child;
     BNode* sibling;
-    explicit BNode(int k) : key(k), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) {}
+    explicit BNode(int k)
+        : key(k), degree(0), parent(nullptr), child(nullptr), sibling(nullptr) {}
 };
 
 class BinomialHeap {
@@ -17,13 +18,13 @@ private:
     BNode* head = nullptr;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     BNode* mergeRootLists(BNode* h1, BNode* h2) {
-        if (!h1) return h2;
-        if (!h2) return h1;
+        if (!h1)
+            return h2;
+        if (!h2)
+            return h1;
 
         BNode* newHead = nullptr;
         BNode* tail = nullptr;
@@ -58,7 +59,8 @@ private:
 
     BNode* unionHeaps(BNode* h1, BNode* h2) {
         BNode* newHead = mergeRootLists(h1, h2);
-        if (!newHead) return nullptr;
+        if (!newHead)
+            return nullptr;
 
         BNode* prev = nullptr;
         BNode* curr = newHead;
@@ -75,8 +77,10 @@ private:
                 curr->sibling = next->sibling;
                 linkTrees(next, curr);
             } else {
-                if (!prev) newHead = next;
-                else prev->sibling = next;
+                if (!prev)
+                    newHead = next;
+                else
+                    prev->sibling = next;
                 linkTrees(curr, next);
                 curr = next;
             }
@@ -95,16 +99,19 @@ public:
     }
 
     int peek() const {
-        if (!head) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!head)
+            return isMinHeap ? INT_MAX : INT_MIN;
         BNode* best = head;
         for (BNode* p = head->sibling; p; p = p->sibling) {
-            if (cmp(p->key, best->key)) best = p;
+            if (cmp(p->key, best->key))
+                best = p;
         }
         return best->key;
     }
 
     int extractTop() {
-        if (!head) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!head)
+            return isMinHeap ? INT_MAX : INT_MIN;
 
         BNode* prevBest = nullptr;
         BNode* best = head;
@@ -118,8 +125,10 @@ public:
             prev = p;
         }
 
-        if (prevBest) prevBest->sibling = best->sibling;
-        else head = best->sibling;
+        if (prevBest)
+            prevBest->sibling = best->sibling;
+        else
+            head = best->sibling;
 
         BNode* child = best->child;
         BNode* rev = nullptr;
@@ -153,8 +162,12 @@ public:
 
 int main() {
     BinomialHeap h1(true), h2(true);
-    h1.insert(10); h1.insert(3); h1.insert(18);
-    h2.insert(7); h2.insert(1); h2.insert(25);
+    h1.insert(10);
+    h1.insert(3);
+    h1.insert(18);
+    h2.insert(7);
+    h2.insert(1);
+    h2.insert(25);
 
     h1.printRoots();
     h2.printRoots();

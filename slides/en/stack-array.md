@@ -67,7 +67,8 @@ bool push(int val) {
 }
 
 int pop() {
-    if (topIndex < 0) return -1;
+    if (topIndex < 0)
+        return -1;
     return arr[topIndex--];
 }
 ```

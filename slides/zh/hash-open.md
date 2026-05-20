@@ -63,11 +63,13 @@ class HashOpenAddressing {
     int TABLE_SIZE;
     int* table;
     int curr_size;
+
 public:
     HashOpenAddressing(int size = 5) {
         TABLE_SIZE = size;
         table = new int[TABLE_SIZE];
-        for (int i = 0; i < TABLE_SIZE; i++) table[i] = -1;
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = -1;
         curr_size = 0;
     }
     int hashFunction(int key) { return key % TABLE_SIZE; }

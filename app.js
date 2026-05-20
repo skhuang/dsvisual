@@ -372,15 +372,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>${method.visualizer}</span>
                     <strong>${method.title}</strong>
                 </div>
-                <div class="method-section-code">
-                    <div class="method-code-title">${method.file}</div>
-                    <pre><code>${getEscapedCode(method.id)}</code></pre>
+                <div class="code-panel" data-language="cpp">
+                    <div class="code-panel-header">
+                        <span class="code-panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span class="code-panel-filename">${method.file}</span>
+                        <button type="button" class="code-panel-copy" data-code-copy aria-label="Copy code">⧉ Copy</button>
+                    </div>
+                    <pre class="code-panel-body"><code class="language-cpp">${getEscapedCode(method.id)}</code></pre>
                 </div>
             </div>
         `;
         section.querySelector('.method-slides-btn').addEventListener('click', () => openSlides(method.id));
         methodSections.appendChild(section);
         mountActiveRuntime(section);
+        if (window.Prism) Prism.highlightAllUnder(section);
+        // Wrap each line in .code-line so the CSS line-number gutter renders.
+        section.querySelectorAll('.code-panel-body > code').forEach((codeEl) => {
+          const lines = codeEl.innerHTML.split('\n');
+          codeEl.innerHTML = lines.map((line) =>
+            '<span class="code-line">' + line + '</span>'
+          ).join('\n');
+        });
     }
 
     function selectMethod(methodId) {
@@ -484,6 +496,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-code-copy]');
+      if (!btn) return;
+      const panel = btn.closest('.code-panel');
+      if (!panel) return;
+      const codeEl = panel.querySelector('code');
+      if (!codeEl) return;
+      navigator.clipboard.writeText(codeEl.textContent).then(() => {
+        btn.dataset.copied = '1';
+        const original = btn.textContent;
+        btn.textContent = '✓ Copied';
+        setTimeout(() => { btn.textContent = original; delete btn.dataset.copied; }, 1500);
+      });
+    });
 
     function renderCategoryNav() {
         if (!categoryNav) return;

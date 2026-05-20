@@ -41,7 +41,7 @@ test.describe('Heap Visualizer Suite', () => {
 
             const card = page.locator(`[data-method-section="${mode.id}"]`);
             await expect(card).toBeVisible();
-            await expect(card.locator('.method-code-title')).toHaveText(mode.file);
+            await expect(card.locator('.code-panel-filename')).toHaveText(mode.file);
 
             await card.locator('.method-slides-btn').click();
             await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();

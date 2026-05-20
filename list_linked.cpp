@@ -25,13 +25,15 @@ public:
         for (int i = 0; temp != nullptr && i < index - 1; i++) {
             temp = temp->next;
         }
-        if (!temp) return; // Out of bounds
+        if (!temp)
+            return; // Out of bounds
         newNode->next = temp->next;
         temp->next = newNode;
     }
 
     void remove(int index) {
-        if (!head) return;
+        if (!head)
+            return;
         if (index == 0) {
             Node* temp = head;
             head = head->next;
@@ -42,7 +44,8 @@ public:
         for (int i = 0; temp != nullptr && i < index - 1; i++) {
             temp = temp->next;
         }
-        if (!temp || !temp->next) return;
+        if (!temp || !temp->next)
+            return;
         Node* delNode = temp->next;
         temp->next = delNode->next;
         delete delNode;

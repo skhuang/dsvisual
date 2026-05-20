@@ -61,9 +61,11 @@ Amortized analysis guarantees total cost of $m$ operations is $O(m \log N)$; sin
 
 ```cpp
 Node* splay(Node* root, int key) {
-    if (!root || root->key == key) return root;
-    if (root->key > key) {          // key is in left subtree
-        if (!root->left) return root;
+    if (!root || root->key == key)
+        return root;
+    if (root->key > key) { // key is in left subtree
+        if (!root->left)
+            return root;
         if (root->left->key > key) { // Zig-Zig (left-left)
             root->left->left = splay(root->left->left, key);
             root = rightRotate(root);
@@ -73,8 +75,9 @@ Node* splay(Node* root, int key) {
                 root->left = leftRotate(root->left);
         }
         return root->left ? rightRotate(root) : root;
-    } else {                        // key is in right subtree
-        if (!root->right) return root;
+    } else { // key is in right subtree
+        if (!root->right)
+            return root;
         if (root->right->key > key) { // Zig-Zag (right-left)
             root->right->left = splay(root->right->left, key);
             if (root->right->left)

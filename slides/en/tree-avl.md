@@ -60,26 +60,32 @@ The AVL tree height is strictly bounded by $1.44 \log_2 N$, guaranteeing $O(\log
 ## Source Code
 
 ```cpp
-int getBalance(Node* N) {
-    return N ? height(N->left) - height(N->right) : 0;
-}
+int getBalance(Node* N) { return N ? height(N->left) - height(N->right) : 0; }
 
 Node* insert(Node* node, int key) {
-    if (!node) return new Node(key);
-    if (key < node->key) node->left = insert(node->left, key);
-    else if (key > node->key) node->right = insert(node->right, key);
-    else return node; // duplicate
+    if (!node)
+        return new Node(key);
+    if (key < node->key)
+        node->left = insert(node->left, key);
+    else if (key > node->key)
+        node->right = insert(node->right, key);
+    else
+        return node; // duplicate
 
     node->height = 1 + max(height(node->left), height(node->right));
     int balance = getBalance(node);
 
-    if (balance > 1 && key < node->left->key)  return rightRotate(node); // LL
-    if (balance < -1 && key > node->right->key) return leftRotate(node);  // RR
-    if (balance > 1 && key > node->left->key) {                           // LR
-        node->left = leftRotate(node->left); return rightRotate(node);
+    if (balance > 1 && key < node->left->key)
+        return rightRotate(node); // LL
+    if (balance < -1 && key > node->right->key)
+        return leftRotate(node);                // RR
+    if (balance > 1 && key > node->left->key) { // LR
+        node->left = leftRotate(node->left);
+        return rightRotate(node);
     }
-    if (balance < -1 && key < node->right->key) {                         // RL
-        node->right = rightRotate(node->right); return leftRotate(node);
+    if (balance < -1 && key < node->right->key) { // RL
+        node->right = rightRotate(node->right);
+        return leftRotate(node);
     }
     return node;
 }

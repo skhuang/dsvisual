@@ -70,7 +70,8 @@ void bubbleSort(int arr[], int n) {
                 swapped = true;
             }
         }
-        if (!swapped) break; // early exit
+        if (!swapped)
+            break; // early exit
     }
 }
 ```

@@ -1,7 +1,7 @@
-#include <iostream>
-#include <vector>
-#include <unordered_map>
 #include <climits>
+#include <iostream>
+#include <unordered_map>
+#include <vector>
 using namespace std;
 
 struct FNode {
@@ -14,7 +14,8 @@ struct FNode {
     FNode* right;
 
     explicit FNode(int k)
-        : key(k), degree(0), mark(false), parent(nullptr), child(nullptr), left(this), right(this) {}
+        : key(k), degree(0), mark(false), parent(nullptr), child(nullptr), left(this),
+          right(this) {}
 };
 
 class FibonacciHeap {
@@ -24,9 +25,7 @@ private:
     int n = 0;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     static void spliceRight(FNode* a, FNode* b) {
         b->left = a;
@@ -50,7 +49,8 @@ private:
             return;
         }
         spliceRight(root, x);
-        if (cmp(x->key, best->key)) best = x;
+        if (cmp(x->key, best->key))
+            best = x;
     }
 
     void link(FNode* y, FNode* x) {
@@ -66,7 +66,8 @@ private:
     }
 
     void consolidate() {
-        if (!root) return;
+        if (!root)
+            return;
 
         vector<FNode*> roots;
         FNode* p = root;
@@ -81,7 +82,8 @@ private:
             int d = x->degree;
             while (A[d]) {
                 FNode* y = A[d];
-                if (cmp(y->key, x->key)) swap(x, y);
+                if (cmp(y->key, x->key))
+                    swap(x, y);
                 link(y, x);
                 A[d] = nullptr;
                 d++;
@@ -92,19 +94,22 @@ private:
         root = nullptr;
         best = nullptr;
         for (FNode* x : A) {
-            if (!x) continue;
+            if (!x)
+                continue;
             x->left = x->right = x;
             if (!root) {
                 root = best = x;
             } else {
                 spliceRight(root, x);
-                if (cmp(x->key, best->key)) best = x;
+                if (cmp(x->key, best->key))
+                    best = x;
             }
         }
     }
 
     void cut(FNode* x, FNode* y) {
-        if (y->child == x) y->child = (x->right != x) ? x->right : nullptr;
+        if (y->child == x)
+            y->child = (x->right != x) ? x->right : nullptr;
         y->degree--;
         removeNode(x);
         addToRootList(x);
@@ -112,7 +117,8 @@ private:
 
     void cascadingCut(FNode* y) {
         FNode* z = y->parent;
-        if (!z) return;
+        if (!z)
+            return;
         if (!y->mark) {
             y->mark = true;
         } else {
@@ -132,12 +138,14 @@ public:
     }
 
     int peek() const {
-        if (!best) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!best)
+            return isMinHeap ? INT_MAX : INT_MIN;
         return best->key;
     }
 
     int extractTop() {
-        if (!best) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!best)
+            return isMinHeap ? INT_MAX : INT_MIN;
         FNode* z = best;
 
         if (z->child) {
@@ -158,7 +166,8 @@ public:
         if (z->right == z) {
             root = best = nullptr;
         } else {
-            if (root == z) root = z->right;
+            if (root == z)
+                root = z->right;
             removeNode(z);
             best = root;
             consolidate();
@@ -171,7 +180,8 @@ public:
     }
 
     void decreaseOrIncreaseKey(FNode* x, int newKey) {
-        if (!x) return;
+        if (!x)
+            return;
         int old = x->key;
         x->key = newKey;
         FNode* y = x->parent;
@@ -182,18 +192,21 @@ public:
             cascadingCut(y);
         }
 
-        if (!best || cmp(x->key, best->key)) best = x;
+        if (!best || cmp(x->key, best->key))
+            best = x;
         (void)old;
     }
 
     void erase(FNode* x) {
-        if (!x) return;
+        if (!x)
+            return;
         decreaseOrIncreaseKey(x, isMinHeap ? INT_MIN : INT_MAX);
         extractTop();
     }
 
     void merge(FibonacciHeap& other) {
-        if (!other.root) return;
+        if (!other.root)
+            return;
         if (!root) {
             root = other.root;
             best = other.best;
@@ -205,7 +218,8 @@ public:
             other.root->left = root;
             aRight->left = bLeft;
             bLeft->right = aRight;
-            if (cmp(other.best->key, best->key)) best = other.best;
+            if (cmp(other.best->key, best->key))
+                best = other.best;
             n += other.n;
         }
         other.root = other.best = nullptr;
@@ -213,8 +227,10 @@ public:
     }
 
     void printTop() const {
-        if (!best) cout << "Heap empty\n";
-        else cout << (isMinHeap ? "Min" : "Max") << " top: " << best->key << "\n";
+        if (!best)
+            cout << "Heap empty\n";
+        else
+            cout << (isMinHeap ? "Min" : "Max") << " top: " << best->key << "\n";
     }
 };
 

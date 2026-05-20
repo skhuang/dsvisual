@@ -12,9 +12,7 @@ public:
 // Concrete Products
 class Car : public Vehicle {
 public:
-    void display() const override {
-        cout << "[Car] 4 wheels, sedan, engine: V6" << endl;
-    }
+    void display() const override { cout << "[Car] 4 wheels, sedan, engine: V6" << endl; }
 };
 
 class Truck : public Vehicle {
@@ -51,9 +49,12 @@ int main() {
     unique_ptr<Vehicle> v2 = VehicleFactory::createVehicle("truck");
     unique_ptr<Vehicle> v3 = VehicleFactory::createVehicle("bike");
 
-    if (v1) v1->display();
-    if (v2) v2->display();
-    if (v3) v3->display();
+    if (v1)
+        v1->display();
+    if (v2)
+        v2->display();
+    if (v3)
+        v3->display();
 
     return 0;
 }

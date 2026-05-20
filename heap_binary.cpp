@@ -1,6 +1,6 @@
 #include <iostream>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 using namespace std;
 
 class BinaryHeap {
@@ -8,14 +8,13 @@ private:
     vector<int> data;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
     void siftUp(int i) {
         while (i > 0) {
             int p = (i - 1) / 2;
-            if (!cmp(data[i], data[p])) break;
+            if (!cmp(data[i], data[p]))
+                break;
             swap(data[i], data[p]);
             i = p;
         }
@@ -28,9 +27,12 @@ private:
             int right = 2 * i + 2;
             int best = i;
 
-            if (left < n && cmp(data[left], data[best])) best = left;
-            if (right < n && cmp(data[right], data[best])) best = right;
-            if (best == i) break;
+            if (left < n && cmp(data[left], data[best]))
+                best = left;
+            if (right < n && cmp(data[right], data[best]))
+                best = right;
+            if (best == i)
+                break;
 
             swap(data[i], data[best]);
             i = best;
@@ -46,16 +48,19 @@ public:
     }
 
     int peek() const {
-        if (data.empty()) throw runtime_error("Heap is empty");
+        if (data.empty())
+            throw runtime_error("Heap is empty");
         return data[0];
     }
 
     int extractTop() {
-        if (data.empty()) throw runtime_error("Heap is empty");
+        if (data.empty())
+            throw runtime_error("Heap is empty");
         int top = data[0];
         data[0] = data.back();
         data.pop_back();
-        if (!data.empty()) siftDown(0);
+        if (!data.empty())
+            siftDown(0);
         return top;
     }
 
@@ -65,8 +70,10 @@ public:
         }
         int oldVal = data[idx];
         data[idx] = newVal;
-        if (cmp(newVal, oldVal)) siftUp(idx);
-        else siftDown(idx);
+        if (cmp(newVal, oldVal))
+            siftUp(idx);
+        else
+            siftDown(idx);
     }
 
     void eraseAt(int idx) {
@@ -82,12 +89,14 @@ public:
     }
 
     void mergeFrom(const vector<int>& other) {
-        for (int v : other) insert(v);
+        for (int v : other)
+            insert(v);
     }
 
     void printArray() const {
         cout << (isMinHeap ? "MinHeap" : "MaxHeap") << " array: ";
-        for (int v : data) cout << v << " ";
+        for (int v : data)
+            cout << v << " ";
         cout << "\n";
     }
 };

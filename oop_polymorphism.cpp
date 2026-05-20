@@ -13,22 +13,20 @@ public:
 class Circle : public Shape {
 private:
     double radius;
+
 public:
     explicit Circle(double r) : radius(r) {}
 
-    void draw() const override {
-        cout << "Drawing Circle(" << radius << ")" << endl;
-    }
+    void draw() const override { cout << "Drawing Circle(" << radius << ")" << endl; }
 
-    double area() const override {
-        return 3.14159 * radius * radius;
-    }
+    double area() const override { return 3.14159 * radius * radius; }
 };
 
 class Rectangle : public Shape {
 private:
     double width;
     double height;
+
 public:
     Rectangle(double w, double h) : width(w), height(h) {}
 
@@ -36,9 +34,7 @@ public:
         cout << "Drawing Rectangle(" << width << ", " << height << ")" << endl;
     }
 
-    double area() const override {
-        return width * height;
-    }
+    double area() const override { return width * height; }
 };
 
 int main() {

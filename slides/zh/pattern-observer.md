@@ -70,14 +70,14 @@ public:
 class Subject {
     vector<shared_ptr<Observer>> m_observers;
     string m_state;
+
 public:
-    void attach(shared_ptr<Observer> obs) {
-        m_observers.push_back(obs);
-    }
+    void attach(shared_ptr<Observer> obs) { m_observers.push_back(obs); }
     void setState(const string& state) {
         m_state = state;
         notify();
     }
+
 private:
     void notify() {
         for (auto& obs : m_observers)

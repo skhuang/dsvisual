@@ -69,21 +69,20 @@ public:
 
 class CreditCardPayment : public PaymentStrategy {
     string m_cardNumber;
+
 public:
     CreditCardPayment(const string& num) : m_cardNumber(num) {}
-    void pay(double amount) const override {
-        cout << "CreditCard: $" << amount << endl;
-    }
+    void pay(double amount) const override { cout << "CreditCard: $" << amount << endl; }
 };
 
 class PaymentProcessor {
     shared_ptr<PaymentStrategy> m_strategy;
+
 public:
-    void setStrategy(shared_ptr<PaymentStrategy> s) {
-        m_strategy = s;
-    }
+    void setStrategy(shared_ptr<PaymentStrategy> s) { m_strategy = s; }
     void processPayment(double amount) {
-        if (m_strategy) m_strategy->pay(amount);
+        if (m_strategy)
+            m_strategy->pay(amount);
     }
 };
 

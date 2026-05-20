@@ -69,17 +69,19 @@ struct Node {
 class HashChaining {
     int TABLE_SIZE;
     Node** table;
+
 public:
     HashChaining(int size = 5) {
         TABLE_SIZE = size;
         table = new Node*[TABLE_SIZE];
-        for (int i = 0; i < TABLE_SIZE; i++) table[i] = nullptr;
+        for (int i = 0; i < TABLE_SIZE; i++)
+            table[i] = nullptr;
     }
     int hashFunction(int key) { return key % TABLE_SIZE; }
     void insert(int key) {
         int hashIdx = hashFunction(key);
         Node* newNode = new Node(key);
-        newNode->next = table[hashIdx];   // prepend
+        newNode->next = table[hashIdx]; // prepend
         table[hashIdx] = newNode;
     }
     void display() {
