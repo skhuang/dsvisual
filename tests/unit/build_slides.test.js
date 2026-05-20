@@ -38,10 +38,15 @@ test('table → markdown and html', () => {
     '<table><thead><tr><th>Col</th></tr></thead><tbody><tr><td>Val</td></tr></tbody></table>');
 });
 
-test('code → fenced markdown and escaped html', () => {
+test('code → fenced markdown and chrome-wrapped highlighted html', () => {
   const block = { type: 'code', lang: 'cpp', code: 'if (a < b) x();' };
   assert.equal(b.blockToMarkdown(block, 'zh', {}), '```cpp\nif (a < b) x();\n```');
-  assert.equal(b.blockToHtml(block, 'zh', {}), '<pre><code class="language-cpp">if (a &lt; b) x();</code></pre>');
+  const html = b.blockToHtml(block, 'zh', {});
+  assert.match(html, /<div class="code-panel" data-language="cpp">/);
+  assert.match(html, /<button[^>]*data-code-copy/);
+  assert.match(html, /<pre class="code-panel-body"><code class="language-cpp">/);
+  // Prism-highlighted output contains token spans
+  assert.match(html, /class="token /);
 });
 
 test('note → blockquote markdown and div html', () => {

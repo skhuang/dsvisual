@@ -1,6 +1,9 @@
 'use strict';
 
 const katex = require('katex');
+const Prism = require('prismjs');
+require('prismjs/components/prism-c');
+require('prismjs/components/prism-cpp');
 
 function pick(i18nValue, lang) {
   if (i18nValue == null) return '';
@@ -76,8 +79,24 @@ function blockToHtml(block, lang, ctx) {
         (r) => '<tr>' + r.map((c) => '<td>' + inlineHtml(pick(c, lang)) + '</td>').join('') + '</tr>').join('') + '</tbody>';
       return '<table>' + head + body + '</table>';
     }
-    case 'code':
-      return '<pre><code class="language-' + (block.lang || '') + '">' + escapeHtml(block.code) + '</code></pre>';
+    case 'code': {
+      const highlighted = Prism.highlight(
+        block.code,
+        Prism.languages.cpp,
+        'cpp'
+      );
+      const filename = block.file ? escapeHtml(block.file) : '';
+      return (
+        '<div class="code-panel" data-language="cpp">' +
+          '<div class="code-panel-header">' +
+            '<span class="code-panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
+            '<span class="code-panel-filename">' + filename + '</span>' +
+            '<button type="button" class="code-panel-copy" data-code-copy aria-label="Copy code">⧉ Copy</button>' +
+          '</div>' +
+          '<pre class="code-panel-body"><code class="language-cpp">' + highlighted + '</code></pre>' +
+        '</div>'
+      );
+    }
     case 'note':
       return '<div class="note">' + inlineHtml(pick(block.text, lang)) + '</div>';
     case 'math': {
