@@ -54,6 +54,14 @@ test.describe('UX polish — code density slider', () => {
         const fontSize = await mainPanel.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
         const lh = await mainPanel.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
         expect(lh).toBeCloseTo(fontSize * 1.3, 1);
+
+        // CRITICAL: the inner <code> is what actually controls visible text spacing,
+        // because Prism sets line-height: 1.5 on `code[class*="language-"]` directly.
+        // If we only override the <pre>, the user sees no visible change.
+        const codeEl = mainPanel.locator('code');
+        const codeFs = await codeEl.evaluate((el) => parseFloat(getComputedStyle(el).fontSize));
+        const codeLh = await codeEl.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+        expect(codeLh).toBeCloseTo(codeFs * 1.3, 1);
     });
 
     test('density persists across page reload', async ({ page }) => {
@@ -82,14 +90,15 @@ test.describe('UX polish — code density slider', () => {
 
     test('preview block inside drawer updates with slider', async ({ page }) => {
         await page.locator('#settings-toggle').click();
-        const preview = page.locator('.settings-row-preview .code-panel-body');
-        await expect(preview).toBeVisible();
-        const before = await preview.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+        const previewPre = page.locator('.settings-row-preview .code-panel-body');
+        const previewCode = previewPre.locator('code');
+        await expect(previewPre).toBeVisible();
+        const before = await previewCode.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
         await page.locator('#code-density-slider').evaluate((el) => {
             el.value = '1.0';
             el.dispatchEvent(new Event('input', { bubbles: true }));
         });
-        const after = await preview.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+        const after = await previewCode.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
         expect(after).toBeLessThan(before);
     });
 });

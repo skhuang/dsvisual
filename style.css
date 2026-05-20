@@ -1400,6 +1400,11 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 pre.code-panel-body[class*="language-"] {
     line-height: var(--code-line-height);
 }
+/* Prism also sets line-height: 1.5 on `code[class*="language-"]` directly, which is
+   what controls the visible text spacing inside the panel. Override on the inner <code>. */
+.code-panel-body code[class*="language-"] {
+    line-height: var(--code-line-height);
+}
 /* Custom scrollbar — dark */
 .code-panel-body::-webkit-scrollbar { width: 10px; height: 10px; }
 .code-panel-body::-webkit-scrollbar-track { background: #0b1220; }
