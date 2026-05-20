@@ -126,6 +126,7 @@ const METHOD_GROUPS = [
         methods: [
             { id: 'graph', title: 'Undirected Graph', file: 'graph.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-adjlist', title: 'Adjacency List', file: 'graph_adjlist.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-traversal', title: 'BFS vs DFS (Dual-Pane)', file: 'graph_traversal.cpp', visualizer: 'graph-dual', controls: 'graph-traversal' },
             { id: 'graph-bfs', title: 'Breadth-First Search', file: 'graph_bfs.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-dfs', title: 'Depth-First Search', file: 'graph_dfs.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-kruskal', title: 'Kruskal MST', file: 'graph_kruskal.cpp', visualizer: 'graph', controls: 'graph' },
@@ -229,6 +230,7 @@ function getCodeForMethod(methodId) {
         'tree-bplus': codeTreeBPlus,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
+        'graph-traversal': codeGraphTraversal,
         'graph-bfs': codeGraphBFS,
         'graph-dfs': codeGraphDFS,
         'graph-kruskal': codeGraphKruskal,
@@ -1596,6 +1598,12 @@ document.addEventListener('DOMContentLoaded', () => {
             graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
             btnGraphClear.classList.add('hidden'); btnGraphAdd.classList.add('hidden');
         }
+        else if (currentMode === 'graph-traversal') {
+            codeTitle.textContent = 'graph_traversal.cpp'; codeDisplay.textContent = codeGraphTraversal; graphActions.classList.remove('hidden');
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden');
+            graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
+            btnGraphClear.classList.add('hidden'); btnGraphAdd.classList.add('hidden');
+        }
         else if (currentMode === 'graph-bfs') {
             codeTitle.textContent = 'graph_bfs.cpp'; codeDisplay.textContent = codeGraphBFS; graphActions.classList.remove('hidden');
             graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden');
@@ -1754,6 +1762,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
+        else if (currentMode === 'graph-traversal') renderGraphDual();
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
@@ -2480,6 +2489,100 @@ document.addEventListener('DOMContentLoaded', () => {
         renderGraph();
         if (selected === nodeCount - 1) showStatus('Kruskal complete: MST weight = ' + totalWeight, '#34d399');
         else showStatus('Kruskal complete: forest weight = ' + totalWeight + ' (graph disconnected)', '#fbbf24');
+    }
+
+    function renderGraphDual() {
+        runtimeVisualizer.innerHTML = '';
+        const adjacency = [[1,4],[0,2,3,4],[1,3],[1,2,4],[0,1,3]];
+
+        function paneSvg(modeClass) {
+            return `<svg viewBox="0 0 280 200" width="100%" class="` + modeClass + `-svg"
+            xmlns="http://www.w3.org/2000/svg">
+            <g class="edges" stroke="#94a3b8" stroke-width="2">
+                <line x1="140" y1="30" x2="60"  y2="80"/>
+                <line x1="140" y1="30" x2="220" y2="80"/>
+                <line x1="60"  y1="80" x2="80"  y2="160"/>
+                <line x1="60"  y1="80" x2="200" y2="160"/>
+                <line x1="60"  y1="80" x2="220" y2="80"/>
+                <line x1="80"  y1="160" x2="200" y2="160"/>
+                <line x1="200" y1="160" x2="220" y2="80"/>
+            </g>
+            <g class="nodes">
+                <circle cx="140" cy="30"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="0"/>
+                <text x="140" y="35" text-anchor="middle" font-size="14" font-weight="700">0</text>
+                <circle cx="60"  cy="80"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="1"/>
+                <text x="60"  y="85" text-anchor="middle" font-size="14" font-weight="700">1</text>
+                <circle cx="80"  cy="160" r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="2"/>
+                <text x="80"  y="165" text-anchor="middle" font-size="14" font-weight="700">2</text>
+                <circle cx="200" cy="160" r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="3"/>
+                <text x="200" y="165" text-anchor="middle" font-size="14" font-weight="700">3</text>
+                <circle cx="220" cy="80"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="4"/>
+                <text x="220" y="85" text-anchor="middle" font-size="14" font-weight="700">4</text>
+            </g>
+        </svg>`;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'graph-dual-grid';
+        grid.innerHTML =
+            '<div class="graph-dual-pane" data-pane="bfs"><h4>BFS (queue)</h4>' + paneSvg('bfs') +
+                '<div class="bfs-queue" data-testid="bfs-queue"><strong>Queue:</strong> <span class="bfs-queue-items">0</span></div>' +
+            '</div>' +
+            '<div class="graph-dual-pane" data-pane="dfs"><h4>DFS (stack)</h4>' + paneSvg('dfs') +
+                '<div class="dfs-stack" data-testid="dfs-stack"><strong>Stack:</strong> <span class="dfs-stack-items">0</span></div>' +
+            '</div>';
+        runtimeVisualizer.appendChild(grid);
+
+        // BFS state
+        let bfsVisited = new Set(), bfsQueue = [0], bfsOrder = [];
+        // DFS state
+        let dfsVisited = new Set(), dfsStack = [0], dfsOrder = [];
+
+        const bfsPane = runtimeVisualizer.querySelector('[data-pane="bfs"]');
+        const dfsPane = runtimeVisualizer.querySelector('[data-pane="dfs"]');
+        const bfsQueueEl = bfsPane.querySelector('.bfs-queue-items');
+        const dfsStackEl = dfsPane.querySelector('.dfs-stack-items');
+
+        function bfsStep() {
+            while (bfsQueue.length && bfsVisited.has(bfsQueue[0])) bfsQueue.shift();
+            if (bfsQueue.length === 0) return;
+            const u = bfsQueue.shift();
+            bfsVisited.add(u);
+            bfsOrder.push(u);
+            const c = bfsPane.querySelector('[data-node="' + u + '"]');
+            if (c) c.setAttribute('fill', '#10b981');
+            for (const v of adjacency[u]) if (!bfsVisited.has(v)) bfsQueue.push(v);
+            bfsQueueEl.textContent = bfsQueue.join(' ');
+        }
+        function dfsStep() {
+            while (dfsStack.length && dfsVisited.has(dfsStack[dfsStack.length - 1])) dfsStack.pop();
+            if (dfsStack.length === 0) return;
+            const u = dfsStack.pop();
+            dfsVisited.add(u);
+            dfsOrder.push(u);
+            const c = dfsPane.querySelector('[data-node="' + u + '"]');
+            if (c) c.setAttribute('fill', '#f59e0b');
+            for (let i = adjacency[u].length - 1; i >= 0; i--) {
+                const v = adjacency[u][i];
+                if (!dfsVisited.has(v)) dfsStack.push(v);
+            }
+            dfsStackEl.textContent = dfsStack.join(' ');
+        }
+
+        const stepBtn = runtimeControls.querySelector('[data-action="step"]')
+                     || runtimeControls.querySelector('.demo-step-btn')
+                     || Array.from(runtimeControls.querySelectorAll('button')).find((b) => /step/i.test(b.textContent || ''));
+        const resetBtn = runtimeControls.querySelector('[data-action="reset"]')
+                      || runtimeControls.querySelector('.demo-reset-btn')
+                      || Array.from(runtimeControls.querySelectorAll('button')).find((b) => /reset/i.test(b.textContent || ''));
+        if (stepBtn) stepBtn.onclick = () => { bfsStep(); dfsStep(); };
+        if (resetBtn) resetBtn.onclick = () => {
+            bfsVisited = new Set(); bfsQueue = [0]; bfsOrder = [];
+            dfsVisited = new Set(); dfsStack = [0]; dfsOrder = [];
+            bfsQueueEl.textContent = '0';
+            dfsStackEl.textContent = '0';
+            runtimeVisualizer.querySelectorAll('.nodes circle').forEach(c => c.setAttribute('fill', '#fff'));
+        };
     }
 
     function renderGraph() {

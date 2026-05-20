@@ -184,6 +184,15 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.dfs-svg .nodes circle')).toHaveCount(5);
     });
 
+    test('Graphs: graph-traversal renders two dual panes (BFS & DFS)', async ({ page }) => {
+        await loadMethod(page, 'graph-traversal');
+        const card = page.locator('[data-method-section="graph-traversal"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_traversal.cpp');
+        await expect(card.locator('.graph-dual-pane')).toHaveCount(2);
+        await expect(card.locator('[data-pane="bfs"] [data-testid="bfs-queue"]')).toBeVisible();
+        await expect(card.locator('[data-pane="dfs"] [data-testid="dfs-stack"]')).toBeVisible();
+    });
+
     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {
         await loadMethod(page, 'sort-radix');
         const sortCard = page.locator('[data-method-section="sort-radix"]');
