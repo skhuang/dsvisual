@@ -2527,9 +2527,11 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML =
             '<div class="graph-dual-pane" data-pane="bfs"><h4>BFS (queue)</h4>' + paneSvg('bfs') +
                 '<div class="bfs-queue" data-testid="bfs-queue"><strong>Queue:</strong> <span class="bfs-queue-items">0</span></div>' +
+                '<div class="bfs-visited"><strong>Visited:</strong> <span class="bfs-visited-items"></span></div>' +
             '</div>' +
             '<div class="graph-dual-pane" data-pane="dfs"><h4>DFS (stack)</h4>' + paneSvg('dfs') +
                 '<div class="dfs-stack" data-testid="dfs-stack"><strong>Stack:</strong> <span class="dfs-stack-items">0</span></div>' +
+                '<div class="bfs-visited"><strong>Visited:</strong> <span class="dfs-visited-items"></span></div>' +
             '</div>';
         runtimeVisualizer.appendChild(grid);
 
@@ -2542,6 +2544,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const dfsPane = runtimeVisualizer.querySelector('[data-pane="dfs"]');
         const bfsQueueEl = bfsPane.querySelector('.bfs-queue-items');
         const dfsStackEl = dfsPane.querySelector('.dfs-stack-items');
+        const bfsVisitedEl = bfsPane.querySelector('.bfs-visited-items');
+        const dfsVisitedEl = dfsPane.querySelector('.dfs-visited-items');
 
         function bfsStep() {
             while (bfsQueue.length && bfsVisited.has(bfsQueue[0])) bfsQueue.shift();
@@ -2553,6 +2557,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (c) c.setAttribute('fill', '#10b981');
             for (const v of adjacency[u]) if (!bfsVisited.has(v)) bfsQueue.push(v);
             bfsQueueEl.textContent = bfsQueue.join(' ');
+            bfsVisitedEl.textContent = bfsOrder.join(' ');
         }
         function dfsStep() {
             while (dfsStack.length && dfsVisited.has(dfsStack[dfsStack.length - 1])) dfsStack.pop();
@@ -2562,11 +2567,13 @@ document.addEventListener('DOMContentLoaded', () => {
             dfsOrder.push(u);
             const c = dfsPane.querySelector('[data-node="' + u + '"]');
             if (c) c.setAttribute('fill', '#f59e0b');
+            // push reverse so smallest-numbered neighbor visited first
             for (let i = adjacency[u].length - 1; i >= 0; i--) {
                 const v = adjacency[u][i];
                 if (!dfsVisited.has(v)) dfsStack.push(v);
             }
             dfsStackEl.textContent = dfsStack.join(' ');
+            dfsVisitedEl.textContent = dfsOrder.join(' ');
         }
 
         const stepBtn = runtimeControls.querySelector('[data-action="step"]')
@@ -2581,6 +2588,8 @@ document.addEventListener('DOMContentLoaded', () => {
             dfsVisited = new Set(); dfsStack = [0]; dfsOrder = [];
             bfsQueueEl.textContent = '0';
             dfsStackEl.textContent = '0';
+            bfsVisitedEl.textContent = '';
+            dfsVisitedEl.textContent = '';
             runtimeVisualizer.querySelectorAll('.nodes circle').forEach(c => c.setAttribute('fill', '#fff'));
         };
     }
