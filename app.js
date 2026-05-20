@@ -372,15 +372,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>${method.visualizer}</span>
                     <strong>${method.title}</strong>
                 </div>
-                <div class="method-section-code">
-                    <div class="method-code-title">${method.file}</div>
-                    <pre><code>${getEscapedCode(method.id)}</code></pre>
+                <div class="code-panel" data-language="cpp">
+                    <div class="code-panel-header">
+                        <span class="code-panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span class="code-panel-filename">${method.file}</span>
+                        <button type="button" class="code-panel-copy" data-code-copy aria-label="Copy code">⧉ Copy</button>
+                    </div>
+                    <pre class="code-panel-body"><code class="language-cpp">${getEscapedCode(method.id)}</code></pre>
                 </div>
             </div>
         `;
         section.querySelector('.method-slides-btn').addEventListener('click', () => openSlides(method.id));
         methodSections.appendChild(section);
         mountActiveRuntime(section);
+        if (window.Prism) Prism.highlightAllUnder(section);
     }
 
     function selectMethod(methodId) {
