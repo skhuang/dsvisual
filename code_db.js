@@ -884,6 +884,48 @@ int main() {
 }
 `;
 
+const codeTreeDSU = `#include <iostream>
+#include <vector>
+using namespace std;
+
+struct DSU {
+    vector<int> p, r;
+    DSU(int n) : p(n), r(n, 0) {
+        for (int i = 0; i < n; i++)
+            p[i] = i;
+    }
+    int find(int x) {
+        return p[x] == x ? x : p[x] = find(p[x]); // path compression
+    }
+    bool unite(int a, int b) {
+        a = find(a);
+        b = find(b);
+        if (a == b)
+            return false;
+        if (r[a] < r[b])
+            swap(a, b);
+        p[b] = a; // union by rank
+        if (r[a] == r[b])
+            r[a]++;
+        return true;
+    }
+};
+
+int main() {
+    DSU d(8);
+    d.unite(0, 1);
+    d.unite(2, 3);
+    d.unite(4, 5);
+    d.unite(6, 7);
+    d.unite(0, 2); // merges {0,1} U {2,3}
+    d.unite(4, 6); // merges {4,5} U {6,7}
+    d.unite(0, 4); // merges all
+    cout << "find(7) = " << d.find(7) << "\\n";
+    cout << "rank[0] = " << d.r[d.find(0)] << "\\n";
+    return 0;
+}
+`;
+
 const codeArray = `#include <iostream>
 using namespace std;
 
@@ -1072,6 +1114,196 @@ int main() {
     g.addEdge(1, 4);
     g.addEdge(2, 3);
     g.addEdge(3, 4);
+    return 0;
+}
+`;
+
+const codeGraphAdjlist = `#include <iostream>
+#include <list>
+#include <vector>
+using namespace std;
+
+class Graph {
+    int V;
+    vector<list<int>> adj;
+
+public:
+    Graph(int v) : V(v), adj(v) {}
+
+    void addEdge(int u, int v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u); // undirected
+    }
+
+    void print() const {
+        for (int i = 0; i < V; i++) {
+            cout << "[" << i << "] -> ";
+            for (int n : adj[i])
+                cout << n << " -> ";
+            cout << "null\\n";
+        }
+    }
+};
+
+int main() {
+    Graph g(5);
+    g.addEdge(0, 1);
+    g.addEdge(0, 4);
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+    g.addEdge(1, 4);
+    g.addEdge(2, 3);
+    g.addEdge(3, 4);
+    g.print();
+    return 0;
+}
+`;
+
+const codeGraphBFS = `#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+
+void bfs(const vector<vector<int>>& adj, int start) {
+    int n = adj.size();
+    vector<bool> visited(n, false);
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        cout << "Visit " << u << "\\n";
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                visited[v] = true;
+                q.push(v);
+            }
+        }
+    }
+}
+
+int main() {
+    vector<vector<int>> adj(5);
+    adj[0] = {1, 4};
+    adj[1] = {0, 2, 3, 4};
+    adj[2] = {1, 3};
+    adj[3] = {1, 2, 4};
+    adj[4] = {0, 1, 3};
+    bfs(adj, 0); // expected: 0 1 4 2 3
+    return 0;
+}
+`;
+
+const codeGraphDFS = `#include <iostream>
+#include <stack>
+#include <vector>
+using namespace std;
+
+void dfsRecursive(const vector<vector<int>>& adj, int u, vector<bool>& visited) {
+    visited[u] = true;
+    cout << "Visit " << u << "\\n";
+    for (int v : adj[u]) {
+        if (!visited[v])
+            dfsRecursive(adj, v, visited);
+    }
+}
+
+void dfsIterative(const vector<vector<int>>& adj, int start) {
+    int n = adj.size();
+    vector<bool> visited(n, false);
+    stack<int> s;
+    s.push(start);
+    while (!s.empty()) {
+        int u = s.top();
+        s.pop();
+        if (visited[u])
+            continue;
+        visited[u] = true;
+        cout << "Visit " << u << "\\n";
+        // push in reverse so smallest neighbor is popped first
+        for (auto it = adj[u].rbegin(); it != adj[u].rend(); ++it) {
+            if (!visited[*it])
+                s.push(*it);
+        }
+    }
+}
+
+int main() {
+    vector<vector<int>> adj(5);
+    adj[0] = {1, 4};
+    adj[1] = {0, 2, 3, 4};
+    adj[2] = {1, 3};
+    adj[3] = {1, 2, 4};
+    adj[4] = {0, 1, 3};
+    vector<bool> visited(5, false);
+    dfsRecursive(adj, 0, visited); // expected: 0 1 2 3 4
+    return 0;
+}
+`;
+
+const codeGraphTraversal = `#include <iostream>
+#include <queue>
+#include <stack>
+#include <vector>
+using namespace std;
+
+vector<int> bfsOrder(const vector<vector<int>>& adj, int start) {
+    int n = adj.size();
+    vector<bool> visited(n, false);
+    vector<int> order;
+    queue<int> q;
+    q.push(start);
+    visited[start] = true;
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        order.push_back(u);
+        for (int v : adj[u]) {
+            if (!visited[v]) {
+                visited[v] = true;
+                q.push(v);
+            }
+        }
+    }
+    return order;
+}
+
+vector<int> dfsOrder(const vector<vector<int>>& adj, int start) {
+    int n = adj.size();
+    vector<bool> visited(n, false);
+    vector<int> order;
+    stack<int> s;
+    s.push(start);
+    while (!s.empty()) {
+        int u = s.top();
+        s.pop();
+        if (visited[u])
+            continue;
+        visited[u] = true;
+        order.push_back(u);
+        for (auto it = adj[u].rbegin(); it != adj[u].rend(); ++it) {
+            if (!visited[*it])
+                s.push(*it);
+        }
+    }
+    return order;
+}
+
+int main() {
+    vector<vector<int>> adj(5);
+    adj[0] = {1, 4};
+    adj[1] = {0, 2, 3, 4};
+    adj[2] = {1, 3};
+    adj[3] = {1, 2, 4};
+    adj[4] = {0, 1, 3};
+    cout << "BFS from 0:";
+    for (int x : bfsOrder(adj, 0))
+        cout << " " << x;
+    cout << "\\nDFS from 0:";
+    for (int x : dfsOrder(adj, 0))
+        cout << " " << x;
+    cout << "\\n";
     return 0;
 }
 `;
