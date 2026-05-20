@@ -166,6 +166,15 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(rows).toHaveCount(5);
     });
 
+    test('Graphs: BFS renders SVG nodes and a queue strip', async ({ page }) => {
+        await loadMethod(page, 'graph-bfs');
+        const card = page.locator('[data-method-section="graph-bfs"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_bfs.cpp');
+        await expect(card.locator('.bfs-svg')).toBeVisible();
+        await expect(card.locator('[data-testid="bfs-queue"]')).toBeVisible();
+        await expect(card.locator('.bfs-svg .nodes circle')).toHaveCount(5);
+    });
+
     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {
         await loadMethod(page, 'sort-radix');
         const sortCard = page.locator('[data-method-section="sort-radix"]');

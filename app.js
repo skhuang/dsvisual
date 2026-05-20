@@ -126,6 +126,8 @@ const METHOD_GROUPS = [
         methods: [
             { id: 'graph', title: 'Undirected Graph', file: 'graph.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-adjlist', title: 'Adjacency List', file: 'graph_adjlist.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-bfs', title: 'Breadth-First Search', file: 'graph_bfs.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-dfs', title: 'Depth-First Search', file: 'graph_dfs.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-kruskal', title: 'Kruskal MST', file: 'graph_kruskal.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-dijkstra', title: 'Dijkstra (Shortest Path)', file: 'graph_dijkstra.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-topo', title: 'Topological Sort', file: 'graph_topo.cpp', visualizer: 'graph', controls: 'graph' },
@@ -227,6 +229,8 @@ function getCodeForMethod(methodId) {
         'tree-bplus': codeTreeBPlus,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
+        'graph-bfs': codeGraphBFS,
+        'graph-dfs': codeGraphDFS,
         'graph-kruskal': codeGraphKruskal,
         'graph-dijkstra': codeGraphDijkstra,
         'graph-topo': codeGraphTopo,
@@ -1592,6 +1596,18 @@ document.addEventListener('DOMContentLoaded', () => {
             graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
             btnGraphClear.classList.add('hidden'); btnGraphAdd.classList.add('hidden');
         }
+        else if (currentMode === 'graph-bfs') {
+            codeTitle.textContent = 'graph_bfs.cpp'; codeDisplay.textContent = codeGraphBFS; graphActions.classList.remove('hidden');
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden');
+            graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
+            btnGraphClear.classList.add('hidden'); btnGraphAdd.classList.add('hidden');
+        }
+        else if (currentMode === 'graph-dfs') {
+            codeTitle.textContent = 'graph_dfs.cpp'; codeDisplay.textContent = codeGraphDFS; graphActions.classList.remove('hidden');
+            graphW.classList.add('hidden'); btnGraphKruskal.classList.add('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden');
+            graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
+            btnGraphClear.classList.add('hidden'); btnGraphAdd.classList.add('hidden');
+        }
         else if (currentMode === 'graph-kruskal') {
             codeTitle.textContent = 'graph_kruskal.cpp'; codeDisplay.textContent = codeGraphKruskal; graphContainer.classList.remove('hidden'); graphActions.classList.remove('hidden');
             graphW.classList.remove('hidden'); btnGraphKruskal.classList.remove('hidden'); btnGraphDijkstra.classList.add('hidden'); btnGraphTopo.classList.add('hidden');
@@ -1738,7 +1754,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
-        else if (currentMode === 'graph' || currentMode === 'graph-adjlist' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo') renderGraph();
+        else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
@@ -2467,6 +2483,77 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGraph() {
+        if (currentMode === 'graph-bfs') {
+            runtimeVisualizer.innerHTML = '';
+            const svg = `<svg viewBox="0 0 280 200" width="100%" style="max-width:280px"
+        xmlns="http://www.w3.org/2000/svg" class="bfs-svg">
+        <g class="edges" stroke="#94a3b8" stroke-width="2">
+            <line x1="140" y1="30" x2="60"  y2="80"/>
+            <line x1="140" y1="30" x2="220" y2="80"/>
+            <line x1="60"  y1="80" x2="80"  y2="160"/>
+            <line x1="60"  y1="80" x2="200" y2="160"/>
+            <line x1="60"  y1="80" x2="220" y2="80"/>
+            <line x1="80"  y1="160" x2="200" y2="160"/>
+            <line x1="200" y1="160" x2="220" y2="80"/>
+        </g>
+        <g class="nodes">
+            <circle cx="140" cy="30"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="0"/>
+            <text x="140" y="35" text-anchor="middle" font-size="14" font-weight="700">0</text>
+            <circle cx="60"  cy="80"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="1"/>
+            <text x="60"  y="85" text-anchor="middle" font-size="14" font-weight="700">1</text>
+            <circle cx="80"  cy="160" r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="2"/>
+            <text x="80"  y="165" text-anchor="middle" font-size="14" font-weight="700">2</text>
+            <circle cx="200" cy="160" r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="3"/>
+            <text x="200" y="165" text-anchor="middle" font-size="14" font-weight="700">3</text>
+            <circle cx="220" cy="80"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="4"/>
+            <text x="220" y="85" text-anchor="middle" font-size="14" font-weight="700">4</text>
+        </g>
+    </svg>`;
+
+            const wrap = document.createElement('div');
+            wrap.className = 'bfs-wrap';
+            wrap.innerHTML = svg + '<div class="bfs-queue" data-testid="bfs-queue"><strong>Queue:</strong> <span class="bfs-queue-items">0</span></div>'
+                               + '<div class="bfs-visited"><strong>Visited:</strong> <span class="bfs-visited-items"></span></div>';
+            runtimeVisualizer.appendChild(wrap);
+
+            // BFS step handler — bind to the existing step/reset buttons if present.
+            const adjacency = [[1,4],[0,2,3,4],[1,3],[1,2,4],[0,1,3]];
+            const state = { visited: [], queue: [0], visitedSet: new Set() };
+            const queueEl = wrap.querySelector('.bfs-queue-items');
+            const visitedEl = wrap.querySelector('.bfs-visited-items');
+
+            function bfsStep() {
+                while (state.queue.length && state.visitedSet.has(state.queue[0])) state.queue.shift();
+                if (state.queue.length === 0) return;
+                const u = state.queue.shift();
+                state.visitedSet.add(u);
+                state.visited.push(u);
+                const circle = wrap.querySelector('[data-node="' + u + '"]');
+                if (circle) circle.setAttribute('fill', '#10b981');
+                for (const v of adjacency[u]) if (!state.visitedSet.has(v)) state.queue.push(v);
+                queueEl.textContent = state.queue.join(' ');
+                visitedEl.textContent = state.visited.join(' ');
+            }
+            function bfsReset() {
+                state.visited = [];
+                state.queue = [0];
+                state.visitedSet = new Set();
+                queueEl.textContent = '0';
+                visitedEl.textContent = '';
+                wrap.querySelectorAll('.nodes circle').forEach((c) => c.setAttribute('fill', '#fff'));
+            }
+
+            // Bind to existing graph controls — search the runtimeControls for step/reset buttons.
+            const stepBtn = runtimeControls.querySelector('[data-action="step"]')
+                         || runtimeControls.querySelector('.demo-step-btn')
+                         || Array.from(runtimeControls.querySelectorAll('button')).find((b) => /step/i.test(b.textContent || ''));
+            const resetBtn = runtimeControls.querySelector('[data-action="reset"]')
+                          || runtimeControls.querySelector('.demo-reset-btn')
+                          || Array.from(runtimeControls.querySelectorAll('button')).find((b) => /reset/i.test(b.textContent || ''));
+            if (stepBtn) stepBtn.onclick = bfsStep;
+            if (resetBtn) resetBtn.onclick = bfsReset;
+            return;
+        }
         if (currentMode === 'graph-adjlist') {
             // Render the same 5-node graph but as a vertical list of adjacency rows:
             // [0] -> 1 -> 4 -> null

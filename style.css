@@ -1620,3 +1620,24 @@ pre.code-panel-body[class*="language-"] {
     color: var(--muted, #64748b);
     font-style: italic;
 }
+
+/* ----- Spec 2a: graph-bfs / graph-dfs visualizer ----- */
+.bfs-wrap, .dfs-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+}
+.bfs-queue, .dfs-stack, .bfs-visited, .dfs-visited {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    background: var(--card-bg, #f8fafc);
+    border: 1px solid var(--card-border, #cbd5e1);
+    border-radius: 4px;
+    min-width: 240px;
+}
+.bfs-svg .nodes circle, .dfs-svg .nodes circle {
+    transition: fill 0.3s ease;
+}
