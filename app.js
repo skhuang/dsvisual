@@ -2554,6 +2554,77 @@ document.addEventListener('DOMContentLoaded', () => {
             if (resetBtn) resetBtn.onclick = bfsReset;
             return;
         }
+        if (currentMode === 'graph-dfs') {
+            runtimeVisualizer.innerHTML = '';
+            const svg = `<svg viewBox="0 0 280 200" width="100%" style="max-width:280px"
+        xmlns="http://www.w3.org/2000/svg" class="dfs-svg">
+        <g class="edges" stroke="#94a3b8" stroke-width="2">
+            <line x1="140" y1="30" x2="60"  y2="80"/>
+            <line x1="140" y1="30" x2="220" y2="80"/>
+            <line x1="60"  y1="80" x2="80"  y2="160"/>
+            <line x1="60"  y1="80" x2="200" y2="160"/>
+            <line x1="60"  y1="80" x2="220" y2="80"/>
+            <line x1="80"  y1="160" x2="200" y2="160"/>
+            <line x1="200" y1="160" x2="220" y2="80"/>
+        </g>
+        <g class="nodes">
+            <circle cx="140" cy="30"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="0"/>
+            <text x="140" y="35" text-anchor="middle" font-size="14" font-weight="700">0</text>
+            <circle cx="60"  cy="80"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="1"/>
+            <text x="60"  y="85" text-anchor="middle" font-size="14" font-weight="700">1</text>
+            <circle cx="80"  cy="160" r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="2"/>
+            <text x="80"  y="165" text-anchor="middle" font-size="14" font-weight="700">2</text>
+            <circle cx="200" cy="160" r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="3"/>
+            <text x="200" y="165" text-anchor="middle" font-size="14" font-weight="700">3</text>
+            <circle cx="220" cy="80"  r="18" fill="#fff" stroke="#1e40af" stroke-width="2" data-node="4"/>
+            <text x="220" y="85" text-anchor="middle" font-size="14" font-weight="700">4</text>
+        </g>
+    </svg>`;
+            const wrap = document.createElement('div');
+            wrap.className = 'dfs-wrap';
+            wrap.innerHTML = svg + '<div class="dfs-stack" data-testid="dfs-stack"><strong>Stack:</strong> <span class="dfs-stack-items">0</span></div>'
+                               + '<div class="bfs-visited"><strong>Visited:</strong> <span class="dfs-visited-items"></span></div>';
+            runtimeVisualizer.appendChild(wrap);
+
+            // DFS step handler — bind to step/reset buttons (use same fallback chain as graph-bfs).
+            const adjacency = [[1,4],[0,2,3,4],[1,3],[1,2,4],[0,1,3]];
+            const state = { visited: [], stack: [0], visitedSet: new Set() };
+            const stackEl = wrap.querySelector('.dfs-stack-items');
+            const visitedEl = wrap.querySelector('.dfs-visited-items');
+
+            function dfsStep() {
+                while (state.stack.length && state.visitedSet.has(state.stack[state.stack.length - 1])) state.stack.pop();
+                if (state.stack.length === 0) return;
+                const u = state.stack.pop();
+                state.visitedSet.add(u);
+                state.visited.push(u);
+                const circle = wrap.querySelector('[data-node="' + u + '"]');
+                if (circle) circle.setAttribute('fill', '#f59e0b');
+                // push reverse so smallest-numbered neighbor visited first
+                for (let i = adjacency[u].length - 1; i >= 0; i--) {
+                    const v = adjacency[u][i];
+                    if (!state.visitedSet.has(v)) state.stack.push(v);
+                }
+                stackEl.textContent = state.stack.join(' ');
+                visitedEl.textContent = state.visited.join(' ');
+            }
+            function dfsReset() {
+                state.visited = []; state.stack = [0]; state.visitedSet = new Set();
+                stackEl.textContent = '0';
+                visitedEl.textContent = '';
+                wrap.querySelectorAll('.nodes circle').forEach((c) => c.setAttribute('fill', '#fff'));
+            }
+
+            const stepBtn = runtimeControls.querySelector('[data-action="step"]')
+                         || runtimeControls.querySelector('.demo-step-btn')
+                         || Array.from(runtimeControls.querySelectorAll('button')).find((b) => /step/i.test(b.textContent || ''));
+            const resetBtn = runtimeControls.querySelector('[data-action="reset"]')
+                          || runtimeControls.querySelector('.demo-reset-btn')
+                          || Array.from(runtimeControls.querySelectorAll('button')).find((b) => /reset/i.test(b.textContent || ''));
+            if (stepBtn) stepBtn.onclick = dfsStep;
+            if (resetBtn) resetBtn.onclick = dfsReset;
+            return;
+        }
         if (currentMode === 'graph-adjlist') {
             // Render the same 5-node graph but as a vertical list of adjacency rows:
             // [0] -> 1 -> 4 -> null

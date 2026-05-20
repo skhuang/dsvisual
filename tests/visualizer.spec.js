@@ -175,6 +175,15 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.bfs-svg .nodes circle')).toHaveCount(5);
     });
 
+    test('Graphs: DFS renders SVG nodes and a stack strip', async ({ page }) => {
+        await loadMethod(page, 'graph-dfs');
+        const card = page.locator('[data-method-section="graph-dfs"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_dfs.cpp');
+        await expect(card.locator('.dfs-svg')).toBeVisible();
+        await expect(card.locator('[data-testid="dfs-stack"]')).toBeVisible();
+        await expect(card.locator('.dfs-svg .nodes circle')).toHaveCount(5);
+    });
+
     test('Advanced Sort: Radix Sort completes execution properly', async ({ page }) => {
         await loadMethod(page, 'sort-radix');
         const sortCard = page.locator('[data-method-section="sort-radix"]');
