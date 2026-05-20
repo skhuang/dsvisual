@@ -1667,3 +1667,65 @@ pre.code-panel-body[class*="language-"] {
 @media (max-width: 800px) {
     .graph-dual-grid { grid-template-columns: 1fr; }
 }
+
+/* ----- Spec 2a: tree-dsu visualizer ----- */
+.dsu-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+}
+.dsu-forest {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+}
+.dsu-tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border: 1px dashed var(--card-border, #cbd5e1);
+    border-radius: 8px;
+    background: var(--card-bg, #f8fafc);
+    min-width: 50px;
+}
+.dsu-tree-node {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--accent-soft, #dbeafe);
+    color: var(--accent, #1e40af);
+    font-weight: 600;
+    border: 2px solid var(--accent, #1e40af);
+    transition: background 0.3s ease;
+}
+.dsu-tree-node.dsu-highlight {
+    background: #f59e0b;
+    color: #fff;
+}
+.dsu-rank-table {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    padding: 4px 10px;
+    background: var(--card-bg, #f8fafc);
+    border: 1px solid var(--card-border, #cbd5e1);
+    border-radius: 4px;
+}
+.dsu-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+.dsu-controls input[type="number"] {
+    width: 48px;
+    padding: 4px;
+    border: 1px solid var(--card-border, #cbd5e1);
+    border-radius: 4px;
+}

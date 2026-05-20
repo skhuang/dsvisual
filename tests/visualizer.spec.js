@@ -331,4 +331,15 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(patternCard.locator('.method-section-visual')).toBeVisible();
     });
 
+    test('Trees: Disjoint Set renders 8 nodes initially and supports union', async ({ page }) => {
+        await loadMethod(page, 'tree-dsu');
+        const card = page.locator('[data-method-section="tree-dsu"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('tree_dsu.cpp');
+        await expect(card.locator('.dsu-tree-node')).toHaveCount(8);
+        await card.locator('[data-dsu-a]').fill('0');
+        await card.locator('[data-dsu-b]').fill('1');
+        await card.locator('[data-action="union"]').click();
+        await expect(card.locator('.dsu-tree')).toHaveCount(7);
+    });
+
 });

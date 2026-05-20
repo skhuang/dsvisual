@@ -118,6 +118,7 @@ const METHOD_GROUPS = [
             { id: 'tree-ternary', title: 'Ternary Search Tree', file: 'tree_ternary.cpp', visualizer: 'text-tree', controls: 'text-tree' },
             { id: 'tree-btree', title: 'B-Tree', file: 'tree_btree.cpp', visualizer: 'advanced-tree', controls: 'tree' },
             { id: 'tree-bplus', title: 'B+ Tree', file: 'tree_bplus.cpp', visualizer: 'advanced-tree', controls: 'tree' },
+            { id: 'tree-dsu', title: 'Disjoint Set (Union-Find)', file: 'tree_dsu.cpp', visualizer: 'dsu', controls: 'dsu' },
         ],
     },
     {
@@ -228,6 +229,7 @@ function getCodeForMethod(methodId) {
         'tree-ternary': codeTreeTST,
         'tree-btree': codeTreeBTree,
         'tree-bplus': codeTreeBPlus,
+        'tree-dsu': codeTreeDSU,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -1652,6 +1654,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if(currentMode === 'tree-btree') { codeTitle.textContent = 'tree_btree.cpp'; codeDisplay.textContent = codeTreeBTree; }
             if(currentMode === 'tree-bplus') { codeTitle.textContent = 'tree_bplus.cpp'; codeDisplay.textContent = codeTreeBPlus; }
         }
+        else if (currentMode === 'tree-dsu') {
+            codeTitle.textContent = 'tree_dsu.cpp';
+            codeDisplay.textContent = codeTreeDSU;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'list-array') { codeTitle.textContent = 'list_array.cpp'; codeDisplay.textContent = codeListArray; listArrContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
@@ -1764,6 +1770,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'queue') renderQueue();
         else if (currentMode === 'graph-traversal') renderGraphDual();
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
+        else if (currentMode === 'tree-dsu') renderDSU();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
@@ -2592,6 +2599,85 @@ document.addEventListener('DOMContentLoaded', () => {
             dfsVisitedEl.textContent = '';
             runtimeVisualizer.querySelectorAll('.nodes circle').forEach(c => c.setAttribute('fill', '#fff'));
         };
+    }
+
+    function renderDSU() {
+        runtimeVisualizer.innerHTML = '';
+        const N = 8;
+        runtimeVisualizer._dsu = {
+            parent: Array.from({length: N}, (_, i) => i),
+            rank: new Array(N).fill(0),
+        };
+        const wrap = document.createElement('div');
+        wrap.className = 'dsu-wrap';
+        let html = '<div class="dsu-forest">';
+        for (let i = 0; i < N; i++) {
+            html += '<div class="dsu-tree" data-tree-of="' + i + '">' +
+                      '<div class="dsu-tree-node" data-node="' + i + '" data-parent="' + i + '">' + i + '</div>' +
+                    '</div>';
+        }
+        html += '</div>';
+        html += '<div class="dsu-rank-table"><strong>rank:</strong> <span class="dsu-ranks">[0,0,0,0,0,0,0,0]</span></div>';
+        html += '<div class="dsu-controls" role="group">' +
+                    '<label>Union</label>' +
+                    '<input type="number" min="0" max="7" value="0" data-dsu-a>' +
+                    '<input type="number" min="0" max="7" value="1" data-dsu-b>' +
+                    '<button type="button" data-action="union">Union</button>' +
+                    '<label>Find</label>' +
+                    '<input type="number" min="0" max="7" value="0" data-dsu-x>' +
+                    '<button type="button" data-action="find">Find</button>' +
+                    '<button type="button" data-action="reset">Reset</button>' +
+                '</div>';
+        wrap.innerHTML = html;
+        runtimeVisualizer.appendChild(wrap);
+
+        function refreshRanks() {
+            const ranksEl = wrap.querySelector('.dsu-ranks');
+            if (ranksEl) ranksEl.textContent = '[' + runtimeVisualizer._dsu.rank.join(',') + ']';
+        }
+        function find(x) {
+            const p = runtimeVisualizer._dsu.parent;
+            if (p[x] === x) return x;
+            p[x] = find(p[x]);  // path compression
+            return p[x];
+        }
+        function unite(a, b) {
+            const root = find(a);
+            const rootB = find(b);
+            if (root === rootB) return;
+            const r = runtimeVisualizer._dsu.rank;
+            let small, large;
+            if (r[root] < r[rootB]) { small = root; large = rootB; }
+            else if (r[root] > r[rootB]) { small = rootB; large = root; }
+            else { small = rootB; large = root; r[large]++; }
+            runtimeVisualizer._dsu.parent[small] = large;
+            const smallTree = wrap.querySelector('[data-tree-of="' + small + '"]');
+            const largeTree = wrap.querySelector('[data-tree-of="' + large + '"]');
+            if (smallTree && largeTree) {
+                const nodes = smallTree.querySelectorAll('.dsu-tree-node');
+                nodes.forEach((n) => largeTree.appendChild(n));
+                smallTree.remove();
+            }
+            refreshRanks();
+        }
+
+        const aInput = wrap.querySelector('[data-dsu-a]');
+        const bInput = wrap.querySelector('[data-dsu-b]');
+        const xInput = wrap.querySelector('[data-dsu-x]');
+        const unionBtn = wrap.querySelector('[data-action="union"]');
+        const findBtn = wrap.querySelector('[data-action="find"]');
+        const resetBtn = wrap.querySelector('[data-action="reset"]');
+        if (unionBtn) unionBtn.onclick = () => unite(+aInput.value, +bInput.value);
+        if (findBtn) findBtn.onclick = () => {
+            find(+xInput.value);
+            const node = wrap.querySelector('[data-node="' + xInput.value + '"]');
+            if (node) {
+                node.classList.add('dsu-highlight');
+                setTimeout(() => node.classList.remove('dsu-highlight'), 600);
+            }
+            refreshRanks();
+        };
+        if (resetBtn) resetBtn.onclick = () => { renderDSU(); };
     }
 
     function renderGraph() {
