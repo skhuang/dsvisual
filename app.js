@@ -300,6 +300,58 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/>/g, '&gt;');
     }
 
+    function bindZoomControls(section) {
+        const scaled = section.querySelector('.viz-body-scaled');
+        const controls = section.querySelector('.viz-zoom-controls');
+        const visualHost = section.querySelector('.method-section-visual');
+        if (!scaled || !controls || !visualHost) return;
+        const resetBtn = controls.querySelector('[data-zoom="reset"]');
+        const inBtn = controls.querySelector('[data-zoom="in"]');
+        const outBtn = controls.querySelector('[data-zoom="out"]');
+        let zoom = 1.0;
+        function applyZoom(z) {
+            zoom = Math.max(0.5, Math.min(2.0, Math.round(z * 100) / 100));
+            scaled.style.setProperty('--viz-zoom', String(zoom));
+            resetBtn.textContent = Math.round(zoom * 100) + '%';
+        }
+        inBtn.addEventListener('click', () => applyZoom(zoom + 0.1));
+        outBtn.addEventListener('click', () => applyZoom(zoom - 0.1));
+        resetBtn.addEventListener('click', () => applyZoom(1.0));
+
+        // Wheel/pinch listeners stay on .method-section-visual so wheel-over-visualizer zooms.
+        visualHost.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            applyZoom(zoom + (e.deltaY < 0 ? 0.05 : -0.05));
+        }, { passive: false });
+
+        const pointers = new Map();
+        let pinchStart = null;
+        visualHost.addEventListener('pointerdown', (e) => {
+            pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (pointers.size === 2) {
+                const [a, b] = Array.from(pointers.values());
+                pinchStart = { dist: Math.hypot(a.x - b.x, a.y - b.y), zoom };
+            }
+        });
+        visualHost.addEventListener('pointermove', (e) => {
+            if (!pointers.has(e.pointerId)) return;
+            pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (pointers.size === 2 && pinchStart && pinchStart.dist > 0) {
+                const [a, b] = Array.from(pointers.values());
+                const dist = Math.hypot(a.x - b.x, a.y - b.y);
+                applyZoom(pinchStart.zoom * (dist / pinchStart.dist));
+            }
+        });
+        function endPointer(e) {
+            pointers.delete(e.pointerId);
+            if (pointers.size < 2) pinchStart = null;
+        }
+        visualHost.addEventListener('pointerup', endPointer);
+        visualHost.addEventListener('pointercancel', endPointer);
+
+        applyZoom(1.0);
+    }
+
     function mountActiveRuntime(section) {
         const visualHost = section.querySelector('.method-section-visual');
         if (!visualHost) return;
@@ -307,8 +359,14 @@ document.addEventListener('DOMContentLoaded', () => {
         visualHost.classList.add('method-section-visual-live');
         visualHost.setAttribute('aria-label', 'Active interactive visualization');
         visualHost.innerHTML = '';
-        visualHost.appendChild(runtimeControls);
-        visualHost.appendChild(runtimeVisualizer);
+
+        const scaled = document.createElement('div');
+        scaled.className = 'viz-body-scaled';
+        scaled.appendChild(runtimeControls);
+        scaled.appendChild(runtimeVisualizer);
+        visualHost.appendChild(scaled);
+
+        bindZoomControls(section);
     }
 
     function renderMethodSections(groupId) {
@@ -382,6 +440,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${method.title}</h3>
                 </div>
                 <div class="method-section-actions">
+                    <div class="viz-zoom-controls" role="toolbar" aria-label="Zoom controls">
+                        <button type="button" data-zoom="out" aria-label="Zoom out">−</button>
+                        <button type="button" data-zoom="reset" aria-label="Reset zoom">100%</button>
+                        <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
+                    </div>
                     <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
                 </div>
             </div>
@@ -530,6 +593,58 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    const DENSITY_STORAGE_KEY = 'dsvisual.codeDensity';
+
+    function applySavedDensity() {
+        const v = localStorage.getItem(DENSITY_STORAGE_KEY);
+        if (v) document.documentElement.style.setProperty('--code-line-height', v);
+    }
+
+    function bindSettingsDrawer() {
+        const toggle = document.getElementById('settings-toggle');
+        const drawer = document.getElementById('settings-drawer');
+        if (!toggle || !drawer) return;
+        const closers = drawer.querySelectorAll('[data-settings-close]');
+        const panel = drawer.querySelector('.settings-drawer-panel');
+        function onKeydown(e) {
+            if (e.key === 'Escape') close();
+        }
+        function open() {
+            drawer.hidden = false;
+            drawer.classList.add('open');
+            panel.focus();
+            document.addEventListener('keydown', onKeydown);
+        }
+        function close() {
+            drawer.hidden = true;
+            drawer.classList.remove('open');
+            document.removeEventListener('keydown', onKeydown);
+        }
+        toggle.addEventListener('click', open);
+        closers.forEach((btn) => btn.addEventListener('click', close));
+    }
+
+    function bindDensitySlider() {
+        const slider = document.getElementById('code-density-slider');
+        const display = document.getElementById('code-density-value');
+        const resetBtn = document.getElementById('code-density-reset');
+        if (!slider || !display || !resetBtn) return;
+        const saved = localStorage.getItem(DENSITY_STORAGE_KEY) || '1.55';
+        slider.value = saved;
+        display.textContent = saved;
+        slider.addEventListener('input', () => {
+            document.documentElement.style.setProperty('--code-line-height', slider.value);
+            display.textContent = slider.value;
+            localStorage.setItem(DENSITY_STORAGE_KEY, slider.value);
+        });
+        resetBtn.addEventListener('click', () => {
+            slider.value = '1.55';
+            display.textContent = '1.55';
+            document.documentElement.style.removeProperty('--code-line-height');
+            localStorage.removeItem(DENSITY_STORAGE_KEY);
+        });
+    }
+
     function renderCategoryNav() {
         if (!categoryNav) return;
         categoryNav.innerHTML = '';
@@ -568,6 +683,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    applySavedDensity();
+    bindSettingsDrawer();
+    bindDensitySlider();
     renderCategoryNav();
 
     // Containers

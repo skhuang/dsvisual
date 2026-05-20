@@ -17,6 +17,7 @@
                 <h1>C++ Algorithms Visualizer</h1>
                 <p>Data Structures (Stack, Queue, Graph, Tree, List) & Validated Algorithm Sandbox.</p>
             </div>
+            <button id="settings-toggle" type="button" class="settings-toggle" aria-label="Open settings">⚙</button>
         </header>
 
         <nav id="category-nav" class="app-category-nav" aria-label="Data structure categories" data-testid="category-nav"></nav>
@@ -304,6 +305,35 @@
         </div>
     </div>
 
+    <aside id="settings-drawer" class="settings-drawer" hidden>
+        <button type="button" class="settings-drawer-backdrop" data-settings-close aria-label="Close settings"></button>
+        <section class="settings-drawer-panel" role="dialog" aria-modal="true" aria-labelledby="settings-drawer-title" tabindex="-1">
+            <header class="settings-drawer-header">
+                <h2 id="settings-drawer-title">設定 / Settings</h2>
+                <button type="button" class="settings-drawer-close" data-settings-close aria-label="Close">×</button>
+            </header>
+            <div class="settings-drawer-body">
+                <section class="settings-row">
+                    <label for="code-density-slider">程式碼面板行距 / Code panel line-height</label>
+                    <div class="settings-row-controls">
+                        <input id="code-density-slider" type="range" min="1.0" max="1.8" step="0.05" value="1.55">
+                        <span id="code-density-value">1.55</span>
+                        <button id="code-density-reset" type="button">Reset</button>
+                    </div>
+                </section>
+                <section class="settings-row settings-row-preview">
+                    <label>預覽 / Preview</label>
+                    <pre class="code-panel-body language-cpp"><code class="language-cpp">int sumTo(int n) {
+    int total = 0;
+    for (int i = 1; i &lt;= n; i++) {
+        total += i;
+    }
+    return total;
+}</code></pre>
+                </section>
+            </div>
+        </section>
+    </aside>
     <script src="vendor/prism/prism.min.js"></script>
     <script src="vendor/prism/prism-c.min.js"></script>
     <script src="vendor/prism/prism-cpp.min.js"></script>
