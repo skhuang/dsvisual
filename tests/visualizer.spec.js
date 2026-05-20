@@ -40,20 +40,20 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const categoryNav = page.locator('[data-testid="category-nav"]');
         const methodSections = page.locator('[data-testid="method-sections"]');
         await expect(categoryNav).toBeVisible();
-        await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(6);
+        await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(9);
         await expect(categoryNav.locator('[data-testid="method-select"]')).toHaveCount(0);
         await expect(methodSections.locator('[data-testid="method-select"]')).toBeVisible();
         await expect(methodSections.locator('[data-method-section="stack-array"]')).toBeVisible();
         await expect(categoryNav.locator('button[data-method], .category-nav-submenu')).toHaveCount(0);
 
-        await categoryNav.getByRole('button', { name: 'Advanced & Application-Specific' }).click();
+        await categoryNav.getByRole('button', { name: 'Sorting' }).click();
         await page.waitForSelector('[data-method-section]', { timeout: 5000 });
         await expect(methodSections.locator('[data-testid="method-select"] option[value="sort-bubble"]')).toHaveCount(1);
         await methodSections.locator('[data-testid="method-select"]').selectOption('sort-bubble');
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toBeVisible();
         await expect(page.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
 
-        await categoryNav.getByRole('button', { name: 'Non-Linear Structures' }).click();
+        await categoryNav.getByRole('button', { name: 'Trees' }).click();
         await page.waitForSelector('[data-method-section]', { timeout: 5000 });
         await expect(methodSections.locator('[data-method-section="tree-bst"]')).toBeVisible();
     });
@@ -97,10 +97,13 @@ test.describe('Data Structure Visualizer Full Suite', () => {
 
     test('Phase 5 regression: every top-level category renders method sections', async ({ page }) => {
         const expectedFirstMethods = [
-            ['Basic Linear Structures', 'stack-array'],
-            ['Linked Lists', 'list-linked'],
-            ['Non-Linear Structures', 'tree-bst'],
-            ['Advanced & Application-Specific', 'hash-chain'],
+            ['Linear Structures', 'stack-array'],
+            ['Trees', 'tree-bst'],
+            ['Graphs', 'graph'],
+            ['Hash & Probabilistic', 'hash-chain'],
+            ['Heaps / Priority Queues', 'heap-binary'],
+            ['Sorting', 'sort-bubble'],
+            ['Searching & String Matching', 'search-linear'],
             ['OOP Concepts', 'oop-inheritance'],
             ['Design Patterns', 'pattern-singleton'],
         ];
