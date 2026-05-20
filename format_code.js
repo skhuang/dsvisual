@@ -23,4 +23,17 @@ function formatCppFile(absPath) {
   });
 }
 
-module.exports = { cppFiles, formatCppFile };
+function compileCheck(absPath) {
+  try {
+    execFileSync('g++', ['-std=c++17', '-fsyntax-only', absPath], {
+      cwd: path.dirname(absPath),
+      stdio: 'pipe',
+    });
+  } catch (err) {
+    const stderr = (err.stderr && err.stderr.toString()) || '';
+    const stdout = (err.stdout && err.stdout.toString()) || '';
+    throw new Error('compileCheck failed for ' + absPath + '\n' + stderr + stdout);
+  }
+}
+
+module.exports = { cppFiles, formatCppFile, compileCheck };

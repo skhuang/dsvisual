@@ -31,3 +31,19 @@ test('formatCppFile reformats and is idempotent', () => {
 
   fs.rmSync(tmp, { recursive: true, force: true });
 });
+
+test('compileCheck passes for syntactically-valid C++', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-'));
+  const file = path.join(tmp, 'ok.cpp');
+  fs.writeFileSync(file, '#include <iostream>\nint main() { std::cout << 1; return 0; }\n');
+  assert.doesNotThrow(() => f.compileCheck(file));
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
+
+test('compileCheck throws on broken C++', () => {
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'cc-'));
+  const file = path.join(tmp, 'broken.cpp');
+  fs.writeFileSync(file, 'int main() { int x = ; return 0; }\n');
+  assert.throws(() => f.compileCheck(file), /broken\.cpp|error/i);
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
