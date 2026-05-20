@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Radix 樹(壓縮前綴樹)"
+category: "Trees"
 ---
 
 ## Radix 樹(壓縮前綴樹)

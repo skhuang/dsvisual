@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "B+ Tree (Database Index Standard)"
+category: "Trees"
 ---
 
 ## B+ Tree (Database Index Standard)

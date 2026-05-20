@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Shell Sort"
+category: "Sorting"
 ---
 
 ## Shell Sort

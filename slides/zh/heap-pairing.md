@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "配對堆積(Pairing Heap)"
+category: "Heaps / Priority Queues"
 ---
 
 ## 配對堆積(Pairing Heap)

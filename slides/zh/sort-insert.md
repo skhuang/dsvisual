@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "插入排序法"
+category: "Sorting"
 ---
 
 ## 插入排序法

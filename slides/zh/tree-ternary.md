@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "三元搜尋樹 (TST)"
+category: "Trees"
 ---
 
 ## 三元搜尋樹 (TST)

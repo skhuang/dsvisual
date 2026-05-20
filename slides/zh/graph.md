@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "無向圖(鄰接矩陣)"
+category: "Graphs"
 ---
 
 ## 無向圖(鄰接矩陣)

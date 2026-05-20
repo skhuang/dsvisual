@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "左傾堆積(Leftist Heap)"
+category: "Heaps / Priority Queues"
 ---
 
 ## 左傾堆積(Leftist Heap)

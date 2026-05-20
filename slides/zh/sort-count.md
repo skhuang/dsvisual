@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "計數排序法"
+category: "Sorting"
 ---
 
 ## 計數排序法

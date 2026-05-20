@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Red-Black Tree"
+category: "Trees"
 ---
 
 ## Red-Black Tree

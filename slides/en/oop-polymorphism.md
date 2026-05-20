@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Polymorphism (Virtual Functions)"
+category: "OOP Concepts"
 ---
 
 ## Polymorphism (Virtual Functions)

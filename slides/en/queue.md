@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Queue (Circular Array)"
+category: "Linear Structures"
 ---
 
 ## Queue (Circular Array)

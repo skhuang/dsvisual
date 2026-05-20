@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "桶排序法"
+category: "Sorting"
 ---
 
 ## 桶排序法

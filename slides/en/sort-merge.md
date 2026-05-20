@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Merge Sort"
+category: "Sorting"
 ---
 
 ## Merge Sort

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Strategy 模式"
+category: "Design Patterns"
 ---
 
 ## Strategy 模式

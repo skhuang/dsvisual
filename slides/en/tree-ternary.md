@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Ternary Search Tree (TST)"
+category: "Trees"
 ---
 
 ## Ternary Search Tree (TST)

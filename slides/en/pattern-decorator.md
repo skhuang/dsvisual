@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Decorator Pattern"
+category: "Design Patterns"
 ---
 
 ## Decorator Pattern

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Insertion Sort"
+category: "Sorting"
 ---
 
 ## Insertion Sort

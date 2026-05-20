@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Factory Method 模式"
+category: "Design Patterns"
 ---
 
 ## Factory Method 模式

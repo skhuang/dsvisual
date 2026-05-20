@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "單向鏈結串列"
+category: "Linear Structures"
 ---
 
 ## 單向鏈結串列

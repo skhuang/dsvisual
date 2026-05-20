@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "AVL Height-Balanced Tree"
+category: "Trees"
 ---
 
 ## AVL Height-Balanced Tree

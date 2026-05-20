@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Dijkstra 最短路徑"
+category: "Graphs"
 ---
 
 ## Dijkstra 最短路徑

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Hash Table (Separate Chaining)"
+category: "Hash & Probabilistic"
 ---
 
 ## Hash Table (Separate Chaining)

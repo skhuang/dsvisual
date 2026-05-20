@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Stack (Array Implementation)"
+category: "Linear Structures"
 ---
 
 ## Stack (Array Implementation)

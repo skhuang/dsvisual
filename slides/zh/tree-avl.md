@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "AVL 高度平衡樹"
+category: "Trees"
 ---
 
 ## AVL 高度平衡樹

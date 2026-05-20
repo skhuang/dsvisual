@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "拓樸排序(Kahn's 演算法)"
+category: "Graphs"
 ---
 
 ## 拓樸排序(Kahn's 演算法)

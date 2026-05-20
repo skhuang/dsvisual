@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Radix Sort"
+category: "Sorting"
 ---
 
 ## Radix Sort

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "快速排序法"
+category: "Sorting"
 ---
 
 ## 快速排序法

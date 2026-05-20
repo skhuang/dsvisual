@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Stack (Linked List Implementation)"
+category: "Linear Structures"
 ---
 
 ## Stack (Linked List Implementation)

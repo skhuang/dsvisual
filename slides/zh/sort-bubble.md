@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "泡沫排序法"
+category: "Sorting"
 ---
 
 ## 泡沫排序法

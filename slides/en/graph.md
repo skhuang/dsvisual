@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Undirected Graph (Adjacency Matrix)"
+category: "Graphs"
 ---
 
 ## Undirected Graph (Adjacency Matrix)

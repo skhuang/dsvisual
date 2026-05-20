@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "搖晃排序法(雙向冒泡)"
+category: "Sorting"
 ---
 
 ## 搖晃排序法(雙向冒泡)

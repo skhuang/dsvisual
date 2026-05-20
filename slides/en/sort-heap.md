@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Heap Sort"
+category: "Sorting"
 ---
 
 ## Heap Sort

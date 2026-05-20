@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "陣列串列"
+category: "Linear Structures"
 ---
 
 ## 陣列串列

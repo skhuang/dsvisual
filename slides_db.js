@@ -4,7 +4,7 @@
 
 const SLIDES_DB = {
   "stack-list": {
-    "category": "Basic Linear Structures",
+    "category": "Linear Structures",
     "title": {
       "zh": "堆疊(鏈結串列實作)",
       "en": "Stack (Linked List Implementation)"
@@ -256,7 +256,7 @@ const SLIDES_DB = {
     ]
   },
   "queue": {
-    "category": "Basic Linear Structures",
+    "category": "Linear Structures",
     "title": {
       "zh": "佇列(循環陣列)",
       "en": "Queue (Circular Array)"
@@ -522,7 +522,7 @@ const SLIDES_DB = {
     ]
   },
   "list-array": {
-    "category": "Basic Linear Structures",
+    "category": "Linear Structures",
     "title": {
       "zh": "陣列串列",
       "en": "Array-Based List"
@@ -792,7 +792,7 @@ const SLIDES_DB = {
     ]
   },
   "list-linked": {
-    "category": "Linked Lists",
+    "category": "Linear Structures",
     "title": {
       "zh": "單向鏈結串列",
       "en": "Singly Linked List"
@@ -1066,7 +1066,7 @@ const SLIDES_DB = {
     ]
   },
   "stack-array": {
-    "category": "Basic Linear Structures",
+    "category": "Linear Structures",
     "title": {
       "zh": "堆疊(陣列實作)",
       "en": "Stack (Array Implementation)"
@@ -1310,7 +1310,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-bst": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "二元搜尋樹 (BST)",
       "en": "Binary Search Tree (BST)"
@@ -1580,7 +1580,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-avl": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "AVL 高度平衡樹",
       "en": "AVL Height-Balanced Tree"
@@ -1850,7 +1850,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-rb": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "紅黑樹",
       "en": "Red-Black Tree"
@@ -2136,7 +2136,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-splay": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "Splay 樹",
       "en": "Splay Tree"
@@ -2406,7 +2406,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-trie": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "Trie(前綴樹)",
       "en": "Trie (Prefix Tree)"
@@ -2676,7 +2676,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-radix": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "Radix 樹(壓縮前綴樹)",
       "en": "Radix Tree (Compressed Trie)"
@@ -2932,7 +2932,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-ternary": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "三元搜尋樹 (TST)",
       "en": "Ternary Search Tree (TST)"
@@ -3188,7 +3188,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-btree": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "B-Tree(多路平衡樹)",
       "en": "B-Tree (Multi-way Balanced Tree)"
@@ -3462,7 +3462,7 @@ const SLIDES_DB = {
     ]
   },
   "tree-bplus": {
-    "category": "Non-Linear Structures",
+    "category": "Trees",
     "title": {
       "zh": "B+ 樹(資料庫索引標準)",
       "en": "B+ Tree (Database Index Standard)"
@@ -3736,7 +3736,7 @@ const SLIDES_DB = {
     ]
   },
   "graph": {
-    "category": "Non-Linear Structures",
+    "category": "Graphs",
     "title": {
       "zh": "無向圖(鄰接矩陣)",
       "en": "Undirected Graph (Adjacency Matrix)"
@@ -4006,7 +4006,7 @@ const SLIDES_DB = {
     ]
   },
   "graph-kruskal": {
-    "category": "Non-Linear Structures",
+    "category": "Graphs",
     "title": {
       "zh": "Kruskal 最小生成樹",
       "en": "Kruskal Minimum Spanning Tree"
@@ -4276,7 +4276,7 @@ const SLIDES_DB = {
     ]
   },
   "graph-dijkstra": {
-    "category": "Non-Linear Structures",
+    "category": "Graphs",
     "title": {
       "zh": "Dijkstra 最短路徑",
       "en": "Dijkstra Shortest Path"
@@ -4546,7 +4546,7 @@ const SLIDES_DB = {
     ]
   },
   "graph-topo": {
-    "category": "Non-Linear Structures",
+    "category": "Graphs",
     "title": {
       "zh": "拓樸排序(Kahn's 演算法)",
       "en": "Topological Sort (Kahn's Algorithm)"
@@ -4802,7 +4802,7 @@ const SLIDES_DB = {
     ]
   },
   "heap-binary": {
-    "category": "Advanced & Application-Specific",
+    "category": "Heaps / Priority Queues",
     "title": {
       "zh": "二元堆積(Binary Heap)",
       "en": "Binary Heap"
@@ -5104,7 +5104,7 @@ const SLIDES_DB = {
     ]
   },
   "heap-binomial": {
-    "category": "Advanced & Application-Specific",
+    "category": "Heaps / Priority Queues",
     "title": {
       "zh": "二項堆積(Binomial Heap)",
       "en": "Binomial Heap"
@@ -5402,7 +5402,7 @@ const SLIDES_DB = {
     ]
   },
   "heap-fibonacci": {
-    "category": "Advanced & Application-Specific",
+    "category": "Heaps / Priority Queues",
     "title": {
       "zh": "費波那契堆積(Fibonacci Heap)",
       "en": "Fibonacci Heap"
@@ -5718,7 +5718,7 @@ const SLIDES_DB = {
     ]
   },
   "heap-leftist": {
-    "category": "Advanced & Application-Specific",
+    "category": "Heaps / Priority Queues",
     "title": {
       "zh": "左傾堆積(Leftist Heap)",
       "en": "Leftist Heap"
@@ -6002,7 +6002,7 @@ const SLIDES_DB = {
     ]
   },
   "heap-skew": {
-    "category": "Advanced & Application-Specific",
+    "category": "Heaps / Priority Queues",
     "title": {
       "zh": "偏斜堆積(Skew Heap)",
       "en": "Skew Heap"
@@ -6290,7 +6290,7 @@ const SLIDES_DB = {
     ]
   },
   "heap-dary": {
-    "category": "Advanced & Application-Specific",
+    "category": "Heaps / Priority Queues",
     "title": {
       "zh": "D-ary 堆積(4-ary Heap)",
       "en": "D-ary Heap (4-ary)"
@@ -6574,7 +6574,7 @@ const SLIDES_DB = {
     ]
   },
   "heap-pairing": {
-    "category": "Advanced & Application-Specific",
+    "category": "Heaps / Priority Queues",
     "title": {
       "zh": "配對堆積(Pairing Heap)",
       "en": "Pairing Heap"
@@ -6872,7 +6872,7 @@ const SLIDES_DB = {
     ]
   },
   "hash-chain": {
-    "category": "Advanced & Application-Specific",
+    "category": "Hash & Probabilistic",
     "title": {
       "zh": "雜湊表(分離鏈結法)",
       "en": "Hash Table (Separate Chaining)"
@@ -7170,7 +7170,7 @@ const SLIDES_DB = {
     ]
   },
   "hash-open": {
-    "category": "Advanced & Application-Specific",
+    "category": "Hash & Probabilistic",
     "title": {
       "zh": "雜湊表(開放定址法)",
       "en": "Hash Table (Open Addressing)"
@@ -7450,7 +7450,7 @@ const SLIDES_DB = {
     ]
   },
   "hash-bucket": {
-    "category": "Advanced & Application-Specific",
+    "category": "Hash & Probabilistic",
     "title": {
       "zh": "雜湊表(桶定址法)",
       "en": "Hash Table (Bucket Hashing)"
@@ -7730,7 +7730,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-bubble": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "泡沫排序法",
       "en": "Bubble Sort"
@@ -8000,7 +8000,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-select": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "選擇排序法",
       "en": "Selection Sort"
@@ -8270,7 +8270,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-insert": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "插入排序法",
       "en": "Insertion Sort"
@@ -8540,7 +8540,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-quick": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "快速排序法",
       "en": "Quick Sort"
@@ -8810,7 +8810,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-shell": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "希爾排序法",
       "en": "Shell Sort"
@@ -9080,7 +9080,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-bucket": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "桶排序法",
       "en": "Bucket Sort"
@@ -9336,7 +9336,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-count": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "計數排序法",
       "en": "Counting Sort"
@@ -9578,7 +9578,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-radix": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "基數排序法",
       "en": "Radix Sort"
@@ -9820,7 +9820,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-shaker": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "搖晃排序法(雙向冒泡)",
       "en": "Shaker Sort (Cocktail Sort)"
@@ -10086,7 +10086,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-merge": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "合併排序法",
       "en": "Merge Sort"
@@ -10356,7 +10356,7 @@ const SLIDES_DB = {
     ]
   },
   "sort-heap": {
-    "category": "Advanced & Application-Specific",
+    "category": "Sorting",
     "title": {
       "zh": "堆積排序法",
       "en": "Heap Sort"
@@ -10634,7 +10634,7 @@ const SLIDES_DB = {
     ]
   },
   "search-linear": {
-    "category": "Advanced & Application-Specific",
+    "category": "Searching & String Matching",
     "title": {
       "zh": "線性搜尋",
       "en": "Linear Search"
@@ -10908,7 +10908,7 @@ const SLIDES_DB = {
     ]
   },
   "search-binary": {
-    "category": "Advanced & Application-Specific",
+    "category": "Searching & String Matching",
     "title": {
       "zh": "二元搜尋",
       "en": "Binary Search"

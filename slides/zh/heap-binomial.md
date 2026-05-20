@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "二項堆積(Binomial Heap)"
+category: "Heaps / Priority Queues"
 ---
 
 ## 二項堆積(Binomial Heap)

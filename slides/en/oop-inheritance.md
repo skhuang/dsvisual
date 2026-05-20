@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Class Inheritance"
+category: "OOP Concepts"
 ---
 
 ## Class Inheritance

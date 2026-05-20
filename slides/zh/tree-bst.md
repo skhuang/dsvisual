@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "二元搜尋樹 (BST)"
+category: "Trees"
 ---
 
 ## 二元搜尋樹 (BST)

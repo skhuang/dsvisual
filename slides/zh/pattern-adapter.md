@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Adapter 模式"
+category: "Design Patterns"
 ---
 
 ## Adapter 模式

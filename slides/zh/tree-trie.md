@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Trie(前綴樹)"
+category: "Trees"
 ---
 
 ## Trie(前綴樹)

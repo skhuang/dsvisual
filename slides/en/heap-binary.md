@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Binary Heap"
+category: "Heaps / Priority Queues"
 ---
 
 ## Binary Heap

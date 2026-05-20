@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "基數排序法"
+category: "Sorting"
 ---
 
 ## 基數排序法

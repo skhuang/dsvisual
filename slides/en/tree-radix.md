@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Radix Tree (Compressed Trie)"
+category: "Trees"
 ---
 
 ## Radix Tree (Compressed Trie)

@@ -4,6 +4,7 @@ theme: default
 paginate: true
 math: katex
 title: "Singleton 模式"
+category: "Design Patterns"
 ---
 
 ## Singleton 模式
