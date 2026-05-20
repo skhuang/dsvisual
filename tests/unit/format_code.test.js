@@ -56,3 +56,34 @@ test('formatCppString reformats a code string in memory', () => {
   // Idempotency
   assert.equal(f.formatCppString(clean), clean);
 });
+
+test('formatSlidesDbCodeBlocks reformats every cpp code block in place', () => {
+  // Use the real slides_db.js after Task 6 will have written it; here we test
+  // the lower-level transformer on a small input.
+  const messy = `const SLIDES_DB = {
+  'demo': {
+    category: 'Test',
+    title: { zh: 'D', en: 'D' },
+    slides: [
+      { heading: { zh: 'H', en: 'H' }, blocks: [
+        { type: 'code', lang: 'cpp', code: 'int  x  =  1 ;\\nint  y=2;' }
+      ] }
+    ]
+  }
+};
+module.exports = SLIDES_DB;
+`;
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'slides-'));
+  const file = path.join(tmp, 'slides_db.js');
+  fs.writeFileSync(file, messy);
+  fs.copyFileSync(path.join(__dirname, '..', '..', '.clang-format'), path.join(tmp, '.clang-format'));
+
+  f.formatSlidesDbCodeBlocksAt(file);
+
+  const updated = require(file);
+  const codeStr = updated['demo'].slides[0].blocks[0].code;
+  assert.notEqual(codeStr, 'int  x  =  1 ;\nint  y=2;');
+  assert.ok(codeStr.includes('int x = 1;'));
+
+  fs.rmSync(tmp, { recursive: true, force: true });
+});
