@@ -1076,6 +1076,216 @@ int main() {
 }
 `;
 
+const codeGraphKruskal = `#include <algorithm>
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Edge {
+    int u, v, w;
+};
+
+struct DSU {
+    vector<int> p, r;
+    DSU(int n) : p(n), r(n, 0) {
+        for (int i = 0; i < n; i++)
+            p[i] = i;
+    }
+    int find(int x) { return p[x] == x ? x : p[x] = find(p[x]); }
+    bool unite(int a, int b) {
+        a = find(a);
+        b = find(b);
+        if (a == b)
+            return false;
+        if (r[a] < r[b])
+            swap(a, b);
+        p[b] = a;
+        if (r[a] == r[b])
+            r[a]++;
+        return true;
+    }
+};
+
+int main() {
+    int V = 5;
+    vector<Edge> edges = {{0, 1, 4}, {0, 2, 7}, {1, 2, 1}, {1, 3, 3},
+                          {2, 3, 2}, {3, 4, 6}, {2, 4, 5}};
+
+    sort(edges.begin(), edges.end(),
+         [](const Edge& a, const Edge& b) { return a.w < b.w; });
+
+    DSU dsu(V);
+    vector<Edge> mst;
+    int totalWeight = 0;
+
+    for (const auto& e : edges) {
+        if (dsu.unite(e.u, e.v)) {
+            mst.push_back(e);
+            totalWeight += e.w;
+            if ((int)mst.size() == V - 1)
+                break;
+        }
+    }
+
+    cout << "MST edges:\\n";
+    for (const auto& e : mst) {
+        cout << e.u << " - " << e.v << " (w=" << e.w << ")\\n";
+    }
+    cout << "Total weight = " << totalWeight << "\\n";
+    return 0;
+}
+`;
+
+const codeGraphDijkstra = `#include <iostream>
+#include <limits>
+#include <queue>
+#include <vector>
+using namespace std;
+
+const int INF = 1e9;
+
+int main() {
+    int V = 5;
+    vector<vector<pair<int, int>>> adj(V); // adjacency list: {neighbor, weight}
+
+    // Build undirected weighted graph
+    auto addEdge = [&](int u, int v, int w) {
+        adj[u].push_back({v, w});
+        adj[v].push_back({u, w});
+    };
+
+    addEdge(0, 1, 4);
+    addEdge(0, 2, 1);
+    addEdge(1, 2, 2);
+    addEdge(1, 3, 3);
+    addEdge(2, 3, 1);
+    addEdge(3, 4, 3);
+    addEdge(2, 4, 5);
+
+    int source = 0;
+    vector<int> dist(V, INF);
+    vector<bool> visited(V, false);
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+    dist[source] = 0;
+    pq.push({0, source});
+
+    cout << "Dijkstra's Shortest Path from node " << source << ":\\n";
+    cout << "======================================\\n\\n";
+
+    while (!pq.empty()) {
+        auto [d, u] = pq.top();
+        pq.pop();
+
+        if (visited[u])
+            continue;
+        visited[u] = true;
+
+        cout << "Processing node " << u << " (distance = " << d << ")\\n";
+
+        for (auto [v, w] : adj[u]) {
+            if (!visited[v]) {
+                if (dist[u] + w < dist[v]) {
+                    dist[v] = dist[u] + w;
+                    pq.push({dist[v], v});
+                    cout << "  Updated distance to node " << v << ": " << dist[v] << "\\n";
+                }
+            }
+        }
+        cout << "\\n";
+    }
+
+    cout << "Final shortest distances from node " << source << ":\\n";
+    for (int i = 0; i < V; i++) {
+        cout << "Node " << i << ": ";
+        if (dist[i] == INF) {
+            cout << "INF (unreachable)\\n";
+        } else {
+            cout << dist[i] << "\\n";
+        }
+    }
+
+    return 0;
+}
+`;
+
+const codeGraphTopo = `#include <iostream>
+#include <queue>
+#include <vector>
+using namespace std;
+
+int main() {
+    int V = 5;
+    vector<vector<int>> adj(V);
+    vector<int> inDegree(V, 0);
+
+    // Build directed acyclic graph (DAG)
+    vector<pair<int, int>> edges = {{0, 1}, {0, 2}, {1, 2}, {1, 3}, {2, 3}, {3, 4}};
+
+    cout << "Building DAG with edges:\\n";
+    for (auto [u, v] : edges) {
+        cout << u << " → " << v << "\\n";
+        adj[u].push_back(v);
+        inDegree[v]++;
+    }
+    cout << "\\n";
+
+    // Kahn's Algorithm (BFS-based topological sort)
+    queue<int> q;
+
+    cout << "In-degrees: ";
+    for (int i = 0; i < V; i++) {
+        cout << i << ":" << inDegree[i] << " ";
+        if (inDegree[i] == 0) {
+            q.push(i);
+        }
+    }
+    cout << "\\n\\n";
+
+    vector<int> topoOrder;
+    cout << "Processing:\\n";
+
+    while (!q.empty()) {
+        int u = q.front();
+        q.pop();
+        topoOrder.push_back(u);
+
+        cout << "Visit node " << u << "\\n";
+
+        // Reduce in-degree for all neighbors
+        for (int v : adj[u]) {
+            inDegree[v]--;
+            cout << "  Reduce in-degree of " << v << " to " << inDegree[v] << "\\n";
+
+            if (inDegree[v] == 0) {
+                cout << "  Node " << v << " now has in-degree 0, add to queue\\n";
+                q.push(v);
+            }
+        }
+        cout << "\\n";
+    }
+
+    cout << "\\n";
+
+    // Check for cycle
+    if ((int)topoOrder.size() != V) {
+        cout << "ERROR: Cycle detected in graph!\\n";
+        cout << "Only " << topoOrder.size() << " nodes processed out of " << V << "\\n";
+    } else {
+        cout << "Topological Sort (Kahn's Algorithm):\\n";
+        cout << "====================================\\n";
+        for (int i = 0; i < (int)topoOrder.size(); i++) {
+            cout << topoOrder[i];
+            if (i < (int)topoOrder.size() - 1)
+                cout << " → ";
+        }
+        cout << "\\n";
+    }
+
+    return 0;
+}
+`;
+
 const codeListArray = `#include <iostream>
 using namespace std;
 
@@ -2648,6 +2858,578 @@ int main() {
     tree.insert(10);
     tree.insert(20);
     // As sequence fills, leaf nodes expand sideways and index nodes rise up!
+    return 0;
+}
+`;
+
+const codeOOPInheritance = `#include <iostream>
+using namespace std;
+
+class Animal {
+public:
+    Animal() { cout << "Animal constructor" << endl; }
+    virtual ~Animal() { cout << "Animal destructor" << endl; }
+
+    virtual void speak() { cout << "Animal sound" << endl; }
+};
+
+class Dog : public Animal {
+public:
+    Dog() { cout << "Dog constructor" << endl; }
+    ~Dog() override { cout << "Dog destructor" << endl; }
+
+    void speak() override { cout << "Woof" << endl; }
+};
+
+class Cat : public Animal {
+public:
+    Cat() { cout << "Cat constructor" << endl; }
+    ~Cat() override { cout << "Cat destructor" << endl; }
+
+    void speak() override { cout << "Meow" << endl; }
+};
+
+int main() {
+    Animal* animals[2];
+    animals[0] = new Dog();
+    animals[1] = new Cat();
+
+    for (int i = 0; i < 2; i++) {
+        animals[i]->speak();
+        delete animals[i];
+    }
+
+    return 0;
+}
+`;
+
+const codeOOPPolymorphism = `#include <iostream>
+#include <vector>
+using namespace std;
+
+class Shape {
+public:
+    virtual ~Shape() {}
+
+    virtual void draw() const = 0;
+    virtual double area() const = 0;
+};
+
+class Circle : public Shape {
+private:
+    double radius;
+
+public:
+    explicit Circle(double r) : radius(r) {}
+
+    void draw() const override { cout << "Drawing Circle(" << radius << ")" << endl; }
+
+    double area() const override { return 3.14159 * radius * radius; }
+};
+
+class Rectangle : public Shape {
+private:
+    double width;
+    double height;
+
+public:
+    Rectangle(double w, double h) : width(w), height(h) {}
+
+    void draw() const override {
+        cout << "Drawing Rectangle(" << width << ", " << height << ")" << endl;
+    }
+
+    double area() const override { return width * height; }
+};
+
+int main() {
+    vector<Shape*> shapes;
+    shapes.push_back(new Circle(5.0));
+    shapes.push_back(new Rectangle(4.0, 6.0));
+
+    for (const auto* shape : shapes) {
+        shape->draw();
+        cout << "Area: " << shape->area() << endl;
+    }
+
+    for (auto* shape : shapes) {
+        delete shape;
+    }
+
+    return 0;
+}
+`;
+
+const codeOOPEncapsulation = `#include <iostream>
+#include <mutex>
+using namespace std;
+
+class BankAccount {
+public:
+    explicit BankAccount(double initialBalance) : balance(initialBalance) {}
+
+    void deposit(double amount) {
+        lock_guard<mutex> guard(accountLock);
+        if (amount > 0) {
+            balance += amount;
+            cout << "Deposited: " << amount << endl;
+        }
+    }
+
+    bool withdraw(double amount) {
+        lock_guard<mutex> guard(accountLock);
+        if (canWithdraw(amount)) {
+            balance -= amount;
+            log("withdraw", amount);
+            return true;
+        }
+        return false;
+    }
+
+    double getBalance() const { return balance; }
+
+protected:
+    bool canWithdraw(double amount) const { return amount > 0 && amount <= balance; }
+
+private:
+    void log(const string& type, double amount) const {
+        cout << "Log: " << type << " " << amount << endl;
+    }
+
+    double balance;
+    mutable mutex accountLock;
+};
+
+int main() {
+    BankAccount account(1000.0);
+
+    account.deposit(200.0);
+    if (account.withdraw(150.0)) {
+        cout << "Withdraw success" << endl;
+    }
+
+    cout << "Final balance: " << account.getBalance() << endl;
+    return 0;
+}
+`;
+
+const codePatternSingleton = `#include <iostream>
+#include <mutex>
+using namespace std;
+
+class Singleton {
+private:
+    static Singleton* m_instance;
+    static mutex m_mutex;
+    int m_value;
+
+    // Private constructor - prevents external instantiation
+    Singleton() : m_value(0) { cout << "Singleton constructor called" << endl; }
+
+public:
+    // Prevent copying
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+
+    // Get singleton instance with thread-safe lazy initialization
+    static Singleton* getInstance() {
+        lock_guard<mutex> lock(m_mutex);
+        if (m_instance == nullptr) {
+            m_instance = new Singleton();
+            cout << "Created new Singleton instance" << endl;
+        } else {
+            cout << "Returning existing Singleton instance" << endl;
+        }
+        return m_instance;
+    }
+
+    void setValue(int val) { m_value = val; }
+
+    int getValue() const { return m_value; }
+
+    ~Singleton() { cout << "Singleton destructor called" << endl; }
+};
+
+// Static member initialization
+Singleton* Singleton::m_instance = nullptr;
+mutex Singleton::m_mutex;
+
+int main() {
+    Singleton* s1 = Singleton::getInstance();
+    s1->setValue(42);
+    cout << "s1 value: " << s1->getValue() << endl;
+
+    Singleton* s2 = Singleton::getInstance();
+    cout << "s2 value: " << s2->getValue() << endl;
+
+    cout << "Same object: " << (s1 == s2 ? "YES" : "NO") << endl;
+
+    return 0;
+}
+`;
+
+const codePatternFactory = `#include <iostream>
+#include <memory>
+using namespace std;
+
+// Abstract Product
+class Vehicle {
+public:
+    virtual ~Vehicle() {}
+    virtual void display() const = 0;
+};
+
+// Concrete Products
+class Car : public Vehicle {
+public:
+    void display() const override { cout << "[Car] 4 wheels, sedan, engine: V6" << endl; }
+};
+
+class Truck : public Vehicle {
+public:
+    void display() const override {
+        cout << "[Truck] 4 wheels, cargo bed, engine: Diesel" << endl;
+    }
+};
+
+class Bike : public Vehicle {
+public:
+    void display() const override {
+        cout << "[Bike] 2 wheels, lightweight, engine: Gasoline" << endl;
+    }
+};
+
+// Factory Method
+class VehicleFactory {
+public:
+    static unique_ptr<Vehicle> createVehicle(const string& type) {
+        if (type == "car")
+            return make_unique<Car>();
+        else if (type == "truck")
+            return make_unique<Truck>();
+        else if (type == "bike")
+            return make_unique<Bike>();
+        return nullptr;
+    }
+};
+
+int main() {
+    // Client code doesn't know concrete classes, only uses factory
+    unique_ptr<Vehicle> v1 = VehicleFactory::createVehicle("car");
+    unique_ptr<Vehicle> v2 = VehicleFactory::createVehicle("truck");
+    unique_ptr<Vehicle> v3 = VehicleFactory::createVehicle("bike");
+
+    if (v1)
+        v1->display();
+    if (v2)
+        v2->display();
+    if (v3)
+        v3->display();
+
+    return 0;
+}
+`;
+
+const codePatternAdapter = `#include <iostream>
+using namespace std;
+
+// Existing/Legacy system with incompatible interface
+class LegacyDataSource {
+public:
+    string getDataLegacy() const { return "Legacy: Raw Binary Data [0x1A, 0x2B, 0x3C]"; }
+};
+
+// Target interface that modern code expects
+class ModernDataInterface {
+public:
+    virtual ~ModernDataInterface() {}
+    virtual string fetch() = 0;
+    virtual string getFormat() = 0;
+};
+
+// Adapter: Bridges the gap
+class LegacyAdapter : public ModernDataInterface {
+private:
+    LegacyDataSource m_legacy;
+
+public:
+    string fetch() override {
+        // Adapt legacy method call to modern interface
+        return "Adapted: " + m_legacy.getDataLegacy();
+    }
+
+    string getFormat() override { return "Binary Format Adapted to JSON"; }
+};
+
+int main() {
+    // Modern code expects ModernDataInterface
+    unique_ptr<ModernDataInterface> adapter = make_unique<LegacyAdapter>();
+
+    cout << "Fetching data: " << adapter->fetch() << endl;
+    cout << "Format: " << adapter->getFormat() << endl;
+
+    // Adapter allows using legacy system with modern code without modification
+    return 0;
+}
+`;
+
+const codePatternDecorator = `#include <iostream>
+#include <memory>
+using namespace std;
+
+// Component interface
+class Coffee {
+public:
+    virtual ~Coffee() {}
+    virtual string getDescription() const = 0;
+    virtual double getCost() const = 0;
+};
+
+// Concrete Component
+class SimpleCoffee : public Coffee {
+public:
+    string getDescription() const override { return "Simple Coffee"; }
+
+    double getCost() const override { return 2.00; }
+};
+
+// Decorator base class
+class CoffeeDecorator : public Coffee {
+protected:
+    shared_ptr<Coffee> m_coffee;
+
+public:
+    CoffeeDecorator(shared_ptr<Coffee> coffee) : m_coffee(coffee) {}
+};
+
+// Concrete Decorators
+class MilkDecorator : public CoffeeDecorator {
+public:
+    MilkDecorator(shared_ptr<Coffee> coffee) : CoffeeDecorator(coffee) {}
+
+    string getDescription() const override {
+        return m_coffee->getDescription() + " + Milk";
+    }
+
+    double getCost() const override { return m_coffee->getCost() + 0.50; }
+};
+
+class SugarDecorator : public CoffeeDecorator {
+public:
+    SugarDecorator(shared_ptr<Coffee> coffee) : CoffeeDecorator(coffee) {}
+
+    string getDescription() const override {
+        return m_coffee->getDescription() + " + Sugar";
+    }
+
+    double getCost() const override { return m_coffee->getCost() + 0.25; }
+};
+
+class WhippedCreamDecorator : public CoffeeDecorator {
+public:
+    WhippedCreamDecorator(shared_ptr<Coffee> coffee) : CoffeeDecorator(coffee) {}
+
+    string getDescription() const override {
+        return m_coffee->getDescription() + " + Whipped Cream";
+    }
+
+    double getCost() const override { return m_coffee->getCost() + 0.75; }
+};
+
+int main() {
+    // Create base coffee
+    shared_ptr<Coffee> coffee = make_shared<SimpleCoffee>();
+    cout << coffee->getDescription() << " => \$" << coffee->getCost() << endl;
+
+    // Decorate with milk
+    coffee = make_shared<MilkDecorator>(coffee);
+    cout << coffee->getDescription() << " => \$" << coffee->getCost() << endl;
+
+    // Add sugar
+    coffee = make_shared<SugarDecorator>(coffee);
+    cout << coffee->getDescription() << " => \$" << coffee->getCost() << endl;
+
+    // Add whipped cream
+    coffee = make_shared<WhippedCreamDecorator>(coffee);
+    cout << coffee->getDescription() << " => \$" << coffee->getCost() << endl;
+
+    return 0;
+}
+`;
+
+const codePatternObserver = `#include <iostream>
+#include <memory>
+#include <vector>
+using namespace std;
+
+// Observer interface
+class Observer {
+public:
+    virtual ~Observer() {}
+    virtual void update(const string& message) = 0;
+};
+
+// Subject
+class Subject {
+private:
+    vector<shared_ptr<Observer>> m_observers;
+    string m_state;
+
+public:
+    void attach(shared_ptr<Observer> observer) { m_observers.push_back(observer); }
+
+    void detach(shared_ptr<Observer> observer) {
+        // Remove observer from list (implementation omitted for brevity)
+    }
+
+    void setState(const string& state) {
+        m_state = state;
+        notify();
+    }
+
+    string getState() const { return m_state; }
+
+private:
+    void notify() {
+        cout << "Subject state changed to: " << m_state << endl;
+        for (auto observer : m_observers) {
+            observer->update(m_state);
+        }
+    }
+};
+
+// Concrete Observers
+class ConcreteObserverA : public Observer {
+public:
+    void update(const string& message) override {
+        cout << "ObserverA received update: " << message << endl;
+    }
+};
+
+class ConcreteObserverB : public Observer {
+public:
+    void update(const string& message) override {
+        cout << "ObserverB received update: " << message << endl;
+    }
+};
+
+class ConcreteObserverC : public Observer {
+public:
+    void update(const string& message) override {
+        cout << "ObserverC received update: " << message << endl;
+    }
+};
+
+int main() {
+    auto subject = make_shared<Subject>();
+
+    auto obs_a = make_shared<ConcreteObserverA>();
+    auto obs_b = make_shared<ConcreteObserverB>();
+    auto obs_c = make_shared<ConcreteObserverC>();
+
+    subject->attach(obs_a);
+    subject->attach(obs_b);
+    subject->attach(obs_c);
+
+    cout << "--- Setting state to 'Event1' ---" << endl;
+    subject->setState("Event1");
+
+    cout << "\\n--- Setting state to 'Event2' ---" << endl;
+    subject->setState("Event2");
+
+    return 0;
+}
+`;
+
+const codePatternStrategy = `#include <iostream>
+#include <memory>
+using namespace std;
+
+// Strategy interface
+class PaymentStrategy {
+public:
+    virtual ~PaymentStrategy() {}
+    virtual void pay(double amount) const = 0;
+};
+
+// Concrete Strategies
+class CreditCardPayment : public PaymentStrategy {
+private:
+    string m_cardNumber;
+
+public:
+    CreditCardPayment(const string& cardNumber) : m_cardNumber(cardNumber) {}
+
+    void pay(double amount) const override {
+        cout << "Processing credit card payment: \$" << amount << " with card "
+             << m_cardNumber.substr(m_cardNumber.length() - 4) << endl;
+    }
+};
+
+class CryptoCurrencyPayment : public PaymentStrategy {
+private:
+    string m_walletAddress;
+
+public:
+    CryptoCurrencyPayment(const string& walletAddr) : m_walletAddress(walletAddr) {}
+
+    void pay(double amount) const override {
+        cout << "Processing cryptocurrency payment: " << amount << " BTC to wallet "
+             << m_walletAddress.substr(0, 8) << "..." << endl;
+    }
+};
+
+class PayPalPayment : public PaymentStrategy {
+private:
+    string m_email;
+
+public:
+    PayPalPayment(const string& email) : m_email(email) {}
+
+    void pay(double amount) const override {
+        cout << "Processing PayPal payment: \$" << amount << " from " << m_email << endl;
+    }
+};
+
+// Context
+class PaymentProcessor {
+private:
+    shared_ptr<PaymentStrategy> m_strategy;
+
+public:
+    void setStrategy(shared_ptr<PaymentStrategy> strategy) { m_strategy = strategy; }
+
+    void processPayment(double amount) {
+        if (m_strategy) {
+            m_strategy->pay(amount);
+        } else {
+            cout << "No payment strategy set!" << endl;
+        }
+    }
+};
+
+int main() {
+    PaymentProcessor processor;
+
+    // Strategy 1: Credit Card
+    cout << "--- Using Credit Card ---" << endl;
+    auto cc = make_shared<CreditCardPayment>("1234567890123456");
+    processor.setStrategy(cc);
+    processor.processPayment(99.99);
+
+    // Strategy 2: Cryptocurrency
+    cout << "\\n--- Using Cryptocurrency ---" << endl;
+    auto crypto =
+        make_shared<CryptoCurrencyPayment>("1A1z7agoat2wtQW6wvV8x4L3yzH2Xkq68R");
+    processor.setStrategy(crypto);
+    processor.processPayment(0.005);
+
+    // Strategy 3: PayPal
+    cout << "\\n--- Using PayPal ---" << endl;
+    auto paypal = make_shared<PayPalPayment>("user@example.com");
+    processor.setStrategy(paypal);
+    processor.processPayment(50.00);
+
     return 0;
 }
 `;
