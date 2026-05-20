@@ -1312,3 +1312,89 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
     margin: 12px 0;
     text-align: center;
 }
+
+/* ----- Shared C++ code-panel theme (App panels + slide-viewer) ----- */
+.code-panel {
+    border: 1px solid #263244;
+    border-radius: var(--app-radius-md, 8px);
+    background: #111827;
+    overflow: hidden;
+    font-family: 'Fira Code', monospace;
+}
+.code-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: #0b1220;
+    border-bottom: 1px solid #1f2a3a;
+}
+.code-panel-dots {
+    display: inline-flex;
+    gap: 6px;
+}
+.code-panel-dots i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #475569;
+    display: inline-block;
+}
+.code-panel-dots i:nth-child(1) { background: #ef4444; }
+.code-panel-dots i:nth-child(2) { background: #f59e0b; }
+.code-panel-dots i:nth-child(3) { background: #10b981; }
+.code-panel-filename {
+    flex: 1;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.code-panel-copy {
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #cbd5e1;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+}
+.code-panel-copy:hover { background: #334155; color: #f1f5f9; }
+.code-panel-copy[data-copied="1"] { background: #065f46; color: #ecfdf5; border-color: #065f46; }
+.code-panel-body {
+    margin: 0;
+    padding: 12px 12px 12px 0;
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: #e2e8f0;
+    max-height: 460px;
+    overflow: auto;
+    counter-reset: code-line;
+}
+.code-panel-body code { display: block; }
+.code-panel-body code {
+    counter-reset: code-line;
+    padding-left: 3.5em;
+    position: relative;
+}
+.code-panel-body code .code-line {
+    counter-increment: code-line;
+    display: block;
+}
+.code-panel-body code .code-line::before {
+    content: counter(code-line);
+    position: absolute;
+    left: 0;
+    width: 2.5em;
+    padding-right: 0.5em;
+    text-align: right;
+    color: #475569;
+    user-select: none;
+}
+/* Custom scrollbar — dark */
+.code-panel-body::-webkit-scrollbar { width: 10px; height: 10px; }
+.code-panel-body::-webkit-scrollbar-track { background: #0b1220; }
+.code-panel-body::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+.code-panel-body::-webkit-scrollbar-thumb:hover { background: #475569; }
