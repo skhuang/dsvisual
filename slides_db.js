@@ -4005,6 +4005,97 @@ const SLIDES_DB = {
       }
     ]
   },
+  "graph-adjlist": {
+    "category": "Graphs",
+    "title": { "zh": "鄰接串列", "en": "Adjacency List" },
+    "slides": [
+      {
+        "heading": { "zh": "鄰接串列", "en": "Adjacency List" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "以每個頂點為起點的鏈結串列來表示圖的邊；對稀疏圖比鄰接矩陣更省記憶體。",
+              "en": "Represent a graph by, for each vertex, a linked list of its neighbors; far more space-efficient than an adjacency matrix on sparse graphs." } }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "一個大小為 $V$ 的陣列，每格 `adj[v]` 是一條串列，儲存 $v$ 的所有鄰居。無向圖中每條邊 $(u, v)$ 同時加進 `adj[u]` 與 `adj[v]`。",
+              "en": "An array of size $V$ where each cell `adj[v]` is a list storing every neighbor of $v$. For an undirected graph, each edge $(u, v)$ is appended to both `adj[u]` and `adj[v]`." } },
+          { "type": "bullets", "items": [
+              { "zh": "空間 $O(V + E)$；對稀疏圖明顯優於矩陣的 $O(V^2)$。", "en": "Space $O(V + E)$; clearly beats the matrix's $O(V^2)$ on sparse graphs." },
+              { "zh": "遍歷某頂點的鄰居 $O(\\deg(v))$，與該頂點度數成正比。", "en": "Iterating $v$'s neighbors is $O(\\deg(v))$, proportional to its degree." },
+              { "zh": "判斷某條邊存在需 $O(\\deg(v))$；矩陣為 $O(1)$。", "en": "Edge-exists query is $O(\\deg(v))$ here vs $O(1)$ in a matrix." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          { "type": "steps", "items": [
+              { "zh": "建立大小為 $V$ 的串列陣列，每格初始為空。", "en": "Create an array of $V$ empty lists." },
+              { "zh": "插入邊 $(u, v)$ 時，把 $v$ 追加到 `adj[u]`，把 $u$ 追加到 `adj[v]`（無向圖）。", "en": "To insert edge $(u, v)$, append $v$ to `adj[u]` and $u$ to `adj[v]` (undirected)." },
+              { "zh": "遍歷頂點 $u$ 的所有鄰居時，逐項走 `adj[u]` 串列。", "en": "To iterate all neighbors of $u$, walk through `adj[u]`." }
+          ] },
+          { "type": "mermaid", "code": "flowchart LR\n  V0[\"adj[0]\"] --> A[1] --> B[4] --> N0[null]\n  V1[\"adj[1]\"] --> C[0] --> D[2] --> E[3] --> F[4] --> N1[null]\n  V2[\"adj[2]\"] --> G[1] --> H[3] --> N2[null]" }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 90\" width=\"360\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\"   y=\"20\">[0] -&gt; 1 -&gt; 4 -&gt; null</text><text x=\"0\"   y=\"40\">[1] -&gt; 0 -&gt; 2 -&gt; 3 -&gt; 4 -&gt; null</text><text x=\"0\"   y=\"60\">[2] -&gt; 1 -&gt; 3 -&gt; null</text><text x=\"0\"   y=\"80\">[3] -&gt; 1 -&gt; 2 -&gt; 4 -&gt; null</text></g></svg>" },
+          { "type": "note", "text": {
+              "zh": "同一張 5 節點圖在 visualizer 裡以這樣的串列形式呈現；對照矩陣表示法可看出空間差異。",
+              "en": "The same 5-node graph rendered as adjacency lists; compare with the matrix representation to see the space tradeoff." } }
+        ]
+      },
+      {
+        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "blocks": [
+          { "type": "table",
+            "headers": [ { "zh": "操作", "en": "Operation" }, { "zh": "時間", "en": "Time" }, { "zh": "空間", "en": "Space" } ],
+            "rows": [
+              [ { "zh": "建構", "en": "Build" }, { "zh": "$O(V + E)$", "en": "$O(V + E)$" }, { "zh": "$O(V + E)$", "en": "$O(V + E)$" } ],
+              [ { "zh": "插入邊", "en": "addEdge" }, { "zh": "$O(1)$", "en": "$O(1)$" }, { "zh": "$O(1)$", "en": "$O(1)$" } ],
+              [ { "zh": "遍歷鄰居", "en": "iterate neighbors" }, { "zh": "$O(\\deg(v))$", "en": "$O(\\deg(v))$" }, { "zh": "$O(1)$", "en": "$O(1)$" } ],
+              [ { "zh": "邊查詢", "en": "edge query" }, { "zh": "$O(\\deg(v))$", "en": "$O(\\deg(v))$" }, { "zh": "$O(1)$", "en": "$O(1)$" } ],
+              [ { "zh": "空間合計", "en": "Total Space" }, { "zh": "—", "en": "—" }, { "zh": "$O(V + E)$", "en": "$O(V + E)$" } ]
+            ] },
+          { "type": "math", "tex": "O(V + E) \\;\\ll\\; O(V^2) \\text{ when } E \\ll V^2", "caption": {
+              "zh": "稀疏圖（$E \\ll V^2$）時鄰接串列的空間明顯較佳。",
+              "en": "For sparse graphs ($E \\ll V^2$), the adjacency list is substantially more space-efficient." } }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          { "type": "code", "lang": "cpp", "code": "class Graph {\n    int V;\n    vector<list<int>> adj;\npublic:\n    Graph(int v) : V(v), adj(v) {}\n    void addEdge(int u, int v) {\n        adj[u].push_back(v);\n        adj[v].push_back(u);\n    }\n};" }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "優點：稀疏圖空間 $O(V+E)$ 比矩陣 $O(V^2)$ 小很多。", "en": "Pro: $O(V+E)$ space for sparse graphs vs $O(V^2)$ for matrix." },
+              { "zh": "優點：遍歷鄰居只走 $\\deg(v)$ 個元素，不需掃整列。", "en": "Pro: iterating neighbors visits only $\\deg(v)$ items, not a full row." },
+              { "zh": "缺點：邊查詢需走串列（$O(\\deg(v))$），矩陣 $O(1)$。", "en": "Con: edge query is $O(\\deg(v))$ vs $O(1)$ for matrix." },
+              { "zh": "適用：稀疏圖、邊集合操作為主、需要遍歷鄰居的演算法（BFS / DFS / Dijkstra）。", "en": "Use for sparse graphs, edge-iteration-heavy algorithms (BFS / DFS / Dijkstra)." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "陣列 + 串列；每邊存兩次（無向）。", "en": "Array + lists; each edge stored twice for undirected." },
+              { "zh": "空間 $O(V+E)$，遍歷鄰居 $O(\\deg(v))$。", "en": "Space $O(V+E)$, iterate neighbors $O(\\deg(v))$." },
+              { "zh": "對稀疏圖是首選；BFS / DFS / Dijkstra / Kruskal 內部皆使用此表示。", "en": "Default representation for sparse graphs; used internally by BFS / DFS / Dijkstra / Kruskal." }
+          ] }
+        ]
+      }
+    ]
+  },
   "graph-kruskal": {
     "category": "Graphs",
     "title": {
