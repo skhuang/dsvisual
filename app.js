@@ -316,6 +316,39 @@ document.addEventListener('DOMContentLoaded', () => {
         inBtn.addEventListener('click', () => applyZoom(zoom + 0.1));
         outBtn.addEventListener('click', () => applyZoom(zoom - 0.1));
         resetBtn.addEventListener('click', () => applyZoom(1.0));
+
+        // Wheel zoom (intercepted inside the visual host so page scroll isn't affected)
+        visualHost.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            applyZoom(zoom + (e.deltaY < 0 ? 0.05 : -0.05));
+        }, { passive: false });
+
+        // Pinch zoom via two-pointer events
+        const pointers = new Map();
+        let pinchStart = null;
+        visualHost.addEventListener('pointerdown', (e) => {
+            pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (pointers.size === 2) {
+                const [a, b] = Array.from(pointers.values());
+                pinchStart = { dist: Math.hypot(a.x - b.x, a.y - b.y), zoom };
+            }
+        });
+        visualHost.addEventListener('pointermove', (e) => {
+            if (!pointers.has(e.pointerId)) return;
+            pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+            if (pointers.size === 2 && pinchStart && pinchStart.dist > 0) {
+                const [a, b] = Array.from(pointers.values());
+                const dist = Math.hypot(a.x - b.x, a.y - b.y);
+                applyZoom(pinchStart.zoom * (dist / pinchStart.dist));
+            }
+        });
+        function endPointer(e) {
+            pointers.delete(e.pointerId);
+            if (pointers.size < 2) pinchStart = null;
+        }
+        visualHost.addEventListener('pointerup', endPointer);
+        visualHost.addEventListener('pointercancel', endPointer);
+
         applyZoom(1.0);
     }
 

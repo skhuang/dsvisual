@@ -127,4 +127,19 @@ test.describe('UX polish — visualizer zoom', () => {
         const newReset = page.locator('[data-method-section="queue"] .viz-zoom-controls button[data-zoom="reset"]');
         await expect(newReset).toHaveText('100%');
     });
+
+    test('wheel scroll inside visualizer zooms by ±5%', async ({ page }) => {
+        const visual = page.locator('.method-section-visual').first();
+        const reset = page.locator('.viz-zoom-controls button[data-zoom="reset"]').first();
+        // Simulate wheel up (zoom in 5%)
+        await visual.evaluate((el) => {
+            el.dispatchEvent(new WheelEvent('wheel', { deltaY: -100, bubbles: true, cancelable: true }));
+        });
+        await expect(reset).toHaveText('105%');
+        // Wheel down (zoom out 5%)
+        await visual.evaluate((el) => {
+            el.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, bubbles: true, cancelable: true }));
+        });
+        await expect(reset).toHaveText('100%');
+    });
 });
