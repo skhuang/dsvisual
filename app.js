@@ -300,10 +300,11 @@ document.addEventListener('DOMContentLoaded', () => {
             .replace(/>/g, '&gt;');
     }
 
-    function bindZoomControls(visualHost) {
-        const scaled = visualHost.querySelector('.viz-body-scaled');
-        const controls = visualHost.querySelector('.viz-zoom-controls');
-        if (!scaled || !controls) return;
+    function bindZoomControls(section) {
+        const scaled = section.querySelector('.viz-body-scaled');
+        const controls = section.querySelector('.viz-zoom-controls');
+        const visualHost = section.querySelector('.method-section-visual');
+        if (!scaled || !controls || !visualHost) return;
         const resetBtn = controls.querySelector('[data-zoom="reset"]');
         const inBtn = controls.querySelector('[data-zoom="in"]');
         const outBtn = controls.querySelector('[data-zoom="out"]');
@@ -317,13 +318,12 @@ document.addEventListener('DOMContentLoaded', () => {
         outBtn.addEventListener('click', () => applyZoom(zoom - 0.1));
         resetBtn.addEventListener('click', () => applyZoom(1.0));
 
-        // Wheel zoom (intercepted inside the visual host so page scroll isn't affected)
+        // Wheel/pinch listeners stay on .method-section-visual so wheel-over-visualizer zooms.
         visualHost.addEventListener('wheel', (e) => {
             e.preventDefault();
             applyZoom(zoom + (e.deltaY < 0 ? 0.05 : -0.05));
         }, { passive: false });
 
-        // Pinch zoom via two-pointer events
         const pointers = new Map();
         let pinchStart = null;
         visualHost.addEventListener('pointerdown', (e) => {
@@ -360,24 +360,13 @@ document.addEventListener('DOMContentLoaded', () => {
         visualHost.setAttribute('aria-label', 'Active interactive visualization');
         visualHost.innerHTML = '';
 
-        // Zoom controls (sibling, NOT scaled, sits above the scaled content)
-        const zoomControls = document.createElement('div');
-        zoomControls.className = 'viz-zoom-controls';
-        zoomControls.setAttribute('role', 'toolbar');
-        zoomControls.setAttribute('aria-label', 'Zoom controls');
-        zoomControls.innerHTML =
-            '<button type="button" data-zoom="out" aria-label="Zoom out">−</button>' +
-            '<button type="button" data-zoom="reset" aria-label="Reset zoom">100%</button>' +
-            '<button type="button" data-zoom="in" aria-label="Zoom in">+</button>';
-        visualHost.appendChild(zoomControls);
-
-        // Scaled wrapper holds the runtime controls + visualizer
         const scaled = document.createElement('div');
         scaled.className = 'viz-body-scaled';
         scaled.appendChild(runtimeControls);
         scaled.appendChild(runtimeVisualizer);
         visualHost.appendChild(scaled);
-        bindZoomControls(visualHost);
+
+        bindZoomControls(section);
     }
 
     function renderMethodSections(groupId) {
@@ -451,6 +440,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${method.title}</h3>
                 </div>
                 <div class="method-section-actions">
+                    <div class="viz-zoom-controls" role="toolbar" aria-label="Zoom controls">
+                        <button type="button" data-zoom="out" aria-label="Zoom out">−</button>
+                        <button type="button" data-zoom="reset" aria-label="Reset zoom">100%</button>
+                        <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
+                    </div>
                     <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
                 </div>
             </div>

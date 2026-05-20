@@ -79,6 +79,19 @@ test.describe('UX polish — code density slider', () => {
         const stored = await page.evaluate(() => localStorage.getItem('dsvisual.codeDensity'));
         expect(stored).toBeNull();
     });
+
+    test('preview block inside drawer updates with slider', async ({ page }) => {
+        await page.locator('#settings-toggle').click();
+        const preview = page.locator('.settings-row-preview .code-panel-body');
+        await expect(preview).toBeVisible();
+        const before = await preview.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+        await page.locator('#code-density-slider').evaluate((el) => {
+            el.value = '1.0';
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        const after = await preview.evaluate((el) => parseFloat(getComputedStyle(el).lineHeight));
+        expect(after).toBeLessThan(before);
+    });
 });
 
 test.describe('UX polish — visualizer zoom', () => {
@@ -148,5 +161,12 @@ test.describe('UX polish — visualizer zoom', () => {
             el.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, bubbles: true, cancelable: true }));
         });
         await expect(reset).toHaveText('100%');
+    });
+
+    test('zoom controls sit in the section header, not over the visualizer', async ({ page }) => {
+        const headerControls = page.locator('.method-section-card .method-section-actions .viz-zoom-controls');
+        await expect(headerControls).toBeVisible();
+        const visualOverlapControls = page.locator('.method-section-card .method-section-visual > .viz-zoom-controls');
+        await expect(visualOverlapControls).toHaveCount(0);
     });
 });

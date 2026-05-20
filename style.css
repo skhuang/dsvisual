@@ -1438,7 +1438,7 @@ pre.code-panel-body[class*="language-"] {
 .settings-drawer-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(15, 23, 42, 0.4);
+    background: rgba(15, 23, 42, 0.1);
     border: 0;
     cursor: pointer;
 }
@@ -1517,6 +1517,19 @@ pre.code-panel-body[class*="language-"] {
     .settings-row-controls #code-density-reset { background: #1e293b; border-color: #334155; color: #e2e8f0; }
 }
 
+.settings-row-preview .code-panel-body {
+    margin: 0;
+    padding: 12px;
+    background: #111827;
+    color: #e2e8f0;
+    border: 1px solid #263244;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.78rem;
+    max-height: 200px;
+    overflow: auto;
+}
+
 /* ----- Visualizer zoom (UX polish) ----- */
 .viz-body-scaled {
     transform: scale(var(--viz-zoom, 1));
@@ -1524,10 +1537,6 @@ pre.code-panel-body[class*="language-"] {
     transition: transform 0.2s ease;
 }
 .viz-zoom-controls {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    z-index: 10;
     display: inline-flex;
     gap: 2px;
     background: rgba(255, 255, 255, 0.92);
