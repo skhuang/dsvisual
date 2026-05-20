@@ -79,7 +79,47 @@ function formatSlidesDbCodeBlocks() {
   formatSlidesDbCodeBlocksAt(path.join(REPO_ROOT, 'slides_db.js'));
 }
 
+function regenerateCodeDb() {
+  execFileSync('node', [path.join(REPO_ROOT, 'build_db.js')], {
+    cwd: REPO_ROOT,
+    stdio: 'inherit',
+  });
+}
+
+function rebuildSlides() {
+  execFileSync('node', [path.join(REPO_ROOT, 'build_slides.js')], {
+    cwd: REPO_ROOT,
+    stdio: 'inherit',
+  });
+}
+
+function main() {
+  const files = cppFiles();
+  console.log('Formatting ' + files.length + ' .cpp files...');
+  for (const f of files) formatCppFile(f);
+
+  console.log('Compile-check gate (g++ -fsyntax-only)...');
+  for (const f of files) compileCheck(f);
+
+  console.log('Regenerating code_db.js...');
+  regenerateCodeDb();
+
+  console.log('Reformatting slides_db.js code blocks...');
+  formatSlidesDbCodeBlocks();
+
+  console.log('Rebuilding slides...');
+  rebuildSlides();
+
+  console.log('Done.');
+}
+
 module.exports = {
   cppFiles, formatCppFile, compileCheck, formatCppString,
   formatSlidesDbCodeBlocksAt, formatSlidesDbCodeBlocks,
+  regenerateCodeDb, rebuildSlides, main,
 };
+
+if (require.main === module) {
+  try { main(); }
+  catch (err) { console.error(err.message || err); process.exit(1); }
+}

@@ -63,9 +63,7 @@ The Adapter wraps the Adaptee and exposes the Target interface outward — a thi
 ```cpp
 class LegacyDataSource {
 public:
-    string getDataLegacy() const {
-        return "Legacy: Raw Binary Data [0x1A, 0x2B]";
-    }
+    string getDataLegacy() const { return "Legacy: Raw Binary Data [0x1A, 0x2B]"; }
 };
 
 class ModernDataInterface {
@@ -78,13 +76,10 @@ public:
 class LegacyAdapter : public ModernDataInterface {
 private:
     LegacyDataSource m_legacy;
+
 public:
-    string fetch() override {
-        return "Adapted: " + m_legacy.getDataLegacy();
-    }
-    string getFormat() override {
-        return "Binary adapted to JSON";
-    }
+    string fetch() override { return "Adapted: " + m_legacy.getDataLegacy(); }
+    string getFormat() override { return "Binary adapted to JSON"; }
 };
 
 int main() {

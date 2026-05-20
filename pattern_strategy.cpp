@@ -18,8 +18,8 @@ public:
     CreditCardPayment(const string& cardNumber) : m_cardNumber(cardNumber) {}
 
     void pay(double amount) const override {
-        cout << "Processing credit card payment: $" << amount 
-             << " with card " << m_cardNumber.substr(m_cardNumber.length() - 4) << endl;
+        cout << "Processing credit card payment: $" << amount << " with card "
+             << m_cardNumber.substr(m_cardNumber.length() - 4) << endl;
     }
 };
 
@@ -54,9 +54,7 @@ private:
     shared_ptr<PaymentStrategy> m_strategy;
 
 public:
-    void setStrategy(shared_ptr<PaymentStrategy> strategy) {
-        m_strategy = strategy;
-    }
+    void setStrategy(shared_ptr<PaymentStrategy> strategy) { m_strategy = strategy; }
 
     void processPayment(double amount) {
         if (m_strategy) {
@@ -78,7 +76,8 @@ int main() {
 
     // Strategy 2: Cryptocurrency
     cout << "\n--- Using Cryptocurrency ---" << endl;
-    auto crypto = make_shared<CryptoCurrencyPayment>("1A1z7agoat2wtQW6wvV8x4L3yzH2Xkq68R");
+    auto crypto =
+        make_shared<CryptoCurrencyPayment>("1A1z7agoat2wtQW6wvV8x4L3yzH2Xkq68R");
     processor.setStrategy(crypto);
     processor.processPayment(0.005);
 

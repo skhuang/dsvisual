@@ -63,12 +63,13 @@ struct TSTNode {
     char data;
     bool isEndOfWord;
     TSTNode *left, *eq, *right;
-    TSTNode(char c) : data(c), isEndOfWord(false),
-        left(nullptr), eq(nullptr), right(nullptr) {}
+    TSTNode(char c)
+        : data(c), isEndOfWord(false), left(nullptr), eq(nullptr), right(nullptr) {}
 };
 
 TSTNode* insertRecursive(TSTNode* root, const string& word, int idx) {
-    if (!root) root = new TSTNode(word[idx]);
+    if (!root)
+        root = new TSTNode(word[idx]);
     if (word[idx] < root->data)
         root->left = insertRecursive(root->left, word, idx);
     else if (word[idx] > root->data)

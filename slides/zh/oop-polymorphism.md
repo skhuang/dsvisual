@@ -69,14 +69,11 @@ public:
 
 class Circle : public Shape {
     double radius;
+
 public:
     explicit Circle(double r) : radius(r) {}
-    void draw() const override {
-        cout << "Drawing Circle(" << radius << ")" << endl;
-    }
-    double area() const override {
-        return 3.14159 * radius * radius;
-    }
+    void draw() const override { cout << "Drawing Circle(" << radius << ")" << endl; }
+    double area() const override { return 3.14159 * radius * radius; }
 };
 
 int main() {
@@ -85,10 +82,11 @@ int main() {
     shapes.push_back(new Circle(3.0));
 
     for (const auto* s : shapes) {
-        s->draw();  // dynamic dispatch via vtable
+        s->draw(); // dynamic dispatch via vtable
         cout << "Area: " << s->area() << endl;
     }
-    for (auto* s : shapes) delete s;
+    for (auto* s : shapes)
+        delete s;
 }
 ```
 

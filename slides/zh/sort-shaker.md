@@ -72,7 +72,8 @@ void shakerSort(vector<int>& arr) {
             }
         }
         right--;
-        if (!swapped) break;
+        if (!swapped)
+            break;
         // Backward pass: sink smallest to left
         swapped = false;
         for (int i = right; i > left; i--) {
@@ -82,7 +83,8 @@ void shakerSort(vector<int>& arr) {
             }
         }
         left++;
-        if (!swapped) break;
+        if (!swapped)
+            break;
     }
 }
 ```

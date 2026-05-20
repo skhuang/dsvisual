@@ -1,5 +1,5 @@
-#include <iostream>
 #include <climits>
+#include <iostream>
 using namespace std;
 
 struct LNode {
@@ -15,21 +15,21 @@ private:
     LNode* root = nullptr;
     bool isMinHeap;
 
-    bool cmp(int a, int b) const {
-        return isMinHeap ? (a < b) : (a > b);
-    }
+    bool cmp(int a, int b) const { return isMinHeap ? (a < b) : (a > b); }
 
-    static int getNpl(LNode* n) {
-        return n ? n->npl : -1;
-    }
+    static int getNpl(LNode* n) { return n ? n->npl : -1; }
 
     LNode* mergeNodes(LNode* a, LNode* b) {
-        if (!a) return b;
-        if (!b) return a;
-        if (!cmp(a->key, b->key)) swap(a, b);
+        if (!a)
+            return b;
+        if (!b)
+            return a;
+        if (!cmp(a->key, b->key))
+            swap(a, b);
 
         a->right = mergeNodes(a->right, b);
-        if (getNpl(a->left) < getNpl(a->right)) swap(a->left, a->right);
+        if (getNpl(a->left) < getNpl(a->right))
+            swap(a->left, a->right);
         a->npl = getNpl(a->right) + 1;
         return a;
     }
@@ -37,17 +37,17 @@ private:
 public:
     explicit LeftistHeap(bool minHeap = true) : isMinHeap(minHeap) {}
 
-    void insert(int x) {
-        root = mergeNodes(root, new LNode(x));
-    }
+    void insert(int x) { root = mergeNodes(root, new LNode(x)); }
 
     int peek() const {
-        if (!root) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!root)
+            return isMinHeap ? INT_MAX : INT_MIN;
         return root->key;
     }
 
     int extractTop() {
-        if (!root) return isMinHeap ? INT_MAX : INT_MIN;
+        if (!root)
+            return isMinHeap ? INT_MAX : INT_MIN;
         int out = root->key;
         LNode* l = root->left;
         LNode* r = root->right;
@@ -62,7 +62,8 @@ public:
     }
 
     void clearNode(LNode* n) {
-        if (!n) return;
+        if (!n)
+            return;
         clearNode(n->left);
         clearNode(n->right);
         delete n;
@@ -71,7 +72,8 @@ public:
     ~LeftistHeap() { clearNode(root); }
 
     void printPreorder(LNode* n) const {
-        if (!n) return;
+        if (!n)
+            return;
         cout << "(" << n->key << ",npl=" << n->npl << ") ";
         printPreorder(n->left);
         printPreorder(n->right);
@@ -86,8 +88,12 @@ public:
 
 int main() {
     LeftistHeap h1(true), h2(true);
-    h1.insert(10); h1.insert(3); h1.insert(17);
-    h2.insert(8); h2.insert(1); h2.insert(6);
+    h1.insert(10);
+    h1.insert(3);
+    h1.insert(17);
+    h2.insert(8);
+    h2.insert(1);
+    h2.insert(6);
 
     h1.print();
     h2.print();

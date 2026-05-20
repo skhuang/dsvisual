@@ -66,15 +66,14 @@ Red-Black Tree height is bounded by $2\log_2(N+1)$ — slightly looser than AVL,
 enum Color { RED, BLACK };
 
 struct Node {
-    int data; bool color;
+    int data;
+    bool color;
     Node *left, *right, *parent;
-    Node(int d) : data(d), color(RED),
-        left(nullptr), right(nullptr), parent(nullptr) {}
+    Node(int d) : data(d), color(RED), left(nullptr), right(nullptr), parent(nullptr) {}
 };
 
 void fixViolation(Node*& root, Node*& pt) {
-    while ((pt != root) && (pt->color != BLACK)
-           && (pt->parent->color == RED)) {
+    while ((pt != root) && (pt->color != BLACK) && (pt->parent->color == RED)) {
         Node* parent = pt->parent;
         Node* grandparent = parent->parent;
         // Case: parent is left child of grandparent
@@ -84,7 +83,8 @@ void fixViolation(Node*& root, Node*& pt) {
                 grandparent->color = RED;
                 parent->color = uncle->color = BLACK;
                 pt = grandparent;
-            } else { /* rotate + recolor */ }
+            } else { /* rotate + recolor */
+            }
         } /* mirror for right-child case */
     }
     root->color = BLACK;

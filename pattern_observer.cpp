@@ -1,6 +1,6 @@
 #include <iostream>
-#include <vector>
 #include <memory>
+#include <vector>
 using namespace std;
 
 // Observer interface
@@ -17,9 +17,7 @@ private:
     string m_state;
 
 public:
-    void attach(shared_ptr<Observer> observer) {
-        m_observers.push_back(observer);
-    }
+    void attach(shared_ptr<Observer> observer) { m_observers.push_back(observer); }
 
     void detach(shared_ptr<Observer> observer) {
         // Remove observer from list (implementation omitted for brevity)
@@ -30,9 +28,7 @@ public:
         notify();
     }
 
-    string getState() const {
-        return m_state;
-    }
+    string getState() const { return m_state; }
 
 private:
     void notify() {

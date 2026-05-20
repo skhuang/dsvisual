@@ -70,19 +70,24 @@ void linkTrees(BNode* rootY, BNode* rootZ) {
 
 BNode* unionHeaps(BNode* h1, BNode* h2) {
     BNode* newHead = mergeRootLists(h1, h2);
-    if (!newHead) return nullptr;
+    if (!newHead)
+        return nullptr;
 
-    BNode* prev = nullptr, *curr = newHead, *next = curr->sibling;
+    BNode *prev = nullptr, *curr = newHead, *next = curr->sibling;
     while (next) {
-        bool degreeDiff  = curr->degree != next->degree;
-        bool tripleSame  = next->sibling && next->sibling->degree == curr->degree;
+        bool degreeDiff = curr->degree != next->degree;
+        bool tripleSame = next->sibling && next->sibling->degree == curr->degree;
         if (degreeDiff || tripleSame) {
-            prev = curr; curr = next;
+            prev = curr;
+            curr = next;
         } else if (cmp(curr->key, next->key)) {
             curr->sibling = next->sibling;
             linkTrees(next, curr);
         } else {
-            if (!prev) newHead = next; else prev->sibling = next;
+            if (!prev)
+                newHead = next;
+            else
+                prev->sibling = next;
             linkTrees(curr, next);
             curr = next;
         }

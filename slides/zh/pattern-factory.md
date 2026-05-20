@@ -70,38 +70,36 @@ public:
 
 class Car : public Vehicle {
 public:
-    void display() const override {
-        cout << "[Car] V6 sedan" << endl;
-    }
+    void display() const override { cout << "[Car] V6 sedan" << endl; }
 };
 
 class Truck : public Vehicle {
 public:
-    void display() const override {
-        cout << "[Truck] Diesel cargo" << endl;
-    }
+    void display() const override { cout << "[Truck] Diesel cargo" << endl; }
 };
 
 class Bike : public Vehicle {
 public:
-    void display() const override {
-        cout << "[Bike] 2 wheels, Gasoline" << endl;
-    }
+    void display() const override { cout << "[Bike] 2 wheels, Gasoline" << endl; }
 };
 
 class VehicleFactory {
 public:
     static unique_ptr<Vehicle> createVehicle(const string& type) {
-        if (type == "car")   return make_unique<Car>();
-        if (type == "truck") return make_unique<Truck>();
-        if (type == "bike")  return make_unique<Bike>();
+        if (type == "car")
+            return make_unique<Car>();
+        if (type == "truck")
+            return make_unique<Truck>();
+        if (type == "bike")
+            return make_unique<Bike>();
         return nullptr;
     }
 };
 
 int main() {
     auto v = VehicleFactory::createVehicle("bike");
-    if (v) v->display(); // [Bike] 2 wheels, Gasoline
+    if (v)
+        v->display(); // [Bike] 2 wheels, Gasoline
 }
 ```
 

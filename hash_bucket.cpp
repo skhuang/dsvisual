@@ -5,7 +5,8 @@ struct Bucket {
     int slots[2];
     int count;
     Bucket() {
-        slots[0] = -1; slots[1] = -1;
+        slots[0] = -1;
+        slots[1] = -1;
         count = 0;
     }
 };
@@ -21,35 +22,35 @@ public:
         table = new Bucket[NUM_BUCKETS];
     }
 
-    int hashFunction(int key) {
-        return key % NUM_BUCKETS;
-    }
+    int hashFunction(int key) { return key % NUM_BUCKETS; }
 
     bool insert(int key) {
         int idx = hashFunction(key);
-        
+
         // Try filling primary physical bucket block
         if (table[idx].count < 2) {
             table[idx].slots[table[idx].count++] = key;
             cout << "Inserted " << key << " directly into Bucket Index " << idx << endl;
             return true;
         }
-        cout << "Bucket " << idx << " is full. Probing to next bucket overflow..." << endl;
-        
+        cout << "Bucket " << idx << " is full. Probing to next bucket overflow..."
+             << endl;
+
         // Primary bucket is full; Linear Probing to next adjacent block
         int startIdx = idx;
         idx = (idx + 1) % NUM_BUCKETS;
         while (idx != startIdx) {
             if (table[idx].count < 2) {
                 table[idx].slots[table[idx].count++] = key;
-                cout << "Overflow Inserted " << key << " into Bucket Index " << idx << endl;
+                cout << "Overflow Inserted " << key << " into Bucket Index " << idx
+                     << endl;
                 return true;
             }
             idx = (idx + 1) % NUM_BUCKETS;
         }
-        
+
         cout << "Catastrophic Failure: All Hash Buckets completely saturated!" << endl;
-        return false; 
+        return false;
     }
 };
 

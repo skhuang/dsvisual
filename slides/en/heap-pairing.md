@@ -62,27 +62,29 @@ The exact amortized bound for decrease-key in Pairing Heap has not been proven t
 
 ```cpp
 PNode* meld(PNode* a, PNode* b) {
-    if (!a) return b;
-    if (!b) return a;
-    if (!cmp(a->key, b->key)) swap(a, b); // a has smaller key
+    if (!a)
+        return b;
+    if (!b)
+        return a;
+    if (!cmp(a->key, b->key))
+        swap(a, b); // a has smaller key
     b->sibling = a->child;
     a->child = b;
     return a;
 }
 
 PNode* mergePairs(PNode* node) {
-    if (!node || !node->sibling) return node;
-    PNode* first  = node;
+    if (!node || !node->sibling)
+        return node;
+    PNode* first = node;
     PNode* second = node->sibling;
-    PNode* rest   = second->sibling;
-    first->sibling  = nullptr;
+    PNode* rest = second->sibling;
+    first->sibling = nullptr;
     second->sibling = nullptr;
     return meld(meld(first, second), mergePairs(rest));
 }
 
-void insert(int value) {
-    root = meld(root, new PNode(value));
-}
+void insert(int value) { root = meld(root, new PNode(value)); }
 
 int extractTop() {
     int top = root->key;

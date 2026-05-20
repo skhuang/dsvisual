@@ -60,13 +60,15 @@ $$T_{\text{avg}}(n,k) = O(n) + k \cdot O\!\left(\frac{n}{k}\right)^2 = O\!\left(
 ```cpp
 void bucketSort(vector<float>& arr) {
     int n = arr.size();
-    if (n <= 0) return;
+    if (n <= 0)
+        return;
     // Create n empty buckets
     vector<vector<float>> buckets(n);
     // Distribute elements into buckets
     for (int i = 0; i < n; i++) {
         int bi = (int)(n * arr[i]);
-        if (bi >= n) bi = n - 1;
+        if (bi >= n)
+            bi = n - 1;
         buckets[bi].push_back(arr[i]);
     }
     // Sort individual buckets

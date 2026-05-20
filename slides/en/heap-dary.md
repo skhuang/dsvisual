@@ -63,7 +63,8 @@ sift-down compares $d$ children per level; height is $\log_d N$, giving $d \cdot
 void siftUp(int index) {
     while (index > 0) {
         int p = (index - 1) / d;
-        if (!cmp(data[index], data[p])) break;
+        if (!cmp(data[index], data[p]))
+            break;
         swap(data[index], data[p]);
         index = p;
     }
@@ -77,7 +78,8 @@ void siftDown(int index) {
             if (c < (int)data.size() && cmp(data[c], data[best]))
                 best = c;
         }
-        if (best == index) break;
+        if (best == index)
+            break;
         swap(data[index], data[best]);
         index = best;
     }
@@ -90,8 +92,10 @@ void insert(int value) {
 
 int extractTop() {
     int top = data[0];
-    data[0] = data.back(); data.pop_back();
-    if (!data.empty()) siftDown(0);
+    data[0] = data.back();
+    data.pop_back();
+    if (!data.empty())
+        siftDown(0);
     return top;
 }
 ```

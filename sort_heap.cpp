@@ -5,8 +5,8 @@ using namespace std;
 
 // To heapify a subtree rooted with node i
 void heapify(vector<int>& arr, int n, int i) {
-    int largest = i; // Initialize largest as root
-    int left = 2 * i + 1; // Left child relative offset
+    int largest = i;       // Initialize largest as root
+    int left = 2 * i + 1;  // Left child relative offset
     int right = 2 * i + 2; // Right child relative offset
 
     // If left child is larger than root

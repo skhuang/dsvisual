@@ -1,11 +1,12 @@
+#include <algorithm>
 #include <iostream>
 #include <vector>
-#include <algorithm>
 using namespace std;
 
 void bucketSort(vector<float>& arr) {
     int n = arr.size();
-    if (n <= 0) return;
+    if (n <= 0)
+        return;
 
     // 1. Create n empty buckets
     vector<vector<float>> buckets(n);
@@ -15,7 +16,8 @@ void bucketSort(vector<float>& arr) {
         // Elements are assumed to be normalized between 0.0 and 1.0!
         // For array [0.78, 0.17, 0.39, 0.26, 0.72]
         int bucketIndex = n * arr[i];
-        if(bucketIndex >= n) bucketIndex = n - 1; // Catch edge cases
+        if (bucketIndex >= n)
+            bucketIndex = n - 1; // Catch edge cases
         buckets[bucketIndex].push_back(arr[i]);
     }
 

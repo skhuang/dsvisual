@@ -67,7 +67,9 @@ public:
 
     void deposit(double amount) {
         lock_guard<mutex> guard(accountLock);
-        if (amount > 0) { balance += amount; }
+        if (amount > 0) {
+            balance += amount;
+        }
     }
 
     bool withdraw(double amount) {
@@ -83,9 +85,7 @@ public:
     double getBalance() const { return balance; } // read-only
 
 protected:
-    bool canWithdraw(double amount) const {
-        return amount > 0 && amount <= balance;
-    }
+    bool canWithdraw(double amount) const { return amount > 0 && amount <= balance; }
 
 private:
     void log(const string& type, double amount) const {

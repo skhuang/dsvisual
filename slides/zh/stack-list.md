@@ -71,7 +71,9 @@ void push(int val) {
 }
 
 int pop() {
-    if (!topNode) { return -1; } // underflow
+    if (!topNode) {
+        return -1;
+    } // underflow
     int val = topNode->data;
     Node* temp = topNode;
     topNode = topNode->next;

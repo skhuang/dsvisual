@@ -76,13 +76,15 @@ void insert(int index, int val) {
     Node* temp = head;
     for (int i = 0; temp != nullptr && i < index - 1; i++)
         temp = temp->next;
-    if (!temp) return;
+    if (!temp)
+        return;
     newNode->next = temp->next;
     temp->next = newNode;
 }
 
 void remove(int index) {
-    if (!head) return;
+    if (!head)
+        return;
     if (index == 0) {
         Node* temp = head;
         head = head->next;
@@ -92,7 +94,8 @@ void remove(int index) {
     Node* temp = head;
     for (int i = 0; temp != nullptr && i < index - 1; i++)
         temp = temp->next;
-    if (!temp || !temp->next) return;
+    if (!temp || !temp->next)
+        return;
     Node* delNode = temp->next;
     temp->next = delNode->next;
     delete delNode;

@@ -21,10 +21,12 @@ public:
             }
             keys[i + 1] = k;
         } else {
-            while (i >= 0 && keys[i] > k) i--;
+            while (i >= 0 && keys[i] > k)
+                i--;
             if (children[i + 1]->keys.size() == 2 * t - 1) {
                 splitChild(i + 1, children[i + 1]);
-                if (keys[i + 1] < k) i++;
+                if (keys[i + 1] < k)
+                    i++;
             }
             children[i + 1]->insertNonFull(k);
         }
@@ -32,9 +34,11 @@ public:
 
     void splitChild(int i, BTreeNode* y) {
         BTreeNode* z = new BTreeNode(y->t, y->leaf);
-        for (int j = 0; j < t - 1; j++) z->keys.push_back(y->keys[j + t]);
+        for (int j = 0; j < t - 1; j++)
+            z->keys.push_back(y->keys[j + t]);
         if (!y->leaf) {
-            for (int j = 0; j < t; j++) z->children.push_back(y->children[j + t]);
+            for (int j = 0; j < t; j++)
+                z->children.push_back(y->children[j + t]);
             y->children.resize(t); // Cut children
         }
         keys.insert(keys.begin() + i, y->keys[t - 1]);
@@ -46,6 +50,7 @@ public:
 class BTree {
     BTreeNode* root;
     int t;
+
 public:
     BTree(int t) : root(nullptr), t(t) {}
 
@@ -71,7 +76,11 @@ public:
 
 int main() {
     BTree t(3); // Order 5 typically, max 5 children, 4 keys
-    t.insert(10); t.insert(20); t.insert(5); t.insert(6); t.insert(12);
+    t.insert(10);
+    t.insert(20);
+    t.insert(5);
+    t.insert(6);
+    t.insert(12);
     // As it hits capacity, blocks split!
     return 0;
 }

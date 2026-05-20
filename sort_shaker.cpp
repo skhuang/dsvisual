@@ -4,11 +4,11 @@ using namespace std;
 
 /*
  * Shaker Sort (Cocktail Sort)
- * 
+ *
  * Time Complexity:  O(n²) worst & average case, O(n) best case
  * Space Complexity: O(1) auxiliary space
  * Stability:        Stable
- * 
+ *
  * Description:
  * Shaker sort is a variation of bubble sort that alternates sorting direction.
  * After each pass, the largest unsorted element bubbles to the right (like bubble sort),
@@ -40,7 +40,7 @@ public:
             for (int i = left; i < right; i++) {
                 // Comparing step
                 events.push_back({i, -1, -1, "COMPARING"});
-                
+
                 if (arr[i] > arr[i + 1]) {
                     swap(arr[i], arr[i + 1]);
                     events.push_back({i, i, i + 1, "SWAPPING"});
@@ -51,14 +51,15 @@ public:
             right--;
 
             // If no swap occurred, array is sorted
-            if (!swapped) break;
+            if (!swapped)
+                break;
 
             // Backward pass (right to left)
             swapped = false;
             for (int i = right; i > left; i--) {
                 // Comparing step
                 events.push_back({i - 1, -1, -1, "COMPARING"});
-                
+
                 if (arr[i - 1] > arr[i]) {
                     swap(arr[i - 1], arr[i]);
                     events.push_back({i - 1, i - 1, i, "SWAPPING"});
@@ -69,7 +70,8 @@ public:
             left++;
 
             // If no swap occurred, array is sorted
-            if (!swapped) break;
+            if (!swapped)
+                break;
         }
 
         // Mark all as sorted at the end
@@ -80,7 +82,8 @@ public:
 
     void print() {
         cout << "Sorted array: ";
-        for (int x : arr) cout << x << " ";
+        for (int x : arr)
+            cout << x << " ";
         cout << endl;
     }
 };
@@ -89,11 +92,12 @@ public:
 int main() {
     vector<int> data = {64, 34, 25, 12, 22, 11, 90, 88, 45, 50};
     ShakerSorter sorter(data);
-    
+
     cout << "Original array: ";
-    for (int x : data) cout << x << " ";
+    for (int x : data)
+        cout << x << " ";
     cout << "\n";
-    
+
     sorter.sort();
     sorter.print();
 
@@ -101,7 +105,8 @@ int main() {
     cout << "\nEvent sequence for visualization:\n";
     for (const auto& e : sorter.events) {
         cout << e.type << " at index " << e.index;
-        if (e.a >= 0) cout << " (swap " << e.a << " <-> " << e.b << ")";
+        if (e.a >= 0)
+            cout << " (swap " << e.a << " <-> " << e.b << ")";
         cout << endl;
     }
 

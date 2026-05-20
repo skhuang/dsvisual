@@ -77,6 +77,7 @@ public:
 class CoffeeDecorator : public Coffee {
 protected:
     shared_ptr<Coffee> m_coffee;
+
 public:
     CoffeeDecorator(shared_ptr<Coffee> c) : m_coffee(c) {}
 };

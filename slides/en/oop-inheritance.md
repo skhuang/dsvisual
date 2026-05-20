@@ -64,9 +64,7 @@ public:
     Animal() { cout << "Animal constructor" << endl; }
     virtual ~Animal() { cout << "Animal destructor" << endl; }
 
-    virtual void speak() {
-        cout << "Animal sound" << endl;
-    }
+    virtual void speak() { cout << "Animal sound" << endl; }
 };
 
 class Dog : public Animal {
@@ -74,9 +72,7 @@ public:
     Dog() { cout << "Dog constructor" << endl; }
     ~Dog() override { cout << "Dog destructor" << endl; }
 
-    void speak() override {
-        cout << "Woof" << endl;
-    }
+    void speak() override { cout << "Woof" << endl; }
 };
 
 int main() {

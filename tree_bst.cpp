@@ -12,15 +12,19 @@ class BST {
 public:
     Node* root = nullptr;
     Node* insert(Node* node, int data) {
-        if (!node) return new Node(data);
-        if (data < node->data) node->left = insert(node->left, data);
-        else if (data > node->data) node->right = insert(node->right, data);
+        if (!node)
+            return new Node(data);
+        if (data < node->data)
+            node->left = insert(node->left, data);
+        else if (data > node->data)
+            node->right = insert(node->right, data);
         return node;
     }
     void insert(int data) { root = insert(root, data); }
-    
+
     void inorder(Node* node) {
-        if (!node) return;
+        if (!node)
+            return;
         inorder(node->left);
         cout << node->data << " ";
         inorder(node->right);

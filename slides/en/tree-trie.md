@@ -66,7 +66,8 @@ public:
     bool isEndOfWord;
     TrieNode() {
         isEndOfWord = false;
-        for (int i = 0; i < 26; i++) children[i] = nullptr;
+        for (int i = 0; i < 26; i++)
+            children[i] = nullptr;
     }
 };
 
@@ -85,7 +86,8 @@ bool search(string word) {
     TrieNode* curr = root;
     for (char c : word) {
         int index = c - 'A';
-        if (!curr->children[index]) return false;
+        if (!curr->children[index])
+            return false;
         curr = curr->children[index];
     }
     return curr->isEndOfWord;

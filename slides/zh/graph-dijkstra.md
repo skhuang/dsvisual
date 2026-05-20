@@ -62,16 +62,16 @@ $$T_{\text{Dijkstra}} = O((V+E)\log V)$$
 const int INF = 1e9;
 vector<int> dist(V, INF);
 vector<bool> visited(V, false);
-priority_queue<pair<int,int>,
-               vector<pair<int,int>>,
-               greater<pair<int,int>>> pq;
+priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
 
 dist[source] = 0;
 pq.push({0, source});
 
 while (!pq.empty()) {
-    auto [d, u] = pq.top(); pq.pop();
-    if (visited[u]) continue;
+    auto [d, u] = pq.top();
+    pq.pop();
+    if (visited[u])
+        continue;
     visited[u] = true;
 
     for (auto [v, w] : adj[u]) {
