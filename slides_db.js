@@ -15962,7 +15962,7 @@ const SLIDES_DB = {
           {
             "type": "paragraph",
             "text": {
-              "zh": "MVC 把應用拆成三個角色:Model（資料與狀態）、View（呈現）、Controller（處理輸入），以分離關注點。",
+              "zh": "MVC 把應用拆成三個角色：Model（資料與狀態）、View（呈現）、Controller（處理輸入），以分離關注點。",
               "en": "MVC splits an application into three roles — Model (data and state), View (presentation), and Controller (input handling) — to separate concerns."
             }
           }
@@ -15977,7 +15977,7 @@ const SLIDES_DB = {
           {
             "type": "paragraph",
             "text": {
-              "zh": "Controller 接收使用者輸入並更新 Model;Model 改變後通知 View 重新呈現。三者各司其職,可獨立替換與測試。",
+              "zh": "Controller 接收使用者輸入並更新 Model；Model 改變後通知 View 重新呈現。三者各司其職，可獨立替換與測試。",
               "en": "The Controller receives user input and updates the Model; when the Model changes, the View re-renders. Each role has one job and can be replaced or tested independently."
             }
           },
@@ -15989,7 +15989,7 @@ const SLIDES_DB = {
                 "en": "The Model knows nothing of the View or Controller — it owns data and rules only."
               },
               {
-                "zh": "View 只負責呈現,從 Model 讀資料。",
+                "zh": "View 只負責呈現，從 Model 讀資料。",
                 "en": "The View only renders, reading data from the Model."
               },
               {
@@ -16018,7 +16018,7 @@ const SLIDES_DB = {
                 "en": "The Controller updates the Model's data and state."
               },
               {
-                "zh": "Model 變更後,View 從 Model 讀取並重新呈現。",
+                "zh": "Model 變更後，View 從 Model 讀取並重新呈現。",
                 "en": "After the Model changes, the View reads from it and re-renders."
               }
             ]
@@ -16042,7 +16042,7 @@ const SLIDES_DB = {
           {
             "type": "note",
             "text": {
-              "zh": "visualizer 以三角佈局呈現:Controller 在上,Model 與 View 在下,連線標示 updates / notifies / user input 三種關係。",
+              "zh": "visualizer 以三角佈局呈現：Controller 在上，Model 與 View 在下，連線標示 updates / notifies / user input 三種關係。",
               "en": "The visualizer uses a triangle layout: Controller on top, Model and View below, with connectors labelled updates / notifies / user input."
             }
           }
@@ -16115,7 +16115,7 @@ const SLIDES_DB = {
           {
             "type": "note",
             "text": {
-              "zh": "此處程式碼為精簡示範:Controller 直接呼叫 view.render()。在完整的 MVC 中,Model 透過觀察者(Observer)機制通知 View 重新呈現。",
+              "zh": "此處程式碼為精簡示範：Controller 直接呼叫 view.render()。在完整的 MVC 中，Model 透過觀察者（Observer）機制通知 View 重新呈現。",
               "en": "This code is a minimal illustration — the Controller calls view.render() directly. In full MVC, the Model notifies Views to re-render via the Observer pattern."
             }
           }
@@ -16131,19 +16131,19 @@ const SLIDES_DB = {
             "type": "bullets",
             "items": [
               {
-                "zh": "優點:三個角色可獨立開發、替換、測試。",
+                "zh": "優點：三個角色可獨立開發、替換、測試。",
                 "en": "Pro: the three roles can be developed, replaced, and tested independently."
               },
               {
-                "zh": "優點:同一 Model 可搭配多個 View。",
+                "zh": "優點：同一 Model 可搭配多個 View。",
                 "en": "Pro: one Model can drive multiple Views."
               },
               {
-                "zh": "缺點:角色間的協調對小程式而言是額外負擔。",
+                "zh": "缺點：角色間的協調對小程式而言是額外負擔。",
                 "en": "Con: the coordination between roles is overhead for small programs."
               },
               {
-                "zh": "適用:具使用者介面、需長期維護的應用。",
+                "zh": "適用：具使用者介面、需長期維護的應用。",
                 "en": "Use for applications with a user interface that need long-term maintenance."
               }
             ]
@@ -16164,11 +16164,11 @@ const SLIDES_DB = {
                 "en": "Model / View / Controller separate data, presentation, and input."
               },
               {
-                "zh": "Controller 更新 Model,Model 通知 View。",
+                "zh": "Controller 更新 Model，Model 通知 View。",
                 "en": "The Controller updates the Model; the Model notifies the View."
               },
               {
-                "zh": "是 UI 架構的經典基礎,衍生出 MVP、MVVM。",
+                "zh": "是 UI 架構的經典基礎，衍生出 MVP、MVVM。",
                 "en": "The classic UI-architecture foundation; MVP and MVVM derive from it."
               }
             ]
