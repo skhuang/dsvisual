@@ -404,6 +404,12 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await loadMethod(page, 'tree-dsu');
         await loadMethod(page, 'tree-bst');
         await expect(page.locator('#tree-nodes-container')).toHaveCount(1);
+        await loadMethod(page, 'deque');
+        await loadMethod(page, 'queue');
+        await expect(page.locator('#queue-container')).toHaveCount(1);
+        await loadMethod(page, 'search-kmp');
+        await loadMethod(page, 'search-linear');
+        await expect(page.locator('#search-container')).toHaveCount(1);
         expect(errors).toEqual([]);
     });
 
