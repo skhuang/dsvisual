@@ -1762,6 +1762,7 @@ pre.code-panel-body[class*="language-"] {
 }
 .deque-node.deque-head { box-shadow: 0 -3px 0 0 #10b981; }
 .deque-node.deque-tail { box-shadow: 0 3px 0 0 #f59e0b; }
+.deque-node.deque-head.deque-tail { box-shadow: 0 -3px 0 0 #10b981, 0 3px 0 0 #f59e0b; }
 .deque-arrow {
     color: #94a3b8;
     font-size: 1.1rem;

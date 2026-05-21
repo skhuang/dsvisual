@@ -2719,7 +2719,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < data.length; i++) {
             html += '<span class="deque-arrow">&#8646;</span>';
             const endClass = (i === 0 ? ' deque-head' : '') + (i === data.length - 1 ? ' deque-tail' : '');
-            html += '<span class="deque-node' + endClass + '" data-deque-idx="' + i + '">' + data[i] + '</span>';
+            html += '<span class="deque-node' + endClass + '">' + data[i] + '</span>';
         }
         html += '<span class="deque-arrow">&#8646;</span>';
         html += '<span class="deque-null">null</span>';
