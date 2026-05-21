@@ -1,0 +1,131 @@
+---
+marp: true
+theme: default
+paginate: true
+math: katex
+title: "Boyer-Moore 字串比對演算法"
+category: "Searching & String Matching"
+---
+
+## Boyer-Moore 字串比對演算法
+
+Boyer-Moore 演算法從右至左比對模式字串，利用**壞字元**與**好後綴**兩種啟發式規則大幅跳過文字區塊；在實際應用中往往達到次線性的比對速度。
+
+---
+
+## 核心概念
+
+**壞字元啟發**：當 `text[s+j]` 與 `pat[j]` 不匹配時，把模式向右對齊，使模式中 `text[s+j]` 最右出現位置與之對應。**好後綴啟發**：已匹配的後綴在模式的其他位置也出現時，直接對齊該位置。每次跳移取兩者的最大值。
+
+- 從右至左比對使得每次不匹配都能跳過多個字元。
+- 預處理時間 $O(m + \sigma)$，$\sigma$ 為字母表大小。
+- 最佳情況下每次跳移 $m$ 個字元，總比對次數 $O(n/m)$。
+
+---
+
+## 運作流程
+
+1. **預處理**：呼叫 `buildBadChar` 建立壞字元表；呼叫 `buildGoodSuffix` 建立好後綴移位表。
+2. **右至左比對**：從 `j = m-1` 往左比對；遇到不匹配即停止。
+3. **移位**：若完全匹配則以 `shift[0]` 移位；否則取 `max(goodSuffix, badChar)` 移位。
+
+<svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 637.984px; background-color: transparent;" viewBox="0 0 637.984375 972.578125" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#my-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#my-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#my-svg .error-icon{fill:#552222;}#my-svg .error-text{fill:#552222;stroke:#552222;}#my-svg .edge-thickness-normal{stroke-width:1px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#333333;stroke:#333333;}#my-svg .marker.cross{stroke:#333333;}#my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#my-svg p{margin:0;}#my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#my-svg .cluster-label text{fill:#333;}#my-svg .cluster-label span{color:#333;}#my-svg .cluster-label span p{background-color:transparent;}#my-svg .label text,#my-svg span{fill:#333;color:#333;}#my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#my-svg .rough-node .label text,#my-svg .node .label text,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-anchor:middle;}#my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#my-svg .rough-node .label,#my-svg .node .label,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-align:center;}#my-svg .node.clickable{cursor:pointer;}#my-svg .root .anchor path{fill:#333333!important;stroke-width:0;stroke:#333333;}#my-svg .arrowheadPath{fill:#333333;}#my-svg .edgePath .path{stroke:#333333;stroke-width:1px;}#my-svg .flowchart-link{stroke:#333333;fill:none;}#my-svg .edgeLabel{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .edgeLabel p{background-color:rgba(232,232,232, 0.8);}#my-svg .edgeLabel rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#my-svg .cluster text{fill:#333;}#my-svg .cluster span{color:#333;}#my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#my-svg rect.text{fill:none;stroke-width:0;}#my-svg .icon-shape,#my-svg .image-shape{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .icon-shape p,#my-svg .image-shape p{background-color:rgba(232,232,232, 0.8);padding:2px;}#my-svg .icon-shape .label rect,#my-svg .image-shape .label rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#my-svg .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#my-svg .node .neo-node{stroke:#9370DB;}#my-svg [data-look="neo"].node rect,#my-svg [data-look="neo"].cluster rect,#my-svg [data-look="neo"].node polygon{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node path{stroke:#9370DB;stroke-width:1px;}#my-svg [data-look="neo"].node .outer-path{filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node .neo-line path{stroke:#9370DB;filter:none;}#my-svg [data-look="neo"].node circle{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node circle .state-start{fill:#000000;}#my-svg [data-look="neo"].icon-shape .icon{fill:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].icon-shape .icon-neo path{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker id="my-svg_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointEnd-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="11.5" refY="7" markerUnits="userSpaceOnUse" markerWidth="10.5" markerHeight="14" orient="auto"><path d="M 0 0 L 11.5 7 L 0 14 z" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="1" refY="7" markerUnits="userSpaceOnUse" markerWidth="11.5" markerHeight="14" orient="auto"><polygon points="0,7 11.5,14 11.5,0" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refY="5" refX="12.25" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-2" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="17.7" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5;"/></marker><marker id="my-svg_flowchart-v2-crossStart-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="-3.5" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5; stroke-dasharray: 1, 0;"/></marker><g class="root"><g class="clusters"/><g class="edgePaths"><path d="M376.91,62L376.91,66.167C376.91,70.333,376.91,78.667,376.91,86.333C376.91,94,376.91,101,376.91,104.5L376.91,108" id="my-svg-L_Start_RtL_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Start_RtL_0" data-points="W3sieCI6Mzc2LjkxMDE1NjI1LCJ5Ijo2Mn0seyJ4IjozNzYuOTEwMTU2MjUsInkiOjg3fSx7IngiOjM3Ni45MTAxNTYyNSwieSI6MTEyfV0=" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M323.185,190L317.445,194.167C311.705,198.333,300.226,206.667,294.486,214.333C288.746,222,288.746,229,288.746,232.5L288.746,236" id="my-svg-L_RtL_Match_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_RtL_Match_0" data-points="W3sieCI6MzIzLjE4NTE4MDY2NDA2MjUsInkiOjE5MH0seyJ4IjoyODguNzQ2MDkzNzUsInkiOjIxNX0seyJ4IjoyODguNzQ2MDkzNzUsInkiOjI0MH1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M246.231,343.391L227.72,356.643C209.209,369.896,172.186,396.401,153.675,422.32C135.164,448.24,135.164,473.573,135.164,496.906C135.164,520.24,135.164,541.573,135.164,557.74C135.164,573.906,135.164,584.906,135.164,590.406L135.164,595.906" id="my-svg-L_Match_Hit_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Match_Hit_0" data-points="W3sieCI6MjQ2LjIzMDc0NDgxOTA3Mjg0LCJ5IjozNDMuMzkwOTAxMDY5MDcyODd9LHsieCI6MTM1LjE2NDA2MjUsInkiOjQyMi45MDYyNX0seyJ4IjoxMzUuMTY0MDYyNSwieSI6NDk4LjkwNjI1fSx7IngiOjEzNS4xNjQwNjI1LCJ5Ijo1NjIuOTA2MjV9LHsieCI6MTM1LjE2NDA2MjUsInkiOjU5OS45MDYyNX1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M135.164,653.906L135.164,660.073C135.164,666.24,135.164,678.573,177.846,696.597C220.528,714.622,305.892,738.338,348.574,750.196L391.256,762.053" id="my-svg-L_Hit_Cont_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Hit_Cont_0" data-points="W3sieCI6MTM1LjE2NDA2MjUsInkiOjY1My45MDYyNX0seyJ4IjoxMzUuMTY0MDYyNSwieSI6NjkwLjkwNjI1fSx7IngiOjM5NS4xMTAyMDk4OTg3MzYwNiwieSI6NzYzLjEyNDE2NTEwMTI2Mzl9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M331.261,343.391L349.773,356.643C368.284,369.896,405.306,396.401,423.817,415.154C442.328,433.906,442.328,444.906,442.328,450.406L442.328,455.906" id="my-svg-L_Match_Calc_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Match_Calc_0" data-points="W3sieCI6MzMxLjI2MTQ0MjY4MDkyNzEzLCJ5IjozNDMuMzkwOTAxMDY5MDcyODd9LHsieCI6NDQyLjMyODEyNSwieSI6NDIyLjkwNjI1fSx7IngiOjQ0Mi4zMjgxMjUsInkiOjQ1OS45MDYyNX1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M442.328,537.906L442.328,542.073C442.328,546.24,442.328,554.573,442.328,562.24C442.328,569.906,442.328,576.906,442.328,580.406L442.328,583.906" id="my-svg-L_Calc_MaxShift_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Calc_MaxShift_0" data-points="W3sieCI6NDQyLjMyODEyNSwieSI6NTM3LjkwNjI1fSx7IngiOjQ0Mi4zMjgxMjUsInkiOjU2Mi45MDYyNX0seyJ4Ijo0NDIuMzI4MTI1LCJ5Ijo1ODcuOTA2MjV9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M442.328,665.906L442.328,670.073C442.328,674.24,442.328,682.573,442.328,690.24C442.328,697.906,442.328,704.906,442.328,708.406L442.328,711.906" id="my-svg-L_MaxShift_Cont_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_MaxShift_Cont_0" data-points="W3sieCI6NDQyLjMyODEyNSwieSI6NjY1LjkwNjI1fSx7IngiOjQ0Mi4zMjgxMjUsInkiOjY5MC45MDYyNX0seyJ4Ijo0NDIuMzI4MTI1LCJ5Ijo3MTUuOTA2MjV9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M482.987,756.565L505.598,745.622C528.21,734.679,573.433,712.792,596.045,691.183C618.656,669.573,618.656,648.24,618.656,626.906C618.656,605.573,618.656,584.24,618.656,562.906C618.656,541.573,618.656,520.24,618.656,496.906C618.656,473.573,618.656,448.24,618.656,417.247C618.656,386.255,618.656,349.604,618.656,314.953C618.656,280.302,618.656,247.651,600.676,226.566C582.696,205.48,546.737,195.96,528.757,191.2L510.777,186.44" id="my-svg-L_Cont_RtL_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Cont_RtL_0" data-points="W3sieCI6NDgyLjk4NjgzMzA2OTU5NjYsInkiOjc1Ni41NjQ5NTgwNjk1OTY2fSx7IngiOjYxOC42NTYyNSwieSI6NjkwLjkwNjI1fSx7IngiOjYxOC42NTYyNSwieSI6NjI2LjkwNjI1fSx7IngiOjYxOC42NTYyNSwieSI6NTYyLjkwNjI1fSx7IngiOjYxOC42NTYyNSwieSI6NDk4LjkwNjI1fSx7IngiOjYxOC42NTYyNSwieSI6NDIyLjkwNjI1fSx7IngiOjYxOC42NTYyNSwieSI6MzEyLjk1MzEyNX0seyJ4Ijo2MTguNjU2MjUsInkiOjIxNX0seyJ4Ijo1MDYuOTEwMTU2MjUsInkiOjE4NS40MTYyNzQ4MjM0Njg1N31d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M442.328,836.578L442.328,842.745C442.328,848.911,442.328,861.245,442.328,872.911C442.328,884.578,442.328,895.578,442.328,901.078L442.328,906.578" id="my-svg-L_Cont_End_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Cont_End_0" data-points="W3sieCI6NDQyLjMyODEyNSwieSI6ODM2LjU3ODEyNX0seyJ4Ijo0NDIuMzI4MTI1LCJ5Ijo4NzMuNTc4MTI1fSx7IngiOjQ0Mi4zMjgxMjUsInkiOjkxMC41NzgxMjV9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_Start_RtL_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_RtL_Match_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(135.1640625, 498.90625)"><g class="label" data-id="L_Match_Hit_0" transform="translate(-11.328125, -12)"><foreignObject width="22.65625" height="24"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"><p>Yes</p></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_Hit_Cont_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(442.328125, 422.90625)"><g class="label" data-id="L_Match_Calc_0" transform="translate(-9.3984375, -12)"><foreignObject width="18.796875" height="24"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"><p>No</p></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_Calc_MaxShift_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_MaxShift_Cont_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(618.65625, 498.90625)"><g class="label" data-id="L_Cont_RtL_0" transform="translate(-11.328125, -12)"><foreignObject width="22.65625" height="24"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"><p>Yes</p></span></div></foreignObject></g></g><g class="edgeLabel" transform="translate(442.328125, 873.578125)"><g class="label" data-id="L_Cont_End_0" transform="translate(-9.3984375, -12)"><foreignObject width="18.796875" height="24"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"><p>No</p></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="my-svg-flowchart-Start-0" data-look="classic" transform="translate(376.91015625, 35)"><rect class="basic label-container" style="" x="-41.6328125" y="-27" width="83.265625" height="54"/><g class="label" style="" transform="translate(-11.6328125, -12)"><rect/><foreignObject width="23.265625" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>s=0</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-RtL-1" data-look="classic" transform="translate(376.91015625, 151)"><rect class="basic label-container" style="" x="-130" y="-39" width="260" height="78"/><g class="label" style="" transform="translate(-100, -24)"><rect/><foreignObject width="200" height="48"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>Compare right-to-left: j = m-1</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-Match-3" data-look="classic" transform="translate(288.74609375, 312.953125)"><polygon points="72.953125,0 145.90625,-72.953125 72.953125,-145.90625 0,-72.953125" class="label-container" transform="translate(-72.453125, 72.953125)"/><g class="label" style="" transform="translate(-45.953125, -12)"><rect/><foreignObject width="91.90625" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>All matched?</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-Hit-5" data-look="classic" transform="translate(135.1640625, 626.90625)"><rect class="basic label-container" style="" x="-127.1640625" y="-27" width="254.328125" height="54"/><g class="label" style="" transform="translate(-97.1640625, -12)"><rect/><foreignObject width="194.328125" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Record match; s += shift[0]</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-Cont-7" data-look="classic" transform="translate(442.328125, 776.2421875)"><polygon points="60.3359375,0 120.671875,-60.3359375 60.3359375,-120.671875 0,-60.3359375" class="label-container" transform="translate(-59.8359375, 60.3359375)"/><g class="label" style="" transform="translate(-33.3359375, -12)"><rect/><foreignObject width="66.671875" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>s &lt;= n-m?</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-Calc-9" data-look="classic" transform="translate(442.328125, 498.90625)"><rect class="basic label-container" style="" x="-130" y="-39" width="260" height="78"/><g class="label" style="" transform="translate(-100, -24)"><rect/><foreignObject width="200" height="48"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>bcShift = j - badChar[text[s+j]]</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-MaxShift-11" data-look="classic" transform="translate(442.328125, 626.90625)"><rect class="basic label-container" style="" x="-130" y="-39" width="260" height="78"/><g class="label" style="" transform="translate(-100, -24)"><rect/><foreignObject width="200" height="48"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>s += max(shift[j+1], max(1, bcShift))</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-End-17" data-look="classic" transform="translate(442.328125, 937.578125)"><rect class="basic label-container" style="" x="-43.1171875" y="-27" width="86.234375" height="54"/><g class="label" style="" transform="translate(-13.1171875, -12)"><rect/><foreignObject width="26.234375" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>End</p></span></div></foreignObject></g></g></g></g></g><defs><filter id="my-svg-drop-shadow" height="130%" width="130%"><feDropShadow dx="4" dy="4" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs><defs><filter id="my-svg-drop-shadow-small" height="150%" width="150%"><feDropShadow dx="2" dy="2" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs></svg>
+
+---
+
+## 示意圖
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 100" width="440"><g font-family="monospace" font-size="13"><text x="0" y="20">Text:     A  B  A  B  D  A  B  A  C  D ...</text><text x="0" y="45">Pattern:  A  B  A  B  C  A  B  A  B</text><text x="0" y="65">Mismatch at j=4 (D vs C)</text><text x="0" y="85">bad-char shift=4  good-suffix shift=4  apply max=4</text></g></svg>
+
+> visualizer 同時顯示壞字元表與好後綴表，並標示每次移位採用哪個啟發式規則。
+
+---
+
+## 複雜度分析
+
+| 階段 | 時間 | 空間 |
+| --- | --- | --- |
+| 預處理 | $O(m + \sigma)$ | $O(m + \sigma)$ |
+| 搜尋（最佳） | $O(n/m)$ | — |
+| 搜尋（最差） | $O(nm)$ | — |
+
+$$T_{\text{BM,best}} = O(n/m)$$
+
+在一般文字上 BM 為次線性；最差情況（重複字串）退化為 $O(nm)$，可透過 Galil 規則改善。
+
+---
+
+## 程式碼
+
+```cpp
+vector<int> buildBadChar(const string& pat) {
+    vector<int> badChar(ALPHABET, -1);
+    for (int i = 0; i < (int)pat.size(); i++)
+        badChar[(unsigned char)pat[i]] = i;
+    return badChar;
+}
+
+void buildGoodSuffix(const string& pat, vector<int>& shift) {
+    int m = pat.size();
+    vector<int> bpos(m + 1, 0);
+    shift.assign(m + 1, 0);
+    int i = m, j = m + 1;
+    bpos[i] = j;
+    while (i > 0) {
+        while (j <= m && pat[i - 1] != pat[j - 1]) {
+            if (shift[j] == 0)
+                shift[j] = j - i;
+            j = bpos[j];
+        }
+        i--;
+        j--;
+        bpos[i] = j;
+    }
+    j = bpos[0];
+    for (i = 0; i <= m; i++) {
+        if (shift[i] == 0)
+            shift[i] = j;
+        if (i == j)
+            j = bpos[j];
+    }
+}
+
+void boyerMooreSearch(const string& text, const string& pat) {
+    int n = text.size(), m = pat.size();
+    vector<int> badChar = buildBadChar(pat);
+    vector<int> shift;
+    buildGoodSuffix(pat, shift);
+    int s = 0;
+    while (s <= n - m) {
+        int j = m - 1;
+        while (j >= 0 && pat[j] == text[s + j])
+            j--;
+        if (j < 0) {
+            cout << "Match at index " << s << endl;
+            s += shift[0];
+        } else {
+            int bcShift = j - badChar[(unsigned char)text[s + j]];
+            s += max(shift[j + 1], max(1, bcShift));
+        }
+    }
+}
+```
+
+---
+
+## 優缺點與使用時機
+
+- 優點：實際效能為次線性，在大型字母表與長文字上是最快的通用比對器。
+- 優點：右至左掃描讓壞字元跳移通常比 KMP 大。
+- 缺點：不加 Galil 規則則最壞情況為 $O(nm)$。
+- 缺點：需要壞字元與好後綴兩張預處理表，實作較複雜。
+- 適用：大型字母表（如自然語言文字）、長模式字串。
+
+---
+
+## 小結
+
+- 從右至左掃描；壞字元 + 好後綴雙啟發。
+- 平均次線性；最差 $O(nm)$。
+- 大型字母表與長文字的首選演算法。
+- 與 KMP、RK 的比較見 search-strcompare。

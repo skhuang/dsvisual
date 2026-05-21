@@ -55,7 +55,12 @@ const mappings = {
     'pattern_adapter.cpp': 'codePatternAdapter',
     'pattern_decorator.cpp': 'codePatternDecorator',
     'pattern_observer.cpp': 'codePatternObserver',
-    'pattern_strategy.cpp': 'codePatternStrategy'
+    'pattern_strategy.cpp': 'codePatternStrategy',
+    'deque.cpp': 'codeDeque',
+    'search_kmp.cpp': 'codeSearchKMP',
+    'search_bm.cpp': 'codeSearchBM',
+    'search_rk.cpp': 'codeSearchRK',
+    'search_strcompare.cpp': 'codeSearchStrCompare'
 };
 
 let out = '// Auto-generated code DB for visualization\n';

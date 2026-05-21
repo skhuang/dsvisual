@@ -342,6 +342,59 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.dsu-tree')).toHaveCount(7);
     });
 
+    test('Linear: Deque renders 3 nodes and supports push/pop at both ends', async ({ page }) => {
+        await loadMethod(page, 'deque');
+        const card = page.locator('[data-method-section="deque"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('deque.cpp');
+        await expect(card.locator('.deque-node')).toHaveCount(3);
+        await card.locator('[data-deque-val]').fill('99');
+        await card.locator('[data-action="push-front"]').click();
+        await expect(card.locator('.deque-node')).toHaveCount(4);
+        await card.locator('[data-action="pop-back"]').click();
+        await expect(card.locator('.deque-node')).toHaveCount(3);
+    });
+
+    test('String: KMP renders text/pattern rows + LPS table and steps', async ({ page }) => {
+        await loadMethod(page, 'search-kmp');
+        const card = page.locator('[data-method-section="search-kmp"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_kmp.cpp');
+        await expect(card.locator('.strsearch-text .strsearch-cell')).toHaveCount(19);
+        await expect(card.locator('.strsearch-lps-cell')).toHaveCount(9);
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="kmp-stats"]')).toContainText('comparisons: 1');
+    });
+
+    test('String: Boyer-Moore renders alignment + tables and steps', async ({ page }) => {
+        await loadMethod(page, 'search-bm');
+        const card = page.locator('[data-method-section="search-bm"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_bm.cpp');
+        await expect(card.locator('.strsearch-text .strsearch-cell')).toHaveCount(19);
+        await expect(card.locator('.strsearch-bm-cell').first()).toBeVisible();
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="bm-stats"]')).toContainText('comparisons: 1');
+    });
+
+    test('String: Rabin-Karp renders alignment + hash panel and steps', async ({ page }) => {
+        await loadMethod(page, 'search-rk');
+        const card = page.locator('[data-method-section="search-rk"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_rk.cpp');
+        await expect(card.locator('.strsearch-text .strsearch-cell')).toHaveCount(19);
+        await expect(card.locator('[data-testid="rk-hash"]')).toBeVisible();
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('.rk-hc')).toContainText('1');
+    });
+
+    test('String: String Matching Compared renders 3 panes and steps all', async ({ page }) => {
+        await loadMethod(page, 'search-strcompare');
+        const card = page.locator('[data-method-section="search-strcompare"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_strcompare.cpp');
+        await expect(card.locator('.strcompare-pane')).toHaveCount(3);
+        await card.locator('[data-action="step"]').click();
+        const counts = card.locator('.strcompare-cmp');
+        await expect(counts.nth(0)).toContainText('1');
+        await expect(counts.nth(2)).toContainText('1');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
@@ -351,6 +404,12 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await loadMethod(page, 'tree-dsu');
         await loadMethod(page, 'tree-bst');
         await expect(page.locator('#tree-nodes-container')).toHaveCount(1);
+        await loadMethod(page, 'deque');
+        await loadMethod(page, 'queue');
+        await expect(page.locator('#queue-container')).toHaveCount(1);
+        await loadMethod(page, 'search-kmp');
+        await loadMethod(page, 'search-linear');
+        await expect(page.locator('#search-container')).toHaveCount(1);
         expect(errors).toEqual([]);
     });
 

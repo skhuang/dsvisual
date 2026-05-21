@@ -103,6 +103,7 @@ const METHOD_GROUPS = [
             { id: 'queue', title: 'Queue', file: 'queue.cpp', visualizer: 'queue', controls: 'standard' },
             { id: 'list-array', title: 'Array List', file: 'list_array.cpp', visualizer: 'array-list', controls: 'list' },
             { id: 'list-linked', title: 'Singly Linked List', file: 'list_linked.cpp', visualizer: 'linked-list', controls: 'list' },
+            { id: 'deque', title: 'Deque (Double-Ended Queue)', file: 'deque.cpp', visualizer: 'deque', controls: 'deque' },
         ],
     },
     {
@@ -180,6 +181,10 @@ const METHOD_GROUPS = [
         methods: [
             { id: 'search-linear', title: 'Linear Search', file: 'search_linear.cpp', visualizer: 'search', controls: 'search' },
             { id: 'search-binary', title: 'Binary Search', file: 'search_binary.cpp', visualizer: 'search', controls: 'search' },
+            { id: 'search-kmp', title: 'KMP (Knuth-Morris-Pratt)', file: 'search_kmp.cpp', visualizer: 'string-search', controls: 'string-search' },
+            { id: 'search-bm', title: 'Boyer-Moore', file: 'search_bm.cpp', visualizer: 'string-search', controls: 'string-search' },
+            { id: 'search-rk', title: 'Rabin-Karp', file: 'search_rk.cpp', visualizer: 'string-search', controls: 'string-search' },
+            { id: 'search-strcompare', title: 'String Matching Compared', file: 'search_strcompare.cpp', visualizer: 'string-compare', controls: 'string-compare' },
         ],
     },
     {
@@ -220,6 +225,7 @@ function getCodeForMethod(methodId) {
         queue: codeQueue,
         'list-array': codeListArray,
         'list-linked': codeListLinked,
+        'deque': codeDeque,
         'tree-bst': codeTreeBST,
         'tree-avl': codeTreeAVL,
         'tree-rb': codeTreeRB,
@@ -243,6 +249,10 @@ function getCodeForMethod(methodId) {
         'hash-bucket': codeHashBucket,
         'search-linear': codeSearchLinear,
         'search-binary': codeSearchBinary,
+        'search-kmp': codeSearchKMP,
+        'search-bm': codeSearchBM,
+        'search-rk': codeSearchRK,
+        'search-strcompare': codeSearchStrCompare,
         'sort-bubble': codeSortBubble,
         'sort-select': codeSortSelect,
         'sort-insert': codeSortInsert,
@@ -1664,8 +1674,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
+        else if (currentMode === 'search-kmp') {
+            codeTitle.textContent = 'search_kmp.cpp';
+            codeDisplay.textContent = codeSearchKMP;
+        }
+        else if (currentMode === 'search-bm') {
+            codeTitle.textContent = 'search_bm.cpp';
+            codeDisplay.textContent = codeSearchBM;
+        }
+        else if (currentMode === 'search-rk') {
+            codeTitle.textContent = 'search_rk.cpp';
+            codeDisplay.textContent = codeSearchRK;
+        }
+        else if (currentMode === 'search-strcompare') {
+            codeTitle.textContent = 'search_strcompare.cpp';
+            codeDisplay.textContent = codeSearchStrCompare;
+        }
         else if (currentMode === 'list-array') { codeTitle.textContent = 'list_array.cpp'; codeDisplay.textContent = codeListArray; listArrContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'list-linked') { codeTitle.textContent = 'list_linked.cpp'; codeDisplay.textContent = codeListLinked; listLLContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
+        else if (currentMode === 'deque') {
+            codeTitle.textContent = 'deque.cpp';
+            codeDisplay.textContent = codeDeque;
+        }
         else if (currentMode.includes('hash-')) {
             hashActions.classList.remove('hidden');
             if(currentMode === 'hash-chain') { codeTitle.textContent = 'hash_chaining.cpp'; codeDisplay.textContent = codeHashChain; hashChContainer.classList.remove('hidden'); }
@@ -1772,11 +1802,16 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
+        else if (currentMode === 'deque') renderDeque();
         else if (currentMode === 'graph-traversal') renderGraphDual();
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
         else if (currentMode === 'tree-dsu') renderDSU();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
+        else if (currentMode === 'search-kmp') renderKMP();
+        else if (currentMode === 'search-bm') renderBM();
+        else if (currentMode === 'search-rk') renderRK();
+        else if (currentMode === 'search-strcompare') renderStringCompare();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
@@ -2696,6 +2731,479 @@ document.addEventListener('DOMContentLoaded', () => {
             refreshRanks();
         };
         if (resetBtn) resetBtn.onclick = () => { renderDSU(); };
+    }
+
+    // Builds two stacked rows: the text row and the pattern row aligned at `offset`.
+    // hi is null, or { kind: 'cell', textIdx, patIdx, status } highlighting one cell in
+    // each row, or { kind: 'window', status } highlighting the whole m-cell window.
+    // status is 'match' | 'mismatch' | 'collision'.
+    function buildAlignmentRow(text, pattern, offset, hi) {
+        function cls(on) { return on && hi && hi.status ? ' strsearch-' + hi.status : ''; }
+        let t = '<div class="strsearch-row strsearch-text">';
+        for (let k = 0; k < text.length; k++) {
+            let on = false;
+            if (hi && hi.kind === 'cell') on = (k === hi.textIdx);
+            else if (hi && hi.kind === 'window') on = (k >= offset && k < offset + pattern.length);
+            t += '<span class="strsearch-cell' + cls(on) + '">' + text[k] + '</span>';
+        }
+        t += '</div>';
+        let p = '<div class="strsearch-row strsearch-pattern">';
+        for (let k = 0; k < offset; k++) p += '<span class="strsearch-cell strsearch-spacer"></span>';
+        for (let k = 0; k < pattern.length; k++) {
+            let on = false;
+            if (hi && hi.kind === 'cell') on = (k === hi.patIdx);
+            else if (hi && hi.kind === 'window') on = true;
+            p += '<span class="strsearch-cell' + cls(on) + '">' + pattern[k] + '</span>';
+        }
+        p += '</div>';
+        return t + p;
+    }
+
+    function renderDeque() {
+        const host = acquireDynamicVizHost();
+        if (!Array.isArray(runtimeVisualizer._dequeData)) {
+            runtimeVisualizer._dequeData = [10, 20, 30];
+        }
+        const data = runtimeVisualizer._dequeData;
+        const wrap = document.createElement('div');
+        wrap.className = 'deque-wrap';
+        let html = '<div class="deque-caption">head &rarr; ... &rarr; tail</div>';
+        html += '<div class="deque-row">';
+        html += '<span class="deque-null">null</span>';
+        for (let i = 0; i < data.length; i++) {
+            html += '<span class="deque-arrow">&#8646;</span>';
+            const endClass = (i === 0 ? ' deque-head' : '') + (i === data.length - 1 ? ' deque-tail' : '');
+            html += '<span class="deque-node' + endClass + '">' + data[i] + '</span>';
+        }
+        html += '<span class="deque-arrow">&#8646;</span>';
+        html += '<span class="deque-null">null</span>';
+        html += '</div>';
+        html += '<div class="deque-controls" role="group">' +
+                    '<input type="number" value="42" data-deque-val>' +
+                    '<button type="button" data-action="push-front">Push Front</button>' +
+                    '<button type="button" data-action="push-back">Push Back</button>' +
+                    '<button type="button" data-action="pop-front">Pop Front</button>' +
+                    '<button type="button" data-action="pop-back">Pop Back</button>' +
+                '</div>';
+        wrap.innerHTML = html;
+        host.appendChild(wrap);
+
+        const valInput = wrap.querySelector('[data-deque-val]');
+        function readVal() {
+            const v = parseInt(valInput.value, 10);
+            return Number.isNaN(v) ? 0 : v;
+        }
+        wrap.querySelector('[data-action="push-front"]').onclick = () => {
+            data.unshift(readVal());
+            renderDeque();
+        };
+        wrap.querySelector('[data-action="push-back"]').onclick = () => {
+            data.push(readVal());
+            renderDeque();
+        };
+        wrap.querySelector('[data-action="pop-front"]').onclick = () => {
+            if (data.length === 0) { showStatus('Deque is empty', '#f87171'); return; }
+            data.shift();
+            renderDeque();
+        };
+        wrap.querySelector('[data-action="pop-back"]').onclick = () => {
+            if (data.length === 0) { showStatus('Deque is empty', '#f87171'); return; }
+            data.pop();
+            renderDeque();
+        };
+    }
+
+    function renderKMP() {
+        const host = acquireDynamicVizHost();
+        const text = 'ABABDABACDABABCABAB';
+        const pattern = 'ABABCABAB';
+        const m = pattern.length;
+        const lps = new Array(m).fill(0);
+        for (let len = 0, k = 1; k < m;) {
+            if (pattern[k] === pattern[len]) lps[k++] = ++len;
+            else if (len !== 0) len = lps[len - 1];
+            else lps[k++] = 0;
+        }
+        let i = 0, j = 0, comparisons = 0, matches = [], runTimer = null;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'strsearch-wrap';
+        wrap.innerHTML =
+            '<div class="strsearch-align"></div>' +
+            '<div class="strsearch-lps"><strong>LPS:</strong> <span class="strsearch-lps-cells"></span></div>' +
+            '<div class="strsearch-stats" data-testid="kmp-stats">comparisons: <span class="strsearch-cmp">0</span>' +
+                ' &nbsp;|&nbsp; matches: <span class="strsearch-matches">[]</span></div>' +
+            '<div class="strsearch-controls" role="group">' +
+                '<button type="button" data-action="step">Step</button>' +
+                '<button type="button" data-action="run">Run</button>' +
+                '<button type="button" data-action="reset">Reset</button>' +
+            '</div>';
+        host.appendChild(wrap);
+
+        const alignEl = wrap.querySelector('.strsearch-align');
+        const lpsEl = wrap.querySelector('.strsearch-lps-cells');
+        const cmpEl = wrap.querySelector('.strsearch-cmp');
+        const matchesEl = wrap.querySelector('.strsearch-matches');
+
+        function draw(offset, hi, lpsActive) {
+            alignEl.innerHTML = buildAlignmentRow(text, pattern, offset, hi);
+            let h = '';
+            for (let k = 0; k < m; k++) {
+                h += '<span class="strsearch-lps-cell' + (k === lpsActive ? ' strsearch-lps-active' : '') +
+                     '">' + lps[k] + '</span>';
+            }
+            lpsEl.innerHTML = h;
+            cmpEl.textContent = comparisons;
+            matchesEl.textContent = '[' + matches.join(',') + ']';
+        }
+        function step() {
+            if (i >= text.length) return;
+            comparisons++;
+            const ti = i, pj = j, drawOffset = i - j;
+            if (text[i] === pattern[j]) {
+                i++; j++;
+                if (j === m) { matches.push(i - j); j = lps[j - 1]; }
+                draw(drawOffset, { kind: 'cell', textIdx: ti, patIdx: pj, status: 'match' }, -1);
+            } else if (j !== 0) {
+                const lpsActive = pj - 1;
+                j = lps[j - 1];
+                draw(drawOffset, { kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' }, lpsActive);
+            } else {
+                i++;
+                draw(drawOffset, { kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' }, -1);
+            }
+        }
+        function reset() {
+            i = 0; j = 0; comparisons = 0; matches = [];
+            if (runTimer) { clearInterval(runTimer); runTimer = null; }
+            draw(0, null, -1);
+        }
+        wrap.querySelector('[data-action="step"]').onclick = step;
+        wrap.querySelector('[data-action="run"]').onclick = () => {
+            if (runTimer) return;
+            runTimer = setInterval(() => {
+                if (i >= text.length) { clearInterval(runTimer); runTimer = null; return; }
+                step();
+            }, 500);
+        };
+        wrap.querySelector('[data-action="reset"]').onclick = reset;
+        draw(0, null, -1);
+    }
+
+    function renderBM() {
+        const host = acquireDynamicVizHost();
+        const text = 'ABABDABACDABABCABAB';
+        const pattern = 'ABABCABAB';
+        const n = text.length, m = pattern.length;
+        const badChar = {};
+        for (let k = 0; k < m; k++) badChar[pattern[k]] = k;
+        const shift = new Array(m + 1).fill(0);
+        const bpos = new Array(m + 1).fill(0);
+        (function preprocess() {
+            let i = m, j = m + 1;
+            bpos[i] = j;
+            while (i > 0) {
+                while (j <= m && pattern[i - 1] !== pattern[j - 1]) {
+                    if (shift[j] === 0) shift[j] = j - i;
+                    j = bpos[j];
+                }
+                i--; j--;
+                bpos[i] = j;
+            }
+            j = bpos[0];
+            for (i = 0; i <= m; i++) {
+                if (shift[i] === 0) shift[i] = j;
+                if (i === j) j = bpos[j];
+            }
+        })();
+
+        let s = 0, j = m - 1, comparisons = 0, matches = [], runTimer = null;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'strsearch-wrap';
+        let badRow = '';
+        Object.keys(badChar).sort().forEach((c) => {
+            badRow += '<span class="strsearch-bm-cell">' + c + ':' + badChar[c] + '</span>';
+        });
+        wrap.innerHTML =
+            '<div class="strsearch-align"></div>' +
+            '<div class="strsearch-lps"><strong>bad-char:</strong> ' + badRow + '</div>' +
+            '<div class="strsearch-lps"><strong>good-suffix shift:</strong> <span>[' + shift.join(',') + ']</span></div>' +
+            '<div class="strsearch-shift-note" data-testid="bm-note">&nbsp;</div>' +
+            '<div class="strsearch-stats" data-testid="bm-stats">comparisons: <span class="strsearch-cmp">0</span>' +
+                ' &nbsp;|&nbsp; matches: <span class="strsearch-matches">[]</span></div>' +
+            '<div class="strsearch-controls" role="group">' +
+                '<button type="button" data-action="step">Step</button>' +
+                '<button type="button" data-action="run">Run</button>' +
+                '<button type="button" data-action="reset">Reset</button>' +
+            '</div>';
+        host.appendChild(wrap);
+
+        const alignEl = wrap.querySelector('.strsearch-align');
+        const noteEl = wrap.querySelector('[data-testid="bm-note"]');
+        const cmpEl = wrap.querySelector('.strsearch-cmp');
+        const matchesEl = wrap.querySelector('.strsearch-matches');
+
+        function draw(hi, note) {
+            alignEl.innerHTML = buildAlignmentRow(text, pattern, s, hi);
+            cmpEl.textContent = comparisons;
+            matchesEl.textContent = '[' + matches.join(',') + ']';
+            noteEl.innerHTML = note || '&nbsp;';
+        }
+        function step() {
+            if (s > n - m) return;
+            comparisons++;
+            const ti = s + j, pj = j;
+            if (pattern[j] === text[s + j]) {
+                if (j === 0) {
+                    matches.push(s);
+                    draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'match' }, 'full match at index ' + s);
+                    s += shift[0];
+                    j = m - 1;
+                } else {
+                    draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'match' }, 'match — scan left');
+                    j--;
+                }
+            } else {
+                const bcRaw = badChar[text[s + j]];
+                const bcShift = Math.max(1, j - (bcRaw === undefined ? -1 : bcRaw));
+                const gsShift = shift[j + 1];
+                const used = gsShift >= bcShift ? 'good-suffix' : 'bad-character';
+                draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' },
+                     'mismatch — bad-char=' + bcShift + ', good-suffix=' + gsShift + ' &rarr; shift by ' +
+                     Math.max(bcShift, gsShift) + ' (' + used + ')');
+                s += Math.max(bcShift, gsShift);
+                j = m - 1;
+            }
+        }
+        function reset() {
+            s = 0; j = m - 1; comparisons = 0; matches = [];
+            if (runTimer) { clearInterval(runTimer); runTimer = null; }
+            draw(null, null);
+        }
+        wrap.querySelector('[data-action="step"]').onclick = step;
+        wrap.querySelector('[data-action="run"]').onclick = () => {
+            if (runTimer) return;
+            runTimer = setInterval(() => {
+                if (s > n - m) { clearInterval(runTimer); runTimer = null; return; }
+                step();
+            }, 500);
+        };
+        wrap.querySelector('[data-action="reset"]').onclick = reset;
+        draw(null, null);
+    }
+
+    function renderRK() {
+        const host = acquireDynamicVizHost();
+        const text = 'ABABDABACDABABCABAB';
+        const pattern = 'ABABCABAB';
+        const BASE = 256, MOD = 101;
+        const n = text.length, m = pattern.length;
+        let h = 1;
+        for (let k = 0; k < m - 1; k++) h = (h * BASE) % MOD;
+        let patHash = 0;
+        for (let k = 0; k < m; k++) patHash = (BASE * patHash + pattern.charCodeAt(k)) % MOD;
+        function windowHash(start) {
+            let wh = 0;
+            for (let k = 0; k < m; k++) wh = (BASE * wh + text.charCodeAt(start + k)) % MOD;
+            return wh;
+        }
+        let s = 0, winHash = windowHash(0);
+        let hashChecks = 0, verifyChecks = 0, matches = [], runTimer = null;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'strsearch-wrap';
+        wrap.innerHTML =
+            '<div class="strsearch-align"></div>' +
+            '<div class="strsearch-hash" data-testid="rk-hash">pattern hash: <span class="rk-pat">' + patHash + '</span>' +
+                ' &nbsp;|&nbsp; window hash: <span class="rk-win">' + winHash + '</span></div>' +
+            '<div class="strsearch-stats">hash checks: <span class="rk-hc">0</span>' +
+                ' &nbsp;|&nbsp; verifications: <span class="rk-vc">0</span>' +
+                ' &nbsp;|&nbsp; matches: <span class="rk-matches">[]</span></div>' +
+            '<div class="strsearch-shift-note" data-testid="rk-note">&nbsp;</div>' +
+            '<div class="strsearch-controls" role="group">' +
+                '<button type="button" data-action="step">Step</button>' +
+                '<button type="button" data-action="run">Run</button>' +
+                '<button type="button" data-action="reset">Reset</button>' +
+            '</div>';
+        host.appendChild(wrap);
+
+        const alignEl = wrap.querySelector('.strsearch-align');
+        const winEl = wrap.querySelector('.rk-win');
+        const hcEl = wrap.querySelector('.rk-hc');
+        const vcEl = wrap.querySelector('.rk-vc');
+        const matchesEl = wrap.querySelector('.rk-matches');
+        const noteEl = wrap.querySelector('[data-testid="rk-note"]');
+
+        function draw(status, note) {
+            alignEl.innerHTML = buildAlignmentRow(text, pattern, Math.min(s, n - m), { kind: 'window', status: status });
+            winEl.textContent = winHash;
+            hcEl.textContent = hashChecks;
+            vcEl.textContent = verifyChecks;
+            matchesEl.textContent = '[' + matches.join(',') + ']';
+            noteEl.innerHTML = note || '&nbsp;';
+        }
+        function step() {
+            if (s > n - m) return;
+            hashChecks++;
+            let status, note;
+            if (winHash === patHash) {
+                let k = 0;
+                while (k < m && text[s + k] === pattern[k]) { verifyChecks++; k++; }
+                if (k === m) { matches.push(s); status = 'match'; note = 'hash hit + verified &rarr; match at ' + s; }
+                else { status = 'collision'; note = 'hash hit but verify failed &rarr; collision'; }
+            } else {
+                status = 'mismatch';
+                note = 'hash mismatch &rarr; slide window';
+            }
+            draw(status, note);
+            if (s < n - m) {
+                winHash = (BASE * (winHash - text.charCodeAt(s) * h) + text.charCodeAt(s + m)) % MOD;
+                winHash = ((winHash % MOD) + MOD) % MOD;
+            }
+            s++;
+        }
+        function reset() {
+            s = 0; winHash = windowHash(0);
+            hashChecks = 0; verifyChecks = 0; matches = [];
+            if (runTimer) { clearInterval(runTimer); runTimer = null; }
+            draw(null, null);
+        }
+        wrap.querySelector('[data-action="step"]').onclick = step;
+        wrap.querySelector('[data-action="run"]').onclick = () => {
+            if (runTimer) return;
+            runTimer = setInterval(() => {
+                if (s > n - m) { clearInterval(runTimer); runTimer = null; return; }
+                step();
+            }, 500);
+        };
+        wrap.querySelector('[data-action="reset"]').onclick = reset;
+        draw(null, null);
+    }
+
+    function renderStringCompare() {
+        const host = acquireDynamicVizHost();
+        const text = 'ABABDABACDABABCABAB';
+        const pattern = 'ABABCABAB';
+        const n = text.length, m = pattern.length;
+
+        // --- KMP stepper ---
+        const lps = new Array(m).fill(0);
+        for (let len = 0, k = 1; k < m;) {
+            if (pattern[k] === pattern[len]) lps[k++] = ++len;
+            else if (len !== 0) len = lps[len - 1];
+            else lps[k++] = 0;
+        }
+        const kmp = { i: 0, j: 0, cmp: 0, done: false };
+        function kmpStep() {
+            if (kmp.done || kmp.i >= n) { kmp.done = true; return; }
+            kmp.cmp++;
+            if (text[kmp.i] === pattern[kmp.j]) {
+                kmp.i++; kmp.j++;
+                if (kmp.j === m) kmp.j = lps[kmp.j - 1];
+            } else if (kmp.j !== 0) {
+                kmp.j = lps[kmp.j - 1];
+            } else {
+                kmp.i++;
+            }
+            if (kmp.i >= n) kmp.done = true;
+        }
+
+        // --- Boyer-Moore (bad-character) stepper ---
+        const bad = {};
+        for (let k = 0; k < m; k++) bad[pattern[k]] = k;
+        const bm = { s: 0, j: m - 1, cmp: 0, done: false };
+        function bmStep() {
+            if (bm.done || bm.s > n - m) { bm.done = true; return; }
+            bm.cmp++;
+            if (pattern[bm.j] === text[bm.s + bm.j]) {
+                if (bm.j === 0) { bm.s += 1; bm.j = m - 1; }
+                else bm.j--;
+            } else {
+                const bcRaw = bad[text[bm.s + bm.j]];
+                bm.s += Math.max(1, bm.j - (bcRaw === undefined ? -1 : bcRaw));
+                bm.j = m - 1;
+            }
+            if (bm.s > n - m) bm.done = true;
+        }
+
+        // --- Rabin-Karp stepper ---
+        const BASE = 256, MOD = 101;
+        let rkH = 1;
+        for (let k = 0; k < m - 1; k++) rkH = (rkH * BASE) % MOD;
+        let rkPat = 0;
+        for (let k = 0; k < m; k++) rkPat = (BASE * rkPat + pattern.charCodeAt(k)) % MOD;
+        function rkWindow(start) {
+            let wh = 0;
+            for (let k = 0; k < m; k++) wh = (BASE * wh + text.charCodeAt(start + k)) % MOD;
+            return wh;
+        }
+        const rk = { s: 0, hash: rkWindow(0), cmp: 0, done: false };
+        function rkStep() {
+            if (rk.done || rk.s > n - m) { rk.done = true; return; }
+            rk.cmp++;
+            if (rk.hash === rkPat) {
+                let k = 0;
+                while (k < m && text[rk.s + k] === pattern[k]) { rk.cmp++; k++; }
+            }
+            if (rk.s < n - m) {
+                rk.hash = (BASE * (rk.hash - text.charCodeAt(rk.s) * rkH) + text.charCodeAt(rk.s + m)) % MOD;
+                rk.hash = ((rk.hash % MOD) + MOD) % MOD;
+            }
+            rk.s++;
+            if (rk.s > n - m) rk.done = true;
+        }
+
+        const grid = document.createElement('div');
+        grid.className = 'strcompare-grid';
+        grid.innerHTML =
+            '<div class="strcompare-pane" data-pane="kmp"><h4>KMP</h4>' +
+                '<div class="strcompare-align"></div>' +
+                '<div class="strsearch-stats">comparisons: <span class="strcompare-cmp">0</span></div></div>' +
+            '<div class="strcompare-pane" data-pane="bm"><h4>Boyer-Moore (bad-char)</h4>' +
+                '<div class="strcompare-align"></div>' +
+                '<div class="strsearch-stats">comparisons: <span class="strcompare-cmp">0</span></div></div>' +
+            '<div class="strcompare-pane" data-pane="rk"><h4>Rabin-Karp</h4>' +
+                '<div class="strcompare-align"></div>' +
+                '<div class="strsearch-stats">comparisons: <span class="strcompare-cmp">0</span></div></div>' +
+            '<div class="strsearch-controls" role="group">' +
+                '<button type="button" data-action="step">Step</button>' +
+                '<button type="button" data-action="run">Run</button>' +
+                '<button type="button" data-action="reset">Reset</button>' +
+            '</div>';
+        host.appendChild(grid);
+
+        const kmpPane = grid.querySelector('[data-pane="kmp"]');
+        const bmPane = grid.querySelector('[data-pane="bm"]');
+        const rkPane = grid.querySelector('[data-pane="rk"]');
+        let runTimer = null;
+
+        function paint() {
+            kmpPane.querySelector('.strcompare-align').innerHTML =
+                buildAlignmentRow(text, pattern, kmp.i - kmp.j, null);
+            kmpPane.querySelector('.strcompare-cmp').textContent = kmp.cmp;
+            bmPane.querySelector('.strcompare-align').innerHTML =
+                buildAlignmentRow(text, pattern, Math.min(bm.s, n - m), null);
+            bmPane.querySelector('.strcompare-cmp').textContent = bm.cmp;
+            rkPane.querySelector('.strcompare-align').innerHTML =
+                buildAlignmentRow(text, pattern, Math.min(rk.s, n - m), { kind: 'window', status: null });
+            rkPane.querySelector('.strcompare-cmp').textContent = rk.cmp;
+        }
+        function allDone() { return kmp.done && bm.done && rk.done; }
+        function step() { kmpStep(); bmStep(); rkStep(); paint(); }
+        grid.querySelector('[data-action="step"]').onclick = step;
+        grid.querySelector('[data-action="run"]').onclick = () => {
+            if (runTimer) return;
+            runTimer = setInterval(() => {
+                if (allDone()) { clearInterval(runTimer); runTimer = null; return; }
+                step();
+            }, 500);
+        };
+        grid.querySelector('[data-action="reset"]').onclick = () => {
+            if (runTimer) { clearInterval(runTimer); runTimer = null; }
+            renderStringCompare();
+        };
+        paint();
     }
 
     function renderGraph() {

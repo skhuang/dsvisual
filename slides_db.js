@@ -4253,6 +4253,268 @@ const SLIDES_DB = {
       }
     ]
   },
+  "deque": {
+    "category": "Linear Structures",
+    "title": {
+      "zh": "雙端佇列",
+      "en": "Deque"
+    },
+    "slides": [
+      {
+        "heading": {
+          "zh": "雙端佇列",
+          "en": "Deque (Double-Ended Queue)"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "雙端佇列允許在頭端與尾端都進行插入與刪除;以雙向串列實作時,四種端點操作皆為 $O(1)$。",
+              "en": "A deque (double-ended queue) allows insertion and removal at both the front and the back; implemented as a doubly-linked list, all four end operations are $O(1)$."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "每個節點除了資料外,同時持有 `prev` 與 `next` 兩個指標。類別維護 `head` 與 `tail` 兩個指標,因此兩端都能在常數時間存取與更新。",
+              "en": "Each node holds two pointers, `prev` and `next`, in addition to its data. The class keeps both a `head` and a `tail` pointer, so either end can be accessed and updated in constant time."
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "是堆疊與佇列的推廣:限制只用一端即退化為堆疊或佇列。",
+                "en": "Generalizes stack and queue: restrict it to one end and it degenerates into a stack or a queue."
+              },
+              {
+                "zh": "雙向串列讓刪除尾端也是 $O(1)$,單向串列做不到。",
+                "en": "The doubly-linked list makes back-removal $O(1)$ too — a singly-linked list cannot."
+              },
+              {
+                "zh": "無固定容量上限,空間隨元素數量成長。",
+                "en": "No fixed capacity; space grows with the number of elements."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "zh": "`pushFront(v)`:新節點的 `next` 指向舊 `head`,舊 `head` 的 `prev` 指向新節點,更新 `head`。",
+                "en": "`pushFront(v)`: the new node's `next` points to the old `head`, the old `head`'s `prev` points to the new node, then update `head`."
+              },
+              {
+                "zh": "`pushBack(v)`:對稱地操作 `tail`。",
+                "en": "`pushBack(v)`: the symmetric operation on `tail`."
+              },
+              {
+                "zh": "`popFront` / `popBack`:斷開端點節點並更新對應指標;若清空則 `head` 與 `tail` 皆設為 null。",
+                "en": "`popFront` / `popBack`: detach the end node and update the corresponding pointer; if the deque becomes empty, set both `head` and `tail` to null."
+              }
+            ]
+          },
+          {
+            "type": "mermaid",
+            "code": "flowchart LR\n  H[\"head\"] --> A[\"5\"]\n  A <--> B[\"10\"]\n  B <--> C[\"20\"]\n  C --> T[\"tail\"]"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
+        "blocks": [
+          {
+            "type": "svg",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 380 70\" width=\"380\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\" y=\"25\">head                          tail</text><text x=\"0\" y=\"50\">null &lt;-&gt; 5 &lt;-&gt; 10 &lt;-&gt; 20 &lt;-&gt; null</text></g></svg>"
+          },
+          {
+            "type": "note",
+            "text": {
+              "zh": "visualizer 以水平節點列呈現,兩端標示 head 與 tail;四顆按鈕分別對應四種端點操作。",
+              "en": "The visualizer shows a horizontal row of nodes with head and tail marked at the ends; four buttons map to the four end operations."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
+        "blocks": [
+          {
+            "type": "table",
+            "headers": [
+              {
+                "zh": "操作",
+                "en": "Operation"
+              },
+              {
+                "zh": "時間",
+                "en": "Time"
+              },
+              {
+                "zh": "空間",
+                "en": "Space"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "zh": "pushFront / pushBack",
+                  "en": "pushFront / pushBack"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                }
+              ],
+              [
+                {
+                  "zh": "popFront / popBack",
+                  "en": "popFront / popBack"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                }
+              ],
+              [
+                {
+                  "zh": "依索引存取",
+                  "en": "access by index"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                }
+              ],
+              [
+                {
+                  "zh": "整體空間",
+                  "en": "Total Space"
+                },
+                {
+                  "zh": "—",
+                  "en": "—"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "math",
+            "tex": "T_{\\text{push}} = T_{\\text{pop}} = O(1)",
+            "caption": {
+              "zh": "四種端點操作皆為常數時間,與元素數量無關。",
+              "en": "All four end operations run in constant time, independent of the element count."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "lang": "cpp",
+            "code": "struct Node {\n    int val;\n    Node* prev;\n    Node* next;\n    Node(int v) : val(v), prev(nullptr), next(nullptr) {}\n};\n\nvoid pushFront(int v) {\n    Node* node = new Node(v);\n    if (!head) {\n        head = tail = node;\n    } else {\n        node->next = head;\n        head->prev = node;\n        head = node;\n    }\n    count++;\n}"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "優點:兩端插入與刪除皆 $O(1)$,比單向串列更靈活。",
+                "en": "Pro: $O(1)$ insertion and removal at both ends — more flexible than a singly-linked list."
+              },
+              {
+                "zh": "優點:可同時當作堆疊或佇列使用。",
+                "en": "Pro: usable as a stack and as a queue at the same time."
+              },
+              {
+                "zh": "缺點:每個節點多一個指標,記憶體開銷略高;隨機存取仍是 $O(n)$。",
+                "en": "Con: an extra pointer per node raises memory overhead slightly; random access is still $O(n)$."
+              },
+              {
+                "zh": "適用:滑動視窗、雙端工作佇列、需要兩端操作的演算法(如 0-1 BFS)。",
+                "en": "Use for sliding-window problems, double-ended work queues, and algorithms needing both-end access (e.g. 0-1 BFS)."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "雙向串列 + head/tail 指標;四種端點操作皆 $O(1)$。",
+                "en": "Doubly-linked list + head/tail pointers; all four end operations are $O(1)$."
+              },
+              {
+                "zh": "是堆疊與佇列的共同推廣。",
+                "en": "A common generalization of both the stack and the queue."
+              },
+              {
+                "zh": "空間 $O(n)$,每節點兩個指標。",
+                "en": "Space $O(n)$, two pointers per node."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "graph-adjlist": {
     "category": "Graphs",
     "title": {
@@ -12464,6 +12726,1045 @@ const SLIDES_DB = {
               {
                 "zh": "與線性搜尋相比:$n=10^6$ 時 Binary Search 約需 20 次,Linear Search 需最多 $10^6$ 次。",
                 "en": "Versus linear search: for $n=10^6$, Binary Search needs ~20 comparisons vs up to $10^6$ for Linear Search."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "search-kmp": {
+    "category": "Searching & String Matching",
+    "title": {
+      "zh": "KMP 字串比對演算法",
+      "en": "KMP String Matching"
+    },
+    "slides": [
+      {
+        "heading": {
+          "zh": "KMP 字串比對演算法",
+          "en": "KMP String Matching"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "KMP（Knuth-Morris-Pratt）演算法透過預先計算模式字串的 LPS 陣列，在發生不匹配時直接決定模式可以跳移多遠，從而避免重新比對已比對過的字元；整體時間複雜度為 $O(n+m)$。",
+              "en": "KMP (Knuth-Morris-Pratt) avoids re-comparing characters by precomputing how far the pattern can shift on a mismatch using the LPS array; total time is $O(n+m)$."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "**LPS 陣列**（最長公共前後綴，a.k.a. failure function）記錄模式每個位置的最長真前綴同時也是後綴的長度。發生不匹配時，直接令 `j = lps[j-1]` 而不是從頭重來。",
+              "en": "The **LPS array** (longest proper prefix that is also a suffix, a.k.a. the failure function) records, at every pattern index, the length of the longest proper prefix which is also a suffix. On a mismatch at index `j`, jump to `lps[j-1]` instead of restarting."
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "LPS 陣列在 $O(m)$ 時間內預建完成。",
+                "en": "The LPS array is built in $O(m)$ time."
+              },
+              {
+                "zh": "文字指標 `i` 永不後退，每步至少前進一格。",
+                "en": "The text index `i` never moves backward; it advances by at least one step each time."
+              },
+              {
+                "zh": "總比對次數 $\\le 2n$，整體複雜度 $O(n+m)$。",
+                "en": "Total comparisons $\\le 2n$; overall complexity $O(n+m)$."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "zh": "**預處理**：對模式字串執行 `computeLPS`，建立 LPS 陣列。",
+                "en": "**Preprocess**: run `computeLPS` on the pattern to build the LPS array."
+              },
+              {
+                "zh": "**匹配推進**：當 `text[i] == pat[j]` 時同時令 `i++` 與 `j++`；若 `j == m` 則記錄一次成功匹配，並令 `j = lps[j-1]`。",
+                "en": "**Match advance**: when `text[i] == pat[j]` increment both `i` and `j`; when `j == m` record a match and set `j = lps[j-1]`."
+              },
+              {
+                "zh": "**不匹配處理**：若 `j > 0`，令 `j = lps[j-1]`（不移動 `i`）；若 `j == 0`，令 `i++`。",
+                "en": "**Mismatch**: if `j > 0`, set `j = lps[j-1]` (keep `i` fixed); if `j == 0`, increment `i`."
+              }
+            ]
+          },
+          {
+            "type": "mermaid",
+            "code": "flowchart TD\n  Start[\"Start: i=0, j=0\"] --> Cmp{\"text[i] == pat[j]?\"}\n  Cmp -- Yes --> Adv[\"i++, j++\"]\n  Adv --> Full{\"j == m?\"}\n  Full -- Yes --> Hit[\"Record match; j = lps[j-1]\"]\n  Full -- No --> Cmp\n  Hit --> Cmp\n  Cmp -- No --> JPos{\"j > 0?\"}\n  JPos -- Yes --> Back[\"j = lps[j-1]\"]\n  Back --> Cmp\n  JPos -- No --> Next[\"i++\"]\n  Next --> Done{\"i < n?\"}\n  Done -- Yes --> Cmp\n  Done -- No --> End[\"End\"]"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
+        "blocks": [
+          {
+            "type": "svg",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 90\" width=\"420\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\" y=\"20\">Pattern:  A  B  A  B  C  A  B  A  B</text><text x=\"0\" y=\"45\">Index:    0  1  2  3  4  5  6  7  8</text><text x=\"0\" y=\"70\">LPS:      0  0  1  2  0  1  2  3  4</text></g></svg>"
+          },
+          {
+            "type": "note",
+            "text": {
+              "zh": "visualizer 在每次利用 LPS 跳移時，高亮對應的 LPS 格位，幫助理解跳移幅度。",
+              "en": "The visualizer highlights the active LPS cell on each shift to show how far the pattern jumps."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
+        "blocks": [
+          {
+            "type": "table",
+            "headers": [
+              {
+                "zh": "階段",
+                "en": "Phase"
+              },
+              {
+                "zh": "時間",
+                "en": "Time"
+              },
+              {
+                "zh": "空間",
+                "en": "Space"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "zh": "建立 LPS",
+                  "en": "Build LPS"
+                },
+                {
+                  "zh": "$O(m)$",
+                  "en": "$O(m)$"
+                },
+                {
+                  "zh": "$O(m)$",
+                  "en": "$O(m)$"
+                }
+              ],
+              [
+                {
+                  "zh": "搜尋",
+                  "en": "Search"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                }
+              ],
+              [
+                {
+                  "zh": "總計",
+                  "en": "Total"
+                },
+                {
+                  "zh": "$O(n+m)$",
+                  "en": "$O(n+m)$"
+                },
+                {
+                  "zh": "$O(m)$",
+                  "en": "$O(m)$"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "math",
+            "tex": "T_{\\text{KMP}} = O(n + m)",
+            "caption": {
+              "zh": "KMP 是線性時間演算法；文字指標永不後退，因此不會重複掃描。",
+              "en": "KMP is linear-time: the text pointer never retreats, so no character is scanned more than twice."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "lang": "cpp",
+            "code": "vector<int> computeLPS(const string& pat) {\n    int m = pat.size();\n    vector<int> lps(m, 0);\n    int len = 0;\n    for (int i = 1; i < m;) {\n        if (pat[i] == pat[len]) {\n            lps[i++] = ++len;\n        } else if (len != 0) {\n            len = lps[len - 1];\n        } else {\n            lps[i++] = 0;\n        }\n    }\n    return lps;\n}\n\nvoid kmpSearch(const string& text, const string& pat) {\n    int n = text.size(), m = pat.size();\n    vector<int> lps = computeLPS(pat);\n    int i = 0, j = 0;\n    while (i < n) {\n        if (text[i] == pat[j]) {\n            i++;\n            j++;\n            if (j == m) {\n                cout << \"Match at index \" << (i - j) << endl;\n                j = lps[j - 1];\n            }\n        } else if (j != 0) {\n            j = lps[j - 1];\n        } else {\n            i++;\n        }\n    }\n}"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "優點：保證線性時間，文字指標絕不後退。",
+                "en": "Pro: guaranteed linear time; the text pointer never backtracks."
+              },
+              {
+                "zh": "優點：LPS 陣列建構簡單，只需 $O(m)$ 時間與空間。",
+                "en": "Pro: the LPS array is straightforward to precompute in $O(m)$ time and space."
+              },
+              {
+                "zh": "缺點：常數因子高於 Boyer-Moore，在一般文字上實際速度較慢。",
+                "en": "Con: constant factor higher than Boyer-Moore; slower in practice on typical text."
+              },
+              {
+                "zh": "缺點：未利用字母表特性，無法像 BM 那樣大幅跳移。",
+                "en": "Con: does not exploit the alphabet; cannot make large skips like Boyer-Moore."
+              },
+              {
+                "zh": "適用：最壞情況線性保證至關重要的場景（例如重複性高的字串）。",
+                "en": "Use when worst-case linearity matters, e.g. highly repetitive strings."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "LPS（failure function）是 KMP 的核心預處理資料。",
+                "en": "The LPS (failure function) array is the key precomputed data structure in KMP."
+              },
+              {
+                "zh": "文字指標永不後退；總比對次數 $\\le 2n$。",
+                "en": "The text pointer never retreats; total comparisons $\\le 2n$."
+              },
+              {
+                "zh": "時間 $O(n+m)$，空間 $O(m)$。",
+                "en": "Time $O(n+m)$, space $O(m)$."
+              },
+              {
+                "zh": "與 BM、RK 的比較見 search-strcompare。",
+                "en": "For a comparison with BM and RK, see search-strcompare."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "search-bm": {
+    "category": "Searching & String Matching",
+    "title": {
+      "zh": "Boyer-Moore 字串比對演算法",
+      "en": "Boyer-Moore String Matching"
+    },
+    "slides": [
+      {
+        "heading": {
+          "zh": "Boyer-Moore 字串比對演算法",
+          "en": "Boyer-Moore String Matching"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "Boyer-Moore 演算法從右至左比對模式字串，利用**壞字元**與**好後綴**兩種啟發式規則大幅跳過文字區塊；在實際應用中往往達到次線性的比對速度。",
+              "en": "Boyer-Moore scans the pattern right-to-left and uses two heuristics — bad-character and good-suffix — to skip large chunks of text, often achieving sublinear performance in practice."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "**壞字元啟發**：當 `text[s+j]` 與 `pat[j]` 不匹配時，把模式向右對齊，使模式中 `text[s+j]` 最右出現位置與之對應。**好後綴啟發**：已匹配的後綴在模式的其他位置也出現時，直接對齊該位置。每次跳移取兩者的最大值。",
+              "en": "The **bad-character** heuristic aligns the mismatched text character with its rightmost occurrence in the pattern. The **good-suffix** heuristic reuses the already-matched suffix to find the next alignment. The shift applied is the `max` of both."
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "從右至左比對使得每次不匹配都能跳過多個字元。",
+                "en": "Right-to-left scanning enables large jumps on every mismatch."
+              },
+              {
+                "zh": "預處理時間 $O(m + \\sigma)$，$\\sigma$ 為字母表大小。",
+                "en": "Preprocessing time is $O(m + \\sigma)$ where $\\sigma$ is the alphabet size."
+              },
+              {
+                "zh": "最佳情況下每次跳移 $m$ 個字元，總比對次數 $O(n/m)$。",
+                "en": "Best case skips $m$ characters at a time, giving $O(n/m)$ total comparisons."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "zh": "**預處理**：呼叫 `buildBadChar` 建立壞字元表；呼叫 `buildGoodSuffix` 建立好後綴移位表。",
+                "en": "**Preprocess**: call `buildBadChar` to build the bad-character table and `buildGoodSuffix` to build the good-suffix shift table."
+              },
+              {
+                "zh": "**右至左比對**：從 `j = m-1` 往左比對；遇到不匹配即停止。",
+                "en": "**Right-to-left compare**: match from `j = m-1` downward; stop on the first mismatch."
+              },
+              {
+                "zh": "**移位**：若完全匹配則以 `shift[0]` 移位；否則取 `max(goodSuffix, badChar)` 移位。",
+                "en": "**Shift**: on a full match apply `shift[0]`; on mismatch shift by `max(good-suffix, bad-character)`."
+              }
+            ]
+          },
+          {
+            "type": "mermaid",
+            "code": "flowchart TD\n  Start[\"s=0\"] --> RtL[\"Compare right-to-left: j = m-1\"]\n  RtL --> Match{\"All matched?\"}\n  Match -- Yes --> Hit[\"Record match; s += shift[0]\"]\n  Hit --> Cont{\"s <= n-m?\"}\n  Match -- No --> Calc[\"bcShift = j - badChar[text[s+j]]\"]\n  Calc --> MaxShift[\"s += max(shift[j+1], max(1, bcShift))\"]\n  MaxShift --> Cont\n  Cont -- Yes --> RtL\n  Cont -- No --> End[\"End\"]"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
+        "blocks": [
+          {
+            "type": "svg",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 440 100\" width=\"440\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\" y=\"20\">Text:     A  B  A  B  D  A  B  A  C  D ...</text><text x=\"0\" y=\"45\">Pattern:  A  B  A  B  C  A  B  A  B</text><text x=\"0\" y=\"65\">Mismatch at j=4 (D vs C)</text><text x=\"0\" y=\"85\">bad-char shift=4  good-suffix shift=4  apply max=4</text></g></svg>"
+          },
+          {
+            "type": "note",
+            "text": {
+              "zh": "visualizer 同時顯示壞字元表與好後綴表，並標示每次移位採用哪個啟發式規則。",
+              "en": "The visualizer shows both the bad-character table and the good-suffix table, highlighting which heuristic determined each shift."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
+        "blocks": [
+          {
+            "type": "table",
+            "headers": [
+              {
+                "zh": "階段",
+                "en": "Phase"
+              },
+              {
+                "zh": "時間",
+                "en": "Time"
+              },
+              {
+                "zh": "空間",
+                "en": "Space"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "zh": "預處理",
+                  "en": "Preprocessing"
+                },
+                {
+                  "zh": "$O(m + \\sigma)$",
+                  "en": "$O(m + \\sigma)$"
+                },
+                {
+                  "zh": "$O(m + \\sigma)$",
+                  "en": "$O(m + \\sigma)$"
+                }
+              ],
+              [
+                {
+                  "zh": "搜尋（最佳）",
+                  "en": "Search (best)"
+                },
+                {
+                  "zh": "$O(n/m)$",
+                  "en": "$O(n/m)$"
+                },
+                {
+                  "zh": "—",
+                  "en": "—"
+                }
+              ],
+              [
+                {
+                  "zh": "搜尋（最差）",
+                  "en": "Search (worst)"
+                },
+                {
+                  "zh": "$O(nm)$",
+                  "en": "$O(nm)$"
+                },
+                {
+                  "zh": "—",
+                  "en": "—"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "math",
+            "tex": "T_{\\text{BM,best}} = O(n/m)",
+            "caption": {
+              "zh": "在一般文字上 BM 為次線性；最差情況（重複字串）退化為 $O(nm)$，可透過 Galil 規則改善。",
+              "en": "On typical text BM is sublinear; the worst case (highly repetitive strings) degrades to $O(nm)$, avoidable with the Galil rule."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "lang": "cpp",
+            "code": "vector<int> buildBadChar(const string& pat) {\n    vector<int> badChar(ALPHABET, -1);\n    for (int i = 0; i < (int)pat.size(); i++)\n        badChar[(unsigned char)pat[i]] = i;\n    return badChar;\n}\n\nvoid buildGoodSuffix(const string& pat, vector<int>& shift) {\n    int m = pat.size();\n    vector<int> bpos(m + 1, 0);\n    shift.assign(m + 1, 0);\n    int i = m, j = m + 1;\n    bpos[i] = j;\n    while (i > 0) {\n        while (j <= m && pat[i - 1] != pat[j - 1]) {\n            if (shift[j] == 0)\n                shift[j] = j - i;\n            j = bpos[j];\n        }\n        i--;\n        j--;\n        bpos[i] = j;\n    }\n    j = bpos[0];\n    for (i = 0; i <= m; i++) {\n        if (shift[i] == 0)\n            shift[i] = j;\n        if (i == j)\n            j = bpos[j];\n    }\n}\n\nvoid boyerMooreSearch(const string& text, const string& pat) {\n    int n = text.size(), m = pat.size();\n    vector<int> badChar = buildBadChar(pat);\n    vector<int> shift;\n    buildGoodSuffix(pat, shift);\n    int s = 0;\n    while (s <= n - m) {\n        int j = m - 1;\n        while (j >= 0 && pat[j] == text[s + j])\n            j--;\n        if (j < 0) {\n            cout << \"Match at index \" << s << endl;\n            s += shift[0];\n        } else {\n            int bcShift = j - badChar[(unsigned char)text[s + j]];\n            s += max(shift[j + 1], max(1, bcShift));\n        }\n    }\n}"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "優點：實際效能為次線性，在大型字母表與長文字上是最快的通用比對器。",
+                "en": "Pro: sublinear in practice; the fastest general-purpose matcher on large alphabets and long texts."
+              },
+              {
+                "zh": "優點：右至左掃描讓壞字元跳移通常比 KMP 大。",
+                "en": "Pro: right-to-left scanning often yields much larger skips than KMP."
+              },
+              {
+                "zh": "缺點：不加 Galil 規則則最壞情況為 $O(nm)$。",
+                "en": "Con: worst case is $O(nm)$ without the Galil rule."
+              },
+              {
+                "zh": "缺點：需要壞字元與好後綴兩張預處理表，實作較複雜。",
+                "en": "Con: two preprocessing tables (bad-character and good-suffix) make the implementation more complex."
+              },
+              {
+                "zh": "適用：大型字母表（如自然語言文字）、長模式字串。",
+                "en": "Use for large alphabets (e.g. natural language text) and long patterns."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "從右至左掃描；壞字元 + 好後綴雙啟發。",
+                "en": "Right-to-left scan; bad-character and good-suffix heuristics."
+              },
+              {
+                "zh": "平均次線性；最差 $O(nm)$。",
+                "en": "Average sublinear; worst case $O(nm)$."
+              },
+              {
+                "zh": "大型字母表與長文字的首選演算法。",
+                "en": "The go-to algorithm for large alphabets and long texts."
+              },
+              {
+                "zh": "與 KMP、RK 的比較見 search-strcompare。",
+                "en": "For a comparison with KMP and RK, see search-strcompare."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "search-rk": {
+    "category": "Searching & String Matching",
+    "title": {
+      "zh": "Rabin-Karp 字串比對演算法",
+      "en": "Rabin-Karp String Matching"
+    },
+    "slides": [
+      {
+        "heading": {
+          "zh": "Rabin-Karp 字串比對演算法",
+          "en": "Rabin-Karp String Matching"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "Rabin-Karp 演算法對文字每個視窗計算滾動雜湊值，並與模式字串的雜湊值比較；只有雜湊命中時才進行逐字元驗證，平均時間複雜度為 $O(n+m)$。",
+              "en": "Rabin-Karp compares a rolling hash of each text window against the pattern's hash, verifying character-by-character only on a hash hit; average time complexity is $O(n+m)$."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "**滾動雜湊**：視窗滑動一格時，移除離開字元的貢獻並加入進入字元，整個更新只需 $O(1)$，無需重算整個視窗。",
+              "en": "The **rolling hash** updates in $O(1)$ when the window slides — subtract the leaving character's contribution and add the entering character's, without recomputing the whole window."
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "雜湊命中不代表一定匹配（偽陽性），需逐字元驗證。",
+                "en": "A hash hit may be a false positive (collision) and requires character-by-character verification."
+              },
+              {
+                "zh": "選取良好的模數可使碰撞率極低，偽陽性概率 $O(1/MOD)$。",
+                "en": "A good modulus keeps collision rate low; false-positive probability is $O(1/MOD)$."
+              },
+              {
+                "zh": "天然延伸至多模式搜尋：同時比對多個模式的雜湊值。",
+                "en": "Extends naturally to multi-pattern search by comparing against multiple pattern hashes simultaneously."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "zh": "**初始化**：計算模式字串的雜湊值 `patHash` 與第一個視窗的雜湊值 `winHash`；預計算高位乘法因子 `h`。",
+                "en": "**Initialize**: compute the pattern hash `patHash` and the first window hash `winHash`; precompute the high-order multiplier `h`."
+              },
+              {
+                "zh": "**滾動更新**：每次視窗右滑一格，以 $O(1)$ 更新 `winHash`：去除最左字元，加入最右字元。",
+                "en": "**Rolling update**: on each slide, update `winHash` in $O(1)$: remove the leftmost character's contribution and add the new rightmost character."
+              },
+              {
+                "zh": "**驗證**：當 `patHash == winHash` 時，逐字元比對確認是否為真正匹配。",
+                "en": "**Verify**: when `patHash == winHash`, compare characters one by one to confirm a genuine match."
+              }
+            ]
+          },
+          {
+            "type": "mermaid",
+            "code": "flowchart TD\n  Init[\"Compute patHash, winHash, h\"] --> Loop{\"s <= n-m?\"}\n  Loop -- No --> End[\"End\"]\n  Loop -- Yes --> HashCmp{\"patHash == winHash?\"}\n  HashCmp -- Yes --> Verify[\"Verify characters\"]\n  Verify --> IsMatch{\"Full match?\"}\n  IsMatch -- Yes --> Record[\"Record match at s\"]\n  IsMatch -- No --> Roll\n  Record --> Roll[\"Roll hash: remove text[s], add text[s+m]\"]\n  HashCmp -- No --> Roll\n  Roll --> Inc[\"s++\"] --> Loop"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
+        "blocks": [
+          {
+            "type": "svg",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 100\" width=\"420\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\" y=\"20\">patHash = hash(\"ABABCABAB\") = 42</text><text x=\"0\" y=\"45\">Window  s=10: hash(\"ABABCABAB\") = 42  → verify → MATCH</text><text x=\"0\" y=\"70\">Window  s= 0: hash(\"ABABDABAC\") = 87  → skip (no verify)</text><text x=\"0\" y=\"95\">Rolling: winHash = (BASE*(winHash - text[s]*h) + text[s+m]) % MOD</text></g></svg>"
+          },
+          {
+            "type": "note",
+            "text": {
+              "zh": "visualizer 以不同顏色區分已驗證匹配與碰撞（偽陽性），幫助理解雜湊命中的兩種結果。",
+              "en": "The visualizer distinguishes a verified match from a collision (false positive) using different highlight colors."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
+        "blocks": [
+          {
+            "type": "table",
+            "headers": [
+              {
+                "zh": "階段",
+                "en": "Phase"
+              },
+              {
+                "zh": "時間",
+                "en": "Time"
+              },
+              {
+                "zh": "空間",
+                "en": "Space"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "zh": "預處理",
+                  "en": "Preprocessing"
+                },
+                {
+                  "zh": "$O(m)$",
+                  "en": "$O(m)$"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                }
+              ],
+              [
+                {
+                  "zh": "搜尋（平均）",
+                  "en": "Search (average)"
+                },
+                {
+                  "zh": "$O(n+m)$",
+                  "en": "$O(n+m)$"
+                },
+                {
+                  "zh": "—",
+                  "en": "—"
+                }
+              ],
+              [
+                {
+                  "zh": "搜尋（最差）",
+                  "en": "Search (worst)"
+                },
+                {
+                  "zh": "$O(nm)$",
+                  "en": "$O(nm)$"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "math",
+            "tex": "T_{\\text{RK,avg}} = O(n + m)",
+            "caption": {
+              "zh": "最差情況發生於每個視窗都觸發雜湊碰撞而需完整驗證；選擇良好的模數可使此情況極少出現。",
+              "en": "The worst case occurs when hash collisions force verification on every window; a good modulus makes this exceedingly rare."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "lang": "cpp",
+            "code": "void rabinKarpSearch(const string& text, const string& pat) {\n    int n = text.size(), m = pat.size();\n    if (m > n)\n        return;\n    int patHash = 0, winHash = 0, h = 1;\n    for (int i = 0; i < m - 1; i++)\n        h = (h * BASE) % MOD;\n    for (int i = 0; i < m; i++) {\n        patHash = (BASE * patHash + pat[i]) % MOD;\n        winHash = (BASE * winHash + text[i]) % MOD;\n    }\n    for (int s = 0; s <= n - m; s++) {\n        if (patHash == winHash) {\n            int j = 0;\n            while (j < m && text[s + j] == pat[j])\n                j++;\n            if (j == m)\n                cout << \"Match at index \" << s << endl;\n        }\n        if (s < n - m) {\n            winHash = (BASE * (winHash - text[s] * h) + text[s + m]) % MOD;\n            if (winHash < 0)\n                winHash += MOD;\n        }\n    }\n}"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "優點：額外空間 $O(1)$，實作簡單，天然支援多模式搜尋。",
+                "en": "Pro: $O(1)$ extra space, simple to implement, extends naturally to multi-pattern search."
+              },
+              {
+                "zh": "優點：平均 $O(n+m)$，在低碰撞率下效能接近 KMP。",
+                "en": "Pro: average $O(n+m)$; performs close to KMP under low collision rates."
+              },
+              {
+                "zh": "缺點：對抗性輸入下碰撞率高，退化為 $O(nm)$。",
+                "en": "Con: adversarial inputs can force $O(nm)$ through high collision rates."
+              },
+              {
+                "zh": "缺點：每次雜湊命中都需額外的驗證步驟。",
+                "en": "Con: every hash hit requires an extra character-by-character verification step."
+              },
+              {
+                "zh": "適用：多模式搜尋、抄襲偵測與文件指紋比對。",
+                "en": "Use for multi-pattern search, plagiarism detection, and document fingerprinting."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "滾動雜湊讓每次視窗滑動只需 $O(1)$ 更新。",
+                "en": "Rolling hash allows $O(1)$ update per window slide."
+              },
+              {
+                "zh": "雜湊命中時才驗證；平均 $O(n+m)$，空間 $O(1)$。",
+                "en": "Verify only on hash hit; average $O(n+m)$, space $O(1)$."
+              },
+              {
+                "zh": "最適合多模式搜尋與指紋比對應用場景。",
+                "en": "Best suited for multi-pattern search and fingerprinting applications."
+              },
+              {
+                "zh": "與 KMP、BM 的比較見 search-strcompare。",
+                "en": "For a comparison with KMP and BM, see search-strcompare."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "search-strcompare": {
+    "category": "Searching & String Matching",
+    "title": {
+      "zh": "字串比對演算法比較",
+      "en": "String Matching Compared"
+    },
+    "slides": [
+      {
+        "heading": {
+          "zh": "字串比對演算法比較",
+          "en": "String Matching Compared"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "KMP、Boyer-Moore 與 Rabin-Karp 三種演算法均解決精確字串比對問題，但在保證上界、實際速度與空間使用上各有取捨；本頁並排呈現三者差異。",
+              "en": "KMP, Boyer-Moore, and Rabin-Karp all solve exact string matching but trade off differently among guaranteed bounds, practical speed, and space; this deck presents all three side by side."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "三種演算法各有一個核心預處理概念：KMP 的 failure function 確保線性；BM 的跳移啟發在實際文字中實現次線性；RK 的滾動雜湊以 $O(1)$ 空間達到平均線性。",
+              "en": "Each algorithm has one defining preprocessing idea: KMP's failure function guarantees linearity; BM's skip heuristics achieve sublinearity on real text; RK's rolling hash reaches average linearity with $O(1)$ space."
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "KMP：LPS（failure function）—— 保證線性時間，文字指標永不後退。",
+                "en": "KMP: LPS / failure function — guaranteed linear time, text pointer never retreats."
+              },
+              {
+                "zh": "BM：壞字元 + 好後綴啟發 —— 實際次線性，大型字母表最快。",
+                "en": "BM: bad-character + good-suffix heuristics — sublinear in practice, fastest on large alphabets."
+              },
+              {
+                "zh": "RK：滾動雜湊 —— 平均線性，空間 $O(1)$，天然支援多模式。",
+                "en": "RK: rolling hash — average linear, $O(1)$ space, naturally multi-pattern."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "zh": "**初始化**：visualizer 以相同文字 `ABABDABACDABABCABAB` 與模式 `ABABCABAB` 同步啟動三個比對窗格。",
+                "en": "**Initialize**: the visualizer starts all three panes simultaneously on the shared text `ABABDABACDABABCABAB` and pattern `ABABCABAB`."
+              },
+              {
+                "zh": "**逐步推進**：每按一次「下一步」，三個演算法各前進一個邏輯步驟，各自的比對計數器分別累計。",
+                "en": "**Step together**: each press of \"Next\" advances all three algorithms by one logical step; their individual comparison counters accumulate independently."
+              },
+              {
+                "zh": "**完成比較**：某個演算法先找到所有匹配後停止；visualizer 顯示各自的比對次數供比較。",
+                "en": "**Compare results**: when an algorithm finishes finding all matches it stops; the visualizer displays each algorithm's comparison count for direct comparison."
+              }
+            ]
+          },
+          {
+            "type": "mermaid",
+            "code": "flowchart LR\n  Input[\"Text + Pattern\"] --> KMP[\"KMP lane\"]\n  Input --> BM[\"BM lane\"]\n  Input --> RK[\"RK lane\"]\n  KMP --> KMPOut[\"KMP: Match@10, cmp=N_kmp\"]\n  BM --> BMOut[\"BM:  Match@10, cmp=N_bm\"]\n  RK --> RKOut[\"RK:  Match@10, cmp=N_rk\"]"
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
+        "blocks": [
+          {
+            "type": "svg",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 110\" width=\"420\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\" y=\"20\">Algorithm   Time(worst)  Space     Practice</text><text x=\"0\" y=\"40\">KMP         O(n+m)       O(m)      linear</text><text x=\"0\" y=\"60\">BM          O(nm)        O(m+sig)  sublinear</text><text x=\"0\" y=\"80\">RK          O(nm)        O(1)      avg-linear</text><text x=\"0\" y=\"100\">Shared example match at index 10</text></g></svg>"
+          },
+          {
+            "type": "note",
+            "text": {
+              "zh": "visualizer 三個窗格同步執行；每個窗格在其演算法完成後顯示總比對次數。",
+              "en": "The visualizer runs all three panes synchronously; each pane displays its total comparison count when its algorithm finishes."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
+        "blocks": [
+          {
+            "type": "table",
+            "headers": [
+              {
+                "zh": "演算法",
+                "en": "Algorithm"
+              },
+              {
+                "zh": "時間（最差）",
+                "en": "Time (worst)"
+              },
+              {
+                "zh": "時間（平均／最佳）",
+                "en": "Time (avg/best)"
+              },
+              {
+                "zh": "空間",
+                "en": "Space"
+              }
+            ],
+            "rows": [
+              [
+                {
+                  "zh": "KMP",
+                  "en": "KMP"
+                },
+                {
+                  "zh": "$O(n+m)$",
+                  "en": "$O(n+m)$"
+                },
+                {
+                  "zh": "$O(n+m)$",
+                  "en": "$O(n+m)$"
+                },
+                {
+                  "zh": "$O(m)$",
+                  "en": "$O(m)$"
+                }
+              ],
+              [
+                {
+                  "zh": "Boyer-Moore",
+                  "en": "Boyer-Moore"
+                },
+                {
+                  "zh": "$O(nm)$",
+                  "en": "$O(nm)$"
+                },
+                {
+                  "zh": "$O(n/m)$（最佳）",
+                  "en": "$O(n/m)$ (best)"
+                },
+                {
+                  "zh": "$O(m + \\sigma)$",
+                  "en": "$O(m + \\sigma)$"
+                }
+              ],
+              [
+                {
+                  "zh": "Rabin-Karp",
+                  "en": "Rabin-Karp"
+                },
+                {
+                  "zh": "$O(nm)$",
+                  "en": "$O(nm)$"
+                },
+                {
+                  "zh": "$O(n+m)$（平均）",
+                  "en": "$O(n+m)$ (avg)"
+                },
+                {
+                  "zh": "$O(1)$",
+                  "en": "$O(1)$"
+                }
+              ]
+            ]
+          },
+          {
+            "type": "math",
+            "tex": "O(n + m) \\text{ — shared baseline}",
+            "caption": {
+              "zh": "三者的共同基線為 $O(n+m)$；取捨在於：KMP 保證最差、BM 實際最快、RK 最省空間。",
+              "en": "The shared baseline is $O(n+m)$; the trade-off is: KMP guarantees worst-case, BM is fastest in practice, RK is most space-thrifty."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
+        "blocks": [
+          {
+            "type": "code",
+            "lang": "cpp",
+            "code": "// Each function returns the number of comparisons performed.\n\nint kmpCompares(const string& text, const string& pat) {\n    int n = text.size(), m = pat.size(), cmp = 0;\n    vector<int> lps(m, 0);\n    for (int len = 0, i = 1; i < m;) {\n        if (pat[i] == pat[len])\n            lps[i++] = ++len;\n        else if (len)\n            len = lps[len - 1];\n        else\n            lps[i++] = 0;\n    }\n    int i = 0, j = 0;\n    while (i < n) {\n        cmp++;\n        if (text[i] == pat[j]) {\n            i++;\n            j++;\n            if (j == m)\n                j = lps[j - 1];\n        } else if (j)\n            j = lps[j - 1];\n        else\n            i++;\n    }\n    return cmp;\n}\n\n// Trimmed Boyer-Moore (bad-character heuristic only).\nint bmCompares(const string& text, const string& pat) {\n    int n = text.size(), m = pat.size(), cmp = 0;\n    vector<int> bad(256, -1);\n    for (int i = 0; i < m; i++)\n        bad[(unsigned char)pat[i]] = i;\n    int s = 0;\n    while (s <= n - m) {\n        int j = m - 1;\n        while (j >= 0) {\n            cmp++;\n            if (pat[j] != text[s + j])\n                break;\n            j--;\n        }\n        if (j < 0)\n            s += 1;\n        else\n            s += max(1, j - bad[(unsigned char)text[s + j]]);\n    }\n    return cmp;\n}\n\nint rkCompares(const string& text, const string& pat) {\n    const int BASE = 256, MOD = 101;\n    int n = text.size(), m = pat.size(), cmp = 0;\n    if (m > n)\n        return 0;\n    int ph = 0, wh = 0, h = 1;\n    for (int i = 0; i < m - 1; i++)\n        h = (h * BASE) % MOD;\n    for (int i = 0; i < m; i++) {\n        ph = (BASE * ph + pat[i]) % MOD;\n        wh = (BASE * wh + text[i]) % MOD;\n    }\n    for (int s = 0; s <= n - m; s++) {\n        cmp++; // one hash comparison per window\n        if (ph == wh) {\n            int j = 0;\n            while (j < m && text[s + j] == pat[j]) {\n                cmp++;\n                j++;\n            }\n        }\n        if (s < n - m) {\n            wh = (BASE * (wh - text[s] * h) + text[s + m]) % MOD;\n            if (wh < 0)\n                wh += MOD;\n        }\n    }\n    return cmp;\n}"
+          },
+          {
+            "type": "note",
+            "text": {
+              "zh": "此處的 `bmCompares` 為比較計數用的精簡版（僅壞字元啟發式）；上方複雜度表描述的是標準完整 Boyer-Moore（含好後綴），其完整實作見 search-bm。",
+              "en": "The `bmCompares` shown here is a trimmed comparison-counting variant (bad-character heuristic only); the complexity table above describes the standard full Boyer-Moore (with good-suffix) — see search-bm for the full implementation."
+            }
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "選 KMP：需要最壞情況線性保證，或字串重複性高（二進位 DNA 序列）。",
+                "en": "Choose KMP: when worst-case linear time is required, e.g. highly repetitive binary or DNA strings."
+              },
+              {
+                "zh": "選 BM：追求在大型字母表與長文字上的最快實際速度（自然語言、程式碼搜尋）。",
+                "en": "Choose BM: for raw speed on large alphabets and long texts (natural language, code search)."
+              },
+              {
+                "zh": "選 RK：多模式搜尋、記憶體受限、抄襲偵測或文件指紋比對場景。",
+                "en": "Choose RK: for multi-pattern search, memory-constrained environments, plagiarism detection, or document fingerprinting."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              {
+                "zh": "同一問題，三種取捨：KMP 保證線性、BM 實際最快、RK 最省空間。",
+                "en": "Same problem, three trade-offs: KMP guaranteed linear, BM fastest in practice, RK most space-thrifty."
+              },
+              {
+                "zh": "KMP 適合重複性高的字串；BM 適合大型字母表；RK 適合多模式比對。",
+                "en": "KMP suits repetitive strings; BM suits large alphabets; RK suits multi-pattern matching."
+              },
+              {
+                "zh": "三者皆為精確比對演算法；$O(n+m)$ 只是比較的參考基線，三者的最差複雜度其實不同（見複雜度表）。",
+                "en": "All three are exact-matching algorithms; $O(n+m)$ is only the reference baseline for comparison — their worst-case complexities actually differ (see the complexity table)."
+              },
+              {
+                "zh": "詳細說明見 search-kmp、search-bm、search-rk。",
+                "en": "For detailed coverage see search-kmp, search-bm, and search-rk."
               }
             ]
           }
