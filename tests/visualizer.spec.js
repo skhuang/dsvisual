@@ -125,6 +125,29 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         }
     });
 
+    test('Design Patterns sub-tabs: switch the method list by GoF category', async ({ page }) => {
+        const nav = page.locator('[data-testid="category-nav"]');
+        await nav.getByRole('button', { name: 'Design Patterns', exact: true }).click();
+
+        const subTabs = page.locator('.category-subtab-row.visible .category-subtab-btn');
+        await expect(subTabs).toHaveCount(3);
+
+        const methodSelect = page.locator('[data-testid="method-select"]');
+        // Default sub-tab is Creational.
+        await expect(methodSelect.locator('option[value="pattern-singleton"]')).toHaveCount(1);
+
+        await subTabs.getByText('Structural', { exact: true }).click();
+        await expect(methodSelect.locator('option[value="pattern-adapter"]')).toHaveCount(1);
+        await expect(methodSelect.locator('option[value="pattern-singleton"]')).toHaveCount(0);
+
+        await subTabs.getByText('Behavioral', { exact: true }).click();
+        await expect(methodSelect.locator('option[value="pattern-observer"]')).toHaveCount(1);
+
+        // Leaving Design Patterns hides the sub-tab row.
+        await nav.getByRole('button', { name: 'Sorting', exact: true }).click();
+        await expect(page.locator('.category-subtab-row.visible')).toHaveCount(0);
+    });
+
     test('Trie Trees: Submits string prefix and generates character-marked edges', async ({ page }) => {
         await loadMethod(page, 'tree-trie');
         const trieCard = page.locator('[data-method-section="tree-trie"]');
