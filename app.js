@@ -2824,8 +2824,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const cmpEl = wrap.querySelector('.strsearch-cmp');
         const matchesEl = wrap.querySelector('.strsearch-matches');
 
-        function draw(hi, lpsActive) {
-            alignEl.innerHTML = buildAlignmentRow(text, pattern, i - j, hi);
+        function draw(offset, hi, lpsActive) {
+            alignEl.innerHTML = buildAlignmentRow(text, pattern, offset, hi);
             let h = '';
             for (let k = 0; k < m; k++) {
                 h += '<span class="strsearch-lps-cell' + (k === lpsActive ? ' strsearch-lps-active' : '') +
@@ -2838,23 +2838,24 @@ document.addEventListener('DOMContentLoaded', () => {
         function step() {
             if (i >= text.length) return;
             comparisons++;
-            const ti = i, pj = j;
+            const ti = i, pj = j, drawOffset = i - j;
             if (text[i] === pattern[j]) {
                 i++; j++;
                 if (j === m) { matches.push(i - j); j = lps[j - 1]; }
-                draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'match' }, -1);
+                draw(drawOffset, { kind: 'cell', textIdx: ti, patIdx: pj, status: 'match' }, -1);
             } else if (j !== 0) {
+                const lpsActive = pj - 1;
                 j = lps[j - 1];
-                draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' }, pj - 1);
+                draw(drawOffset, { kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' }, lpsActive);
             } else {
                 i++;
-                draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' }, -1);
+                draw(drawOffset, { kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' }, -1);
             }
         }
         function reset() {
             i = 0; j = 0; comparisons = 0; matches = [];
             if (runTimer) { clearInterval(runTimer); runTimer = null; }
-            draw(null, -1);
+            draw(0, null, -1);
         }
         wrap.querySelector('[data-action="step"]').onclick = step;
         wrap.querySelector('[data-action="run"]').onclick = () => {
@@ -2865,7 +2866,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 500);
         };
         wrap.querySelector('[data-action="reset"]').onclick = reset;
-        draw(null, -1);
+        draw(0, null, -1);
     }
 
     function renderGraph() {
