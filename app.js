@@ -103,6 +103,7 @@ const METHOD_GROUPS = [
             { id: 'queue', title: 'Queue', file: 'queue.cpp', visualizer: 'queue', controls: 'standard' },
             { id: 'list-array', title: 'Array List', file: 'list_array.cpp', visualizer: 'array-list', controls: 'list' },
             { id: 'list-linked', title: 'Singly Linked List', file: 'list_linked.cpp', visualizer: 'linked-list', controls: 'list' },
+            { id: 'deque', title: 'Deque (Double-Ended Queue)', file: 'deque.cpp', visualizer: 'deque', controls: 'deque' },
         ],
     },
     {
@@ -220,6 +221,7 @@ function getCodeForMethod(methodId) {
         queue: codeQueue,
         'list-array': codeListArray,
         'list-linked': codeListLinked,
+        'deque': codeDeque,
         'tree-bst': codeTreeBST,
         'tree-avl': codeTreeAVL,
         'tree-rb': codeTreeRB,
@@ -1666,6 +1668,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'list-array') { codeTitle.textContent = 'list_array.cpp'; codeDisplay.textContent = codeListArray; listArrContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'list-linked') { codeTitle.textContent = 'list_linked.cpp'; codeDisplay.textContent = codeListLinked; listLLContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
+        else if (currentMode === 'deque') {
+            codeTitle.textContent = 'deque.cpp';
+            codeDisplay.textContent = codeDeque;
+        }
         else if (currentMode.includes('hash-')) {
             hashActions.classList.remove('hidden');
             if(currentMode === 'hash-chain') { codeTitle.textContent = 'hash_chaining.cpp'; codeDisplay.textContent = codeHashChain; hashChContainer.classList.remove('hidden'); }
@@ -1772,6 +1778,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
+        else if (currentMode === 'deque') renderDeque();
         else if (currentMode === 'graph-traversal') renderGraphDual();
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
         else if (currentMode === 'tree-dsu') renderDSU();
@@ -2696,6 +2703,60 @@ document.addEventListener('DOMContentLoaded', () => {
             refreshRanks();
         };
         if (resetBtn) resetBtn.onclick = () => { renderDSU(); };
+    }
+
+    function renderDeque() {
+        const host = acquireDynamicVizHost();
+        if (!Array.isArray(runtimeVisualizer._dequeData)) {
+            runtimeVisualizer._dequeData = [10, 20, 30];
+        }
+        const data = runtimeVisualizer._dequeData;
+        const wrap = document.createElement('div');
+        wrap.className = 'deque-wrap';
+        let html = '<div class="deque-caption">head &rarr; ... &rarr; tail</div>';
+        html += '<div class="deque-row">';
+        html += '<span class="deque-null">null</span>';
+        for (let i = 0; i < data.length; i++) {
+            html += '<span class="deque-arrow">&#8646;</span>';
+            const endClass = (i === 0 ? ' deque-head' : '') + (i === data.length - 1 ? ' deque-tail' : '');
+            html += '<span class="deque-node' + endClass + '" data-deque-idx="' + i + '">' + data[i] + '</span>';
+        }
+        html += '<span class="deque-arrow">&#8646;</span>';
+        html += '<span class="deque-null">null</span>';
+        html += '</div>';
+        html += '<div class="deque-controls" role="group">' +
+                    '<input type="number" value="42" data-deque-val>' +
+                    '<button type="button" data-action="push-front">Push Front</button>' +
+                    '<button type="button" data-action="push-back">Push Back</button>' +
+                    '<button type="button" data-action="pop-front">Pop Front</button>' +
+                    '<button type="button" data-action="pop-back">Pop Back</button>' +
+                '</div>';
+        wrap.innerHTML = html;
+        host.appendChild(wrap);
+
+        const valInput = wrap.querySelector('[data-deque-val]');
+        function readVal() {
+            const v = parseInt(valInput.value, 10);
+            return Number.isNaN(v) ? 0 : v;
+        }
+        wrap.querySelector('[data-action="push-front"]').onclick = () => {
+            data.unshift(readVal());
+            renderDeque();
+        };
+        wrap.querySelector('[data-action="push-back"]').onclick = () => {
+            data.push(readVal());
+            renderDeque();
+        };
+        wrap.querySelector('[data-action="pop-front"]').onclick = () => {
+            if (data.length === 0) { showStatus('Deque is empty', '#f87171'); return; }
+            data.shift();
+            renderDeque();
+        };
+        wrap.querySelector('[data-action="pop-back"]').onclick = () => {
+            if (data.length === 0) { showStatus('Deque is empty', '#f87171'); return; }
+            data.pop();
+            renderDeque();
+        };
     }
 
     function renderGraph() {

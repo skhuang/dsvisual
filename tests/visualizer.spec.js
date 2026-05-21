@@ -342,6 +342,18 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.dsu-tree')).toHaveCount(7);
     });
 
+    test('Linear: Deque renders 3 nodes and supports push/pop at both ends', async ({ page }) => {
+        await loadMethod(page, 'deque');
+        const card = page.locator('[data-method-section="deque"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('deque.cpp');
+        await expect(card.locator('.deque-node')).toHaveCount(3);
+        await card.locator('[data-deque-val]').fill('99');
+        await card.locator('[data-action="push-front"]').click();
+        await expect(card.locator('.deque-node')).toHaveCount(4);
+        await card.locator('[data-action="pop-back"]').click();
+        await expect(card.locator('.deque-node')).toHaveCount(3);
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
