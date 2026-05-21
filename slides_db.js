@@ -15946,6 +15946,92 @@ const SLIDES_DB = {
       }
     ]
   },
+  "pattern-mvc": {
+    "category": "Design Patterns",
+    "title": { "zh": "MVC 模式", "en": "MVC Pattern" },
+    "slides": [
+      {
+        "heading": { "zh": "MVC（Model-View-Controller）", "en": "MVC (Model-View-Controller)" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "MVC 把應用拆成三個角色:Model（資料與狀態）、View（呈現）、Controller（處理輸入),以分離關注點。",
+              "en": "MVC splits an application into three roles — Model (data and state), View (presentation), and Controller (input handling) — to separate concerns." } }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "Controller 接收使用者輸入並更新 Model;Model 改變後通知 View 重新呈現。三者各司其職,可獨立替換與測試。",
+              "en": "The Controller receives user input and updates the Model; when the Model changes, the View re-renders. Each role has one job and can be replaced or tested independently." } },
+          { "type": "bullets", "items": [
+              { "zh": "Model 不知道 View 或 Controller —— 只管資料與規則。", "en": "The Model knows nothing of the View or Controller — it owns data and rules only." },
+              { "zh": "View 只負責呈現,從 Model 讀資料。", "en": "The View only renders, reading data from the Model." },
+              { "zh": "Controller 是輸入與更新的協調者。", "en": "The Controller coordinates input and updates." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          { "type": "steps", "items": [
+              { "zh": "使用者輸入抵達 Controller。", "en": "User input reaches the Controller." },
+              { "zh": "Controller 更新 Model 的資料與狀態。", "en": "The Controller updates the Model's data and state." },
+              { "zh": "Model 變更後,View 從 Model 讀取並重新呈現。", "en": "After the Model changes, the View reads from it and re-renders." }
+          ] },
+          { "type": "mermaid", "code": "flowchart LR\n  U[\"User input\"] --> C[\"Controller\"]\n  C --> M[\"Model\"]\n  M --> V[\"View\"]\n  V --> U" }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 150\" width=\"360\"><g font-family=\"monospace\" font-size=\"12\"><rect x=\"120\" y=\"10\" width=\"120\" height=\"34\" fill=\"none\" stroke=\"#f59e0b\"/><text x=\"180\" y=\"31\" text-anchor=\"middle\" fill=\"#f59e0b\">Controller</text><rect x=\"20\" y=\"100\" width=\"120\" height=\"34\" fill=\"none\" stroke=\"#34d399\"/><text x=\"80\" y=\"121\" text-anchor=\"middle\" fill=\"#34d399\">Model</text><rect x=\"220\" y=\"100\" width=\"120\" height=\"34\" fill=\"none\" stroke=\"#60a5fa\"/><text x=\"280\" y=\"121\" text-anchor=\"middle\" fill=\"#60a5fa\">View</text><line x1=\"140\" y1=\"44\" x2=\"80\" y2=\"100\" stroke=\"#64748b\"/><line x1=\"140\" y1=\"117\" x2=\"220\" y2=\"117\" stroke=\"#64748b\"/><line x1=\"280\" y1=\"100\" x2=\"220\" y2=\"44\" stroke=\"#64748b\"/></g></svg>" },
+          { "type": "note", "text": {
+              "zh": "visualizer 以三角佈局呈現:Controller 在上,Model 與 View 在下,箭頭表示 updates / notifies / user input。",
+              "en": "The visualizer uses a triangle layout: Controller on top, Model and View below, with arrows for updates / notifies / user input." } }
+        ]
+      },
+      {
+        "heading": { "zh": "取捨與使用時機", "en": "Trade-offs & When to Use" },
+        "blocks": [
+          { "type": "table",
+            "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "說明", "en": "Notes" } ],
+            "rows": [
+              [ { "zh": "關注點分離", "en": "Separation of concerns" }, { "zh": "資料、呈現、輸入各自獨立", "en": "Data, presentation, input are independent" } ],
+              [ { "zh": "可測試性", "en": "Testability" }, { "zh": "Model 可不靠 UI 單獨測試", "en": "The Model can be tested without a UI" } ],
+              [ { "zh": "成本", "en": "Cost" }, { "zh": "小程式會顯得過度設計", "en": "Overkill for very small programs" } ]
+            ] }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          { "type": "code", "lang": "cpp", "code": "class Controller {\n    Model& model;\n    View& view;\npublic:\n    Controller(Model& m, View& v) : model(m), view(v) {}\n    void handleInput(const string& input) {\n        model.setData(input);\n        view.render(model);\n    }\n};" }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "優點:三個角色可獨立開發、替換、測試。", "en": "Pro: the three roles can be developed, replaced, and tested independently." },
+              { "zh": "優點:同一 Model 可搭配多個 View。", "en": "Pro: one Model can drive multiple Views." },
+              { "zh": "缺點:角色間的協調對小程式而言是額外負擔。", "en": "Con: the coordination between roles is overhead for small programs." },
+              { "zh": "適用:具使用者介面、需長期維護的應用。", "en": "Use for applications with a user interface that need long-term maintenance." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "Model / View / Controller 分離資料、呈現、輸入。", "en": "Model / View / Controller separate data, presentation, and input." },
+              { "zh": "Controller 更新 Model,Model 通知 View。", "en": "The Controller updates the Model; the Model notifies the View." },
+              { "zh": "是 UI 架構的經典基礎,衍生出 MVP、MVVM。", "en": "The classic UI-architecture foundation; MVP and MVVM derive from it." }
+          ] }
+        ]
+      }
+    ]
+  },
   "oop-encapsulation": {
     "category": "OOP Concepts",
     "title": {
