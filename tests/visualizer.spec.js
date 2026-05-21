@@ -419,6 +419,14 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('#pattern-pipefilter-svg rect')).toHaveCount(5);
     });
 
+    test('Architectural: Dependency Injection renders the wiring diagram', async ({ page }) => {
+        await loadMethod(page, 'pattern-di');
+        const card = page.locator('[data-method-section="pattern-di"]');
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        await expect(card.locator('.code-panel-filename')).toContainText('pattern_di.cpp');
+        await expect(card.locator('#pattern-di-svg rect')).toHaveCount(3);
+    });
+
     test('Trees: Disjoint Set renders 8 nodes initially and supports union', async ({ page }) => {
         await loadMethod(page, 'tree-dsu');
         const card = page.locator('[data-method-section="tree-dsu"]');

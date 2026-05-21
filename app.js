@@ -239,6 +239,7 @@ const METHOD_GROUPS = [
             { id: 'pattern-layered', title: 'Layered Architecture', file: 'pattern_layered.cpp', visualizer: 'pattern', controls: 'pattern' },
             { id: 'pattern-pubsub', title: 'Publish-Subscribe', file: 'pattern_pubsub.cpp', visualizer: 'pattern', controls: 'pattern' },
             { id: 'pattern-pipefilter', title: 'Pipe-and-Filter', file: 'pattern_pipefilter.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-di', title: 'Dependency Injection', file: 'pattern_di.cpp', visualizer: 'pattern', controls: 'pattern' },
         ],
     },
 ];
@@ -320,6 +321,7 @@ function getCodeForMethod(methodId) {
         'pattern-layered': codePatternLayered,
         'pattern-pubsub': codePatternPubSub,
         'pattern-pipefilter': codePatternPipeFilter,
+        'pattern-di': codePatternDI,
     };
     return codeByMethod[methodId] || '// Source code pending.';
 }
@@ -1924,6 +1926,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codePatternPipeFilter;
                 document.getElementById('pattern-pipefilter-view').classList.remove('hidden');
                 patternModeSelect.value = 'pipefilter';
+            }
+            else if (currentMode === 'pattern-di') {
+                codeTitle.textContent = 'pattern_di.cpp';
+                codeDisplay.textContent = codePatternDI;
+                document.getElementById('pattern-di-view').classList.remove('hidden');
+                patternModeSelect.value = 'di';
             }
         }
         syncHeapTutorialChrome();
@@ -4169,6 +4177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'layered') renderPatternLayered();
         else if (mode === 'pubsub') renderPatternPubSub();
         else if (mode === 'pipefilter') renderPatternPipeFilter();
+        else if (mode === 'di') renderPatternDI();
     }
 
     function renderPatternSingleton() {
@@ -4627,6 +4636,24 @@ document.addEventListener('DOMContentLoaded', () => {
         drawOopLabel(svg, 250, 220, 'data flows through each filter via pipes', '#94a3b8');
     }
 
+    function renderPatternDI() {
+        const svg = document.getElementById('pattern-di-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopBox(svg, { x: 150, y: 24, w: 210, h: 56, title: 'Composition Root', titleColor: '#ec4899',
+            lines: [ { text: 'wires dependencies', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 50, y: 192, w: 180, h: 70, title: 'ConsoleService', titleColor: '#34d399',
+            lines: [ { text: 'concrete Service', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 290, y: 192, w: 180, h: 70, title: 'Consumer', titleColor: '#60a5fa',
+            lines: [ { text: 'depends on Service', color: '#cbd5e1' }, { text: 'never calls new', color: '#cbd5e1' } ] });
+        drawOopLine(svg, 210, 80, 140, 192);   // Composition Root -> Service
+        drawOopLine(svg, 300, 80, 380, 192);   // Composition Root -> Consumer
+        drawOopLine(svg, 230, 227, 290, 227);  // Service injected -> Consumer
+        drawOopLabel(svg, 150, 150, 'creates', '#34d399');
+        drawOopLabel(svg, 360, 150, 'injects', '#60a5fa');
+        drawOopLabel(svg, 260, 248, 'inject', '#ec4899');
+    }
+
     function createArrow(svg, x1, y1, x2, y2, color) {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', x1); line.setAttribute('y1', y1);
@@ -4749,6 +4776,13 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus('Each filter transforms the data and passes it on', '#34d399');
             await sleep(700);
             showStatus('Trim -> Upper -> Exclaim -> Output', '#60a5fa');
+        }
+        else if (mode === 'di') {
+            showStatus('Composition root creates the concrete ConsoleService...', '#34d399');
+            await sleep(700);
+            showStatus('Service is injected into the Consumer constructor', '#60a5fa');
+            await sleep(700);
+            showStatus('Consumer depends only on the Service abstraction — easy to test', '#ec4899');
         }
     }
 });
