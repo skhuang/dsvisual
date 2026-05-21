@@ -496,11 +496,15 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="bloom-filter"]');
         await expect(card.locator('.code-panel-filename')).toContainText('bloom_filter.cpp');
         await expect(card.locator('.bloom-cell')).toHaveCount(32);
-        await expect(card.locator('.bloom-cell.bloom-on').first()).toBeVisible();
+        const onBefore = await card.locator('.bloom-cell.bloom-on').count();
+        expect(onBefore).toBeGreaterThan(0);
         await card.locator('[data-bloom-val]').fill('zebra');
         await card.locator('[data-action="bloom-insert"]').click();
+        const onAfter = await card.locator('.bloom-cell.bloom-on').count();
+        expect(onAfter).toBeGreaterThanOrEqual(onBefore);
         await card.locator('[data-action="bloom-query"]').click();
         await expect(card.locator('[data-testid="bloom-hashes"]')).toContainText('zebra');
+        await expect(card.locator('.bloom-cell.bloom-hit').first()).toBeVisible();
     });
 
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {

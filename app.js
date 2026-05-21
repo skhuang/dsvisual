@@ -2987,10 +2987,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         html += '</div>';
         html += '<div class="bloom-hashes" data-testid="bloom-hashes"></div>';
-        html += '<div class="bloom-items"><strong>inserted:</strong> <span class="bloom-items-list">' +
-                items.join(', ') + '</span></div>';
+        html += '<div class="bloom-items"><strong>inserted:</strong> <span class="bloom-items-list"></span></div>';
         html += '<div class="bloom-controls" role="group">' +
-                    '<input type="text" value="' + savedVal + '" data-bloom-val>' +
+                    '<input type="text" data-bloom-val>' +
                     '<button type="button" data-action="bloom-insert">Insert</button>' +
                     '<button type="button" data-action="bloom-query">Query</button>' +
                 '</div>';
@@ -2998,8 +2997,10 @@ document.addEventListener('DOMContentLoaded', () => {
         host.appendChild(wrap);
 
         const valInput = wrap.querySelector('[data-bloom-val]');
+        valInput.value = savedVal;
+        wrap.querySelector('.bloom-items-list').textContent = items.join(', ');
         const hashesEl = wrap.querySelector('.bloom-hashes');
-        valInput.addEventListener('input', () => { runtimeVisualizer._bloomInputVal = valInput.value; });
+        valInput.addEventListener('input', () => { runtimeVisualizer._bloomInputVal = valInput.value.trim(); });
         function highlight(idxs, cls) {
             wrap.querySelectorAll('.bloom-cell').forEach((c) => c.classList.remove('bloom-hit', 'bloom-miss'));
             for (const i of idxs) {
