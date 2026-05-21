@@ -196,6 +196,7 @@ const METHOD_GROUPS = [
             { id: 'oop-encapsulation', title: 'Encapsulation & Access', file: 'oop_encapsulation.cpp', visualizer: 'oop', controls: 'oop' },
             { id: 'oop-abstraction', title: 'Abstraction (Abstract Classes)', file: 'oop_abstraction.cpp', visualizer: 'oop', controls: 'oop' },
             { id: 'oop-adhoc', title: 'Ad-hoc Polymorphism (Overloading)', file: 'oop_adhoc.cpp', visualizer: 'oop', controls: 'oop' },
+            { id: 'oop-templates', title: 'Parametric Polymorphism (Templates)', file: 'oop_templates.cpp', visualizer: 'oop', controls: 'oop' },
         ],
     },
     {
@@ -278,6 +279,7 @@ function getCodeForMethod(methodId) {
         'oop-encapsulation': codeOOPEncapsulation,
         'oop-abstraction': codeOOPAbstraction,
         'oop-adhoc': codeOOPAdhoc,
+        'oop-templates': codeOOPTemplates,
         'pattern-singleton': codePatternSingleton,
         'pattern-factory': codePatternFactory,
         'pattern-adapter': codePatternAdapter,
@@ -789,6 +791,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const oopEncapsulationView = document.getElementById('oop-encapsulation-view');
     const oopAbstractionView = document.getElementById('oop-abstraction-view');
     const oopAdhocView = document.getElementById('oop-adhoc-view');
+    const oopTemplatesView = document.getElementById('oop-templates-view');
 
     const patternActions = document.getElementById('pattern-actions');
     const patternModeSelect = document.getElementById('pattern-mode-select');
@@ -1742,6 +1745,7 @@ document.addEventListener('DOMContentLoaded', () => {
             oopEncapsulationView.classList.add('hidden');
             oopAbstractionView.classList.add('hidden');
             oopAdhocView.classList.add('hidden');
+            oopTemplatesView.classList.add('hidden');
             if (currentMode === 'oop-inheritance') {
                 codeTitle.textContent = 'oop_inheritance.cpp';
                 codeDisplay.textContent = codeOOPInheritance;
@@ -1771,6 +1775,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codeOOPAdhoc;
                 oopAdhocView.classList.remove('hidden');
                 oopModeSelect.value = 'adhoc';
+            }
+            else if (currentMode === 'oop-templates') {
+                codeTitle.textContent = 'oop_templates.cpp';
+                codeDisplay.textContent = codeOOPTemplates;
+                oopTemplatesView.classList.remove('hidden');
+                oopModeSelect.value = 'templates';
             }
         }
         else if (currentMode.includes('pattern-')) {
@@ -3641,6 +3651,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'encapsulation') renderOOPEncapsulation();
         else if (mode === 'abstraction') renderOOPAbstraction();
         else if (mode === 'adhoc') renderOOPAdhoc();
+        else if (mode === 'templates') renderOOPTemplates();
     }
 
     function renderOOPInheritance() {
@@ -3959,6 +3970,25 @@ document.addEventListener('DOMContentLoaded', () => {
             lines: [ { text: 'Vector2D::operator+', color: '#cbd5e1' } ] });
         drawOopLine(svg, 190, 256, 310, 256);
         drawOopLabel(svg, 250, 322, 'Same name, chosen by argument types — no runtime dispatch', '#fbbf24');
+    }
+
+    function renderOOPTemplates() {
+        const svg = document.getElementById('oop-templates-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        // Template blueprint — dashed box.
+        drawOopBox(svg, { x: 160, y: 30, w: 180, h: 70, title: 'template<typename T>', titleColor: '#a78bfa', dashed: true,
+            lines: [ { text: 'class Box { T value; }', color: '#fbbf24' } ] });
+        drawOopLabel(svg, 250, 125, 'compiler instantiates one concrete class per type', '#94a3b8');
+        // Concrete instantiations.
+        const insts = [ 'Box<int>', 'Box<double>', 'Box<string>' ];
+        for (let i = 0; i < 3; i++) {
+            const x = 40 + i * 150;
+            drawOopBox(svg, { x: x, y: 160, w: 130, h: 60, title: insts[i], titleColor: '#34d399',
+                lines: [ { text: 'concrete class', color: '#cbd5e1' } ] });
+            drawOopLine(svg, 250, 100, x + 65, 160);
+        }
+        drawOopLabel(svg, 250, 290, 'One blueprint  ->  many concrete types (compile-time)', '#fbbf24');
     }
 
     // OOP Button Listeners
