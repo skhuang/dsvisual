@@ -6,14 +6,23 @@ async function loadMethod(page, methodId) {
     const methodSelect = page.locator('[data-testid="method-select"]');
     const count = await categoryButtons.count();
 
+    async function trySelect() {
+        const hasOption = await methodSelect.locator(`option[value="${methodId}"]`).count();
+        if (!hasOption) return false;
+        await methodSelect.selectOption(methodId);
+        const card = page.locator(`[data-method-section="${methodId}"]`);
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        return true;
+    }
+
     for (let i = 0; i < count; i++) {
         await categoryButtons.nth(i).click();
-        const hasOption = await methodSelect.locator(`option[value="${methodId}"]`).count();
-        if (hasOption) {
-            await methodSelect.selectOption(methodId);
-            const card = page.locator(`[data-method-section="${methodId}"]`);
-            await expect(card).toHaveAttribute('data-runtime-state', 'active');
-            return;
+        if (await trySelect()) return;
+        const subTabs = page.locator('.category-subtab-row.visible .category-subtab-btn');
+        const tabCount = await subTabs.count();
+        for (let t = 0; t < tabCount; t++) {
+            await subTabs.nth(t).click();
+            if (await trySelect()) return;
         }
     }
     throw new Error(`Method ${methodId} not found in method dropdown`);
@@ -114,6 +123,29 @@ test.describe('Data Structure Visualizer Full Suite', () => {
             await expect(page.locator('[data-testid="method-sections"] [data-method-section]')).toHaveCount(1);
             await expect(page.locator(`[data-method-section="${methodId}"]`)).toHaveAttribute('data-runtime-state', 'active');
         }
+    });
+
+    test('Design Patterns sub-tabs: switch the method list by GoF category', async ({ page }) => {
+        const nav = page.locator('[data-testid="category-nav"]');
+        await nav.getByRole('button', { name: 'Design Patterns', exact: true }).click();
+
+        const subTabs = page.locator('.category-subtab-row.visible .category-subtab-btn');
+        await expect(subTabs).toHaveCount(3);
+
+        const methodSelect = page.locator('[data-testid="method-select"]');
+        // Default sub-tab is Creational.
+        await expect(methodSelect.locator('option[value="pattern-singleton"]')).toHaveCount(1);
+
+        await subTabs.getByText('Structural', { exact: true }).click();
+        await expect(methodSelect.locator('option[value="pattern-adapter"]')).toHaveCount(1);
+        await expect(methodSelect.locator('option[value="pattern-singleton"]')).toHaveCount(0);
+
+        await subTabs.getByText('Behavioral', { exact: true }).click();
+        await expect(methodSelect.locator('option[value="pattern-observer"]')).toHaveCount(1);
+
+        // Leaving Design Patterns hides the sub-tab row.
+        await nav.getByRole('button', { name: 'Sorting', exact: true }).click();
+        await expect(page.locator('.category-subtab-row.visible')).toHaveCount(0);
     });
 
     test('Trie Trees: Submits string prefix and generates character-marked edges', async ({ page }) => {
