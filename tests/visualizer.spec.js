@@ -384,6 +384,17 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.rk-hc')).toContainText('1');
     });
 
+    test('String: String Matching Compared renders 3 panes and steps all', async ({ page }) => {
+        await loadMethod(page, 'search-strcompare');
+        const card = page.locator('[data-method-section="search-strcompare"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_strcompare.cpp');
+        await expect(card.locator('.strcompare-pane')).toHaveCount(3);
+        await card.locator('[data-action="step"]').click();
+        const counts = card.locator('.strcompare-cmp');
+        await expect(counts.nth(0)).toContainText('1');
+        await expect(counts.nth(2)).toContainText('1');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
