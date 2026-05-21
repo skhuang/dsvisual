@@ -288,6 +288,14 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(oopCard.locator('.method-section-visual')).toBeVisible();
     });
 
+    test('OOP Abstraction: renders abstract class hierarchy', async ({ page }) => {
+        await loadMethod(page, 'oop-abstraction');
+        const oopCard = page.locator('[data-method-section="oop-abstraction"]');
+        await expect(oopCard).toHaveAttribute('data-runtime-state', 'active');
+        await expect(oopCard.locator('.code-panel-filename')).toContainText('oop_abstraction.cpp');
+        await expect(oopCard.locator('#oop-abstraction-svg rect')).toHaveCount(3);
+    });
+
     // Design Patterns Tests
     test('Design Patterns: Singleton - Renders and demo runs', async ({ page }) => {
         await loadMethod(page, 'pattern-singleton');

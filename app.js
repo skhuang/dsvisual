@@ -194,6 +194,7 @@ const METHOD_GROUPS = [
             { id: 'oop-inheritance', title: 'Class Inheritance', file: 'oop_inheritance.cpp', visualizer: 'oop', controls: 'oop' },
             { id: 'oop-polymorphism', title: 'Polymorphism (Virtual)', file: 'oop_polymorphism.cpp', visualizer: 'oop', controls: 'oop' },
             { id: 'oop-encapsulation', title: 'Encapsulation & Access', file: 'oop_encapsulation.cpp', visualizer: 'oop', controls: 'oop' },
+            { id: 'oop-abstraction', title: 'Abstraction (Abstract Classes)', file: 'oop_abstraction.cpp', visualizer: 'oop', controls: 'oop' },
         ],
     },
     {
@@ -274,6 +275,7 @@ function getCodeForMethod(methodId) {
         'oop-inheritance': codeOOPInheritance,
         'oop-polymorphism': codeOOPPolymorphism,
         'oop-encapsulation': codeOOPEncapsulation,
+        'oop-abstraction': codeOOPAbstraction,
         'pattern-singleton': codePatternSingleton,
         'pattern-factory': codePatternFactory,
         'pattern-adapter': codePatternAdapter,
@@ -783,6 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const oopInheritanceView = document.getElementById('oop-inheritance-view');
     const oopPolymorphismView = document.getElementById('oop-polymorphism-view');
     const oopEncapsulationView = document.getElementById('oop-encapsulation-view');
+    const oopAbstractionView = document.getElementById('oop-abstraction-view');
 
     const patternActions = document.getElementById('pattern-actions');
     const patternModeSelect = document.getElementById('pattern-mode-select');
@@ -1734,6 +1737,7 @@ document.addEventListener('DOMContentLoaded', () => {
             oopInheritanceView.classList.add('hidden');
             oopPolymorphismView.classList.add('hidden');
             oopEncapsulationView.classList.add('hidden');
+            oopAbstractionView.classList.add('hidden');
             if (currentMode === 'oop-inheritance') {
                 codeTitle.textContent = 'oop_inheritance.cpp';
                 codeDisplay.textContent = codeOOPInheritance;
@@ -1751,6 +1755,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codeOOPEncapsulation;
                 oopEncapsulationView.classList.remove('hidden');
                 oopModeSelect.value = 'encapsulation';
+            }
+            else if (currentMode === 'oop-abstraction') {
+                codeTitle.textContent = 'oop_abstraction.cpp';
+                codeDisplay.textContent = codeOOPAbstraction;
+                oopAbstractionView.classList.remove('hidden');
+                oopModeSelect.value = 'abstraction';
             }
         }
         else if (currentMode.includes('pattern-')) {
@@ -3576,11 +3586,50 @@ document.addEventListener('DOMContentLoaded', () => {
     // End original routines mappings
 
     // OOP Visualization Functions
+    function oopSvgEl(tag, attrs) {
+        const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (const k in attrs) el.setAttribute(k, String(attrs[k]));
+        return el;
+    }
+    // Draws a class box: a rect + a bold title + member-line texts. opts:
+    // { x, y, w, h, title, titleColor, lines:[{text,color}], dashed }
+    function drawOopBox(svg, opts) {
+        const rect = oopSvgEl('rect', { x: opts.x, y: opts.y, width: opts.w, height: opts.h, class: 'oop-class-rect' });
+        if (opts.dashed) rect.setAttribute('stroke-dasharray', '6 4');
+        svg.appendChild(rect);
+        const cx = opts.x + opts.w / 2;
+        const title = oopSvgEl('text', {
+            x: cx, y: opts.y + 22, 'text-anchor': 'middle', class: 'oop-member-text',
+            style: 'font-weight:bold;fill:' + (opts.titleColor || '#60a5fa') + ';' + (opts.dashed ? 'font-style:italic;' : ''),
+        });
+        title.textContent = opts.title;
+        svg.appendChild(title);
+        (opts.lines || []).forEach((ln, i) => {
+            const t = oopSvgEl('text', {
+                x: cx, y: opts.y + 44 + i * 17, 'text-anchor': 'middle', class: 'oop-member-text',
+                style: 'font-size:11px;fill:' + (ln.color || '#cbd5e1') + ';',
+            });
+            t.textContent = ln.text;
+            svg.appendChild(t);
+        });
+    }
+    function drawOopLabel(svg, x, y, text, color) {
+        const t = oopSvgEl('text', {
+            x: x, y: y, 'text-anchor': 'middle', class: 'oop-member-text',
+            style: 'font-size:11px;fill:' + (color || '#cbd5e1') + ';',
+        });
+        t.textContent = text;
+        svg.appendChild(t);
+    }
+    function drawOopLine(svg, x1, y1, x2, y2) {
+        svg.appendChild(oopSvgEl('line', { x1: x1, y1: y1, x2: x2, y2: y2, class: 'oop-inheritance-line' }));
+    }
     function renderOOP() {
         const mode = oopModeSelect.value;
         if (mode === 'inheritance') renderOOPInheritance();
         else if (mode === 'polymorphism') renderOOPPolymorphism();
         else if (mode === 'encapsulation') renderOOPEncapsulation();
+        else if (mode === 'abstraction') renderOOPAbstraction();
     }
 
     function renderOOPInheritance() {
@@ -3856,6 +3905,26 @@ document.addEventListener('DOMContentLoaded', () => {
             text.textContent = '- ' + m;
             svg.appendChild(text);
         });
+    }
+
+    function renderOOPAbstraction() {
+        const svg = document.getElementById('oop-abstraction-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        // Abstract base class — dashed box.
+        drawOopBox(svg, { x: 175, y: 30, w: 150, h: 70, title: 'Shape «abstract»', titleColor: '#a78bfa', dashed: true,
+            lines: [ { text: '+ area() = 0', color: '#fbbf24' } ] });
+        // Concrete derived classes.
+        drawOopBox(svg, { x: 60, y: 190, w: 150, h: 70, title: 'Circle', titleColor: '#f472b6',
+            lines: [ { text: '+ area() override', color: '#34d399' } ] });
+        drawOopBox(svg, { x: 290, y: 190, w: 150, h: 70, title: 'Rectangle', titleColor: '#f472b6',
+            lines: [ { text: '+ area() override', color: '#34d399' } ] });
+        // Inheritance arrows (derived -> base).
+        drawOopLine(svg, 135, 190, 230, 100);
+        drawOopLine(svg, 365, 190, 270, 100);
+        // Annotations.
+        drawOopLabel(svg, 250, 295, 'Shape s;  ->  compile error (abstract)', '#ef4444');
+        drawOopLabel(svg, 250, 318, 'Shape* p = new Circle();  ->  OK', '#34d399');
     }
 
     // OOP Button Listeners
