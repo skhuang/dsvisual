@@ -237,6 +237,7 @@ const METHOD_GROUPS = [
         methods: [
             { id: 'pattern-mvc', title: 'MVC (Model-View-Controller)', file: 'pattern_mvc.cpp', visualizer: 'pattern', controls: 'pattern' },
             { id: 'pattern-layered', title: 'Layered Architecture', file: 'pattern_layered.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-pubsub', title: 'Publish-Subscribe', file: 'pattern_pubsub.cpp', visualizer: 'pattern', controls: 'pattern' },
         ],
     },
 ];
@@ -316,6 +317,7 @@ function getCodeForMethod(methodId) {
         'pattern-strategy': codePatternStrategy,
         'pattern-mvc': codePatternMVC,
         'pattern-layered': codePatternLayered,
+        'pattern-pubsub': codePatternPubSub,
     };
     return codeByMethod[methodId] || '// Source code pending.';
 }
@@ -1908,6 +1910,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codePatternLayered;
                 document.getElementById('pattern-layered-view').classList.remove('hidden');
                 patternModeSelect.value = 'layered';
+            }
+            else if (currentMode === 'pattern-pubsub') {
+                codeTitle.textContent = 'pattern_pubsub.cpp';
+                codeDisplay.textContent = codePatternPubSub;
+                document.getElementById('pattern-pubsub-view').classList.remove('hidden');
+                patternModeSelect.value = 'pubsub';
             }
         }
         syncHeapTutorialChrome();
@@ -4151,6 +4159,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'strategy') renderPatternStrategy();
         else if (mode === 'mvc') renderPatternMVC();
         else if (mode === 'layered') renderPatternLayered();
+        else if (mode === 'pubsub') renderPatternPubSub();
     }
 
     function renderPatternSingleton() {
@@ -4570,6 +4579,25 @@ document.addEventListener('DOMContentLoaded', () => {
         drawOopLabel(svg, 320, 204, 'calls', '#94a3b8');
     }
 
+    function renderPatternPubSub() {
+        const svg = document.getElementById('pattern-pubsub-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopBox(svg, { x: 24, y: 130, w: 120, h: 58, title: 'Publisher', titleColor: '#f59e0b',
+            lines: [ { text: 'emits events', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 196, y: 130, w: 120, h: 58, title: 'EventBus', titleColor: '#a78bfa',
+            lines: [ { text: 'broker', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 372, y: 36, w: 116, h: 50, title: 'Subscriber A', titleColor: '#34d399' });
+        drawOopBox(svg, { x: 372, y: 134, w: 116, h: 50, title: 'Subscriber B', titleColor: '#34d399' });
+        drawOopBox(svg, { x: 372, y: 232, w: 116, h: 50, title: 'Subscriber C', titleColor: '#34d399' });
+        drawOopLine(svg, 144, 159, 196, 159);   // Publisher -> EventBus
+        drawOopLine(svg, 316, 159, 372, 61);    // EventBus -> A
+        drawOopLine(svg, 316, 159, 372, 159);   // EventBus -> B
+        drawOopLine(svg, 316, 159, 372, 257);   // EventBus -> C
+        drawOopLabel(svg, 170, 150, 'publish', '#f59e0b');
+        drawOopLabel(svg, 344, 110, 'notify', '#34d399');
+    }
+
     function createArrow(svg, x1, y1, x2, y2, color) {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', x1); line.setAttribute('y1', y1);
@@ -4678,6 +4706,13 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus('Business layer applies rules, calls the layer below', '#f59e0b');
             await sleep(700);
             showStatus('Data layer returns raw records — each layer calls only downward', '#34d399');
+        }
+        else if (mode === 'pubsub') {
+            showStatus('Publisher emits an event to the EventBus...', '#f59e0b');
+            await sleep(700);
+            showStatus('EventBus fans the event out to every subscriber', '#a78bfa');
+            await sleep(700);
+            showStatus('Subscribers A, B, C all receive it — fully decoupled', '#34d399');
         }
     }
 });
