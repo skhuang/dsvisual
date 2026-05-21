@@ -288,6 +288,30 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(oopCard.locator('.method-section-visual')).toBeVisible();
     });
 
+    test('OOP Abstraction: renders abstract class hierarchy', async ({ page }) => {
+        await loadMethod(page, 'oop-abstraction');
+        const oopCard = page.locator('[data-method-section="oop-abstraction"]');
+        await expect(oopCard).toHaveAttribute('data-runtime-state', 'active');
+        await expect(oopCard.locator('.code-panel-filename')).toContainText('oop_abstraction.cpp');
+        await expect(oopCard.locator('#oop-abstraction-svg rect')).toHaveCount(3);
+    });
+
+    test('OOP Ad-hoc: renders overload-resolution diagram', async ({ page }) => {
+        await loadMethod(page, 'oop-adhoc');
+        const oopCard = page.locator('[data-method-section="oop-adhoc"]');
+        await expect(oopCard).toHaveAttribute('data-runtime-state', 'active');
+        await expect(oopCard.locator('.code-panel-filename')).toContainText('oop_adhoc.cpp');
+        await expect(oopCard.locator('#oop-adhoc-svg rect')).toHaveCount(8);
+    });
+
+    test('OOP Templates: renders template instantiation diagram', async ({ page }) => {
+        await loadMethod(page, 'oop-templates');
+        const oopCard = page.locator('[data-method-section="oop-templates"]');
+        await expect(oopCard).toHaveAttribute('data-runtime-state', 'active');
+        await expect(oopCard.locator('.code-panel-filename')).toContainText('oop_templates.cpp');
+        await expect(oopCard.locator('#oop-templates-svg rect')).toHaveCount(4);
+    });
+
     // Design Patterns Tests
     test('Design Patterns: Singleton - Renders and demo runs', async ({ page }) => {
         await loadMethod(page, 'pattern-singleton');
