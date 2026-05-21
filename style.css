@@ -1784,3 +1784,77 @@ pre.code-panel-body[class*="language-"] {
     border: 1px solid var(--card-border, #cbd5e1);
     border-radius: 4px;
 }
+
+/* ----- Spec 2b: string-search visualizers ----- */
+.strsearch-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+}
+.strsearch-row {
+    display: flex;
+    gap: 2px;
+}
+.strsearch-cell {
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--card-border, #cbd5e1);
+    border-radius: 3px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    background: var(--card-bg, #f8fafc);
+}
+.strsearch-cell.strsearch-spacer {
+    border-color: transparent;
+    background: transparent;
+}
+.strsearch-cell.strsearch-match { background: #10b981; color: #fff; border-color: #10b981; }
+.strsearch-cell.strsearch-mismatch { background: #ef4444; color: #fff; border-color: #ef4444; }
+.strsearch-cell.strsearch-collision { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+.strsearch-pattern { margin-top: 2px; }
+.strsearch-lps, .strsearch-hash, .strsearch-stats {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+}
+.strsearch-lps-cell, .strsearch-bm-cell {
+    display: inline-flex;
+    width: 26px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--card-border, #cbd5e1);
+    border-radius: 3px;
+    margin-right: 2px;
+}
+.strsearch-lps-cell.strsearch-lps-active { background: #f59e0b; color: #fff; border-color: #f59e0b; }
+.strsearch-controls {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.strsearch-shift-note { font-size: 0.78rem; color: var(--accent, #1e40af); }
+/* ----- Spec 2b: string-matching comparison (3-pane) ----- */
+.strcompare-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+}
+.strcompare-pane {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid var(--card-border, #cbd5e1);
+    border-radius: 8px;
+    background: var(--card-bg, #f8fafc);
+}
+.strcompare-pane h4 {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--accent, #1e40af);
+}

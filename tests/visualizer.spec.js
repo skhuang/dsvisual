@@ -354,6 +354,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.deque-node')).toHaveCount(3);
     });
 
+    test('String: KMP renders text/pattern rows + LPS table and steps', async ({ page }) => {
+        await loadMethod(page, 'search-kmp');
+        const card = page.locator('[data-method-section="search-kmp"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_kmp.cpp');
+        await expect(card.locator('.strsearch-text .strsearch-cell')).toHaveCount(19);
+        await expect(card.locator('.strsearch-lps-cell')).toHaveCount(9);
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="kmp-stats"]')).toContainText('comparisons: 1');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));

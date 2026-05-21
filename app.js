@@ -181,6 +181,7 @@ const METHOD_GROUPS = [
         methods: [
             { id: 'search-linear', title: 'Linear Search', file: 'search_linear.cpp', visualizer: 'search', controls: 'search' },
             { id: 'search-binary', title: 'Binary Search', file: 'search_binary.cpp', visualizer: 'search', controls: 'search' },
+            { id: 'search-kmp', title: 'KMP (Knuth-Morris-Pratt)', file: 'search_kmp.cpp', visualizer: 'string-search', controls: 'string-search' },
         ],
     },
     {
@@ -245,6 +246,7 @@ function getCodeForMethod(methodId) {
         'hash-bucket': codeHashBucket,
         'search-linear': codeSearchLinear,
         'search-binary': codeSearchBinary,
+        'search-kmp': codeSearchKMP,
         'sort-bubble': codeSortBubble,
         'sort-select': codeSortSelect,
         'sort-insert': codeSortInsert,
@@ -1666,6 +1668,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
+        else if (currentMode === 'search-kmp') {
+            codeTitle.textContent = 'search_kmp.cpp';
+            codeDisplay.textContent = codeSearchKMP;
+        }
         else if (currentMode === 'list-array') { codeTitle.textContent = 'list_array.cpp'; codeDisplay.textContent = codeListArray; listArrContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'list-linked') { codeTitle.textContent = 'list_linked.cpp'; codeDisplay.textContent = codeListLinked; listLLContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'deque') {
@@ -1784,6 +1790,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-dsu') renderDSU();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
+        else if (currentMode === 'search-kmp') renderKMP();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
@@ -2705,6 +2712,32 @@ document.addEventListener('DOMContentLoaded', () => {
         if (resetBtn) resetBtn.onclick = () => { renderDSU(); };
     }
 
+    // Builds two stacked rows: the text row and the pattern row aligned at `offset`.
+    // hi is null, or { kind: 'cell', textIdx, patIdx, status } highlighting one cell in
+    // each row, or { kind: 'window', status } highlighting the whole m-cell window.
+    // status is 'match' | 'mismatch' | 'collision'.
+    function buildAlignmentRow(text, pattern, offset, hi) {
+        function cls(on) { return on && hi && hi.status ? ' strsearch-' + hi.status : ''; }
+        let t = '<div class="strsearch-row strsearch-text">';
+        for (let k = 0; k < text.length; k++) {
+            let on = false;
+            if (hi && hi.kind === 'cell') on = (k === hi.textIdx);
+            else if (hi && hi.kind === 'window') on = (k >= offset && k < offset + pattern.length);
+            t += '<span class="strsearch-cell' + cls(on) + '">' + text[k] + '</span>';
+        }
+        t += '</div>';
+        let p = '<div class="strsearch-row strsearch-pattern">';
+        for (let k = 0; k < offset; k++) p += '<span class="strsearch-cell strsearch-spacer"></span>';
+        for (let k = 0; k < pattern.length; k++) {
+            let on = false;
+            if (hi && hi.kind === 'cell') on = (k === hi.patIdx);
+            else if (hi && hi.kind === 'window') on = true;
+            p += '<span class="strsearch-cell' + cls(on) + '">' + pattern[k] + '</span>';
+        }
+        p += '</div>';
+        return t + p;
+    }
+
     function renderDeque() {
         const host = acquireDynamicVizHost();
         if (!Array.isArray(runtimeVisualizer._dequeData)) {
@@ -2757,6 +2790,82 @@ document.addEventListener('DOMContentLoaded', () => {
             data.pop();
             renderDeque();
         };
+    }
+
+    function renderKMP() {
+        const host = acquireDynamicVizHost();
+        const text = 'ABABDABACDABABCABAB';
+        const pattern = 'ABABCABAB';
+        const m = pattern.length;
+        const lps = new Array(m).fill(0);
+        for (let len = 0, k = 1; k < m;) {
+            if (pattern[k] === pattern[len]) lps[k++] = ++len;
+            else if (len !== 0) len = lps[len - 1];
+            else lps[k++] = 0;
+        }
+        let i = 0, j = 0, comparisons = 0, matches = [], runTimer = null;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'strsearch-wrap';
+        wrap.innerHTML =
+            '<div class="strsearch-align"></div>' +
+            '<div class="strsearch-lps"><strong>LPS:</strong> <span class="strsearch-lps-cells"></span></div>' +
+            '<div class="strsearch-stats" data-testid="kmp-stats">comparisons: <span class="strsearch-cmp">0</span>' +
+                ' &nbsp;|&nbsp; matches: <span class="strsearch-matches">[]</span></div>' +
+            '<div class="strsearch-controls" role="group">' +
+                '<button type="button" data-action="step">Step</button>' +
+                '<button type="button" data-action="run">Run</button>' +
+                '<button type="button" data-action="reset">Reset</button>' +
+            '</div>';
+        host.appendChild(wrap);
+
+        const alignEl = wrap.querySelector('.strsearch-align');
+        const lpsEl = wrap.querySelector('.strsearch-lps-cells');
+        const cmpEl = wrap.querySelector('.strsearch-cmp');
+        const matchesEl = wrap.querySelector('.strsearch-matches');
+
+        function draw(hi, lpsActive) {
+            alignEl.innerHTML = buildAlignmentRow(text, pattern, i - j, hi);
+            let h = '';
+            for (let k = 0; k < m; k++) {
+                h += '<span class="strsearch-lps-cell' + (k === lpsActive ? ' strsearch-lps-active' : '') +
+                     '">' + lps[k] + '</span>';
+            }
+            lpsEl.innerHTML = h;
+            cmpEl.textContent = comparisons;
+            matchesEl.textContent = '[' + matches.join(',') + ']';
+        }
+        function step() {
+            if (i >= text.length) return;
+            comparisons++;
+            const ti = i, pj = j;
+            if (text[i] === pattern[j]) {
+                i++; j++;
+                if (j === m) { matches.push(i - j); j = lps[j - 1]; }
+                draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'match' }, -1);
+            } else if (j !== 0) {
+                j = lps[j - 1];
+                draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' }, pj - 1);
+            } else {
+                i++;
+                draw({ kind: 'cell', textIdx: ti, patIdx: pj, status: 'mismatch' }, -1);
+            }
+        }
+        function reset() {
+            i = 0; j = 0; comparisons = 0; matches = [];
+            if (runTimer) { clearInterval(runTimer); runTimer = null; }
+            draw(null, -1);
+        }
+        wrap.querySelector('[data-action="step"]').onclick = step;
+        wrap.querySelector('[data-action="run"]').onclick = () => {
+            if (runTimer) return;
+            runTimer = setInterval(() => {
+                if (i >= text.length) { clearInterval(runTimer); runTimer = null; return; }
+                step();
+            }, 500);
+        };
+        wrap.querySelector('[data-action="reset"]').onclick = reset;
+        draw(null, -1);
     }
 
     function renderGraph() {
