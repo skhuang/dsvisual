@@ -109,3 +109,4 @@ int main() {
 - Pure virtual (`= 0`) makes the class an abstract interface, mandating implementation in derived classes.
 - Virtual call overhead is just two pointer indirections — negligible in most scenarios.
 - Polymorphism underpins many design patterns such as Strategy and Template Method.
+- Versus Go: virtual functions are runtime subtype dynamic dispatch; a Go interface is the structural, inheritance-free equivalent.

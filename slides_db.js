@@ -14323,7 +14323,8 @@ const SLIDES_DB = {
               {
                 "zh": "多型是設計模式(Strategy、Template Method 等)的基礎機制。",
                 "en": "Polymorphism underpins many design patterns such as Strategy and Template Method."
-              }
+              },
+              { "zh": "對照 Go:虛擬函式是執行期 subtype 動態分派;Go interface 是其「結構化、無繼承」的等價物。", "en": "Versus Go: virtual functions are runtime subtype dynamic dispatch; a Go interface is the structural, inheritance-free equivalent." }
             ]
           }
         ]
@@ -16240,6 +16241,95 @@ const SLIDES_DB = {
               }
             ]
           }
+        ]
+      }
+    ]
+  },
+  "oop-abstraction": {
+    "category": "OOP Concepts",
+    "title": { "zh": "抽象化", "en": "Abstraction" },
+    "slides": [
+      {
+        "heading": { "zh": "抽象化", "en": "Abstraction" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "抽象化定義「做什麼」(介面)而隱藏「怎麼做」(實作);在 C++ 裡,一個全部成員都是純虛擬函式的抽象類別就是介面。",
+              "en": "Abstraction defines what (the interface) while hiding how (the implementation); in C++, an abstract class whose members are all pure virtual functions is an interface." } }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "只要一個類別含有至少一個純虛擬函式(`virtual ... = 0;`),它就是抽象類別,無法被直接實例化。衍生類別必須 `override` 所有純虛擬函式,才會成為可實例化的具體類別。",
+              "en": "A class with at least one pure virtual function (`virtual ... = 0;`) is abstract and cannot be instantiated directly. A derived class must `override` every pure virtual function to become a concrete, instantiable class." } },
+          { "type": "bullets", "items": [
+              { "zh": "純虛擬函式 `= 0` 宣告契約,不提供實作。", "en": "A pure virtual function `= 0` declares a contract without providing an implementation." },
+              { "zh": "抽象類別無法實例化(`Shape s;` 編譯失敗),但可用基底指標/參考指向衍生物件。", "en": "An abstract class cannot be instantiated (`Shape s;` fails to compile), but a base pointer/reference can point to a derived object." },
+              { "zh": "C++ 的介面是名義型別:衍生類別必須明確 `: public Base` 繼承,編譯器才認。", "en": "A C++ interface is nominal: the derived class must explicitly inherit `: public Base` for the compiler to accept it." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          { "type": "steps", "items": [
+              { "zh": "宣告抽象基底類別,把契約方法寫成純虛擬 `= 0`,並提供 virtual 解構子。", "en": "Declare an abstract base class; write the contract methods as pure virtual `= 0`, and provide a virtual destructor." },
+              { "zh": "每個具體衍生類別 `override` 全部純虛擬函式。", "en": "Each concrete derived class overrides every pure virtual function." },
+              { "zh": "透過基底指標/參考使用物件,呼叫在執行期分派到實際型別。", "en": "Use objects through a base pointer/reference; calls dispatch at runtime to the actual type." }
+          ] },
+          { "type": "mermaid", "code": "flowchart TD\n  S[\"Shape «abstract»\\narea() = 0\"] --> C[\"Circle\\narea() override\"]\n  S --> R[\"Rectangle\\narea() override\"]" }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 120\" width=\"420\"><g font-family=\"monospace\" font-size=\"12\"><rect x=\"150\" y=\"10\" width=\"120\" height=\"40\" fill=\"none\" stroke=\"#a78bfa\" stroke-dasharray=\"5 3\"/><text x=\"210\" y=\"28\" text-anchor=\"middle\" fill=\"#a78bfa\">Shape «abstract»</text><text x=\"210\" y=\"42\" text-anchor=\"middle\" fill=\"#fbbf24\">area() = 0</text><rect x=\"40\" y=\"80\" width=\"120\" height=\"32\" fill=\"none\" stroke=\"#f472b6\"/><text x=\"100\" y=\"100\" text-anchor=\"middle\" fill=\"#f472b6\">Circle</text><rect x=\"260\" y=\"80\" width=\"120\" height=\"32\" fill=\"none\" stroke=\"#f472b6\"/><text x=\"320\" y=\"100\" text-anchor=\"middle\" fill=\"#f472b6\">Rectangle</text><line x1=\"100\" y1=\"80\" x2=\"190\" y2=\"50\" stroke=\"#64748b\"/><line x1=\"320\" y1=\"80\" x2=\"230\" y2=\"50\" stroke=\"#64748b\"/></g></svg>" },
+          { "type": "note", "text": {
+              "zh": "visualizer 以虛線方框畫出抽象的 `Shape`,兩個具體子類別 `Circle`、`Rectangle` 各自實作 `area()`。",
+              "en": "The visualizer draws the abstract `Shape` as a dashed box; the two concrete subclasses `Circle` and `Rectangle` each implement `area()`." } }
+        ]
+      },
+      {
+        "heading": { "zh": "成本與取捨", "en": "Cost & Trade-offs" },
+        "blocks": [
+          { "type": "table",
+            "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "成本", "en": "Cost" } ],
+            "rows": [
+              [ { "zh": "抽象類別本身", "en": "Abstract class itself" }, { "zh": "零額外執行期成本", "en": "Zero extra runtime cost" } ],
+              [ { "zh": "經基底指標的虛擬呼叫", "en": "Virtual call via base pointer" }, { "zh": "一次 vtable 指標間接", "en": "One vtable pointer indirection" } ],
+              [ { "zh": "每個多型物件", "en": "Each polymorphic object" }, { "zh": "多一個 vptr 指標", "en": "One extra vptr pointer" } ]
+            ] },
+          { "type": "math", "tex": "T_{\\text{virtual call}} = T_{\\text{direct call}} + O(1)", "caption": {
+              "zh": "虛擬呼叫只比直接呼叫多一次常數時間的間接查表。",
+              "en": "A virtual call costs just one constant-time table indirection more than a direct call." } }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          { "type": "code", "lang": "cpp", "code": "class Shape {\npublic:\n    virtual double area() const = 0;  // pure virtual\n    virtual ~Shape() {}\n};\n\nclass Circle : public Shape {\n    double r;\npublic:\n    Circle(double radius) : r(radius) {}\n    double area() const override { return 3.14159 * r * r; }\n};" }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "優點:把介面與實作解耦,呼叫端只依賴契約。", "en": "Pro: decouples interface from implementation — callers depend only on the contract." },
+              { "zh": "優點:強制衍生類別實作所有契約方法,否則無法實例化。", "en": "Pro: forces derived classes to implement every contract method, or they stay non-instantiable." },
+              { "zh": "缺點:虛擬呼叫有一次間接;且 C++ 介面是名義型別,需明確繼承。", "en": "Con: a virtual call has one indirection; and a C++ interface is nominal — explicit inheritance is required." },
+              { "zh": "對照 Go:Go interface 是結構化(鴨子)型別,型別具備方法即自動滿足,不需繼承;兩者都屬子型別多型。", "en": "Versus Go: a Go interface is structural (duck-typed) — a type satisfies it automatically by having the methods, with no inheritance; both are forms of subtype polymorphism." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "抽象類別 = 含純虛擬函式的契約;全純虛擬 = C++ 的介面。", "en": "An abstract class is a contract with pure virtual functions; all-pure-virtual = a C++ interface." },
+              { "zh": "C++ 介面為名義型別(需明確繼承);Go interface 為結構化型別。", "en": "A C++ interface is nominal (explicit inheritance); a Go interface is structural." },
+              { "zh": "抽象化補齊 OOP 四大支柱(封裝、抽象、繼承、多型)。", "en": "Abstraction completes the four pillars of OOP (encapsulation, abstraction, inheritance, polymorphism)." }
+          ] }
         ]
       }
     ]
