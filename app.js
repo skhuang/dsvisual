@@ -229,6 +229,15 @@ const METHOD_GROUPS = [
             { id: 'pattern-strategy', title: 'Strategy', file: 'pattern_strategy.cpp', visualizer: 'pattern', controls: 'pattern' },
         ],
     },
+    {
+        id: 'patterns-architectural',
+        title: 'Architectural',
+        parent: 'patterns',
+        parentTitle: 'Design Patterns',
+        methods: [
+            { id: 'pattern-mvc', title: 'MVC (Model-View-Controller)', file: 'pattern_mvc.cpp', visualizer: 'pattern', controls: 'pattern' },
+        ],
+    },
 ];
 
 function getMethodGroupById(groupId) {
@@ -304,6 +313,7 @@ function getCodeForMethod(methodId) {
         'pattern-decorator': codePatternDecorator,
         'pattern-observer': codePatternObserver,
         'pattern-strategy': codePatternStrategy,
+        'pattern-mvc': codePatternMVC,
     };
     return codeByMethod[methodId] || '// Source code pending.';
 }
@@ -1884,6 +1894,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codePatternStrategy;
                 document.getElementById('pattern-strategy-view').classList.remove('hidden');
                 patternModeSelect.value = 'strategy';
+            }
+            else if (currentMode === 'pattern-mvc') {
+                codeTitle.textContent = 'pattern_mvc.cpp';
+                codeDisplay.textContent = codePatternMVC;
+                document.getElementById('pattern-mvc-view').classList.remove('hidden');
+                patternModeSelect.value = 'mvc';
             }
         }
         syncHeapTutorialChrome();
@@ -4125,6 +4141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'decorator') renderPatternDecorator();
         else if (mode === 'observer') renderPatternObserver();
         else if (mode === 'strategy') renderPatternStrategy();
+        else if (mode === 'mvc') renderPatternMVC();
     }
 
     function renderPatternSingleton() {
@@ -4510,6 +4527,24 @@ document.addEventListener('DOMContentLoaded', () => {
         createArrow(svg, '190', '135', '280', '110', '#fbbf24');
     }
 
+    function renderPatternMVC() {
+        const svg = document.getElementById('pattern-mvc-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopBox(svg, { x: 190, y: 26, w: 140, h: 56, title: 'Controller', titleColor: '#f59e0b',
+            lines: [ { text: 'handles input', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 40, y: 200, w: 140, h: 56, title: 'Model', titleColor: '#34d399',
+            lines: [ { text: 'data + state', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 340, y: 200, w: 140, h: 56, title: 'View', titleColor: '#60a5fa',
+            lines: [ { text: 'renders model', color: '#cbd5e1' } ] });
+        drawOopLine(svg, 225, 82, 120, 200);   // Controller -> Model
+        drawOopLine(svg, 180, 228, 340, 228);  // Model -> View
+        drawOopLine(svg, 400, 200, 295, 82);   // View -> Controller
+        drawOopLabel(svg, 150, 150, 'updates', '#f59e0b');
+        drawOopLabel(svg, 260, 246, 'notifies', '#34d399');
+        drawOopLabel(svg, 372, 150, 'user input', '#60a5fa');
+    }
+
     function createArrow(svg, x1, y1, x2, y2, color) {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', x1); line.setAttribute('y1', y1);
@@ -4604,6 +4639,13 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus('processPayment(0.005): Crypto payment', '#fbbf24');
             await sleep(600);
             showStatus('Algorithm can be changed at runtime!', '#34d399');
+        }
+        else if (mode === 'mvc') {
+            showStatus('User input arrives at the Controller...', '#f59e0b');
+            await sleep(700);
+            showStatus('Controller updates the Model (data + state)', '#34d399');
+            await sleep(700);
+            showStatus('Model change notifies the View, which re-renders', '#60a5fa');
         }
     }
 });
