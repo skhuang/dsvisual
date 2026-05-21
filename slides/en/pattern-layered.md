@@ -57,19 +57,17 @@ Strict downward dependency — a layer never calls upward or skips a layer. Each
 // Business layer — applies rules; calls only the layer below.
 class BusinessLayer {
     DataLayer data;
+
 public:
-    string process() {
-        return "[validated] " + data.fetch();
-    }
+    string process() { return "[validated] " + data.fetch(); }
 };
 
 // Presentation layer — formats output; calls only the layer below.
 class PresentationLayer {
     BusinessLayer business;
+
 public:
-    void show() {
-        cout << "Display: " << business.process() << endl;
-    }
+    void show() { cout << "Display: " << business.process() << endl; }
 };
 ```
 

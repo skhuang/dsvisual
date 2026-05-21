@@ -57,6 +57,7 @@ The Controller receives user input and updates the Model; when the Model changes
 class Controller {
     Model& model;
     View& view;
+
 public:
     Controller(Model& m, View& v) : model(m), view(v) {}
     void handleInput(const string& input) {

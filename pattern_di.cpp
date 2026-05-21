@@ -17,18 +17,16 @@ public:
 
 // Consumer — receives its dependency; never constructs it.
 class Consumer {
-    Service& service;   // depends on the abstraction
+    Service& service; // depends on the abstraction
 public:
-    Consumer(Service& s) : service(s) {}   // constructor injection
-    void run() {
-        cout << "Consumer used: " << service.fetch() << endl;
-    }
+    Consumer(Service& s) : service(s) {} // constructor injection
+    void run() { cout << "Consumer used: " << service.fetch() << endl; }
 };
 
 int main() {
     // Composition root — wires concrete implementations to abstractions.
     ConsoleService service;
-    Consumer consumer(service);   // dependency injected, not hard-coded
+    Consumer consumer(service); // dependency injected, not hard-coded
     consumer.run();
     return 0;
 }

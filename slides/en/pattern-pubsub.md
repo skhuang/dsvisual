@@ -57,12 +57,14 @@ The event bus is the key to decoupling: it hides each side from the other. One e
 // Event bus — decouples publishers from subscribers.
 class EventBus {
     vector<function<void(const string&)>> subscribers;
+
 public:
     void subscribe(function<void(const string&)> handler) {
         subscribers.push_back(handler);
     }
     void publish(const string& event) {
-        for (auto& handler : subscribers) handler(event);
+        for (auto& handler : subscribers)
+            handler(event);
     }
 };
 ```

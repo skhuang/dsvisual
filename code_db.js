@@ -3771,6 +3771,7 @@ using namespace std;
 // Model — owns the data.
 class Model {
     string data;
+
 public:
     void setData(const string& d) { data = d; }
     string getData() const { return data; }
@@ -3779,15 +3780,14 @@ public:
 // View — renders the model.
 class View {
 public:
-    void render(const Model& m) {
-        cout << "[View] " << m.getData() << endl;
-    }
+    void render(const Model& m) { cout << "[View] " << m.getData() << endl; }
 };
 
 // Controller — handles input, updates the model, refreshes the view.
 class Controller {
     Model& model;
     View& view;
+
 public:
     Controller(Model& m, View& v) : model(m), view(v) {}
     void handleInput(const string& input) {
@@ -3800,8 +3800,8 @@ int main() {
     Model model;
     View view;
     Controller controller(model, view);
-    controller.handleInput("Hello, MVC");    // [View] Hello, MVC
-    controller.handleInput("Updated text");  // [View] Updated text
+    controller.handleInput("Hello, MVC");   // [View] Hello, MVC
+    controller.handleInput("Updated text"); // [View] Updated text
     return 0;
 }
 `;
@@ -3819,43 +3819,43 @@ public:
 // Business layer — applies rules; calls only the layer below.
 class BusinessLayer {
     DataLayer data;
+
 public:
-    string process() {
-        return "[validated] " + data.fetch();
-    }
+    string process() { return "[validated] " + data.fetch(); }
 };
 
 // Presentation layer — formats output; calls only the layer below.
 class PresentationLayer {
     BusinessLayer business;
+
 public:
-    void show() {
-        cout << "Display: " << business.process() << endl;
-    }
+    void show() { cout << "Display: " << business.process() << endl; }
 };
 
 int main() {
     PresentationLayer ui;
-    ui.show();   // Display: [validated] raw record
+    ui.show(); // Display: [validated] raw record
     return 0;
 }
 `;
 
-const codePatternPubSub = `#include <iostream>
+const codePatternPubSub = `#include <functional>
+#include <iostream>
 #include <string>
-#include <functional>
 #include <vector>
 using namespace std;
 
 // Event bus — decouples publishers from subscribers.
 class EventBus {
     vector<function<void(const string&)>> subscribers;
+
 public:
     void subscribe(function<void(const string&)> handler) {
         subscribers.push_back(handler);
     }
     void publish(const string& event) {
-        for (auto& handler : subscribers) handler(event);
+        for (auto& handler : subscribers)
+            handler(event);
     }
 };
 
@@ -3870,11 +3870,11 @@ int main() {
 }
 `;
 
-const codePatternPipeFilter = `#include <iostream>
+const codePatternPipeFilter = `#include <algorithm>
+#include <cctype>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <cctype>
 using namespace std;
 
 // Filter — one transformation stage.
@@ -3910,11 +3910,13 @@ public:
 // Pipeline — chains filters; data flows through each pipe.
 class Pipeline {
     vector<Filter*> filters;
+
 public:
     void add(Filter* f) { filters.push_back(f); }
     string run(const string& input) const {
         string data = input;
-        for (Filter* f : filters) data = f->process(data);
+        for (Filter* f : filters)
+            data = f->process(data);
         return data;
     }
 };
@@ -3927,7 +3929,7 @@ int main() {
     pipeline.add(&trim);
     pipeline.add(&upper);
     pipeline.add(&exclaim);
-    cout << pipeline.run("  hello  ") << endl;   // HELLO!
+    cout << pipeline.run("  hello  ") << endl; // HELLO!
     return 0;
 }
 `;
@@ -3951,18 +3953,16 @@ public:
 
 // Consumer — receives its dependency; never constructs it.
 class Consumer {
-    Service& service;   // depends on the abstraction
+    Service& service; // depends on the abstraction
 public:
-    Consumer(Service& s) : service(s) {}   // constructor injection
-    void run() {
-        cout << "Consumer used: " << service.fetch() << endl;
-    }
+    Consumer(Service& s) : service(s) {} // constructor injection
+    void run() { cout << "Consumer used: " << service.fetch() << endl; }
 };
 
 int main() {
     // Composition root — wires concrete implementations to abstractions.
     ConsoleService service;
-    Consumer consumer(service);   // dependency injected, not hard-coded
+    Consumer consumer(service); // dependency injected, not hard-coded
     consumer.run();
     return 0;
 }

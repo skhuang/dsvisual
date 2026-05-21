@@ -1,8 +1,8 @@
+#include <algorithm>
+#include <cctype>
 #include <iostream>
 #include <string>
 #include <vector>
-#include <algorithm>
-#include <cctype>
 using namespace std;
 
 // Filter — one transformation stage.
@@ -38,11 +38,13 @@ public:
 // Pipeline — chains filters; data flows through each pipe.
 class Pipeline {
     vector<Filter*> filters;
+
 public:
     void add(Filter* f) { filters.push_back(f); }
     string run(const string& input) const {
         string data = input;
-        for (Filter* f : filters) data = f->process(data);
+        for (Filter* f : filters)
+            data = f->process(data);
         return data;
     }
 };
@@ -55,6 +57,6 @@ int main() {
     pipeline.add(&trim);
     pipeline.add(&upper);
     pipeline.add(&exclaim);
-    cout << pipeline.run("  hello  ") << endl;   // HELLO!
+    cout << pipeline.run("  hello  ") << endl; // HELLO!
     return 0;
 }

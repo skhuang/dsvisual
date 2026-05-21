@@ -64,11 +64,13 @@ public:
 // Pipeline — chains filters; data flows through each pipe.
 class Pipeline {
     vector<Filter*> filters;
+
 public:
     void add(Filter* f) { filters.push_back(f); }
     string run(const string& input) const {
         string data = input;
-        for (Filter* f : filters) data = f->process(data);
+        for (Filter* f : filters)
+            data = f->process(data);
         return data;
     }
 };
