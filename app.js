@@ -236,6 +236,7 @@ const METHOD_GROUPS = [
         parentTitle: 'Design Patterns',
         methods: [
             { id: 'pattern-mvc', title: 'MVC (Model-View-Controller)', file: 'pattern_mvc.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-layered', title: 'Layered Architecture', file: 'pattern_layered.cpp', visualizer: 'pattern', controls: 'pattern' },
         ],
     },
 ];
@@ -314,6 +315,7 @@ function getCodeForMethod(methodId) {
         'pattern-observer': codePatternObserver,
         'pattern-strategy': codePatternStrategy,
         'pattern-mvc': codePatternMVC,
+        'pattern-layered': codePatternLayered,
     };
     return codeByMethod[methodId] || '// Source code pending.';
 }
@@ -1900,6 +1902,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codePatternMVC;
                 document.getElementById('pattern-mvc-view').classList.remove('hidden');
                 patternModeSelect.value = 'mvc';
+            }
+            else if (currentMode === 'pattern-layered') {
+                codeTitle.textContent = 'pattern_layered.cpp';
+                codeDisplay.textContent = codePatternLayered;
+                document.getElementById('pattern-layered-view').classList.remove('hidden');
+                patternModeSelect.value = 'layered';
             }
         }
         syncHeapTutorialChrome();
@@ -4142,6 +4150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'observer') renderPatternObserver();
         else if (mode === 'strategy') renderPatternStrategy();
         else if (mode === 'mvc') renderPatternMVC();
+        else if (mode === 'layered') renderPatternLayered();
     }
 
     function renderPatternSingleton() {
@@ -4545,6 +4554,22 @@ document.addEventListener('DOMContentLoaded', () => {
         drawOopLabel(svg, 372, 150, 'user input', '#60a5fa');
     }
 
+    function renderPatternLayered() {
+        const svg = document.getElementById('pattern-layered-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopBox(svg, { x: 150, y: 24, w: 200, h: 58, title: 'Presentation', titleColor: '#60a5fa',
+            lines: [ { text: 'formats output', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 150, y: 122, w: 200, h: 58, title: 'Business', titleColor: '#f59e0b',
+            lines: [ { text: 'applies rules', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 150, y: 220, w: 200, h: 58, title: 'Data', titleColor: '#34d399',
+            lines: [ { text: 'raw records', color: '#cbd5e1' } ] });
+        drawOopLine(svg, 250, 82, 250, 122);    // Presentation -> Business
+        drawOopLine(svg, 250, 180, 250, 220);   // Business -> Data
+        drawOopLabel(svg, 320, 106, 'calls', '#94a3b8');
+        drawOopLabel(svg, 320, 204, 'calls', '#94a3b8');
+    }
+
     function createArrow(svg, x1, y1, x2, y2, color) {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', x1); line.setAttribute('y1', y1);
@@ -4646,6 +4671,13 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus('Controller updates the Model (data + state)', '#34d399');
             await sleep(700);
             showStatus('Model change notifies the View, which re-renders', '#60a5fa');
+        }
+        else if (mode === 'layered') {
+            showStatus('Presentation layer formats a request...', '#60a5fa');
+            await sleep(700);
+            showStatus('Business layer applies rules, calls the layer below', '#f59e0b');
+            await sleep(700);
+            showStatus('Data layer returns raw records — each layer calls only downward', '#34d399');
         }
     }
 });

@@ -395,6 +395,14 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('#pattern-mvc-svg rect')).toHaveCount(3);
     });
 
+    test('Architectural: Layered renders the 3-layer stack', async ({ page }) => {
+        await loadMethod(page, 'pattern-layered');
+        const card = page.locator('[data-method-section="pattern-layered"]');
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        await expect(card.locator('.code-panel-filename')).toContainText('pattern_layered.cpp');
+        await expect(card.locator('#pattern-layered-svg rect')).toHaveCount(3);
+    });
+
     test('Trees: Disjoint Set renders 8 nodes initially and supports union', async ({ page }) => {
         await loadMethod(page, 'tree-dsu');
         const card = page.locator('[data-method-section="tree-dsu"]');
