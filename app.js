@@ -200,13 +200,31 @@ const METHOD_GROUPS = [
         ],
     },
     {
-        id: 'patterns',
-        title: 'Design Patterns',
+        id: 'patterns-creational',
+        title: 'Creational',
+        parent: 'patterns',
+        parentTitle: 'Design Patterns',
         methods: [
             { id: 'pattern-singleton', title: 'Singleton', file: 'pattern_singleton.cpp', visualizer: 'pattern', controls: 'pattern' },
             { id: 'pattern-factory', title: 'Factory Method', file: 'pattern_factory.cpp', visualizer: 'pattern', controls: 'pattern' },
+        ],
+    },
+    {
+        id: 'patterns-structural',
+        title: 'Structural',
+        parent: 'patterns',
+        parentTitle: 'Design Patterns',
+        methods: [
             { id: 'pattern-adapter', title: 'Adapter', file: 'pattern_adapter.cpp', visualizer: 'pattern', controls: 'pattern' },
             { id: 'pattern-decorator', title: 'Decorator', file: 'pattern_decorator.cpp', visualizer: 'pattern', controls: 'pattern' },
+        ],
+    },
+    {
+        id: 'patterns-behavioral',
+        title: 'Behavioral',
+        parent: 'patterns',
+        parentTitle: 'Design Patterns',
+        methods: [
             { id: 'pattern-observer', title: 'Observer', file: 'pattern_observer.cpp', visualizer: 'pattern', controls: 'pattern' },
             { id: 'pattern-strategy', title: 'Strategy', file: 'pattern_strategy.cpp', visualizer: 'pattern', controls: 'pattern' },
         ],
@@ -305,13 +323,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const runtimeVisualizer = document.querySelector('.stack-container-wrapper');
     
     const categoryButtons = new Map();
+    const subTabButtons = new Map();
 
     function setActiveCategory(groupId) {
+        const group = getMethodGroupById(groupId);
+        const parentId = group && group.parent;
         categoryButtons.forEach((button, id) => {
-            const isActive = id === groupId;
+            const isActive = id === groupId || id === parentId;
             button.classList.toggle('active', isActive);
             button.setAttribute('aria-current', isActive ? 'true' : 'false');
         });
+        subTabButtons.forEach((button, id) => {
+            button.classList.toggle('active', id === groupId);
+        });
+        const subTabRow = categoryNav && categoryNav.querySelector('.category-subtab-row');
+        if (subTabRow) subTabRow.classList.toggle('visible', !!parentId);
     }
 
     function expandModeGroup(groupId) {
@@ -675,6 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!categoryNav) return;
         categoryNav.innerHTML = '';
         categoryButtons.clear();
+        subTabButtons.clear();
 
         function activateGroup(groupId, methodId) {
             const group = getMethodGroupById(groupId);
@@ -687,16 +714,47 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollToCategory(group.id);
         }
 
+        const subTabRow = document.createElement('div');
+        subTabRow.className = 'category-subtab-row';
+        subTabRow.dataset.testid = 'category-subtab-row';
+        const renderedParents = new Set();
+
         METHOD_GROUPS.forEach((group) => {
-            const groupBtn = document.createElement('button');
-            groupBtn.type = 'button';
-            groupBtn.className = 'category-nav-btn';
-            groupBtn.dataset.group = group.id;
-            groupBtn.textContent = group.title;
-            groupBtn.addEventListener('click', () => activateGroup(group.id));
-            categoryButtons.set(group.id, groupBtn);
-            categoryNav.appendChild(groupBtn);
+            if (group.parent) {
+                if (!renderedParents.has(group.parent)) {
+                    renderedParents.add(group.parent);
+                    const firstChild = METHOD_GROUPS.find((g) => g.parent === group.parent);
+                    const parentBtn = document.createElement('button');
+                    parentBtn.type = 'button';
+                    parentBtn.className = 'category-nav-btn';
+                    parentBtn.dataset.group = group.parent;
+                    parentBtn.textContent = group.parentTitle;
+                    parentBtn.addEventListener('click', () => activateGroup(firstChild.id));
+                    categoryButtons.set(group.parent, parentBtn);
+                    categoryNav.appendChild(parentBtn);
+                }
+                const tabBtn = document.createElement('button');
+                tabBtn.type = 'button';
+                tabBtn.className = 'category-subtab-btn';
+                tabBtn.dataset.subgroup = group.id;
+                tabBtn.dataset.parent = group.parent;
+                tabBtn.textContent = group.title;
+                tabBtn.addEventListener('click', () => activateGroup(group.id));
+                subTabButtons.set(group.id, tabBtn);
+                subTabRow.appendChild(tabBtn);
+            } else {
+                const groupBtn = document.createElement('button');
+                groupBtn.type = 'button';
+                groupBtn.className = 'category-nav-btn';
+                groupBtn.dataset.group = group.id;
+                groupBtn.textContent = group.title;
+                groupBtn.addEventListener('click', () => activateGroup(group.id));
+                categoryButtons.set(group.id, groupBtn);
+                categoryNav.appendChild(groupBtn);
+            }
         });
+
+        categoryNav.appendChild(subTabRow);
 
         const initialGroup = getMethodGroupForMode('stack-array');
         setActiveCategory(initialGroup.id);

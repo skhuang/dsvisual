@@ -6,14 +6,23 @@ async function loadMethod(page, methodId) {
     const methodSelect = page.locator('[data-testid="method-select"]');
     const count = await categoryButtons.count();
 
+    async function trySelect() {
+        const hasOption = await methodSelect.locator(`option[value="${methodId}"]`).count();
+        if (!hasOption) return false;
+        await methodSelect.selectOption(methodId);
+        const card = page.locator(`[data-method-section="${methodId}"]`);
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        return true;
+    }
+
     for (let i = 0; i < count; i++) {
         await categoryButtons.nth(i).click();
-        const hasOption = await methodSelect.locator(`option[value="${methodId}"]`).count();
-        if (hasOption) {
-            await methodSelect.selectOption(methodId);
-            const card = page.locator(`[data-method-section="${methodId}"]`);
-            await expect(card).toHaveAttribute('data-runtime-state', 'active');
-            return;
+        if (await trySelect()) return;
+        const subTabs = page.locator('.category-subtab-row.visible .category-subtab-btn');
+        const tabCount = await subTabs.count();
+        for (let t = 0; t < tabCount; t++) {
+            await subTabs.nth(t).click();
+            if (await trySelect()) return;
         }
     }
     throw new Error(`Method ${methodId} not found in method dropdown`);
