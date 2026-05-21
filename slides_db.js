@@ -4448,6 +4448,10 @@ const SLIDES_DB = {
               {
                 "zh": "最佳用於稀疏圖;Prim 演算法在稠密圖上更佳。",
                 "en": "Best for sparse graphs; Prim's algorithm is preferred for dense graphs."
+              },
+              {
+                "zh": "Union-Find 的詳細解說與視覺化:見 `tree-dsu`。",
+                "en": "For a detailed walkthrough and visualization of Union-Find, see `tree-dsu`."
               }
             ]
           }

@@ -111,3 +111,4 @@ for (const auto& e : edges) {
 - Sort edges + DSU cycle detection: MST built in $O(E \log E)$ time.
 - MST has exactly $V-1$ edges, spans all vertices with minimum total weight.
 - Best for sparse graphs; Prim's algorithm is preferred for dense graphs.
+- For a detailed walkthrough and visualization of Union-Find, see `tree-dsu`.

@@ -111,3 +111,4 @@ for (const auto& e : edges) {
 - 排序邊 + DSU 偵測環路:$O(E \log E)$ 時間建構 MST。
 - MST 恰有 $V-1$ 條邊,覆蓋所有頂點且總權重最小。
 - 最佳用於稀疏圖;Prim 演算法在稠密圖上更佳。
+- Union-Find 的詳細解說與視覺化:見 `tree-dsu`。
