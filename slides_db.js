@@ -5199,7 +5199,7 @@ const SLIDES_DB = {
       {
         "heading": { "zh": "示意圖", "en": "Layout" },
         "blocks": [
-          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 120\" width=\"360\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\" y=\"20\">DFS visit order: 0  1  2  3  4</text><text x=\"0\" y=\"50\">Tree edges  : 0-&gt;1, 1-&gt;2, 2-&gt;3, 3-&gt;4</text><text x=\"0\" y=\"80\">Node 0: neighbors 1,4</text><text x=\"0\" y=\"100\">Node 4: visited last via back edge 3-&gt;4</text></g></svg>" },
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 120\" width=\"360\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\" y=\"20\">DFS visit order: 0  1  2  3  4</text><text x=\"0\" y=\"50\">Tree edges  : 0-&gt;1, 1-&gt;2, 2-&gt;3, 3-&gt;4</text><text x=\"0\" y=\"80\">Node 0: neighbors 1,4</text><text x=\"0\" y=\"100\">Node 4: tree edge 3-&gt;4; back edges 4-&gt;0, 4-&gt;1</text></g></svg>" },
           { "type": "note", "text": {
               "zh": "DFS 從 0 出發，沿最小鄰居深入：0→1→2→3→4；5 個節點全部出現。4 最後被訪問是因為 3 的鄰居 4 尚未訪問時才被探索。",
               "en": "DFS from 0 dives along smallest neighbors: 0→1→2→3→4; all 5 nodes appear. Node 4 is visited last when neighbor 4 of node 3 is found unvisited." } }

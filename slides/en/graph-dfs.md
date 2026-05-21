@@ -35,7 +35,7 @@ A stack (or call stack) tracks the current path. Pop the top node; if unvisited 
 
 ## Layout
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" width="360"><g font-family="monospace" font-size="13"><text x="0" y="20">DFS visit order: 0  1  2  3  4</text><text x="0" y="50">Tree edges  : 0-&gt;1, 1-&gt;2, 2-&gt;3, 3-&gt;4</text><text x="0" y="80">Node 0: neighbors 1,4</text><text x="0" y="100">Node 4: visited last via back edge 3-&gt;4</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" width="360"><g font-family="monospace" font-size="13"><text x="0" y="20">DFS visit order: 0  1  2  3  4</text><text x="0" y="50">Tree edges  : 0-&gt;1, 1-&gt;2, 2-&gt;3, 3-&gt;4</text><text x="0" y="80">Node 0: neighbors 1,4</text><text x="0" y="100">Node 4: tree edge 3-&gt;4; back edges 4-&gt;0, 4-&gt;1</text></g></svg>
 
 > DFS from 0 dives along smallest neighbors: 0→1→2→3→4; all 5 nodes appear. Node 4 is visited last when neighbor 4 of node 3 is found unvisited.
 
