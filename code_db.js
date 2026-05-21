@@ -3717,8 +3717,10 @@ public:
         Node* node = head;
         int v = node->val;
         head = head->next;
-        if (head) head->prev = nullptr;
-        else tail = nullptr;
+        if (head)
+            head->prev = nullptr;
+        else
+            tail = nullptr;
         delete node;
         count--;
         return v;
@@ -3732,8 +3734,10 @@ public:
         Node* node = tail;
         int v = node->val;
         tail = tail->prev;
-        if (tail) tail->next = nullptr;
-        else head = nullptr;
+        if (tail)
+            tail->next = nullptr;
+        else
+            head = nullptr;
         delete node;
         count--;
         return v;
@@ -3741,7 +3745,8 @@ public:
 
     void print() {
         cout << "null <-> ";
-        for (Node* p = head; p; p = p->next) cout << p->val << " <-> ";
+        for (Node* p = head; p; p = p->next)
+            cout << p->val << " <-> ";
         cout << "null" << endl;
     }
 };
@@ -3751,17 +3756,17 @@ int main() {
     dq.pushBack(10);
     dq.pushBack(20);
     dq.pushFront(5);
-    dq.print();        // null <-> 5 <-> 10 <-> 20 <-> null
+    dq.print(); // null <-> 5 <-> 10 <-> 20 <-> null
     dq.popBack();
     dq.popFront();
-    dq.print();        // null <-> 10 <-> null
+    dq.print(); // null <-> 10 <-> null
     return 0;
 }
 `;
 
 const codeSearchKMP = `#include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
 vector<int> computeLPS(const string& pat) {
@@ -3786,7 +3791,8 @@ void kmpSearch(const string& text, const string& pat) {
     int i = 0, j = 0;
     while (i < n) {
         if (text[i] == pat[j]) {
-            i++; j++;
+            i++;
+            j++;
             if (j == m) {
                 cout << "Match at index " << (i - j) << endl;
                 j = lps[j - 1];
@@ -3802,15 +3808,15 @@ void kmpSearch(const string& text, const string& pat) {
 int main() {
     string text = "ABABDABACDABABCABAB";
     string pattern = "ABABCABAB";
-    kmpSearch(text, pattern);   // Match at index 10
+    kmpSearch(text, pattern); // Match at index 10
     return 0;
 }
 `;
 
-const codeSearchBM = `#include <iostream>
-#include <vector>
+const codeSearchBM = `#include <algorithm>
+#include <iostream>
 #include <string>
-#include <algorithm>
+#include <vector>
 using namespace std;
 
 const int ALPHABET = 256;
@@ -3831,16 +3837,20 @@ void buildGoodSuffix(const string& pat, vector<int>& shift) {
     bpos[i] = j;
     while (i > 0) {
         while (j <= m && pat[i - 1] != pat[j - 1]) {
-            if (shift[j] == 0) shift[j] = j - i;
+            if (shift[j] == 0)
+                shift[j] = j - i;
             j = bpos[j];
         }
-        i--; j--;
+        i--;
+        j--;
         bpos[i] = j;
     }
     j = bpos[0];
     for (i = 0; i <= m; i++) {
-        if (shift[i] == 0) shift[i] = j;
-        if (i == j) j = bpos[j];
+        if (shift[i] == 0)
+            shift[i] = j;
+        if (i == j)
+            j = bpos[j];
     }
 }
 
@@ -3852,7 +3862,8 @@ void boyerMooreSearch(const string& text, const string& pat) {
     int s = 0;
     while (s <= n - m) {
         int j = m - 1;
-        while (j >= 0 && pat[j] == text[s + j]) j--;
+        while (j >= 0 && pat[j] == text[s + j])
+            j--;
         if (j < 0) {
             cout << "Match at index " << s << endl;
             s += shift[0];
@@ -3866,7 +3877,7 @@ void boyerMooreSearch(const string& text, const string& pat) {
 int main() {
     string text = "ABABDABACDABABCABAB";
     string pattern = "ABABCABAB";
-    boyerMooreSearch(text, pattern);   // Match at index 10
+    boyerMooreSearch(text, pattern); // Match at index 10
     return 0;
 }
 `;
@@ -3880,9 +3891,11 @@ const int MOD = 101;
 
 void rabinKarpSearch(const string& text, const string& pat) {
     int n = text.size(), m = pat.size();
-    if (m > n) return;
+    if (m > n)
+        return;
     int patHash = 0, winHash = 0, h = 1;
-    for (int i = 0; i < m - 1; i++) h = (h * BASE) % MOD;
+    for (int i = 0; i < m - 1; i++)
+        h = (h * BASE) % MOD;
     for (int i = 0; i < m; i++) {
         patHash = (BASE * patHash + pat[i]) % MOD;
         winHash = (BASE * winHash + text[i]) % MOD;
@@ -3890,12 +3903,15 @@ void rabinKarpSearch(const string& text, const string& pat) {
     for (int s = 0; s <= n - m; s++) {
         if (patHash == winHash) {
             int j = 0;
-            while (j < m && text[s + j] == pat[j]) j++;
-            if (j == m) cout << "Match at index " << s << endl;
+            while (j < m && text[s + j] == pat[j])
+                j++;
+            if (j == m)
+                cout << "Match at index " << s << endl;
         }
         if (s < n - m) {
             winHash = (BASE * (winHash - text[s] * h) + text[s + m]) % MOD;
-            if (winHash < 0) winHash += MOD;
+            if (winHash < 0)
+                winHash += MOD;
         }
     }
 }
@@ -3903,15 +3919,15 @@ void rabinKarpSearch(const string& text, const string& pat) {
 int main() {
     string text = "ABABDABACDABABCABAB";
     string pattern = "ABABCABAB";
-    rabinKarpSearch(text, pattern);   // Match at index 10
+    rabinKarpSearch(text, pattern); // Match at index 10
     return 0;
 }
 `;
 
-const codeSearchStrCompare = `#include <iostream>
-#include <vector>
+const codeSearchStrCompare = `#include <algorithm>
+#include <iostream>
 #include <string>
-#include <algorithm>
+#include <vector>
 using namespace std;
 
 // Each function returns the number of character/hash comparisons performed.
@@ -3920,16 +3936,25 @@ int kmpCompares(const string& text, const string& pat) {
     int n = text.size(), m = pat.size(), cmp = 0;
     vector<int> lps(m, 0);
     for (int len = 0, i = 1; i < m;) {
-        if (pat[i] == pat[len]) lps[i++] = ++len;
-        else if (len) len = lps[len - 1];
-        else lps[i++] = 0;
+        if (pat[i] == pat[len])
+            lps[i++] = ++len;
+        else if (len)
+            len = lps[len - 1];
+        else
+            lps[i++] = 0;
     }
     int i = 0, j = 0;
     while (i < n) {
         cmp++;
-        if (text[i] == pat[j]) { i++; j++; if (j == m) j = lps[j - 1]; }
-        else if (j) j = lps[j - 1];
-        else i++;
+        if (text[i] == pat[j]) {
+            i++;
+            j++;
+            if (j == m)
+                j = lps[j - 1];
+        } else if (j)
+            j = lps[j - 1];
+        else
+            i++;
     }
     return cmp;
 }
@@ -3938,17 +3963,21 @@ int kmpCompares(const string& text, const string& pat) {
 int bmCompares(const string& text, const string& pat) {
     int n = text.size(), m = pat.size(), cmp = 0;
     vector<int> bad(256, -1);
-    for (int i = 0; i < m; i++) bad[(unsigned char)pat[i]] = i;
+    for (int i = 0; i < m; i++)
+        bad[(unsigned char)pat[i]] = i;
     int s = 0;
     while (s <= n - m) {
         int j = m - 1;
         while (j >= 0) {
             cmp++;
-            if (pat[j] != text[s + j]) break;
+            if (pat[j] != text[s + j])
+                break;
             j--;
         }
-        if (j < 0) s += 1;
-        else s += max(1, j - bad[(unsigned char)text[s + j]]);
+        if (j < 0)
+            s += 1;
+        else
+            s += max(1, j - bad[(unsigned char)text[s + j]]);
     }
     return cmp;
 }
@@ -3956,22 +3985,28 @@ int bmCompares(const string& text, const string& pat) {
 int rkCompares(const string& text, const string& pat) {
     const int BASE = 256, MOD = 101;
     int n = text.size(), m = pat.size(), cmp = 0;
-    if (m > n) return 0;
+    if (m > n)
+        return 0;
     int ph = 0, wh = 0, h = 1;
-    for (int i = 0; i < m - 1; i++) h = (h * BASE) % MOD;
+    for (int i = 0; i < m - 1; i++)
+        h = (h * BASE) % MOD;
     for (int i = 0; i < m; i++) {
         ph = (BASE * ph + pat[i]) % MOD;
         wh = (BASE * wh + text[i]) % MOD;
     }
     for (int s = 0; s <= n - m; s++) {
-        cmp++;  // one hash comparison per window
+        cmp++; // one hash comparison per window
         if (ph == wh) {
             int j = 0;
-            while (j < m && text[s + j] == pat[j]) { cmp++; j++; }
+            while (j < m && text[s + j] == pat[j]) {
+                cmp++;
+                j++;
+            }
         }
         if (s < n - m) {
             wh = (BASE * (wh - text[s] * h) + text[s + m]) % MOD;
-            if (wh < 0) wh += MOD;
+            if (wh < 0)
+                wh += MOD;
         }
     }
     return cmp;

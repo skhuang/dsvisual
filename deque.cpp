@@ -49,8 +49,10 @@ public:
         Node* node = head;
         int v = node->val;
         head = head->next;
-        if (head) head->prev = nullptr;
-        else tail = nullptr;
+        if (head)
+            head->prev = nullptr;
+        else
+            tail = nullptr;
         delete node;
         count--;
         return v;
@@ -64,8 +66,10 @@ public:
         Node* node = tail;
         int v = node->val;
         tail = tail->prev;
-        if (tail) tail->next = nullptr;
-        else head = nullptr;
+        if (tail)
+            tail->next = nullptr;
+        else
+            head = nullptr;
         delete node;
         count--;
         return v;
@@ -73,7 +77,8 @@ public:
 
     void print() {
         cout << "null <-> ";
-        for (Node* p = head; p; p = p->next) cout << p->val << " <-> ";
+        for (Node* p = head; p; p = p->next)
+            cout << p->val << " <-> ";
         cout << "null" << endl;
     }
 };
@@ -83,9 +88,9 @@ int main() {
     dq.pushBack(10);
     dq.pushBack(20);
     dq.pushFront(5);
-    dq.print();        // null <-> 5 <-> 10 <-> 20 <-> null
+    dq.print(); // null <-> 5 <-> 10 <-> 20 <-> null
     dq.popBack();
     dq.popFront();
-    dq.print();        // null <-> 10 <-> null
+    dq.print(); // null <-> 10 <-> null
     return 0;
 }

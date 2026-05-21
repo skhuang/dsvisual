@@ -1,7 +1,7 @@
-#include <iostream>
-#include <vector>
-#include <string>
 #include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
 using namespace std;
 
 const int ALPHABET = 256;
@@ -22,16 +22,20 @@ void buildGoodSuffix(const string& pat, vector<int>& shift) {
     bpos[i] = j;
     while (i > 0) {
         while (j <= m && pat[i - 1] != pat[j - 1]) {
-            if (shift[j] == 0) shift[j] = j - i;
+            if (shift[j] == 0)
+                shift[j] = j - i;
             j = bpos[j];
         }
-        i--; j--;
+        i--;
+        j--;
         bpos[i] = j;
     }
     j = bpos[0];
     for (i = 0; i <= m; i++) {
-        if (shift[i] == 0) shift[i] = j;
-        if (i == j) j = bpos[j];
+        if (shift[i] == 0)
+            shift[i] = j;
+        if (i == j)
+            j = bpos[j];
     }
 }
 
@@ -43,7 +47,8 @@ void boyerMooreSearch(const string& text, const string& pat) {
     int s = 0;
     while (s <= n - m) {
         int j = m - 1;
-        while (j >= 0 && pat[j] == text[s + j]) j--;
+        while (j >= 0 && pat[j] == text[s + j])
+            j--;
         if (j < 0) {
             cout << "Match at index " << s << endl;
             s += shift[0];
@@ -57,6 +62,6 @@ void boyerMooreSearch(const string& text, const string& pat) {
 int main() {
     string text = "ABABDABACDABABCABAB";
     string pattern = "ABABCABAB";
-    boyerMooreSearch(text, pattern);   // Match at index 10
+    boyerMooreSearch(text, pattern); // Match at index 10
     return 0;
 }

@@ -1,6 +1,6 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
 vector<int> computeLPS(const string& pat) {
@@ -25,7 +25,8 @@ void kmpSearch(const string& text, const string& pat) {
     int i = 0, j = 0;
     while (i < n) {
         if (text[i] == pat[j]) {
-            i++; j++;
+            i++;
+            j++;
             if (j == m) {
                 cout << "Match at index " << (i - j) << endl;
                 j = lps[j - 1];
@@ -41,6 +42,6 @@ void kmpSearch(const string& text, const string& pat) {
 int main() {
     string text = "ABABDABACDABABCABAB";
     string pattern = "ABABCABAB";
-    kmpSearch(text, pattern);   // Match at index 10
+    kmpSearch(text, pattern); // Match at index 10
     return 0;
 }
