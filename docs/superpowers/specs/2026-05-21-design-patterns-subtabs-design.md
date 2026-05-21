@@ -108,6 +108,7 @@ dsvisual 的 Design Patterns 分類目前是單一 top-level 分類,內含 6 個
 ## 不在範圍內
 
 - 新增任何 design pattern(Builder、Abstract Factory、Composite、Facade、Command、State、Template Method、Proxy 等)—— 留給後續的 Batch 1 / Batch 2 spec。
+- **Architectural patterns(MVC、Layered、Pub-Sub 等)** —— GoF 三類之外規劃中的第 4 個 sub-tab。本 spec 的 sub-tab 機制刻意設計成支援任意數量的子 group:未來新增一個帶 `parent: 'patterns'` 的 `patterns-architectural` group(含方法)時,第 4 個 tab 會自動出現,無需再改 nav 程式碼。Architectural patterns 的內容(C++、視覺化、簡報)留給獨立的後續 spec。
 - 其他分類的 sub-tab 化 —— 本 spec 只處理 Design Patterns。
 - 簡報 `category` 字串變更。
 
