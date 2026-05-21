@@ -195,6 +195,7 @@ const METHOD_GROUPS = [
             { id: 'oop-polymorphism', title: 'Polymorphism (Virtual)', file: 'oop_polymorphism.cpp', visualizer: 'oop', controls: 'oop' },
             { id: 'oop-encapsulation', title: 'Encapsulation & Access', file: 'oop_encapsulation.cpp', visualizer: 'oop', controls: 'oop' },
             { id: 'oop-abstraction', title: 'Abstraction (Abstract Classes)', file: 'oop_abstraction.cpp', visualizer: 'oop', controls: 'oop' },
+            { id: 'oop-adhoc', title: 'Ad-hoc Polymorphism (Overloading)', file: 'oop_adhoc.cpp', visualizer: 'oop', controls: 'oop' },
         ],
     },
     {
@@ -276,6 +277,7 @@ function getCodeForMethod(methodId) {
         'oop-polymorphism': codeOOPPolymorphism,
         'oop-encapsulation': codeOOPEncapsulation,
         'oop-abstraction': codeOOPAbstraction,
+        'oop-adhoc': codeOOPAdhoc,
         'pattern-singleton': codePatternSingleton,
         'pattern-factory': codePatternFactory,
         'pattern-adapter': codePatternAdapter,
@@ -786,6 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const oopPolymorphismView = document.getElementById('oop-polymorphism-view');
     const oopEncapsulationView = document.getElementById('oop-encapsulation-view');
     const oopAbstractionView = document.getElementById('oop-abstraction-view');
+    const oopAdhocView = document.getElementById('oop-adhoc-view');
 
     const patternActions = document.getElementById('pattern-actions');
     const patternModeSelect = document.getElementById('pattern-mode-select');
@@ -1738,6 +1741,7 @@ document.addEventListener('DOMContentLoaded', () => {
             oopPolymorphismView.classList.add('hidden');
             oopEncapsulationView.classList.add('hidden');
             oopAbstractionView.classList.add('hidden');
+            oopAdhocView.classList.add('hidden');
             if (currentMode === 'oop-inheritance') {
                 codeTitle.textContent = 'oop_inheritance.cpp';
                 codeDisplay.textContent = codeOOPInheritance;
@@ -1761,6 +1765,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codeOOPAbstraction;
                 oopAbstractionView.classList.remove('hidden');
                 oopModeSelect.value = 'abstraction';
+            }
+            else if (currentMode === 'oop-adhoc') {
+                codeTitle.textContent = 'oop_adhoc.cpp';
+                codeDisplay.textContent = codeOOPAdhoc;
+                oopAdhocView.classList.remove('hidden');
+                oopModeSelect.value = 'adhoc';
             }
         }
         else if (currentMode.includes('pattern-')) {
@@ -3630,6 +3640,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'polymorphism') renderOOPPolymorphism();
         else if (mode === 'encapsulation') renderOOPEncapsulation();
         else if (mode === 'abstraction') renderOOPAbstraction();
+        else if (mode === 'adhoc') renderOOPAdhoc();
     }
 
     function renderOOPInheritance() {
@@ -3925,6 +3936,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Annotations.
         drawOopLabel(svg, 250, 295, 'Shape s;  ->  compile error (abstract)', '#ef4444');
         drawOopLabel(svg, 250, 318, 'Shape* p = new Circle();  ->  OK', '#34d399');
+    }
+
+    function renderOOPAdhoc() {
+        const svg = document.getElementById('oop-adhoc-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopLabel(svg, 110, 22, 'Call sites', '#94a3b8');
+        drawOopLabel(svg, 390, 22, 'Resolved at compile time', '#94a3b8');
+        const calls = [ 'print(42)', 'print(3.14)', 'print("hi")' ];
+        const funcs = [ 'print(int)', 'print(double)', 'print(string)' ];
+        for (let i = 0; i < 3; i++) {
+            const y = 40 + i * 56;
+            drawOopBox(svg, { x: 30, y: y, w: 160, h: 40, title: calls[i], titleColor: '#60a5fa' });
+            drawOopBox(svg, { x: 310, y: y, w: 160, h: 40, title: funcs[i], titleColor: '#34d399' });
+            drawOopLine(svg, 190, y + 20, 310, y + 20);
+        }
+        // Operator overloading panel.
+        drawOopBox(svg, { x: 30, y: 230, w: 160, h: 52, title: 'v1 + v2', titleColor: '#60a5fa',
+            lines: [ { text: 'two Vector2D values', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 310, y: 230, w: 160, h: 52, title: 'operator+', titleColor: '#34d399',
+            lines: [ { text: 'Vector2D::operator+', color: '#cbd5e1' } ] });
+        drawOopLine(svg, 190, 256, 310, 256);
+        drawOopLabel(svg, 250, 322, 'Same name, chosen by argument types — no runtime dispatch', '#fbbf24');
     }
 
     // OOP Button Listeners
