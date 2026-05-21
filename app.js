@@ -238,6 +238,7 @@ const METHOD_GROUPS = [
             { id: 'pattern-mvc', title: 'MVC (Model-View-Controller)', file: 'pattern_mvc.cpp', visualizer: 'pattern', controls: 'pattern' },
             { id: 'pattern-layered', title: 'Layered Architecture', file: 'pattern_layered.cpp', visualizer: 'pattern', controls: 'pattern' },
             { id: 'pattern-pubsub', title: 'Publish-Subscribe', file: 'pattern_pubsub.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-pipefilter', title: 'Pipe-and-Filter', file: 'pattern_pipefilter.cpp', visualizer: 'pattern', controls: 'pattern' },
         ],
     },
 ];
@@ -318,6 +319,7 @@ function getCodeForMethod(methodId) {
         'pattern-mvc': codePatternMVC,
         'pattern-layered': codePatternLayered,
         'pattern-pubsub': codePatternPubSub,
+        'pattern-pipefilter': codePatternPipeFilter,
     };
     return codeByMethod[methodId] || '// Source code pending.';
 }
@@ -1916,6 +1918,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codePatternPubSub;
                 document.getElementById('pattern-pubsub-view').classList.remove('hidden');
                 patternModeSelect.value = 'pubsub';
+            }
+            else if (currentMode === 'pattern-pipefilter') {
+                codeTitle.textContent = 'pattern_pipefilter.cpp';
+                codeDisplay.textContent = codePatternPipeFilter;
+                document.getElementById('pattern-pipefilter-view').classList.remove('hidden');
+                patternModeSelect.value = 'pipefilter';
             }
         }
         syncHeapTutorialChrome();
@@ -4160,6 +4168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'mvc') renderPatternMVC();
         else if (mode === 'layered') renderPatternLayered();
         else if (mode === 'pubsub') renderPatternPubSub();
+        else if (mode === 'pipefilter') renderPatternPipeFilter();
     }
 
     function renderPatternSingleton() {
@@ -4598,6 +4607,26 @@ document.addEventListener('DOMContentLoaded', () => {
         drawOopLabel(svg, 344, 110, 'notify', '#34d399');
     }
 
+    function renderPatternPipeFilter() {
+        const svg = document.getElementById('pattern-pipefilter-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        const stages = [
+            { x: 12, title: 'Input', color: '#94a3b8' },
+            { x: 110, title: 'Trim', color: '#34d399' },
+            { x: 208, title: 'Upper', color: '#34d399' },
+            { x: 306, title: 'Exclaim', color: '#34d399' },
+            { x: 404, title: 'Output', color: '#60a5fa' },
+        ];
+        stages.forEach((s) => {
+            drawOopBox(svg, { x: s.x, y: 132, w: 80, h: 56, title: s.title, titleColor: s.color });
+        });
+        for (let i = 0; i < stages.length - 1; i++) {
+            drawOopLine(svg, stages[i].x + 80, 160, stages[i + 1].x, 160);
+        }
+        drawOopLabel(svg, 250, 220, 'data flows through each filter via pipes', '#94a3b8');
+    }
+
     function createArrow(svg, x1, y1, x2, y2, color) {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', x1); line.setAttribute('y1', y1);
@@ -4713,6 +4742,13 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus('EventBus fans the event out to every subscriber', '#a78bfa');
             await sleep(700);
             showStatus('Subscribers A, B, C all receive it — fully decoupled', '#34d399');
+        }
+        else if (mode === 'pipefilter') {
+            showStatus('Input enters the pipeline...', '#94a3b8');
+            await sleep(700);
+            showStatus('Each filter transforms the data and passes it on', '#34d399');
+            await sleep(700);
+            showStatus('Trim -> Upper -> Exclaim -> Output', '#60a5fa');
         }
     }
 });

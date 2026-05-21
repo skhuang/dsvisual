@@ -411,6 +411,14 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('#pattern-pubsub-svg rect')).toHaveCount(5);
     });
 
+    test('Architectural: Pipe-and-Filter renders the filter chain', async ({ page }) => {
+        await loadMethod(page, 'pattern-pipefilter');
+        const card = page.locator('[data-method-section="pattern-pipefilter"]');
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        await expect(card.locator('.code-panel-filename')).toContainText('pattern_pipefilter.cpp');
+        await expect(card.locator('#pattern-pipefilter-svg rect')).toHaveCount(5);
+    });
+
     test('Trees: Disjoint Set renders 8 nodes initially and supports union', async ({ page }) => {
         await loadMethod(page, 'tree-dsu');
         const card = page.locator('[data-method-section="tree-dsu"]');
