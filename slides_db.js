@@ -16035,6 +16035,354 @@ const SLIDES_DB = {
       }
     ]
   },
+  "pattern-layered": {
+    "category": "Design Patterns",
+    "title": { "zh": "分層架構", "en": "Layered Architecture" },
+    "slides": [
+      {
+        "heading": { "zh": "分層架構", "en": "Layered Architecture" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "分層架構將系統組織成水平的層次（呈現層、業務層、資料層）；每一層只能呼叫其正下方的層次，以隔離關注點。",
+              "en": "Layered architecture organizes a system into horizontal layers (Presentation, Business, Data); each layer uses only the layer directly below it to separate concerns." } }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "嚴格的向下依賴：任何層都不得向上呼叫，也不得跨層呼叫。每一層只知道它下方的鄰層，從而確保彼此獨立。",
+              "en": "Strict downward dependency — a layer never calls upward or skips a layer. Each layer knows only its immediate neighbor below, keeping layers independent." } },
+          { "type": "bullets", "items": [
+              { "zh": "每一層只有一個職責，關注點明確。", "en": "Each layer has a single responsibility with a clear focus." },
+              { "zh": "下層不知道上層的存在，耦合度低。", "en": "Lower layers are unaware of higher ones, keeping coupling low." },
+              { "zh": "替換某層的實作不會向上波及其他層。", "en": "Swapping a layer's implementation doesn't ripple upward to other layers." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          { "type": "steps", "items": [
+              { "zh": "請求從呈現層進入，呈現層負責格式化與顯示。", "en": "A request enters at the Presentation layer, which handles formatting and display." },
+              { "zh": "呈現層呼叫業務層；業務層套用規則並驗證資料。", "en": "The Presentation layer calls the Business layer, which applies rules and validates data." },
+              { "zh": "業務層呼叫資料層取得原始資料；結果逐層往上回傳。", "en": "The Business layer calls the Data layer to retrieve raw data; results flow back up through each layer." }
+          ] },
+          { "type": "mermaid", "code": "flowchart TD\n  Presentation[\"Presentation\"] --> Business[\"Business\"]\n  Business --> Data[\"Data\"]" }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 320 160\" width=\"320\"><g font-family=\"monospace\" font-size=\"12\"><rect x=\"60\" y=\"10\" width=\"200\" height=\"34\" fill=\"none\" stroke=\"#60a5fa\"/><text x=\"160\" y=\"31\" text-anchor=\"middle\" fill=\"#60a5fa\">Presentation</text><line x1=\"160\" y1=\"44\" x2=\"160\" y2=\"63\" stroke=\"#64748b\"/><rect x=\"60\" y=\"63\" width=\"200\" height=\"34\" fill=\"none\" stroke=\"#34d399\"/><text x=\"160\" y=\"84\" text-anchor=\"middle\" fill=\"#34d399\">Business</text><line x1=\"160\" y1=\"97\" x2=\"160\" y2=\"116\" stroke=\"#64748b\"/><rect x=\"60\" y=\"116\" width=\"200\" height=\"34\" fill=\"none\" stroke=\"#f59e0b\"/><text x=\"160\" y=\"137\" text-anchor=\"middle\" fill=\"#f59e0b\">Data</text></g></svg>" },
+          { "type": "note", "text": {
+              "zh": "visualizer 以縱向堆疊呈現三層：呈現層在上、業務層居中、資料層在下，連線代表「呼叫」關係，由上往下單向流動。",
+              "en": "The visualizer stacks the three layers vertically: Presentation on top, Business in the middle, Data at the bottom, with connectors showing the downward \"calls\" relationship." } }
+        ]
+      },
+      {
+        "heading": { "zh": "取捨與使用時機", "en": "Trade-offs & When to Use" },
+        "blocks": [
+          { "type": "table",
+            "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "說明", "en": "Notes" } ],
+            "rows": [
+              [ { "zh": "關注點分離與可維護性", "en": "Separation of concerns & maintainability" }, { "zh": "各層職責清晰，易於維護", "en": "Each layer has a clear role, making maintenance straightforward" } ],
+              [ { "zh": "逐層可測試性", "en": "Per-layer testability" }, { "zh": "可以 mock 下層來單獨測試每一層", "en": "Each layer can be tested in isolation by mocking the layer below" } ],
+              [ { "zh": "成本", "en": "Cost" }, { "zh": "請求須逐層傳遞；有產生純透傳「沉洞層」的風險", "en": "Requests are passed layer-to-layer; risk of pass-through sinkhole layers" } ]
+            ] }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          { "type": "code", "lang": "cpp", "code": "// Business layer — applies rules; calls only the layer below.\nclass BusinessLayer {\n    DataLayer data;\npublic:\n    string process() {\n        return \"[validated] \" + data.fetch();\n    }\n};\n\n// Presentation layer — formats output; calls only the layer below.\nclass PresentationLayer {\n    BusinessLayer business;\npublic:\n    void show() {\n        cout << \"Display: \" << business.process() << endl;\n    }\n};" }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "優點：結構清晰，每一層可獨立維護與測試。", "en": "Pro: clear structure; each layer can be independently maintained and tested." },
+              { "zh": "優點：替換某層實作（例如切換資料庫）不影響上層邏輯。", "en": "Pro: swapping a layer's implementation (e.g., switching databases) does not affect upper layers." },
+              { "zh": "缺點：請求逐層傳遞，增加間接呼叫的開銷。", "en": "Con: extra indirection as requests pass through each layer." },
+              { "zh": "缺點：若中間層無實質邏輯，容易淪為純透傳的「沉洞層」。", "en": "Con: risk of pass-through sinkhole layers when intermediate layers add no real logic." },
+              { "zh": "適用：具有清晰水平關注點的商業應用程式（如傳統三層式架構）。", "en": "Use for business applications with clear horizontal concerns (e.g., classic 3-tier architecture)." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "分層架構以水平層次組織系統，並施加嚴格的向下依賴規則。", "en": "Layered architecture organizes a system into horizontal layers with strict downward dependency." },
+              { "zh": "是經典的 n 層式結構，廣泛用於商業應用與 Web 系統。", "en": "It is the classic n-tier structure, widely used in business applications and web systems." },
+              { "zh": "清晰的職責分離使各層可獨立開發、測試與替換。", "en": "Clear separation of responsibilities allows each layer to be developed, tested, and replaced independently." }
+          ] }
+        ]
+      }
+    ]
+  },
+  "pattern-pubsub": {
+    "category": "Design Patterns",
+    "title": { "zh": "發布-訂閱", "en": "Publish-Subscribe" },
+    "slides": [
+      {
+        "heading": { "zh": "發布-訂閱模式", "en": "Publish-Subscribe Pattern" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "發布者將事件發送至事件匯流排（broker）；訂閱者從匯流排接收事件——發布者與訂閱者彼此完全不知道對方的存在。",
+              "en": "Publishers emit events to an event bus (broker); subscribers receive them from the bus — publishers and subscribers never reference each other." } }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "事件匯流排是解耦的關鍵：它同時對兩端隱藏了對方。一個事件可以扇出（fan-out）至多個訂閱者；訂閱者可以在執行時期動態新增或移除。",
+              "en": "The event bus is the key to decoupling: it hides each side from the other. One event fans out to many subscribers; subscribers can be added or removed at runtime." } },
+          { "type": "bullets", "items": [
+              { "zh": "發布者與訂閱者完全解耦，互不依賴。", "en": "Publishers and subscribers are fully decoupled — neither depends on the other." },
+              { "zh": "單一事件可同時廣播給多個訂閱者（扇出）。", "en": "A single event can be broadcast to multiple subscribers simultaneously (fan-out)." },
+              { "zh": "訂閱者可在執行時期動態新增或移除，彈性高。", "en": "Subscribers can be dynamically added or removed at runtime for maximum flexibility." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          { "type": "steps", "items": [
+              { "zh": "訂閱者向事件匯流排注冊處理函式（handler）。", "en": "Subscribers register their handler functions with the event bus." },
+              { "zh": "發布者呼叫匯流排的 publish() 方法，傳入事件資料。", "en": "A publisher calls the bus's publish() method with the event data." },
+              { "zh": "匯流排依序呼叫所有已注冊的處理函式，完成事件派送。", "en": "The bus invokes every registered handler in sequence, completing the event dispatch." }
+          ] },
+          { "type": "mermaid", "code": "flowchart LR\n  Publisher[\"Publisher\"] --> EventBus[\"EventBus\"]\n  EventBus --> SubscriberA[\"SubscriberA\"]\n  EventBus --> SubscriberB[\"SubscriberB\"]\n  EventBus --> SubscriberC[\"SubscriberC\"]" }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 160\" width=\"400\"><g font-family=\"monospace\" font-size=\"12\"><rect x=\"10\" y=\"63\" width=\"90\" height=\"34\" fill=\"none\" stroke=\"#f59e0b\"/><text x=\"55\" y=\"84\" text-anchor=\"middle\" fill=\"#f59e0b\">Publisher</text><line x1=\"100\" y1=\"80\" x2=\"150\" y2=\"80\" stroke=\"#64748b\"/><rect x=\"150\" y=\"63\" width=\"90\" height=\"34\" fill=\"none\" stroke=\"#60a5fa\"/><text x=\"195\" y=\"84\" text-anchor=\"middle\" fill=\"#60a5fa\">EventBus</text><line x1=\"240\" y1=\"80\" x2=\"290\" y2=\"30\" stroke=\"#64748b\"/><line x1=\"240\" y1=\"80\" x2=\"290\" y2=\"80\" stroke=\"#64748b\"/><line x1=\"240\" y1=\"80\" x2=\"290\" y2=\"130\" stroke=\"#64748b\"/><rect x=\"290\" y=\"13\" width=\"100\" height=\"34\" fill=\"none\" stroke=\"#34d399\"/><text x=\"340\" y=\"34\" text-anchor=\"middle\" fill=\"#34d399\">Subscriber A</text><rect x=\"290\" y=\"63\" width=\"100\" height=\"34\" fill=\"none\" stroke=\"#34d399\"/><text x=\"340\" y=\"84\" text-anchor=\"middle\" fill=\"#34d399\">Subscriber B</text><rect x=\"290\" y=\"113\" width=\"100\" height=\"34\" fill=\"none\" stroke=\"#34d399\"/><text x=\"340\" y=\"134\" text-anchor=\"middle\" fill=\"#34d399\">Subscriber C</text></g></svg>" },
+          { "type": "note", "text": {
+              "zh": "visualizer 以左右佈局呈現：發布者在最左，事件匯流排居中，三個訂閱者在右側，連線代表事件流向。",
+              "en": "The visualizer uses a left-to-right layout: Publisher on the far left, EventBus in the center, three Subscribers on the right, with connectors showing event flow." } }
+        ]
+      },
+      {
+        "heading": { "zh": "取捨與使用時機", "en": "Trade-offs & When to Use" },
+        "blocks": [
+          { "type": "table",
+            "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "說明", "en": "Notes" } ],
+            "rows": [
+              [ { "zh": "解耦", "en": "Decoupling" }, { "zh": "發布者與訂閱者完全不互相依賴", "en": "Publishers and subscribers have zero direct dependency on each other" } ],
+              [ { "zh": "扇出", "en": "Fan-out" }, { "zh": "一個事件可輕易廣播給多個訂閱者", "en": "One event can easily reach multiple subscribers simultaneously" } ],
+              [ { "zh": "成本", "en": "Cost" }, { "zh": "事件流難以追蹤；需額外關注訊息順序與傳遞保證", "en": "Event flow is harder to trace; ordering and delivery guarantees need explicit attention" } ]
+            ] }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          { "type": "code", "lang": "cpp", "code": "// Event bus — decouples publishers from subscribers.\nclass EventBus {\n    vector<function<void(const string&)>> subscribers;\npublic:\n    void subscribe(function<void(const string&)> handler) {\n        subscribers.push_back(handler);\n    }\n    void publish(const string& event) {\n        for (auto& handler : subscribers) handler(event);\n    }\n};" }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "優點：發布者與訂閱者完全解耦，互不知曉。", "en": "Pro: publishers and subscribers are totally decoupled — neither knows of the other." },
+              { "zh": "優點：新增或移除訂閱者無需修改發布者程式碼。", "en": "Pro: adding or removing subscribers requires no changes to the publisher." },
+              { "zh": "優點：天然支援一對多的事件扇出。", "en": "Pro: naturally supports one-to-many event fan-out." },
+              { "zh": "缺點：間接的控制流使除錯與追蹤更為困難。", "en": "Con: indirect control flow makes debugging and tracing harder." },
+              { "zh": "適用：事件驅動系統、UI 事件處理、需要解耦的模組間通訊。", "en": "Use for event-driven systems, UI event handling, and decoupled inter-module communication." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "發布-訂閱透過事件匯流排作為仲介，使發布者與訂閱者完全解耦。", "en": "Publish-Subscribe uses an event bus as a broker to fully decouple publishers and subscribers." },
+              { "zh": "一個事件可廣播給任意數量的訂閱者，並支援執行時期的動態訂閱。", "en": "One event can broadcast to any number of subscribers, with dynamic subscription at runtime." },
+              { "zh": "是事件驅動架構的核心機制，廣泛應用於 UI 框架與訊息系統。", "en": "It is the core mechanism of event-driven architecture, widely used in UI frameworks and messaging systems." }
+          ] }
+        ]
+      }
+    ]
+  },
+  "pattern-pipefilter": {
+    "category": "Design Patterns",
+    "title": { "zh": "管道與過濾器", "en": "Pipe-and-Filter" },
+    "slides": [
+      {
+        "heading": { "zh": "管道與過濾器", "en": "Pipe-and-Filter" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "資料透過一連串以管道（pipe）連接的獨立過濾器（filter）逐步流動；每個過濾器負責一種轉換，並將結果傳遞給下一個。",
+              "en": "Data flows through a chain of independent filters connected by pipes; each filter transforms its input and passes the result on to the next." } }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "每個過濾器只有單一職責，且具備統一的輸入／輸出介面，因此過濾器可以自由組合與重新排序。管道線（pipeline）就是一個有序的過濾器列表。",
+              "en": "Each filter has a single responsibility and a uniform input/output interface, so filters compose and reorder freely. The pipeline is simply an ordered list of filters." } },
+          { "type": "bullets", "items": [
+              { "zh": "統一的「輸入 → 輸出」介面讓過濾器可以任意串接。", "en": "The uniform input → output interface allows filters to be chained in any order." },
+              { "zh": "過濾器彼此獨立，可單獨重複使用。", "en": "Filters are independent of each other and individually reusable." },
+              { "zh": "管道線只是一個有序的過濾器列表，組合方式靈活。", "en": "The pipeline is just an ordered list of filters, enabling flexible composition." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          { "type": "steps", "items": [
+              { "zh": "建立管道線並依序加入所需的過濾器。", "en": "Build the pipeline by adding filters in the desired order." },
+              { "zh": "將輸入資料送入管道線的第一個過濾器。", "en": "Feed the input data into the first filter of the pipeline." },
+              { "zh": "每個過濾器轉換資料後傳遞給下一個，最終輸出結果。", "en": "Each filter transforms the data and forwards it to the next, producing the final output." }
+          ] },
+          { "type": "mermaid", "code": "flowchart LR\n  Input[\"Input\"] --> Trim[\"Trim\"]\n  Trim --> Upper[\"Upper\"]\n  Upper --> Exclaim[\"Exclaim\"]\n  Exclaim --> Output[\"Output\"]" }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 440 80\" width=\"440\"><g font-family=\"monospace\" font-size=\"12\"><rect x=\"10\" y=\"23\" width=\"60\" height=\"34\" fill=\"none\" stroke=\"#64748b\"/><text x=\"40\" y=\"44\" text-anchor=\"middle\" fill=\"#64748b\">Input</text><line x1=\"70\" y1=\"40\" x2=\"90\" y2=\"40\" stroke=\"#64748b\"/><rect x=\"90\" y=\"23\" width=\"70\" height=\"34\" fill=\"none\" stroke=\"#60a5fa\"/><text x=\"125\" y=\"44\" text-anchor=\"middle\" fill=\"#60a5fa\">Trim</text><line x1=\"160\" y1=\"40\" x2=\"180\" y2=\"40\" stroke=\"#64748b\"/><rect x=\"180\" y=\"23\" width=\"70\" height=\"34\" fill=\"none\" stroke=\"#34d399\"/><text x=\"215\" y=\"44\" text-anchor=\"middle\" fill=\"#34d399\">Upper</text><line x1=\"250\" y1=\"40\" x2=\"270\" y2=\"40\" stroke=\"#64748b\"/><rect x=\"270\" y=\"23\" width=\"80\" height=\"34\" fill=\"none\" stroke=\"#f59e0b\"/><text x=\"310\" y=\"44\" text-anchor=\"middle\" fill=\"#f59e0b\">Exclaim</text><line x1=\"350\" y1=\"40\" x2=\"370\" y2=\"40\" stroke=\"#64748b\"/><rect x=\"370\" y=\"23\" width=\"60\" height=\"34\" fill=\"none\" stroke=\"#64748b\"/><text x=\"400\" y=\"44\" text-anchor=\"middle\" fill=\"#64748b\">Output</text></g></svg>" },
+          { "type": "note", "text": {
+              "zh": "visualizer 以水平鏈呈現過濾器：Input → Trim → Upper → Exclaim → Output，連線代表資料流向（管道）。",
+              "en": "The visualizer shows the filter chain horizontally: Input → Trim → Upper → Exclaim → Output, with connectors representing data flow (pipes)." } }
+        ]
+      },
+      {
+        "heading": { "zh": "取捨與使用時機", "en": "Trade-offs & When to Use" },
+        "blocks": [
+          { "type": "table",
+            "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "說明", "en": "Notes" } ],
+            "rows": [
+              [ { "zh": "可組合性與重用", "en": "Composability & reuse" }, { "zh": "過濾器可自由組合、重新排序並在不同管道線中重用", "en": "Filters compose freely, can be reordered, and reused across different pipelines" } ],
+              [ { "zh": "各階段可獨立測試", "en": "Per-stage testability" }, { "zh": "每個過濾器可單獨提供輸入並驗證輸出", "en": "Each filter can be tested in isolation with direct input and output verification" } ],
+              [ { "zh": "成本", "en": "Cost" }, { "zh": "各階段的資料複製增加開銷；不適合需要緊密回饋迴圈的場景", "en": "Per-stage data copying adds overhead; not ideal for tight feedback loops" } ]
+            ] }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          { "type": "code", "lang": "cpp", "code": "// Filter — one transformation stage.\nclass Filter {\npublic:\n    virtual string process(const string& input) const = 0;\n    virtual ~Filter() {}\n};\n\n// Pipeline — chains filters; data flows through each pipe.\nclass Pipeline {\n    vector<Filter*> filters;\npublic:\n    void add(Filter* f) { filters.push_back(f); }\n    string run(const string& input) const {\n        string data = input;\n        for (Filter* f : filters) data = f->process(data);\n        return data;\n    }\n};" }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "優點：過濾器可自由組合、重新排序，彈性極高。", "en": "Pro: filters compose and reorder freely for maximum flexibility." },
+              { "zh": "優點：每個過濾器可獨立進行單元測試。", "en": "Pro: each filter can be unit-tested in complete isolation." },
+              { "zh": "缺點：各階段的資料複製增加效能開銷。", "en": "Con: copying data between stages adds performance overhead." },
+              { "zh": "缺點：對於非線性的資料流，此模式不易套用。", "en": "Con: awkward to apply for non-linear data flows." },
+              { "zh": "適用：串流與批次資料轉換（編譯器、資料管線、文字處理）。", "en": "Use for stream and batch data transformation (compilers, data pipelines, text processing)." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "管道與過濾器將資料處理拆解為一連串單一職責的獨立過濾器。", "en": "Pipe-and-Filter decomposes data processing into a chain of single-responsibility, independent filters." },
+              { "zh": "統一的介面讓過濾器可以自由組合，實現高度可重用的管道線。", "en": "The uniform interface enables free composition of filters into highly reusable pipelines." },
+              { "zh": "廣泛應用於編譯器前端、ETL 資料管線與文字處理等場景。", "en": "Widely applied in compiler front-ends, ETL pipelines, and text-processing scenarios." }
+          ] }
+        ]
+      }
+    ]
+  },
+  "pattern-di": {
+    "category": "Design Patterns",
+    "title": { "zh": "依賴注入", "en": "Dependency Injection" },
+    "slides": [
+      {
+        "heading": { "zh": "依賴注入（Dependency Injection）", "en": "Dependency Injection" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "依賴注入是控制反轉（Inversion of Control）的實踐方式：物件不自行建立依賴，而是由外部（通常透過建構子）注入——從而讓依賴關係可抽換、可測試。",
+              "en": "Dependency Injection is an application of Inversion of Control: instead of an object constructing its own dependencies, they are supplied from outside (typically via the constructor) — making dependencies swappable and testable." } }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "消費者（Consumer）依賴於一個抽象（介面），而非具體實作；組合根（Composition Root）負責建立具體物件並將其注入消費者。",
+              "en": "The consumer depends on an abstraction (interface), not a concrete class; a composition root wires the concrete implementation in." } },
+          { "type": "bullets", "items": [
+              { "zh": "消費者從不對其依賴呼叫 new，依賴由外部提供。", "en": "The consumer never calls new on its dependency — dependencies are supplied externally." },
+              { "zh": "依賴於介面而非具體類別，使替換實作變得容易。", "en": "Depending on an interface rather than a concrete class makes swapping implementations easy." },
+              { "zh": "組合根是唯一負責接線的地方，清晰且集中。", "en": "The composition root is the single, centralized wiring place — clear and explicit." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          { "type": "steps", "items": [
+              { "zh": "定義 Service 抽象介面，消費者僅依賴此介面。", "en": "Define a Service abstraction; the Consumer depends only on this interface." },
+              { "zh": "Consumer 透過建構子接收 Service& 參數（建構子注入）。", "en": "The Consumer takes a Service& in its constructor (constructor injection)." },
+              { "zh": "組合根（main）建立具體的 ConsoleService 並注入至 Consumer。", "en": "The composition root (main) creates the concrete ConsoleService and injects it into the Consumer." }
+          ] },
+          { "type": "mermaid", "code": "flowchart LR\n  CompositionRoot[\"CompositionRoot\"] --> ConsoleService[\"ConsoleService\"]\n  CompositionRoot --> Consumer[\"Consumer\"]\n  ConsoleService --> Consumer" }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 400 160\" width=\"400\"><g font-family=\"monospace\" font-size=\"12\"><rect x=\"140\" y=\"10\" width=\"120\" height=\"34\" fill=\"none\" stroke=\"#a78bfa\"/><text x=\"200\" y=\"31\" text-anchor=\"middle\" fill=\"#a78bfa\">CompositionRoot</text><line x1=\"160\" y1=\"44\" x2=\"90\" y2=\"100\" stroke=\"#64748b\"/><line x1=\"240\" y1=\"44\" x2=\"310\" y2=\"100\" stroke=\"#64748b\"/><rect x=\"20\" y=\"100\" width=\"120\" height=\"34\" fill=\"none\" stroke=\"#f59e0b\"/><text x=\"80\" y=\"121\" text-anchor=\"middle\" fill=\"#f59e0b\">ConsoleService</text><rect x=\"260\" y=\"100\" width=\"100\" height=\"34\" fill=\"none\" stroke=\"#34d399\"/><text x=\"310\" y=\"121\" text-anchor=\"middle\" fill=\"#34d399\">Consumer</text><line x1=\"140\" y1=\"117\" x2=\"260\" y2=\"117\" stroke=\"#60a5fa\" stroke-dasharray=\"4\"/><text x=\"200\" y=\"113\" text-anchor=\"middle\" fill=\"#60a5fa\" font-size=\"10\">injects</text></g></svg>" },
+          { "type": "note", "text": {
+              "zh": "visualizer 以三角佈局呈現：組合根在上，ConsoleService 與 Consumer 在下；實線代表「建立」關係，虛線代表「注入」關係。",
+              "en": "The visualizer uses a triangle layout: CompositionRoot on top, ConsoleService and Consumer below; solid connectors show creation and the dashed connector shows injection." } }
+        ]
+      },
+      {
+        "heading": { "zh": "取捨與使用時機", "en": "Trade-offs & When to Use" },
+        "blocks": [
+          { "type": "table",
+            "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "說明", "en": "Notes" } ],
+            "rows": [
+              [ { "zh": "可測試性", "en": "Testability" }, { "zh": "極佳——可注入 mock 或 fake 取代真實依賴", "en": "Excellent — inject a mock or fake in place of the real dependency" } ],
+              [ { "zh": "彈性", "en": "Flexibility" }, { "zh": "無需修改消費者即可替換具體實作", "en": "Swap concrete implementations without touching the consumer" } ],
+              [ { "zh": "成本", "en": "Cost" }, { "zh": "接線程式碼較多；需維護一個組合根", "en": "More wiring code; a composition root to maintain" } ]
+            ] }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          { "type": "code", "lang": "cpp", "code": "// Service — an abstraction the consumer depends on.\nclass Service {\npublic:\n    virtual string fetch() const = 0;\n    virtual ~Service() {}\n};\n\n// Consumer — receives its dependency; never constructs it.\nclass Consumer {\n    Service& service;   // depends on the abstraction\npublic:\n    Consumer(Service& s) : service(s) {}   // constructor injection\n    void run() {\n        cout << \"Consumer used: \" << service.fetch() << endl;\n    }\n};" }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "優點：可注入 mock 或 fake，大幅提升單元測試的便利性。", "en": "Pro: greatly improves unit testability by allowing mock or fake injection." },
+              { "zh": "優點：替換具體實作無需修改消費者程式碼，彈性極高。", "en": "Pro: swap concrete implementations without modifying the consumer, for maximum flexibility." },
+              { "zh": "缺點：需要更多接線程式碼，並需維護一個組合根。", "en": "Con: requires more wiring boilerplate and a composition root to maintain." },
+              { "zh": "缺點：間接性增加，對初學者而言較難理解控制流。", "en": "Con: added indirection makes control flow harder to follow for beginners." },
+              { "zh": "適用：任何類別擁有可測試或可替換的外部依賴時；注意 DI 是控制反轉的實踐機制。", "en": "Use whenever a class has external dependencies you want to test or swap. Note: DI is the practical mechanism behind Inversion of Control." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "依賴注入將依賴從外部供入；消費者依賴抽象而非具體實作。", "en": "Dependency Injection supplies dependencies from outside; the consumer depends on an abstraction, not a concrete class." },
+              { "zh": "組合根是唯一的接線場所，使整個系統的依賴關係清晰可見。", "en": "The composition root is the single wiring place, making the system's dependency graph explicit." },
+              { "zh": "是可測試、鬆耦合程式碼的基礎，也是控制反轉原則的實踐形式。", "en": "It is the foundation of testable, loosely-coupled code and the practical form of Inversion of Control." }
+          ] }
+        ]
+      }
+    ]
+  },
   "oop-encapsulation": {
     "category": "OOP Concepts",
     "title": {

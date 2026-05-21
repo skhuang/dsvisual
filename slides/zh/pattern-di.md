@@ -1,0 +1,91 @@
+---
+marp: true
+theme: default
+paginate: true
+math: katex
+title: "依賴注入"
+category: "Design Patterns"
+---
+
+## 依賴注入（Dependency Injection）
+
+依賴注入是控制反轉（Inversion of Control）的實踐方式：物件不自行建立依賴，而是由外部（通常透過建構子）注入——從而讓依賴關係可抽換、可測試。
+
+---
+
+## 核心概念
+
+消費者（Consumer）依賴於一個抽象（介面），而非具體實作；組合根（Composition Root）負責建立具體物件並將其注入消費者。
+
+- 消費者從不對其依賴呼叫 new，依賴由外部提供。
+- 依賴於介面而非具體類別，使替換實作變得容易。
+- 組合根是唯一負責接線的地方，清晰且集中。
+
+---
+
+## 運作流程
+
+1. 定義 Service 抽象介面，消費者僅依賴此介面。
+2. Consumer 透過建構子接收 Service& 參數（建構子注入）。
+3. 組合根（main）建立具體的 ConsoleService 並注入至 Consumer。
+
+<svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 593.828px; background-color: transparent;" viewBox="0 -4 593.828125 105" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#my-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#my-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#my-svg .error-icon{fill:#552222;}#my-svg .error-text{fill:#552222;stroke:#552222;}#my-svg .edge-thickness-normal{stroke-width:1px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#333333;stroke:#333333;}#my-svg .marker.cross{stroke:#333333;}#my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#my-svg p{margin:0;}#my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#my-svg .cluster-label text{fill:#333;}#my-svg .cluster-label span{color:#333;}#my-svg .cluster-label span p{background-color:transparent;}#my-svg .label text,#my-svg span{fill:#333;color:#333;}#my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#my-svg .rough-node .label text,#my-svg .node .label text,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-anchor:middle;}#my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#my-svg .rough-node .label,#my-svg .node .label,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-align:center;}#my-svg .node.clickable{cursor:pointer;}#my-svg .root .anchor path{fill:#333333!important;stroke-width:0;stroke:#333333;}#my-svg .arrowheadPath{fill:#333333;}#my-svg .edgePath .path{stroke:#333333;stroke-width:1px;}#my-svg .flowchart-link{stroke:#333333;fill:none;}#my-svg .edgeLabel{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .edgeLabel p{background-color:rgba(232,232,232, 0.8);}#my-svg .edgeLabel rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#my-svg .cluster text{fill:#333;}#my-svg .cluster span{color:#333;}#my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#my-svg rect.text{fill:none;stroke-width:0;}#my-svg .icon-shape,#my-svg .image-shape{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .icon-shape p,#my-svg .image-shape p{background-color:rgba(232,232,232, 0.8);padding:2px;}#my-svg .icon-shape .label rect,#my-svg .image-shape .label rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#my-svg .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#my-svg .node .neo-node{stroke:#9370DB;}#my-svg [data-look="neo"].node rect,#my-svg [data-look="neo"].cluster rect,#my-svg [data-look="neo"].node polygon{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node path{stroke:#9370DB;stroke-width:1px;}#my-svg [data-look="neo"].node .outer-path{filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node .neo-line path{stroke:#9370DB;filter:none;}#my-svg [data-look="neo"].node circle{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node circle .state-start{fill:#000000;}#my-svg [data-look="neo"].icon-shape .icon{fill:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].icon-shape .icon-neo path{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker id="my-svg_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointEnd-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="11.5" refY="7" markerUnits="userSpaceOnUse" markerWidth="10.5" markerHeight="14" orient="auto"><path d="M 0 0 L 11.5 7 L 0 14 z" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="1" refY="7" markerUnits="userSpaceOnUse" markerWidth="11.5" markerHeight="14" orient="auto"><polygon points="0,7 11.5,14 11.5,0" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refY="5" refX="12.25" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-2" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="17.7" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5;"/></marker><marker id="my-svg_flowchart-v2-crossStart-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="-3.5" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5; stroke-dasharray: 1, 0;"/></marker><g class="root"><g class="clusters"/><g class="edgePaths"><path d="M188.391,59.272L192.557,60.394C196.724,61.515,205.057,63.757,212.724,64.879C220.391,66,227.391,66,230.891,66L234.391,66" id="my-svg-L_CompositionRoot_ConsoleService_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_CompositionRoot_ConsoleService_0" data-points="W3sieCI6MTg4LjM5MDYyNSwieSI6NTkuMjcyMjk1NjkzNDU1NDA1fSx7IngiOjIxMy4zOTA2MjUsInkiOjY2fSx7IngiOjIzOC4zOTA2MjUsInkiOjY2fV0=" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M188.391,10.728L192.557,9.606C196.724,8.485,205.057,6.243,227.315,5.121C249.573,4,285.755,4,321.938,4C358.12,4,394.302,4,415.929,5.216C437.557,6.431,444.629,8.863,448.165,10.079L451.702,11.294" id="my-svg-L_CompositionRoot_Consumer_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_CompositionRoot_Consumer_0" data-points="W3sieCI6MTg4LjM5MDYyNSwieSI6MTAuNzI3NzA0MzA2NTQ0NTkyfSx7IngiOjIxMy4zOTA2MjUsInkiOjR9LHsieCI6MzIxLjkzNzUsInkiOjR9LHsieCI6NDMwLjQ4NDM3NSwieSI6NH0seyJ4Ijo0NTUuNDg0Mzc1LCJ5IjoxMi41OTQ2OTc2MjYwNjEzNH1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M405.484,66L409.651,66C413.818,66,422.151,66,429.854,64.784C437.557,63.569,444.629,61.137,448.165,59.921L451.702,58.706" id="my-svg-L_ConsoleService_Consumer_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_ConsoleService_Consumer_0" data-points="W3sieCI6NDA1LjQ4NDM3NSwieSI6NjZ9LHsieCI6NDMwLjQ4NDM3NSwieSI6NjZ9LHsieCI6NDU1LjQ4NDM3NSwieSI6NTcuNDA1MzAyMzczOTM4NjZ9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_CompositionRoot_ConsoleService_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_CompositionRoot_Consumer_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_ConsoleService_Consumer_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="my-svg-flowchart-CompositionRoot-0" data-look="classic" transform="translate(98.1953125, 35)"><rect class="basic label-container" style="" x="-90.1953125" y="-27" width="180.390625" height="54"/><g class="label" style="" transform="translate(-60.1953125, -12)"><rect/><foreignObject width="120.390625" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>CompositionRoot</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-ConsoleService-1" data-look="classic" transform="translate(321.9375, 66)"><rect class="basic label-container" style="" x="-83.546875" y="-27" width="167.09375" height="54"/><g class="label" style="" transform="translate(-53.546875, -12)"><rect/><foreignObject width="107.09375" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>ConsoleService</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-Consumer-3" data-look="classic" transform="translate(520.65625, 35)"><rect class="basic label-container" style="" x="-65.171875" y="-27" width="130.34375" height="54"/><g class="label" style="" transform="translate(-35.171875, -12)"><rect/><foreignObject width="70.34375" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Consumer</p></span></div></foreignObject></g></g></g></g></g><defs><filter id="my-svg-drop-shadow" height="130%" width="130%"><feDropShadow dx="4" dy="4" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs><defs><filter id="my-svg-drop-shadow-small" height="150%" width="150%"><feDropShadow dx="2" dy="2" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs></svg>
+
+---
+
+## 示意圖
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" width="400"><g font-family="monospace" font-size="12"><rect x="140" y="10" width="120" height="34" fill="none" stroke="#a78bfa"/><text x="200" y="31" text-anchor="middle" fill="#a78bfa">CompositionRoot</text><line x1="160" y1="44" x2="90" y2="100" stroke="#64748b"/><line x1="240" y1="44" x2="310" y2="100" stroke="#64748b"/><rect x="20" y="100" width="120" height="34" fill="none" stroke="#f59e0b"/><text x="80" y="121" text-anchor="middle" fill="#f59e0b">ConsoleService</text><rect x="260" y="100" width="100" height="34" fill="none" stroke="#34d399"/><text x="310" y="121" text-anchor="middle" fill="#34d399">Consumer</text><line x1="140" y1="117" x2="260" y2="117" stroke="#60a5fa" stroke-dasharray="4"/><text x="200" y="113" text-anchor="middle" fill="#60a5fa" font-size="10">injects</text></g></svg>
+
+> visualizer 以三角佈局呈現：組合根在上，ConsoleService 與 Consumer 在下；實線代表「建立」關係，虛線代表「注入」關係。
+
+---
+
+## 取捨與使用時機
+
+| 面向 | 說明 |
+| --- | --- |
+| 可測試性 | 極佳——可注入 mock 或 fake 取代真實依賴 |
+| 彈性 | 無需修改消費者即可替換具體實作 |
+| 成本 | 接線程式碼較多；需維護一個組合根 |
+
+---
+
+## 程式碼
+
+```cpp
+// Service — an abstraction the consumer depends on.
+class Service {
+public:
+    virtual string fetch() const = 0;
+    virtual ~Service() {}
+};
+
+// Consumer — receives its dependency; never constructs it.
+class Consumer {
+    Service& service;   // depends on the abstraction
+public:
+    Consumer(Service& s) : service(s) {}   // constructor injection
+    void run() {
+        cout << "Consumer used: " << service.fetch() << endl;
+    }
+};
+```
+
+---
+
+## 優缺點與使用時機
+
+- 優點：可注入 mock 或 fake，大幅提升單元測試的便利性。
+- 優點：替換具體實作無需修改消費者程式碼，彈性極高。
+- 缺點：需要更多接線程式碼，並需維護一個組合根。
+- 缺點：間接性增加，對初學者而言較難理解控制流。
+- 適用：任何類別擁有可測試或可替換的外部依賴時；注意 DI 是控制反轉的實踐機制。
+
+---
+
+## 小結
+
+- 依賴注入將依賴從外部供入；消費者依賴抽象而非具體實作。
+- 組合根是唯一的接線場所，使整個系統的依賴關係清晰可見。
+- 是可測試、鬆耦合程式碼的基礎，也是控制反轉原則的實踐形式。
