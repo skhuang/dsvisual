@@ -4327,24 +4327,25 @@ int main() {
 const codeBloomFilter = `#include <iostream>
 #include <vector>
 #include <string>
+using namespace std;
 
 // A Bloom filter: a space-efficient probabilistic set. A query may report a
 // false positive ("possibly present") but never a false negative.
 class BloomFilter {
     static const int SIZE = 32;
-    std::vector<bool> bits;
+    vector<bool> bits;
 
-    int hash1(const std::string& s) const {
+    int hash1(const string& s) const {
         unsigned long h = 5381;
         for (char c : s) h = h * 33 + static_cast<unsigned char>(c);
         return static_cast<int>(h % SIZE);
     }
-    int hash2(const std::string& s) const {
+    int hash2(const string& s) const {
         unsigned long h = 0;
         for (char c : s) h = h * 31 + static_cast<unsigned char>(c);
         return static_cast<int>(h % SIZE);
     }
-    int hash3(const std::string& s) const {
+    int hash3(const string& s) const {
         unsigned long h = 7;
         for (char c : s) h = h * 17 + static_cast<unsigned char>(c) + 1;
         return static_cast<int>(h % SIZE);
@@ -4353,13 +4354,13 @@ class BloomFilter {
 public:
     BloomFilter() : bits(SIZE, false) {}
 
-    void insert(const std::string& key) {
+    void insert(const string& key) {
         bits[hash1(key)] = true;
         bits[hash2(key)] = true;
         bits[hash3(key)] = true;
     }
 
-    bool possiblyContains(const std::string& key) const {
+    bool possiblyContains(const string& key) const {
         return bits[hash1(key)] && bits[hash2(key)] && bits[hash3(key)];
     }
 };
@@ -4371,9 +4372,9 @@ int main() {
     bf.insert("bird");
 
     // "dog" was inserted, so this is always true.
-    std::cout << "contains dog?  " << bf.possiblyContains("dog") << "\\n";
+    cout << "contains dog?  " << bf.possiblyContains("dog") << "\\n";
     // "fish" was never inserted: 0 means definitely absent, 1 a false positive.
-    std::cout << "contains fish? " << bf.possiblyContains("fish") << "\\n";
+    cout << "contains fish? " << bf.possiblyContains("fish") << "\\n";
     return 0;
 }
 `;
@@ -4381,12 +4382,13 @@ int main() {
 const codeSkipList = `#include <iostream>
 #include <vector>
 #include <cstdlib>
+using namespace std;
 
 // A skip list: an ordered map built from a multi-level linked list. Each node
 // is promoted to a random number of express lanes, giving expected O(log n).
 struct Node {
     int key;
-    std::vector<Node*> forward;
+    vector<Node*> forward;
     Node(int k, int level) : key(k), forward(level + 1, nullptr) {}
 };
 
@@ -4397,7 +4399,7 @@ class SkipList {
 
     int randomLevel() {
         int lvl = 0;
-        while ((std::rand() & 1) && lvl < MAX_LEVEL) lvl++;
+        while ((rand() & 1) && lvl < MAX_LEVEL) lvl++;
         return lvl;
     }
 
@@ -4405,7 +4407,7 @@ public:
     SkipList() : level(0) { head = new Node(-1, MAX_LEVEL); }
 
     void insert(int key) {
-        std::vector<Node*> update(MAX_LEVEL + 1, head);
+        vector<Node*> update(MAX_LEVEL + 1, head);
         Node* cur = head;
         for (int i = level; i >= 0; i--) {
             while (cur->forward[i] && cur->forward[i]->key < key) cur = cur->forward[i];
@@ -4433,7 +4435,7 @@ public:
     }
 
     void remove(int key) {
-        std::vector<Node*> update(MAX_LEVEL + 1, head);
+        vector<Node*> update(MAX_LEVEL + 1, head);
         Node* cur = head;
         for (int i = level; i >= 0; i--) {
             while (cur->forward[i] && cur->forward[i]->key < key) cur = cur->forward[i];
@@ -4455,10 +4457,10 @@ int main() {
     int keys[] = {3, 7, 12, 19, 25};
     for (int k : keys) sl.insert(k);
 
-    std::cout << "search 12? " << sl.search(12) << "\\n";  // 1
-    std::cout << "search 20? " << sl.search(20) << "\\n";  // 0
+    cout << "search 12? " << sl.search(12) << "\\n";  // 1
+    cout << "search 20? " << sl.search(20) << "\\n";  // 0
     sl.remove(12);
-    std::cout << "search 12 after remove? " << sl.search(12) << "\\n";  // 0
+    cout << "search 12 after remove? " << sl.search(12) << "\\n";  // 0
     return 0;
 }
 `;
@@ -4466,6 +4468,7 @@ int main() {
 const codeCountMinSketch = `#include <iostream>
 #include <string>
 #include <algorithm>
+using namespace std;
 
 // A Count-Min Sketch: a probabilistic frequency table. estimate() never
 // underestimates a count; hash collisions may inflate it.
@@ -4474,7 +4477,7 @@ class CountMinSketch {
     static const int WIDTH = 8;
     int table[DEPTH][WIDTH];
 
-    int hash(int row, const std::string& s) const {
+    int hash(int row, const string& s) const {
         unsigned long h = static_cast<unsigned long>(row + 1) * 2654435761UL;
         for (char c : s) h = h * 31 + static_cast<unsigned char>(c);
         return static_cast<int>(h % WIDTH);
@@ -4486,13 +4489,13 @@ public:
             for (int c = 0; c < WIDTH; c++) table[r][c] = 0;
     }
 
-    void update(const std::string& key) {
+    void update(const string& key) {
         for (int r = 0; r < DEPTH; r++) table[r][hash(r, key)]++;
     }
 
-    int estimate(const std::string& key) const {
+    int estimate(const string& key) const {
         int est = table[0][hash(0, key)];
-        for (int r = 1; r < DEPTH; r++) est = std::min(est, table[r][hash(r, key)]);
+        for (int r = 1; r < DEPTH; r++) est = min(est, table[r][hash(r, key)]);
         return est;
     }
 };
@@ -4503,9 +4506,9 @@ int main() {
     for (int i = 0; i < 2; i++) cms.update("banana");
     cms.update("cherry");
 
-    std::cout << "apple  ~ " << cms.estimate("apple") << "\\n";   // >= 5
-    std::cout << "banana ~ " << cms.estimate("banana") << "\\n";  // >= 2
-    std::cout << "grape  ~ " << cms.estimate("grape") << "\\n";   // >= 0
+    cout << "apple  ~ " << cms.estimate("apple") << "\\n";   // >= 5
+    cout << "banana ~ " << cms.estimate("banana") << "\\n";  // >= 2
+    cout << "grape  ~ " << cms.estimate("grape") << "\\n";   // >= 0
     return 0;
 }
 `;
@@ -4514,15 +4517,16 @@ const codeSearchZAlgo = `#include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
+using namespace std;
 
 // The Z-array: Z[i] is the length of the longest substring starting at i that
 // matches a prefix of the string. Built in linear time with a [l, r] window.
-std::vector<int> computeZ(const std::string& s) {
+vector<int> computeZ(const string& s) {
     int n = static_cast<int>(s.size());
-    std::vector<int> z(n, 0);
+    vector<int> z(n, 0);
     int l = 0, r = 0;
     for (int i = 1; i < n; i++) {
-        if (i < r) z[i] = std::min(r - i, z[i - l]);
+        if (i < r) z[i] = min(r - i, z[i - l]);
         while (i + z[i] < n && s[z[i]] == s[i + z[i]]) z[i]++;
         if (i + z[i] > r) { l = i; r = i + z[i]; }
     }
@@ -4530,11 +4534,12 @@ std::vector<int> computeZ(const std::string& s) {
 }
 
 // String matching: build pattern + '\$' + text; an index whose Z-value equals
-// the pattern length marks an occurrence.
-std::vector<int> zSearch(const std::string& text, const std::string& pattern) {
-    std::string combined = pattern + "\$" + text;
-    std::vector<int> z = computeZ(combined);
-    std::vector<int> matches;
+// the pattern length marks an occurrence; assumes '\$' appears in neither the
+// pattern nor the text.
+vector<int> zSearch(const string& text, const string& pattern) {
+    string combined = pattern + "\$" + text;
+    vector<int> z = computeZ(combined);
+    vector<int> matches;
     int m = static_cast<int>(pattern.size());
     for (int i = 0; i < static_cast<int>(combined.size()); i++) {
         if (z[i] == m) matches.push_back(i - m - 1);  // translate back into text
@@ -4543,13 +4548,13 @@ std::vector<int> zSearch(const std::string& text, const std::string& pattern) {
 }
 
 int main() {
-    std::string text = "ABABDABACDABABCABAB";
-    std::string pattern = "ABABCABAB";
-    std::vector<int> matches = zSearch(text, pattern);
+    string text = "ABABDABACDABABCABAB";
+    string pattern = "ABABCABAB";
+    vector<int> matches = zSearch(text, pattern);
 
-    std::cout << "matches at:";
-    for (int idx : matches) std::cout << " " << idx;
-    std::cout << "\\n";
+    cout << "matches at:";
+    for (int idx : matches) cout << " " << idx;
+    cout << "\\n";  // matches at index 10
     return 0;
 }
 `;
@@ -4559,23 +4564,24 @@ const codeSearchAho = `#include <iostream>
 #include <queue>
 #include <vector>
 #include <string>
+using namespace std;
 
 // Aho-Corasick: a trie of all patterns plus BFS-computed failure links, so a
 // single text scan reports every occurrence of every pattern.
 struct Node {
-    std::map<char, Node*> children;
+    map<char, Node*> children;
     Node* fail = nullptr;
-    std::vector<int> output;
+    vector<int> output;
 };
 
 class AhoCorasick {
     Node* root;
-    std::vector<std::string> patterns;
+    vector<string> patterns;
 
 public:
     AhoCorasick() { root = new Node(); }
 
-    void addPattern(const std::string& p) {
+    void addPattern(const string& p) {
         int idx = static_cast<int>(patterns.size());
         patterns.push_back(p);
         Node* cur = root;
@@ -4587,7 +4593,7 @@ public:
     }
 
     void build() {
-        std::queue<Node*> q;
+        queue<Node*> q;
         root->fail = root;
         for (auto& kv : root->children) {
             kv.second->fail = root;
@@ -4611,7 +4617,7 @@ public:
         }
     }
 
-    void search(const std::string& text) {
+    void search(const string& text) {
         Node* cur = root;
         for (int i = 0; i < static_cast<int>(text.size()); i++) {
             char c = text[i];
@@ -4619,7 +4625,7 @@ public:
             if (cur->children.count(c)) cur = cur->children[c];
             for (int idx : cur->output) {
                 int start = i - static_cast<int>(patterns[idx].size()) + 1;
-                std::cout << "match \\"" << patterns[idx] << "\\" at " << start << "\\n";
+                cout << "match \\"" << patterns[idx] << "\\" at " << start << "\\n";
             }
         }
     }

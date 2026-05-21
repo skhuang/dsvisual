@@ -3,23 +3,24 @@
 #include <queue>
 #include <vector>
 #include <string>
+using namespace std;
 
 // Aho-Corasick: a trie of all patterns plus BFS-computed failure links, so a
 // single text scan reports every occurrence of every pattern.
 struct Node {
-    std::map<char, Node*> children;
+    map<char, Node*> children;
     Node* fail = nullptr;
-    std::vector<int> output;
+    vector<int> output;
 };
 
 class AhoCorasick {
     Node* root;
-    std::vector<std::string> patterns;
+    vector<string> patterns;
 
 public:
     AhoCorasick() { root = new Node(); }
 
-    void addPattern(const std::string& p) {
+    void addPattern(const string& p) {
         int idx = static_cast<int>(patterns.size());
         patterns.push_back(p);
         Node* cur = root;
@@ -31,7 +32,7 @@ public:
     }
 
     void build() {
-        std::queue<Node*> q;
+        queue<Node*> q;
         root->fail = root;
         for (auto& kv : root->children) {
             kv.second->fail = root;
@@ -55,7 +56,7 @@ public:
         }
     }
 
-    void search(const std::string& text) {
+    void search(const string& text) {
         Node* cur = root;
         for (int i = 0; i < static_cast<int>(text.size()); i++) {
             char c = text[i];
@@ -63,7 +64,7 @@ public:
             if (cur->children.count(c)) cur = cur->children[c];
             for (int idx : cur->output) {
                 int start = i - static_cast<int>(patterns[idx].size()) + 1;
-                std::cout << "match \"" << patterns[idx] << "\" at " << start << "\n";
+                cout << "match \"" << patterns[idx] << "\" at " << start << "\n";
             }
         }
     }
