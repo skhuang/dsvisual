@@ -342,4 +342,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.dsu-tree')).toHaveCount(7);
     });
 
+    test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
+        const errors = [];
+        page.on('pageerror', (e) => errors.push(e.message));
+        await loadMethod(page, 'graph-adjlist');
+        await loadMethod(page, 'graph');
+        await expect(page.locator('#graph-edges')).toHaveCount(1);
+        await loadMethod(page, 'tree-dsu');
+        await loadMethod(page, 'tree-bst');
+        await expect(page.locator('#tree-nodes-container')).toHaveCount(1);
+        expect(errors).toEqual([]);
+    });
+
 });

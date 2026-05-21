@@ -1583,6 +1583,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const containers = [arrayContainer, linkedListContainer, queueContainer, graphContainer, treeContainer, advTreeContainer, searchContainer, listArrContainer, listLLContainer, sortContainer, hashChContainer, hashOaContainer, hashBucketContainer, heapContainer, oopContainer, patternContainer];
         const actions = [stdActions, graphActions, treeActions, textTreeActions, searchActions, listActions, sortActions, hashActions, heapActions, oopActions, patternActions];
         containers.forEach(c => c.classList.add('hidden')); actions.forEach(a => a.classList.add('hidden'));
+        const dynHost = document.getElementById('dynamic-viz-host');
+        if (dynHost) dynHost.classList.add('hidden');
+        const vizHolder = document.getElementById('visualizer-container');
+        if (vizHolder) vizHolder.classList.remove('hidden');
         if(treeDrawLoop) { cancelAnimationFrame(treeDrawLoop); treeDrawLoop = null; }
 
         if(currentMode === 'stack-array') { codeTitle.textContent = 'stack_array.cpp'; codeDisplay.textContent = codeArray; arrayContainer.classList.remove('hidden'); stdActions.classList.remove('hidden'); btnStdAdd.textContent = 'Push()'; btnStdRemove.textContent = 'Pop()'; }
@@ -2498,8 +2502,22 @@ document.addEventListener('DOMContentLoaded', () => {
         else showStatus('Kruskal complete: forest weight = ' + totalWeight + ' (graph disconnected)', '#fbbf24');
     }
 
+    function acquireDynamicVizHost() {
+        const vizContainer = document.getElementById('visualizer-container');
+        if (vizContainer) vizContainer.classList.add('hidden');
+        let host = document.getElementById('dynamic-viz-host');
+        if (!host) {
+            host = document.createElement('div');
+            host.id = 'dynamic-viz-host';
+            runtimeVisualizer.appendChild(host);
+        }
+        host.classList.remove('hidden');
+        host.innerHTML = '';
+        return host;
+    }
+
     function renderGraphDual() {
-        runtimeVisualizer.innerHTML = '';
+        const host = acquireDynamicVizHost();
         const adjacency = [[1,4],[0,2,3,4],[1,3],[1,2,4],[0,1,3]];
 
         function paneSvg(modeClass) {
@@ -2540,15 +2558,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 '<div class="dfs-stack" data-testid="dfs-stack"><strong>Stack:</strong> <span class="dfs-stack-items">0</span></div>' +
                 '<div class="bfs-visited"><strong>Visited:</strong> <span class="dfs-visited-items"></span></div>' +
             '</div>';
-        runtimeVisualizer.appendChild(grid);
+        host.appendChild(grid);
 
         // BFS state
         let bfsVisited = new Set(), bfsQueue = [0], bfsOrder = [];
         // DFS state
         let dfsVisited = new Set(), dfsStack = [0], dfsOrder = [];
 
-        const bfsPane = runtimeVisualizer.querySelector('[data-pane="bfs"]');
-        const dfsPane = runtimeVisualizer.querySelector('[data-pane="dfs"]');
+        const bfsPane = host.querySelector('[data-pane="bfs"]');
+        const dfsPane = host.querySelector('[data-pane="dfs"]');
         const bfsQueueEl = bfsPane.querySelector('.bfs-queue-items');
         const dfsStackEl = dfsPane.querySelector('.dfs-stack-items');
         const bfsVisitedEl = bfsPane.querySelector('.bfs-visited-items');
@@ -2597,12 +2615,12 @@ document.addEventListener('DOMContentLoaded', () => {
             dfsStackEl.textContent = '0';
             bfsVisitedEl.textContent = '';
             dfsVisitedEl.textContent = '';
-            runtimeVisualizer.querySelectorAll('.nodes circle').forEach(c => c.setAttribute('fill', '#fff'));
+            host.querySelectorAll('.nodes circle').forEach(c => c.setAttribute('fill', '#fff'));
         };
     }
 
     function renderDSU() {
-        runtimeVisualizer.innerHTML = '';
+        const host = acquireDynamicVizHost();
         const N = 8;
         runtimeVisualizer._dsu = {
             parent: Array.from({length: N}, (_, i) => i),
@@ -2629,7 +2647,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     '<button type="button" data-action="reset">Reset</button>' +
                 '</div>';
         wrap.innerHTML = html;
-        runtimeVisualizer.appendChild(wrap);
+        host.appendChild(wrap);
 
         function refreshRanks() {
             const ranksEl = wrap.querySelector('.dsu-ranks');
@@ -2682,7 +2700,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderGraph() {
         if (currentMode === 'graph-bfs') {
-            runtimeVisualizer.innerHTML = '';
+            const host = acquireDynamicVizHost();
             const svg = `<svg viewBox="0 0 280 200" width="100%" style="max-width:280px"
         xmlns="http://www.w3.org/2000/svg" class="bfs-svg">
         <g class="edges" stroke="#94a3b8" stroke-width="2">
@@ -2712,7 +2730,7 @@ document.addEventListener('DOMContentLoaded', () => {
             wrap.className = 'bfs-wrap';
             wrap.innerHTML = svg + '<div class="bfs-queue" data-testid="bfs-queue"><strong>Queue:</strong> <span class="bfs-queue-items">0</span></div>'
                                + '<div class="bfs-visited"><strong>Visited:</strong> <span class="bfs-visited-items"></span></div>';
-            runtimeVisualizer.appendChild(wrap);
+            host.appendChild(wrap);
 
             // BFS step handler — bind to the existing step/reset buttons if present.
             const adjacency = [[1,4],[0,2,3,4],[1,3],[1,2,4],[0,1,3]];
@@ -2753,7 +2771,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         if (currentMode === 'graph-dfs') {
-            runtimeVisualizer.innerHTML = '';
+            const host = acquireDynamicVizHost();
             const svg = `<svg viewBox="0 0 280 200" width="100%" style="max-width:280px"
         xmlns="http://www.w3.org/2000/svg" class="dfs-svg">
         <g class="edges" stroke="#94a3b8" stroke-width="2">
@@ -2782,7 +2800,7 @@ document.addEventListener('DOMContentLoaded', () => {
             wrap.className = 'dfs-wrap';
             wrap.innerHTML = svg + '<div class="dfs-stack" data-testid="dfs-stack"><strong>Stack:</strong> <span class="dfs-stack-items">0</span></div>'
                                + '<div class="bfs-visited"><strong>Visited:</strong> <span class="dfs-visited-items"></span></div>';
-            runtimeVisualizer.appendChild(wrap);
+            host.appendChild(wrap);
 
             // DFS step handler — bind to step/reset buttons (use same fallback chain as graph-bfs).
             const adjacency = [[1,4],[0,2,3,4],[1,3],[1,2,4],[0,1,3]];
@@ -2835,7 +2853,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 [1, 2, 4],
                 [0, 1, 3],
             ];
-            runtimeVisualizer.innerHTML = '';
+            const host = acquireDynamicVizHost();
             const container = document.createElement('div');
             container.className = 'adjlist-container';
             for (let i = 0; i < adjacency.length; i++) {
@@ -2865,7 +2883,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 row.appendChild(nullNode);
                 container.appendChild(row);
             }
-            runtimeVisualizer.appendChild(container);
+            host.appendChild(container);
             return;
         }
         const svg = document.getElementById('graph-edges'); svg.innerHTML = '';
