@@ -4332,7 +4332,7 @@ const SLIDES_DB = {
           },
           {
             "type": "mermaid",
-            "code": "flowchart LR\n  H([\"head\"]) --> A[\"5\"]\n  A <--> B[\"10\"]\n  B <--> C[\"20\"]\n  C --> T([\"tail\"])"
+            "code": "flowchart LR\n  H[\"head\"] --> A[\"5\"]\n  A <--> B[\"10\"]\n  B <--> C[\"20\"]\n  C --> T[\"tail\"]"
           }
         ]
       },
@@ -12812,7 +12812,7 @@ const SLIDES_DB = {
           },
           {
             "type": "mermaid",
-            "code": "flowchart TD\n  Start([\"Start: i=0, j=0\"]) --> Cmp{\"text[i] == pat[j]?\"}\n  Cmp -- Yes --> Adv[\"i++, j++\"]\n  Adv --> Full{\"j == m?\"}\n  Full -- Yes --> Hit[\"Record match; j = lps[j-1]\"]\n  Full -- No --> Cmp\n  Hit --> Cmp\n  Cmp -- No --> JPos{\"j > 0?\"}\n  JPos -- Yes --> Back[\"j = lps[j-1]\"]\n  Back --> Cmp\n  JPos -- No --> Next[\"i++\"]\n  Next --> Done{\"i < n?\"}\n  Done -- Yes --> Cmp\n  Done -- No --> End([End])"
+            "code": "flowchart TD\n  Start[\"Start: i=0, j=0\"] --> Cmp{\"text[i] == pat[j]?\"}\n  Cmp -- Yes --> Adv[\"i++, j++\"]\n  Adv --> Full{\"j == m?\"}\n  Full -- Yes --> Hit[\"Record match; j = lps[j-1]\"]\n  Full -- No --> Cmp\n  Hit --> Cmp\n  Cmp -- No --> JPos{\"j > 0?\"}\n  JPos -- Yes --> Back[\"j = lps[j-1]\"]\n  Back --> Cmp\n  JPos -- No --> Next[\"i++\"]\n  Next --> Done{\"i < n?\"}\n  Done -- Yes --> Cmp\n  Done -- No --> End[\"End\"]"
           }
         ]
       },
@@ -13068,7 +13068,7 @@ const SLIDES_DB = {
           },
           {
             "type": "mermaid",
-            "code": "flowchart TD\n  Start([\"s=0\"]) --> RtL[\"Compare right-to-left: j = m-1\"]\n  RtL --> Match{\"All matched?\"}\n  Match -- Yes --> Hit[\"Record match; s += shift[0]\"]\n  Hit --> Cont{\"s <= n-m?\"}\n  Match -- No --> Calc[\"bcShift = j - badChar[text[s+j]]\"]\n  Calc --> MaxShift[\"s += max(shift[j+1], max(1, bcShift))\"]\n  MaxShift --> Cont\n  Cont -- Yes --> RtL\n  Cont -- No --> End([End])"
+            "code": "flowchart TD\n  Start[\"s=0\"] --> RtL[\"Compare right-to-left: j = m-1\"]\n  RtL --> Match{\"All matched?\"}\n  Match -- Yes --> Hit[\"Record match; s += shift[0]\"]\n  Hit --> Cont{\"s <= n-m?\"}\n  Match -- No --> Calc[\"bcShift = j - badChar[text[s+j]]\"]\n  Calc --> MaxShift[\"s += max(shift[j+1], max(1, bcShift))\"]\n  MaxShift --> Cont\n  Cont -- Yes --> RtL\n  Cont -- No --> End[\"End\"]"
           }
         ]
       },
@@ -13324,7 +13324,7 @@ const SLIDES_DB = {
           },
           {
             "type": "mermaid",
-            "code": "flowchart TD\n  Init[\"Compute patHash, winHash, h\"] --> Loop{\"s <= n-m?\"}\n  Loop -- No --> End([End])\n  Loop -- Yes --> HashCmp{\"patHash == winHash?\"}\n  HashCmp -- Yes --> Verify[\"Verify characters\"]\n  Verify --> IsMatch{\"Full match?\"}\n  IsMatch -- Yes --> Record[\"Record match at s\"]\n  IsMatch -- No --> Roll\n  Record --> Roll[\"Roll hash: remove text[s], add text[s+m]\"]\n  HashCmp -- No --> Roll\n  Roll --> Inc[\"s++\"] --> Loop"
+            "code": "flowchart TD\n  Init[\"Compute patHash, winHash, h\"] --> Loop{\"s <= n-m?\"}\n  Loop -- No --> End[\"End\"]\n  Loop -- Yes --> HashCmp{\"patHash == winHash?\"}\n  HashCmp -- Yes --> Verify[\"Verify characters\"]\n  Verify --> IsMatch{\"Full match?\"}\n  IsMatch -- Yes --> Record[\"Record match at s\"]\n  IsMatch -- No --> Roll\n  Record --> Roll[\"Roll hash: remove text[s], add text[s+m]\"]\n  HashCmp -- No --> Roll\n  Roll --> Inc[\"s++\"] --> Loop"
           }
         ]
       },
@@ -13580,7 +13580,7 @@ const SLIDES_DB = {
           },
           {
             "type": "mermaid",
-            "code": "flowchart LR\n  Input([\"Text + Pattern\"]) --> KMP[\"KMP lane\"]\n  Input --> BM[\"BM lane\"]\n  Input --> RK[\"RK lane\"]\n  KMP --> KMPOut[\"KMP: Match@10, cmp=N_kmp\"]\n  BM --> BMOut[\"BM:  Match@10, cmp=N_bm\"]\n  RK --> RKOut[\"RK:  Match@10, cmp=N_rk\"]"
+            "code": "flowchart LR\n  Input[\"Text + Pattern\"] --> KMP[\"KMP lane\"]\n  Input --> BM[\"BM lane\"]\n  Input --> RK[\"RK lane\"]\n  KMP --> KMPOut[\"KMP: Match@10, cmp=N_kmp\"]\n  BM --> BMOut[\"BM:  Match@10, cmp=N_bm\"]\n  RK --> RKOut[\"RK:  Match@10, cmp=N_rk\"]"
           }
         ]
       },
