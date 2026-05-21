@@ -16151,9 +16151,9 @@ const SLIDES_DB = {
         "heading": { "zh": "運作流程", "en": "Operation Flow" },
         "blocks": [
           { "type": "steps", "items": [
-              { "zh": "訂閱者向事件匯流排注冊處理函式（handler）。", "en": "Subscribers register their handler functions with the event bus." },
+              { "zh": "訂閱者向事件匯流排註冊處理函式（handler）。", "en": "Subscribers register their handler functions with the event bus." },
               { "zh": "發布者呼叫匯流排的 publish() 方法，傳入事件資料。", "en": "A publisher calls the bus's publish() method with the event data." },
-              { "zh": "匯流排依序呼叫所有已注冊的處理函式，完成事件派送。", "en": "The bus invokes every registered handler in sequence, completing the event dispatch." }
+              { "zh": "匯流排依序呼叫所有已註冊的處理函式，完成事件派送。", "en": "The bus invokes every registered handler in sequence, completing the event dispatch." }
           ] },
           { "type": "mermaid", "code": "flowchart LR\n  Publisher[\"Publisher\"] --> EventBus[\"EventBus\"]\n  EventBus --> SubscriberA[\"SubscriberA\"]\n  EventBus --> SubscriberB[\"SubscriberB\"]\n  EventBus --> SubscriberC[\"SubscriberC\"]" }
         ]
@@ -16329,7 +16329,7 @@ const SLIDES_DB = {
               { "zh": "Consumer 透過建構子接收 Service& 參數（建構子注入）。", "en": "The Consumer takes a Service& in its constructor (constructor injection)." },
               { "zh": "組合根（main）建立具體的 ConsoleService 並注入至 Consumer。", "en": "The composition root (main) creates the concrete ConsoleService and injects it into the Consumer." }
           ] },
-          { "type": "mermaid", "code": "flowchart LR\n  CompositionRoot[\"CompositionRoot\"] --> ConsoleService[\"ConsoleService\"]\n  CompositionRoot --> Consumer[\"Consumer\"]\n  ConsoleService --> Consumer" }
+          { "type": "mermaid", "code": "flowchart LR\n  CompositionRoot[\"CompositionRoot\"] -->|creates| ConsoleService[\"ConsoleService\"]\n  CompositionRoot -->|injects| Consumer[\"Consumer\"]" }
         ]
       },
       {
