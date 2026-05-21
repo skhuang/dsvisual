@@ -3764,6 +3764,210 @@ int main() {
 }
 `;
 
+const codePatternMVC = `#include <iostream>
+#include <string>
+using namespace std;
+
+// Model — owns the data.
+class Model {
+    string data;
+
+public:
+    void setData(const string& d) { data = d; }
+    string getData() const { return data; }
+};
+
+// View — renders the model.
+class View {
+public:
+    void render(const Model& m) { cout << "[View] " << m.getData() << endl; }
+};
+
+// Controller — handles input, updates the model, refreshes the view.
+class Controller {
+    Model& model;
+    View& view;
+
+public:
+    Controller(Model& m, View& v) : model(m), view(v) {}
+    void handleInput(const string& input) {
+        model.setData(input);
+        view.render(model);
+    }
+};
+
+int main() {
+    Model model;
+    View view;
+    Controller controller(model, view);
+    controller.handleInput("Hello, MVC");   // [View] Hello, MVC
+    controller.handleInput("Updated text"); // [View] Updated text
+    return 0;
+}
+`;
+
+const codePatternLayered = `#include <iostream>
+#include <string>
+using namespace std;
+
+// Data layer — lowest layer, returns raw data.
+class DataLayer {
+public:
+    string fetch() { return "raw record"; }
+};
+
+// Business layer — applies rules; calls only the layer below.
+class BusinessLayer {
+    DataLayer data;
+
+public:
+    string process() { return "[validated] " + data.fetch(); }
+};
+
+// Presentation layer — formats output; calls only the layer below.
+class PresentationLayer {
+    BusinessLayer business;
+
+public:
+    void show() { cout << "Display: " << business.process() << endl; }
+};
+
+int main() {
+    PresentationLayer ui;
+    ui.show(); // Display: [validated] raw record
+    return 0;
+}
+`;
+
+const codePatternPubSub = `#include <functional>
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+// Event bus — decouples publishers from subscribers.
+class EventBus {
+    vector<function<void(const string&)>> subscribers;
+
+public:
+    void subscribe(function<void(const string&)> handler) {
+        subscribers.push_back(handler);
+    }
+    void publish(const string& event) {
+        for (auto& handler : subscribers)
+            handler(event);
+    }
+};
+
+int main() {
+    EventBus bus;
+    // Two subscribers — neither knows the publisher or each other.
+    bus.subscribe([](const string& e) { cout << "Subscriber A got: " << e << endl; });
+    bus.subscribe([](const string& e) { cout << "Subscriber B got: " << e << endl; });
+    // Publisher emits through the bus.
+    bus.publish("user.signed_in");
+    return 0;
+}
+`;
+
+const codePatternPipeFilter = `#include <algorithm>
+#include <cctype>
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+// Filter — one transformation stage.
+class Filter {
+public:
+    virtual string process(const string& input) const = 0;
+    virtual ~Filter() {}
+};
+
+class TrimFilter : public Filter {
+public:
+    string process(const string& s) const override {
+        size_t a = s.find_first_not_of(' ');
+        size_t b = s.find_last_not_of(' ');
+        return (a == string::npos) ? "" : s.substr(a, b - a + 1);
+    }
+};
+
+class UpperFilter : public Filter {
+public:
+    string process(const string& s) const override {
+        string r = s;
+        transform(r.begin(), r.end(), r.begin(), ::toupper);
+        return r;
+    }
+};
+
+class ExclaimFilter : public Filter {
+public:
+    string process(const string& s) const override { return s + "!"; }
+};
+
+// Pipeline — chains filters; data flows through each pipe.
+class Pipeline {
+    vector<Filter*> filters;
+
+public:
+    void add(Filter* f) { filters.push_back(f); }
+    string run(const string& input) const {
+        string data = input;
+        for (Filter* f : filters)
+            data = f->process(data);
+        return data;
+    }
+};
+
+int main() {
+    TrimFilter trim;
+    UpperFilter upper;
+    ExclaimFilter exclaim;
+    Pipeline pipeline;
+    pipeline.add(&trim);
+    pipeline.add(&upper);
+    pipeline.add(&exclaim);
+    cout << pipeline.run("  hello  ") << endl; // HELLO!
+    return 0;
+}
+`;
+
+const codePatternDI = `#include <iostream>
+#include <string>
+using namespace std;
+
+// Service — an abstraction the consumer depends on.
+class Service {
+public:
+    virtual string fetch() const = 0;
+    virtual ~Service() {}
+};
+
+// A concrete implementation.
+class ConsoleService : public Service {
+public:
+    string fetch() const override { return "data from ConsoleService"; }
+};
+
+// Consumer — receives its dependency; never constructs it.
+class Consumer {
+    Service& service; // depends on the abstraction
+public:
+    Consumer(Service& s) : service(s) {} // constructor injection
+    void run() { cout << "Consumer used: " << service.fetch() << endl; }
+};
+
+int main() {
+    // Composition root — wires concrete implementations to abstractions.
+    ConsoleService service;
+    Consumer consumer(service); // dependency injected, not hard-coded
+    consumer.run();
+    return 0;
+}
+`;
+
 const codeDeque = `#include <iostream>
 using namespace std;
 

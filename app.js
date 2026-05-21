@@ -229,6 +229,19 @@ const METHOD_GROUPS = [
             { id: 'pattern-strategy', title: 'Strategy', file: 'pattern_strategy.cpp', visualizer: 'pattern', controls: 'pattern' },
         ],
     },
+    {
+        id: 'patterns-architectural',
+        title: 'Architectural',
+        parent: 'patterns',
+        parentTitle: 'Design Patterns',
+        methods: [
+            { id: 'pattern-mvc', title: 'MVC (Model-View-Controller)', file: 'pattern_mvc.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-layered', title: 'Layered Architecture', file: 'pattern_layered.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-pubsub', title: 'Publish-Subscribe', file: 'pattern_pubsub.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-pipefilter', title: 'Pipe-and-Filter', file: 'pattern_pipefilter.cpp', visualizer: 'pattern', controls: 'pattern' },
+            { id: 'pattern-di', title: 'Dependency Injection', file: 'pattern_di.cpp', visualizer: 'pattern', controls: 'pattern' },
+        ],
+    },
 ];
 
 function getMethodGroupById(groupId) {
@@ -304,6 +317,11 @@ function getCodeForMethod(methodId) {
         'pattern-decorator': codePatternDecorator,
         'pattern-observer': codePatternObserver,
         'pattern-strategy': codePatternStrategy,
+        'pattern-mvc': codePatternMVC,
+        'pattern-layered': codePatternLayered,
+        'pattern-pubsub': codePatternPubSub,
+        'pattern-pipefilter': codePatternPipeFilter,
+        'pattern-di': codePatternDI,
     };
     return codeByMethod[methodId] || '// Source code pending.';
 }
@@ -1884,6 +1902,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 codeDisplay.textContent = codePatternStrategy;
                 document.getElementById('pattern-strategy-view').classList.remove('hidden');
                 patternModeSelect.value = 'strategy';
+            }
+            else if (currentMode === 'pattern-mvc') {
+                codeTitle.textContent = 'pattern_mvc.cpp';
+                codeDisplay.textContent = codePatternMVC;
+                document.getElementById('pattern-mvc-view').classList.remove('hidden');
+                patternModeSelect.value = 'mvc';
+            }
+            else if (currentMode === 'pattern-layered') {
+                codeTitle.textContent = 'pattern_layered.cpp';
+                codeDisplay.textContent = codePatternLayered;
+                document.getElementById('pattern-layered-view').classList.remove('hidden');
+                patternModeSelect.value = 'layered';
+            }
+            else if (currentMode === 'pattern-pubsub') {
+                codeTitle.textContent = 'pattern_pubsub.cpp';
+                codeDisplay.textContent = codePatternPubSub;
+                document.getElementById('pattern-pubsub-view').classList.remove('hidden');
+                patternModeSelect.value = 'pubsub';
+            }
+            else if (currentMode === 'pattern-pipefilter') {
+                codeTitle.textContent = 'pattern_pipefilter.cpp';
+                codeDisplay.textContent = codePatternPipeFilter;
+                document.getElementById('pattern-pipefilter-view').classList.remove('hidden');
+                patternModeSelect.value = 'pipefilter';
+            }
+            else if (currentMode === 'pattern-di') {
+                codeTitle.textContent = 'pattern_di.cpp';
+                codeDisplay.textContent = codePatternDI;
+                document.getElementById('pattern-di-view').classList.remove('hidden');
+                patternModeSelect.value = 'di';
             }
         }
         syncHeapTutorialChrome();
@@ -4125,6 +4173,11 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'decorator') renderPatternDecorator();
         else if (mode === 'observer') renderPatternObserver();
         else if (mode === 'strategy') renderPatternStrategy();
+        else if (mode === 'mvc') renderPatternMVC();
+        else if (mode === 'layered') renderPatternLayered();
+        else if (mode === 'pubsub') renderPatternPubSub();
+        else if (mode === 'pipefilter') renderPatternPipeFilter();
+        else if (mode === 'di') renderPatternDI();
     }
 
     function renderPatternSingleton() {
@@ -4510,6 +4563,97 @@ document.addEventListener('DOMContentLoaded', () => {
         createArrow(svg, '190', '135', '280', '110', '#fbbf24');
     }
 
+    function renderPatternMVC() {
+        const svg = document.getElementById('pattern-mvc-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopBox(svg, { x: 190, y: 26, w: 140, h: 56, title: 'Controller', titleColor: '#f59e0b',
+            lines: [ { text: 'handles input', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 40, y: 200, w: 140, h: 56, title: 'Model', titleColor: '#34d399',
+            lines: [ { text: 'data + state', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 340, y: 200, w: 140, h: 56, title: 'View', titleColor: '#60a5fa',
+            lines: [ { text: 'renders model', color: '#cbd5e1' } ] });
+        drawOopLine(svg, 225, 82, 120, 200);   // Controller -> Model
+        drawOopLine(svg, 180, 228, 340, 228);  // Model -> View
+        drawOopLine(svg, 400, 200, 295, 82);   // View -> Controller
+        drawOopLabel(svg, 150, 150, 'updates', '#f59e0b');
+        drawOopLabel(svg, 260, 246, 'notifies', '#34d399');
+        drawOopLabel(svg, 372, 150, 'user input', '#60a5fa');
+    }
+
+    function renderPatternLayered() {
+        const svg = document.getElementById('pattern-layered-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopBox(svg, { x: 150, y: 24, w: 200, h: 58, title: 'Presentation', titleColor: '#60a5fa',
+            lines: [ { text: 'formats output', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 150, y: 122, w: 200, h: 58, title: 'Business', titleColor: '#f59e0b',
+            lines: [ { text: 'applies rules', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 150, y: 220, w: 200, h: 58, title: 'Data', titleColor: '#34d399',
+            lines: [ { text: 'raw records', color: '#cbd5e1' } ] });
+        drawOopLine(svg, 250, 82, 250, 122);    // Presentation -> Business
+        drawOopLine(svg, 250, 180, 250, 220);   // Business -> Data
+        drawOopLabel(svg, 320, 106, 'calls', '#94a3b8');
+        drawOopLabel(svg, 320, 204, 'calls', '#94a3b8');
+    }
+
+    function renderPatternPubSub() {
+        const svg = document.getElementById('pattern-pubsub-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopBox(svg, { x: 24, y: 130, w: 120, h: 58, title: 'Publisher', titleColor: '#f59e0b',
+            lines: [ { text: 'emits events', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 196, y: 130, w: 120, h: 58, title: 'EventBus', titleColor: '#a78bfa',
+            lines: [ { text: 'broker', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 372, y: 36, w: 116, h: 50, title: 'Subscriber A', titleColor: '#34d399' });
+        drawOopBox(svg, { x: 372, y: 134, w: 116, h: 50, title: 'Subscriber B', titleColor: '#34d399' });
+        drawOopBox(svg, { x: 372, y: 232, w: 116, h: 50, title: 'Subscriber C', titleColor: '#34d399' });
+        drawOopLine(svg, 144, 159, 196, 159);   // Publisher -> EventBus
+        drawOopLine(svg, 316, 159, 372, 61);    // EventBus -> A
+        drawOopLine(svg, 316, 159, 372, 159);   // EventBus -> B
+        drawOopLine(svg, 316, 159, 372, 257);   // EventBus -> C
+        drawOopLabel(svg, 170, 150, 'publish', '#f59e0b');
+        drawOopLabel(svg, 344, 110, 'notify', '#34d399');
+    }
+
+    function renderPatternPipeFilter() {
+        const svg = document.getElementById('pattern-pipefilter-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        const stages = [
+            { x: 12, title: 'Input', color: '#94a3b8' },
+            { x: 110, title: 'Trim', color: '#34d399' },
+            { x: 208, title: 'Upper', color: '#34d399' },
+            { x: 306, title: 'Exclaim', color: '#34d399' },
+            { x: 404, title: 'Output', color: '#60a5fa' },
+        ];
+        stages.forEach((s) => {
+            drawOopBox(svg, { x: s.x, y: 132, w: 80, h: 56, title: s.title, titleColor: s.color });
+        });
+        for (let i = 0; i < stages.length - 1; i++) {
+            drawOopLine(svg, stages[i].x + 80, 160, stages[i + 1].x, 160);
+        }
+        drawOopLabel(svg, 250, 220, 'data flows through each filter via pipes', '#94a3b8');
+    }
+
+    function renderPatternDI() {
+        const svg = document.getElementById('pattern-di-svg');
+        if (!svg) return;
+        svg.innerHTML = '';
+        drawOopBox(svg, { x: 150, y: 24, w: 210, h: 56, title: 'Composition Root', titleColor: '#ec4899',
+            lines: [ { text: 'wires dependencies', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 50, y: 192, w: 180, h: 70, title: 'ConsoleService', titleColor: '#34d399',
+            lines: [ { text: 'concrete Service', color: '#cbd5e1' } ] });
+        drawOopBox(svg, { x: 290, y: 192, w: 180, h: 70, title: 'Consumer', titleColor: '#60a5fa',
+            lines: [ { text: 'depends on Service', color: '#cbd5e1' }, { text: 'never calls new', color: '#cbd5e1' } ] });
+        drawOopLine(svg, 210, 80, 140, 192);   // Composition Root -> Service
+        drawOopLine(svg, 300, 80, 380, 192);   // Composition Root -> Consumer
+        drawOopLine(svg, 230, 227, 290, 227);  // Service injected -> Consumer
+        drawOopLabel(svg, 150, 150, 'creates', '#34d399');
+        drawOopLabel(svg, 360, 150, 'injects', '#60a5fa');
+        drawOopLabel(svg, 260, 248, 'inject', '#ec4899');
+    }
+
     function createArrow(svg, x1, y1, x2, y2, color) {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.setAttribute('x1', x1); line.setAttribute('y1', y1);
@@ -4604,6 +4748,41 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus('processPayment(0.005): Crypto payment', '#fbbf24');
             await sleep(600);
             showStatus('Algorithm can be changed at runtime!', '#34d399');
+        }
+        else if (mode === 'mvc') {
+            showStatus('User input arrives at the Controller...', '#f59e0b');
+            await sleep(700);
+            showStatus('Controller updates the Model (data + state)', '#34d399');
+            await sleep(700);
+            showStatus('Model change notifies the View, which re-renders', '#60a5fa');
+        }
+        else if (mode === 'layered') {
+            showStatus('Presentation layer formats a request...', '#60a5fa');
+            await sleep(700);
+            showStatus('Business layer applies rules, calls the layer below', '#f59e0b');
+            await sleep(700);
+            showStatus('Data layer returns raw records — each layer calls only downward', '#34d399');
+        }
+        else if (mode === 'pubsub') {
+            showStatus('Publisher emits an event to the EventBus...', '#f59e0b');
+            await sleep(700);
+            showStatus('EventBus fans the event out to every subscriber', '#a78bfa');
+            await sleep(700);
+            showStatus('Subscribers A, B, C all receive it — fully decoupled', '#34d399');
+        }
+        else if (mode === 'pipefilter') {
+            showStatus('Input enters the pipeline...', '#94a3b8');
+            await sleep(700);
+            showStatus('Each filter transforms the data and passes it on', '#34d399');
+            await sleep(700);
+            showStatus('Trim -> Upper -> Exclaim -> Output', '#60a5fa');
+        }
+        else if (mode === 'di') {
+            showStatus('Composition root creates the concrete ConsoleService...', '#34d399');
+            await sleep(700);
+            showStatus('Service is injected into the Consumer constructor', '#60a5fa');
+            await sleep(700);
+            showStatus('Consumer depends only on the Service abstraction — easy to test', '#ec4899');
         }
     }
 });

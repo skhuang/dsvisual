@@ -1,0 +1,88 @@
+---
+marp: true
+theme: default
+paginate: true
+math: katex
+title: "發布-訂閱"
+category: "Design Patterns"
+---
+
+## 發布-訂閱模式
+
+發布者將事件發送至事件匯流排（broker）；訂閱者從匯流排接收事件——發布者與訂閱者彼此完全不知道對方的存在。
+
+---
+
+## 核心概念
+
+事件匯流排是解耦的關鍵：它同時對兩端隱藏了對方。一個事件可以扇出（fan-out）至多個訂閱者；訂閱者可以在執行時期動態新增或移除。
+
+- 發布者與訂閱者完全解耦，互不依賴。
+- 單一事件可同時廣播給多個訂閱者（扇出）。
+- 訂閱者可在執行時期動態新增或移除，彈性高。
+
+---
+
+## 運作流程
+
+1. 訂閱者向事件匯流排註冊處理函式（handler）。
+2. 發布者呼叫匯流排的 publish() 方法，傳入事件資料。
+3. 匯流排依序呼叫所有已註冊的處理函式，完成事件派送。
+
+<svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 510.5px; background-color: transparent;" viewBox="0 0 510.5 278" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#333;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#my-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#my-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#my-svg .error-icon{fill:#552222;}#my-svg .error-text{fill:#552222;stroke:#552222;}#my-svg .edge-thickness-normal{stroke-width:1px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#333333;stroke:#333333;}#my-svg .marker.cross{stroke:#333333;}#my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#my-svg p{margin:0;}#my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#333;}#my-svg .cluster-label text{fill:#333;}#my-svg .cluster-label span{color:#333;}#my-svg .cluster-label span p{background-color:transparent;}#my-svg .label text,#my-svg span{fill:#333;color:#333;}#my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#my-svg .rough-node .label text,#my-svg .node .label text,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-anchor:middle;}#my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#my-svg .rough-node .label,#my-svg .node .label,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-align:center;}#my-svg .node.clickable{cursor:pointer;}#my-svg .root .anchor path{fill:#333333!important;stroke-width:0;stroke:#333333;}#my-svg .arrowheadPath{fill:#333333;}#my-svg .edgePath .path{stroke:#333333;stroke-width:1px;}#my-svg .flowchart-link{stroke:#333333;fill:none;}#my-svg .edgeLabel{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .edgeLabel p{background-color:rgba(232,232,232, 0.8);}#my-svg .edgeLabel rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#my-svg .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#my-svg .cluster text{fill:#333;}#my-svg .cluster span{color:#333;}#my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#my-svg rect.text{fill:none;stroke-width:0;}#my-svg .icon-shape,#my-svg .image-shape{background-color:rgba(232,232,232, 0.8);text-align:center;}#my-svg .icon-shape p,#my-svg .image-shape p{background-color:rgba(232,232,232, 0.8);padding:2px;}#my-svg .icon-shape .label rect,#my-svg .image-shape .label rect{opacity:0.5;background-color:rgba(232,232,232, 0.8);fill:rgba(232,232,232, 0.8);}#my-svg .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#my-svg .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#my-svg .node .neo-node{stroke:#9370DB;}#my-svg [data-look="neo"].node rect,#my-svg [data-look="neo"].cluster rect,#my-svg [data-look="neo"].node polygon{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node path{stroke:#9370DB;stroke-width:1px;}#my-svg [data-look="neo"].node .outer-path{filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node .neo-line path{stroke:#9370DB;filter:none;}#my-svg [data-look="neo"].node circle{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].node circle .state-start{fill:#000000;}#my-svg [data-look="neo"].icon-shape .icon{fill:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg [data-look="neo"].icon-shape .icon-neo path{stroke:#9370DB;filter:drop-shadow(1px 2px 2px rgba(185, 185, 185, 1));}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker id="my-svg_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointEnd-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="11.5" refY="7" markerUnits="userSpaceOnUse" markerWidth="10.5" markerHeight="14" orient="auto"><path d="M 0 0 L 11.5 7 L 0 14 z" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart-margin" class="marker flowchart-v2" viewBox="0 0 11.5 14" refX="1" refY="7" markerUnits="userSpaceOnUse" markerWidth="11.5" markerHeight="14" orient="auto"><polygon points="0,7 11.5,14 11.5,0" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refY="5" refX="12.25" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart-margin" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-2" refY="5" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 0; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="17.7" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5;"/></marker><marker id="my-svg_flowchart-v2-crossStart-margin" class="marker cross flowchart-v2" viewBox="0 0 15 15" refX="-3.5" refY="7.5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 1,1 L 14,14 M 1,14 L 14,1" class="arrowMarkerPath" style="stroke-width: 2.5; stroke-dasharray: 1, 0;"/></marker><g class="root"><g class="clusters"/><g class="edgePaths"><path d="M134.031,139L138.198,139C142.365,139,150.698,139,158.365,139C166.031,139,173.031,139,176.531,139L180.031,139" id="my-svg-L_Publisher_EventBus_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Publisher_EventBus_0" data-points="W3sieCI6MTM0LjAzMTI1LCJ5IjoxMzl9LHsieCI6MTU5LjAzMTI1LCJ5IjoxMzl9LHsieCI6MTg0LjAzMTI1LCJ5IjoxMzl9XQ==" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M268.933,112L279.699,99.167C290.466,86.333,311.998,60.667,326.277,47.833C340.555,35,347.578,35,351.09,35L354.602,35" id="my-svg-L_EventBus_SubscriberA_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_EventBus_SubscriberA_0" data-points="W3sieCI6MjY4LjkzMjY5MjMwNzY5MjMsInkiOjExMn0seyJ4IjozMzMuNTMxMjUsInkiOjM1fSx7IngiOjM1OC42MDE1NjI1LCJ5IjozNX1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M308.531,139L312.698,139C316.865,139,325.198,139,332.908,139C340.617,139,347.703,139,351.246,139L354.789,139" id="my-svg-L_EventBus_SubscriberB_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_EventBus_SubscriberB_0" data-points="W3sieCI6MzA4LjUzMTI1LCJ5IjoxMzl9LHsieCI6MzMzLjUzMTI1LCJ5IjoxMzl9LHsieCI6MzU4Ljc4OTA2MjUsInkiOjEzOX1d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M268.933,166L279.699,178.833C290.466,191.667,311.998,217.333,326.265,230.167C340.531,243,347.531,243,351.031,243L354.531,243" id="my-svg-L_EventBus_SubscriberC_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_EventBus_SubscriberC_0" data-points="W3sieCI6MjY4LjkzMjY5MjMwNzY5MjMsInkiOjE2Nn0seyJ4IjozMzMuNTMxMjUsInkiOjI0M30seyJ4IjozNTguNTMxMjUsInkiOjI0M31d" data-look="classic" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_Publisher_EventBus_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_EventBus_SubscriberA_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_EventBus_SubscriberB_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_EventBus_SubscriberC_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="my-svg-flowchart-Publisher-0" data-look="classic" transform="translate(71.015625, 139)"><rect class="basic label-container" style="" x="-63.015625" y="-27" width="126.03125" height="54"/><g class="label" style="" transform="translate(-33.015625, -12)"><rect/><foreignObject width="66.03125" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Publisher</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-EventBus-1" data-look="classic" transform="translate(246.28125, 139)"><rect class="basic label-container" style="" x="-62.25" y="-27" width="124.5" height="54"/><g class="label" style="" transform="translate(-32.25, -12)"><rect/><foreignObject width="64.5" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>EventBus</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-SubscriberA-3" data-look="classic" transform="translate(430.515625, 35)"><rect class="basic label-container" style="" x="-71.9140625" y="-27" width="143.828125" height="54"/><g class="label" style="" transform="translate(-41.9140625, -12)"><rect/><foreignObject width="83.828125" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>SubscriberA</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-SubscriberB-5" data-look="classic" transform="translate(430.515625, 139)"><rect class="basic label-container" style="" x="-71.7265625" y="-27" width="143.453125" height="54"/><g class="label" style="" transform="translate(-41.7265625, -12)"><rect/><foreignObject width="83.453125" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>SubscriberB</p></span></div></foreignObject></g></g><g class="node default" id="my-svg-flowchart-SubscriberC-7" data-look="classic" transform="translate(430.515625, 243)"><rect class="basic label-container" style="" x="-71.984375" y="-27" width="143.96875" height="54"/><g class="label" style="" transform="translate(-41.984375, -12)"><rect/><foreignObject width="83.96875" height="24"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>SubscriberC</p></span></div></foreignObject></g></g></g></g></g><defs><filter id="my-svg-drop-shadow" height="130%" width="130%"><feDropShadow dx="4" dy="4" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs><defs><filter id="my-svg-drop-shadow-small" height="150%" width="150%"><feDropShadow dx="2" dy="2" stdDeviation="0" flood-opacity="0.06" flood-color="#000000"/></filter></defs></svg>
+
+---
+
+## 示意圖
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160" width="400"><g font-family="monospace" font-size="12"><rect x="10" y="63" width="90" height="34" fill="none" stroke="#f59e0b"/><text x="55" y="84" text-anchor="middle" fill="#f59e0b">Publisher</text><line x1="100" y1="80" x2="150" y2="80" stroke="#64748b"/><rect x="150" y="63" width="90" height="34" fill="none" stroke="#60a5fa"/><text x="195" y="84" text-anchor="middle" fill="#60a5fa">EventBus</text><line x1="240" y1="80" x2="290" y2="30" stroke="#64748b"/><line x1="240" y1="80" x2="290" y2="80" stroke="#64748b"/><line x1="240" y1="80" x2="290" y2="130" stroke="#64748b"/><rect x="290" y="13" width="100" height="34" fill="none" stroke="#34d399"/><text x="340" y="34" text-anchor="middle" fill="#34d399">Subscriber A</text><rect x="290" y="63" width="100" height="34" fill="none" stroke="#34d399"/><text x="340" y="84" text-anchor="middle" fill="#34d399">Subscriber B</text><rect x="290" y="113" width="100" height="34" fill="none" stroke="#34d399"/><text x="340" y="134" text-anchor="middle" fill="#34d399">Subscriber C</text></g></svg>
+
+> visualizer 以左右佈局呈現：發布者在最左，事件匯流排居中，三個訂閱者在右側，連線代表事件流向。
+
+---
+
+## 取捨與使用時機
+
+| 面向 | 說明 |
+| --- | --- |
+| 解耦 | 發布者與訂閱者完全不互相依賴 |
+| 扇出 | 一個事件可輕易廣播給多個訂閱者 |
+| 成本 | 事件流難以追蹤；需額外關注訊息順序與傳遞保證 |
+
+---
+
+## 程式碼
+
+```cpp
+// Event bus — decouples publishers from subscribers.
+class EventBus {
+    vector<function<void(const string&)>> subscribers;
+
+public:
+    void subscribe(function<void(const string&)> handler) {
+        subscribers.push_back(handler);
+    }
+    void publish(const string& event) {
+        for (auto& handler : subscribers)
+            handler(event);
+    }
+};
+```
+
+---
+
+## 優缺點與使用時機
+
+- 優點：發布者與訂閱者完全解耦，互不知曉。
+- 優點：新增或移除訂閱者無需修改發布者程式碼。
+- 優點：天然支援一對多的事件扇出。
+- 缺點：間接的控制流使除錯與追蹤更為困難。
+- 適用：事件驅動系統、UI 事件處理、需要解耦的模組間通訊。
+
+---
+
+## 小結
+
+- 發布-訂閱透過事件匯流排作為仲介，使發布者與訂閱者完全解耦。
+- 一個事件可廣播給任意數量的訂閱者，並支援執行時期的動態訂閱。
+- 是事件驅動架構的核心機制，廣泛應用於 UI 框架與訊息系統。

@@ -130,7 +130,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await nav.getByRole('button', { name: 'Design Patterns', exact: true }).click();
 
         const subTabs = page.locator('.category-subtab-row.visible .category-subtab-btn');
-        await expect(subTabs).toHaveCount(3);
+        await expect(subTabs).toHaveCount(4);
 
         const methodSelect = page.locator('[data-testid="method-select"]');
         // Default sub-tab is Creational.
@@ -385,6 +385,46 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const patternCard = page.locator('[data-method-section="pattern-strategy"]');
         await expect(patternCard).toHaveAttribute('data-runtime-state', 'active');
         await expect(patternCard.locator('.method-section-visual')).toBeVisible();
+    });
+
+    test('Architectural: MVC renders the Model-View-Controller diagram', async ({ page }) => {
+        await loadMethod(page, 'pattern-mvc');
+        const card = page.locator('[data-method-section="pattern-mvc"]');
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        await expect(card.locator('.code-panel-filename')).toContainText('pattern_mvc.cpp');
+        await expect(card.locator('#pattern-mvc-svg rect')).toHaveCount(3);
+    });
+
+    test('Architectural: Layered renders the 3-layer stack', async ({ page }) => {
+        await loadMethod(page, 'pattern-layered');
+        const card = page.locator('[data-method-section="pattern-layered"]');
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        await expect(card.locator('.code-panel-filename')).toContainText('pattern_layered.cpp');
+        await expect(card.locator('#pattern-layered-svg rect')).toHaveCount(3);
+    });
+
+    test('Architectural: Publish-Subscribe renders publisher, bus, subscribers', async ({ page }) => {
+        await loadMethod(page, 'pattern-pubsub');
+        const card = page.locator('[data-method-section="pattern-pubsub"]');
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        await expect(card.locator('.code-panel-filename')).toContainText('pattern_pubsub.cpp');
+        await expect(card.locator('#pattern-pubsub-svg rect')).toHaveCount(5);
+    });
+
+    test('Architectural: Pipe-and-Filter renders the filter chain', async ({ page }) => {
+        await loadMethod(page, 'pattern-pipefilter');
+        const card = page.locator('[data-method-section="pattern-pipefilter"]');
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        await expect(card.locator('.code-panel-filename')).toContainText('pattern_pipefilter.cpp');
+        await expect(card.locator('#pattern-pipefilter-svg rect')).toHaveCount(5);
+    });
+
+    test('Architectural: Dependency Injection renders the wiring diagram', async ({ page }) => {
+        await loadMethod(page, 'pattern-di');
+        const card = page.locator('[data-method-section="pattern-di"]');
+        await expect(card).toHaveAttribute('data-runtime-state', 'active');
+        await expect(card.locator('.code-panel-filename')).toContainText('pattern_di.cpp');
+        await expect(card.locator('#pattern-di-svg rect')).toHaveCount(3);
     });
 
     test('Trees: Disjoint Set renders 8 nodes initially and supports union', async ({ page }) => {
