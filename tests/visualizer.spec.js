@@ -364,6 +364,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('[data-testid="kmp-stats"]')).toContainText('comparisons: 1');
     });
 
+    test('String: Boyer-Moore renders alignment + tables and steps', async ({ page }) => {
+        await loadMethod(page, 'search-bm');
+        const card = page.locator('[data-method-section="search-bm"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_bm.cpp');
+        await expect(card.locator('.strsearch-text .strsearch-cell')).toHaveCount(19);
+        await expect(card.locator('.strsearch-bm-cell').first()).toBeVisible();
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="bm-stats"]')).toContainText('comparisons: 1');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
