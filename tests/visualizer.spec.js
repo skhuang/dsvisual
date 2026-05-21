@@ -519,7 +519,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(l0).toHaveCount(6);
         await card.locator('[data-skiplist-search]').fill('12');
         await card.locator('[data-action="step"]').click();
-        await expect(card.locator('[data-testid="skiplist-status"]')).toBeVisible();
+        await expect(card.locator('[data-testid="skiplist-status"]')).toContainText('level');
     });
 
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {

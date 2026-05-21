@@ -3103,7 +3103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return path;
         }
 
-        let searchPath = null, searchStep = 0;
+        let searchPath = null, searchStep = 0, searchTarget = null;
 
         const wrap = document.createElement('div');
         wrap.className = 'skiplist-wrap';
@@ -3152,19 +3152,24 @@ document.addEventListener('DOMContentLoaded', () => {
         function resetSearch() {
             searchPath = null;
             searchStep = 0;
+            searchTarget = null;
             statusEl.innerHTML = '&nbsp;';
             draw();
         }
         function stepSearch() {
-            const target = parseInt(wrap.querySelector('[data-skiplist-search]').value, 10);
-            if (Number.isNaN(target)) { showStatus('Enter a search key', '#f87171'); return false; }
-            if (!searchPath) { searchPath = computePath(target); searchStep = 0; }
+            if (!searchPath) {
+                const t = parseInt(wrap.querySelector('[data-skiplist-search]').value, 10);
+                if (Number.isNaN(t)) { showStatus('Enter a search key', '#f87171'); return false; }
+                searchTarget = t;
+                searchPath = computePath(t);
+                searchStep = 0;
+            }
             if (searchStep >= searchPath.length) return false;
             const s = searchPath[searchStep];
             searchStep++;
             draw();
-            if (s.kind === 'found') statusEl.textContent = 'Found ' + target;
-            else if (s.kind === 'notfound') statusEl.textContent = target + ' not found';
+            if (s.kind === 'found') statusEl.textContent = 'Found ' + searchTarget;
+            else if (s.kind === 'notfound') statusEl.textContent = searchTarget + ' not found';
             else statusEl.textContent = 'level ' + s.level + ': move ' + s.kind;
             return searchStep < searchPath.length;
         }
