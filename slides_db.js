@@ -15954,7 +15954,7 @@ const SLIDES_DB = {
         "heading": { "zh": "MVC（Model-View-Controller）", "en": "MVC (Model-View-Controller)" },
         "blocks": [
           { "type": "paragraph", "text": {
-              "zh": "MVC 把應用拆成三個角色:Model（資料與狀態）、View（呈現）、Controller（處理輸入),以分離關注點。",
+              "zh": "MVC 把應用拆成三個角色:Model（資料與狀態）、View（呈現）、Controller（處理輸入），以分離關注點。",
               "en": "MVC splits an application into three roles — Model (data and state), View (presentation), and Controller (input handling) — to separate concerns." } }
         ]
       },
@@ -15987,8 +15987,8 @@ const SLIDES_DB = {
         "blocks": [
           { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 150\" width=\"360\"><g font-family=\"monospace\" font-size=\"12\"><rect x=\"120\" y=\"10\" width=\"120\" height=\"34\" fill=\"none\" stroke=\"#f59e0b\"/><text x=\"180\" y=\"31\" text-anchor=\"middle\" fill=\"#f59e0b\">Controller</text><rect x=\"20\" y=\"100\" width=\"120\" height=\"34\" fill=\"none\" stroke=\"#34d399\"/><text x=\"80\" y=\"121\" text-anchor=\"middle\" fill=\"#34d399\">Model</text><rect x=\"220\" y=\"100\" width=\"120\" height=\"34\" fill=\"none\" stroke=\"#60a5fa\"/><text x=\"280\" y=\"121\" text-anchor=\"middle\" fill=\"#60a5fa\">View</text><line x1=\"140\" y1=\"44\" x2=\"80\" y2=\"100\" stroke=\"#64748b\"/><line x1=\"140\" y1=\"117\" x2=\"220\" y2=\"117\" stroke=\"#64748b\"/><line x1=\"280\" y1=\"100\" x2=\"220\" y2=\"44\" stroke=\"#64748b\"/></g></svg>" },
           { "type": "note", "text": {
-              "zh": "visualizer 以三角佈局呈現:Controller 在上,Model 與 View 在下,箭頭表示 updates / notifies / user input。",
-              "en": "The visualizer uses a triangle layout: Controller on top, Model and View below, with arrows for updates / notifies / user input." } }
+              "zh": "visualizer 以三角佈局呈現:Controller 在上,Model 與 View 在下,連線標示 updates / notifies / user input 三種關係。",
+              "en": "The visualizer uses a triangle layout: Controller on top, Model and View below, with connectors labelled updates / notifies / user input." } }
         ]
       },
       {
@@ -16006,7 +16006,10 @@ const SLIDES_DB = {
       {
         "heading": { "zh": "程式碼", "en": "Source Code" },
         "blocks": [
-          { "type": "code", "lang": "cpp", "code": "class Controller {\n    Model& model;\n    View& view;\npublic:\n    Controller(Model& m, View& v) : model(m), view(v) {}\n    void handleInput(const string& input) {\n        model.setData(input);\n        view.render(model);\n    }\n};" }
+          { "type": "code", "lang": "cpp", "code": "class Controller {\n    Model& model;\n    View& view;\npublic:\n    Controller(Model& m, View& v) : model(m), view(v) {}\n    void handleInput(const string& input) {\n        model.setData(input);\n        view.render(model);\n    }\n};" },
+          { "type": "note", "text": {
+              "zh": "此處程式碼為精簡示範:Controller 直接呼叫 view.render()。在完整的 MVC 中,Model 透過觀察者(Observer)機制通知 View 重新呈現。",
+              "en": "This code is a minimal illustration — the Controller calls view.render() directly. In full MVC, the Model notifies Views to re-render via the Observer pattern." } }
         ]
       },
       {

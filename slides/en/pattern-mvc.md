@@ -37,7 +37,7 @@ The Controller receives user input and updates the Model; when the Model changes
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 150" width="360"><g font-family="monospace" font-size="12"><rect x="120" y="10" width="120" height="34" fill="none" stroke="#f59e0b"/><text x="180" y="31" text-anchor="middle" fill="#f59e0b">Controller</text><rect x="20" y="100" width="120" height="34" fill="none" stroke="#34d399"/><text x="80" y="121" text-anchor="middle" fill="#34d399">Model</text><rect x="220" y="100" width="120" height="34" fill="none" stroke="#60a5fa"/><text x="280" y="121" text-anchor="middle" fill="#60a5fa">View</text><line x1="140" y1="44" x2="80" y2="100" stroke="#64748b"/><line x1="140" y1="117" x2="220" y2="117" stroke="#64748b"/><line x1="280" y1="100" x2="220" y2="44" stroke="#64748b"/></g></svg>
 
-> The visualizer uses a triangle layout: Controller on top, Model and View below, with arrows for updates / notifies / user input.
+> The visualizer uses a triangle layout: Controller on top, Model and View below, with connectors labelled updates / notifies / user input.
 
 ---
 
@@ -65,6 +65,8 @@ public:
     }
 };
 ```
+
+> This code is a minimal illustration — the Controller calls view.render() directly. In full MVC, the Model notifies Views to re-render via the Observer pattern.
 
 ---
 
