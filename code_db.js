@@ -3666,3 +3666,324 @@ int main() {
 }
 `;
 
+const codeDeque = `#include <iostream>
+using namespace std;
+
+struct Node {
+    int val;
+    Node* prev;
+    Node* next;
+    Node(int v) : val(v), prev(nullptr), next(nullptr) {}
+};
+
+class Deque {
+private:
+    Node* head;
+    Node* tail;
+    int count;
+
+public:
+    Deque() : head(nullptr), tail(nullptr), count(0) {}
+
+    void pushFront(int v) {
+        Node* node = new Node(v);
+        if (!head) {
+            head = tail = node;
+        } else {
+            node->next = head;
+            head->prev = node;
+            head = node;
+        }
+        count++;
+    }
+
+    void pushBack(int v) {
+        Node* node = new Node(v);
+        if (!tail) {
+            head = tail = node;
+        } else {
+            node->prev = tail;
+            tail->next = node;
+            tail = node;
+        }
+        count++;
+    }
+
+    int popFront() {
+        if (!head) {
+            cout << "Deque is empty" << endl;
+            return -1;
+        }
+        Node* node = head;
+        int v = node->val;
+        head = head->next;
+        if (head) head->prev = nullptr;
+        else tail = nullptr;
+        delete node;
+        count--;
+        return v;
+    }
+
+    int popBack() {
+        if (!tail) {
+            cout << "Deque is empty" << endl;
+            return -1;
+        }
+        Node* node = tail;
+        int v = node->val;
+        tail = tail->prev;
+        if (tail) tail->next = nullptr;
+        else head = nullptr;
+        delete node;
+        count--;
+        return v;
+    }
+
+    void print() {
+        cout << "null <-> ";
+        for (Node* p = head; p; p = p->next) cout << p->val << " <-> ";
+        cout << "null" << endl;
+    }
+};
+
+int main() {
+    Deque dq;
+    dq.pushBack(10);
+    dq.pushBack(20);
+    dq.pushFront(5);
+    dq.print();        // null <-> 5 <-> 10 <-> 20 <-> null
+    dq.popBack();
+    dq.popFront();
+    dq.print();        // null <-> 10 <-> null
+    return 0;
+}
+`;
+
+const codeSearchKMP = `#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+vector<int> computeLPS(const string& pat) {
+    int m = pat.size();
+    vector<int> lps(m, 0);
+    int len = 0;
+    for (int i = 1; i < m;) {
+        if (pat[i] == pat[len]) {
+            lps[i++] = ++len;
+        } else if (len != 0) {
+            len = lps[len - 1];
+        } else {
+            lps[i++] = 0;
+        }
+    }
+    return lps;
+}
+
+void kmpSearch(const string& text, const string& pat) {
+    int n = text.size(), m = pat.size();
+    vector<int> lps = computeLPS(pat);
+    int i = 0, j = 0;
+    while (i < n) {
+        if (text[i] == pat[j]) {
+            i++; j++;
+            if (j == m) {
+                cout << "Match at index " << (i - j) << endl;
+                j = lps[j - 1];
+            }
+        } else if (j != 0) {
+            j = lps[j - 1];
+        } else {
+            i++;
+        }
+    }
+}
+
+int main() {
+    string text = "ABABDABACDABABCABAB";
+    string pattern = "ABABCABAB";
+    kmpSearch(text, pattern);   // Match at index 10
+    return 0;
+}
+`;
+
+const codeSearchBM = `#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+const int ALPHABET = 256;
+
+vector<int> buildBadChar(const string& pat) {
+    vector<int> badChar(ALPHABET, -1);
+    for (int i = 0; i < (int)pat.size(); i++)
+        badChar[(unsigned char)pat[i]] = i;
+    return badChar;
+}
+
+// Strong good-suffix preprocessing: fills shift[] of size m+1.
+void buildGoodSuffix(const string& pat, vector<int>& shift) {
+    int m = pat.size();
+    vector<int> bpos(m + 1, 0);
+    shift.assign(m + 1, 0);
+    int i = m, j = m + 1;
+    bpos[i] = j;
+    while (i > 0) {
+        while (j <= m && pat[i - 1] != pat[j - 1]) {
+            if (shift[j] == 0) shift[j] = j - i;
+            j = bpos[j];
+        }
+        i--; j--;
+        bpos[i] = j;
+    }
+    j = bpos[0];
+    for (i = 0; i <= m; i++) {
+        if (shift[i] == 0) shift[i] = j;
+        if (i == j) j = bpos[j];
+    }
+}
+
+void boyerMooreSearch(const string& text, const string& pat) {
+    int n = text.size(), m = pat.size();
+    vector<int> badChar = buildBadChar(pat);
+    vector<int> shift;
+    buildGoodSuffix(pat, shift);
+    int s = 0;
+    while (s <= n - m) {
+        int j = m - 1;
+        while (j >= 0 && pat[j] == text[s + j]) j--;
+        if (j < 0) {
+            cout << "Match at index " << s << endl;
+            s += shift[0];
+        } else {
+            int bcShift = j - badChar[(unsigned char)text[s + j]];
+            s += max(shift[j + 1], max(1, bcShift));
+        }
+    }
+}
+
+int main() {
+    string text = "ABABDABACDABABCABAB";
+    string pattern = "ABABCABAB";
+    boyerMooreSearch(text, pattern);   // Match at index 10
+    return 0;
+}
+`;
+
+const codeSearchRK = `#include <iostream>
+#include <string>
+using namespace std;
+
+const int BASE = 256;
+const int MOD = 101;
+
+void rabinKarpSearch(const string& text, const string& pat) {
+    int n = text.size(), m = pat.size();
+    if (m > n) return;
+    int patHash = 0, winHash = 0, h = 1;
+    for (int i = 0; i < m - 1; i++) h = (h * BASE) % MOD;
+    for (int i = 0; i < m; i++) {
+        patHash = (BASE * patHash + pat[i]) % MOD;
+        winHash = (BASE * winHash + text[i]) % MOD;
+    }
+    for (int s = 0; s <= n - m; s++) {
+        if (patHash == winHash) {
+            int j = 0;
+            while (j < m && text[s + j] == pat[j]) j++;
+            if (j == m) cout << "Match at index " << s << endl;
+        }
+        if (s < n - m) {
+            winHash = (BASE * (winHash - text[s] * h) + text[s + m]) % MOD;
+            if (winHash < 0) winHash += MOD;
+        }
+    }
+}
+
+int main() {
+    string text = "ABABDABACDABABCABAB";
+    string pattern = "ABABCABAB";
+    rabinKarpSearch(text, pattern);   // Match at index 10
+    return 0;
+}
+`;
+
+const codeSearchStrCompare = `#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+// Each function returns the number of character/hash comparisons performed.
+
+int kmpCompares(const string& text, const string& pat) {
+    int n = text.size(), m = pat.size(), cmp = 0;
+    vector<int> lps(m, 0);
+    for (int len = 0, i = 1; i < m;) {
+        if (pat[i] == pat[len]) lps[i++] = ++len;
+        else if (len) len = lps[len - 1];
+        else lps[i++] = 0;
+    }
+    int i = 0, j = 0;
+    while (i < n) {
+        cmp++;
+        if (text[i] == pat[j]) { i++; j++; if (j == m) j = lps[j - 1]; }
+        else if (j) j = lps[j - 1];
+        else i++;
+    }
+    return cmp;
+}
+
+// Trimmed Boyer-Moore (bad-character heuristic only).
+int bmCompares(const string& text, const string& pat) {
+    int n = text.size(), m = pat.size(), cmp = 0;
+    vector<int> bad(256, -1);
+    for (int i = 0; i < m; i++) bad[(unsigned char)pat[i]] = i;
+    int s = 0;
+    while (s <= n - m) {
+        int j = m - 1;
+        while (j >= 0) {
+            cmp++;
+            if (pat[j] != text[s + j]) break;
+            j--;
+        }
+        if (j < 0) s += 1;
+        else s += max(1, j - bad[(unsigned char)text[s + j]]);
+    }
+    return cmp;
+}
+
+int rkCompares(const string& text, const string& pat) {
+    const int BASE = 256, MOD = 101;
+    int n = text.size(), m = pat.size(), cmp = 0;
+    if (m > n) return 0;
+    int ph = 0, wh = 0, h = 1;
+    for (int i = 0; i < m - 1; i++) h = (h * BASE) % MOD;
+    for (int i = 0; i < m; i++) {
+        ph = (BASE * ph + pat[i]) % MOD;
+        wh = (BASE * wh + text[i]) % MOD;
+    }
+    for (int s = 0; s <= n - m; s++) {
+        cmp++;  // one hash comparison per window
+        if (ph == wh) {
+            int j = 0;
+            while (j < m && text[s + j] == pat[j]) { cmp++; j++; }
+        }
+        if (s < n - m) {
+            wh = (BASE * (wh - text[s] * h) + text[s + m]) % MOD;
+            if (wh < 0) wh += MOD;
+        }
+    }
+    return cmp;
+}
+
+int main() {
+    string text = "ABABDABACDABABCABAB";
+    string pattern = "ABABCABAB";
+    cout << "KMP comparisons: " << kmpCompares(text, pattern) << endl;
+    cout << "BM  comparisons: " << bmCompares(text, pattern) << endl;
+    cout << "RK  comparisons: " << rkCompares(text, pattern) << endl;
+    return 0;
+}
+`;
+
