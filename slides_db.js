@@ -4253,6 +4253,96 @@ const SLIDES_DB = {
       }
     ]
   },
+  "deque": {
+    "category": "Linear Structures",
+    "title": { "zh": "雙端佇列", "en": "Deque" },
+    "slides": [
+      {
+        "heading": { "zh": "雙端佇列", "en": "Deque (Double-Ended Queue)" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "雙端佇列允許在頭端與尾端都進行插入與刪除;以雙向串列實作時,四種端點操作皆為 $O(1)$。",
+              "en": "A deque (double-ended queue) allows insertion and removal at both the front and the back; implemented as a doubly-linked list, all four end operations are $O(1)$." } }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          { "type": "paragraph", "text": {
+              "zh": "每個節點除了資料外,同時持有 `prev` 與 `next` 兩個指標。類別維護 `head` 與 `tail` 兩個指標,因此兩端都能在常數時間存取與更新。",
+              "en": "Each node holds two pointers, `prev` and `next`, in addition to its data. The class keeps both a `head` and a `tail` pointer, so either end can be accessed and updated in constant time." } },
+          { "type": "bullets", "items": [
+              { "zh": "是堆疊與佇列的推廣:限制只用一端即退化為堆疊或佇列。", "en": "Generalizes stack and queue: restrict it to one end and it degenerates into a stack or a queue." },
+              { "zh": "雙向串列讓刪除尾端也是 $O(1)$,單向串列做不到。", "en": "The doubly-linked list makes back-removal $O(1)$ too — a singly-linked list cannot." },
+              { "zh": "無固定容量上限,空間隨元素數量成長。", "en": "No fixed capacity; space grows with the number of elements." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          { "type": "steps", "items": [
+              { "zh": "`pushFront(v)`:新節點的 `next` 指向舊 `head`,舊 `head` 的 `prev` 指向新節點,更新 `head`。", "en": "`pushFront(v)`: the new node's `next` points to the old `head`, the old `head`'s `prev` points to the new node, then update `head`." },
+              { "zh": "`pushBack(v)`:對稱地操作 `tail`。", "en": "`pushBack(v)`: the symmetric operation on `tail`." },
+              { "zh": "`popFront` / `popBack`:斷開端點節點並更新對應指標;若清空則 `head` 與 `tail` 皆設為 null。", "en": "`popFront` / `popBack`: detach the end node and update the corresponding pointer; if the deque becomes empty, set both `head` and `tail` to null." }
+          ] },
+          { "type": "mermaid", "code": "flowchart LR\n  H([\"head\"]) --> A[\"5\"]\n  A <--> B[\"10\"]\n  B <--> C[\"20\"]\n  C --> T([\"tail\"])" }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 380 70\" width=\"380\"><g font-family=\"monospace\" font-size=\"13\"><text x=\"0\" y=\"25\">head                          tail</text><text x=\"0\" y=\"50\">null &lt;-&gt; 5 &lt;-&gt; 10 &lt;-&gt; 20 &lt;-&gt; null</text></g></svg>" },
+          { "type": "note", "text": {
+              "zh": "visualizer 以水平節點列呈現,兩端標示 head 與 tail;四顆按鈕分別對應四種端點操作。",
+              "en": "The visualizer shows a horizontal row of nodes with head and tail marked at the ends; four buttons map to the four end operations." } }
+        ]
+      },
+      {
+        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "blocks": [
+          { "type": "table",
+            "headers": [ { "zh": "操作", "en": "Operation" }, { "zh": "時間", "en": "Time" }, { "zh": "空間", "en": "Space" } ],
+            "rows": [
+              [ { "zh": "pushFront / pushBack", "en": "pushFront / pushBack" }, { "zh": "$O(1)$", "en": "$O(1)$" }, { "zh": "$O(1)$", "en": "$O(1)$" } ],
+              [ { "zh": "popFront / popBack", "en": "popFront / popBack" }, { "zh": "$O(1)$", "en": "$O(1)$" }, { "zh": "$O(1)$", "en": "$O(1)$" } ],
+              [ { "zh": "依索引存取", "en": "access by index" }, { "zh": "$O(n)$", "en": "$O(n)$" }, { "zh": "$O(1)$", "en": "$O(1)$" } ],
+              [ { "zh": "整體空間", "en": "Total Space" }, { "zh": "—", "en": "—" }, { "zh": "$O(n)$", "en": "$O(n)$" } ]
+            ] },
+          { "type": "math", "tex": "T_{\\text{push}} = T_{\\text{pop}} = O(1)", "caption": {
+              "zh": "四種端點操作皆為常數時間,與元素數量無關。",
+              "en": "All four end operations run in constant time, independent of the element count." } }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          { "type": "code", "lang": "cpp", "code": "struct Node {\n    int val;\n    Node* prev;\n    Node* next;\n    Node(int v) : val(v), prev(nullptr), next(nullptr) {}\n};\n\nvoid pushFront(int v) {\n    Node* node = new Node(v);\n    if (!head) { head = tail = node; }\n    else {\n        node->next = head;\n        head->prev = node;\n        head = node;\n    }\n    count++;\n}" }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "優點:兩端插入與刪除皆 $O(1)$,比單向串列更靈活。", "en": "Pro: $O(1)$ insertion and removal at both ends — more flexible than a singly-linked list." },
+              { "zh": "優點:可同時當作堆疊或佇列使用。", "en": "Pro: usable as a stack and as a queue at the same time." },
+              { "zh": "缺點:每個節點多一個指標,記憶體開銷略高;隨機存取仍是 $O(n)$。", "en": "Con: an extra pointer per node raises memory overhead slightly; random access is still $O(n)$." },
+              { "zh": "適用:滑動視窗、雙端工作佇列、需要兩端操作的演算法(如 0-1 BFS)。", "en": "Use for sliding-window problems, double-ended work queues, and algorithms needing both-end access (e.g. 0-1 BFS)." }
+          ] }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          { "type": "bullets", "items": [
+              { "zh": "雙向串列 + head/tail 指標;四種端點操作皆 $O(1)$。", "en": "Doubly-linked list + head/tail pointers; all four end operations are $O(1)$." },
+              { "zh": "是堆疊與佇列的共同推廣。", "en": "A common generalization of both the stack and the queue." },
+              { "zh": "空間 $O(n)$,每節點兩個指標。", "en": "Space $O(n)$, two pointers per node." }
+          ] }
+        ]
+      }
+    ]
+  },
   "graph-adjlist": {
     "category": "Graphs",
     "title": {
