@@ -35,7 +35,7 @@ Maintain an $[l, r]$ window (the rightmost segment known to match a prefix) so i
 
 ## Layout
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 90" width="290"><g font-family="monospace" font-size="12"><text x="0" y="16">string</text><text x="0" y="60">Z</text><g stroke="#cbd5e1" fill="none"><rect x="48" y="4" width="28" height="24"/><rect x="76" y="4" width="28" height="24"/><rect x="104" y="4" width="28" height="24"/><rect x="132" y="4" width="28" height="24"/><rect x="160" y="4" width="28" height="24"/><rect x="188" y="4" width="28" height="24"/><rect x="216" y="4" width="28" height="24"/><rect x="48" y="48" width="28" height="24"/><rect x="76" y="48" width="28" height="24"/><rect x="104" y="48" width="28" height="24"/><rect x="132" y="48" width="28" height="24"/><rect x="160" y="48" width="28" height="24"/><rect x="188" y="48" width="28" height="24"/><rect x="216" y="48" width="28" height="24"/></g><g text-anchor="middle"><text x="62" y="21">a</text><text x="90" y="21">b</text><text x="118" y="21">a</text><text x="146" y="21">b</text><text x="174" y="21">a</text><text x="202" y="21">b</text><text x="230" y="21">c</text><text x="62" y="65">-</text><text x="90" y="65">0</text><text x="118" y="65">3</text><text x="146" y="65">0</text><text x="174" y="65">1</text><text x="202" y="65">0</text><text x="230" y="65">0</text></g></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 290 90" width="290"><g font-family="monospace" font-size="12"><text x="0" y="16">string</text><text x="0" y="60">Z</text><g stroke="#cbd5e1" fill="none"><rect x="48" y="4" width="28" height="24"/><rect x="76" y="4" width="28" height="24"/><rect x="104" y="4" width="28" height="24"/><rect x="132" y="4" width="28" height="24"/><rect x="160" y="4" width="28" height="24"/><rect x="188" y="4" width="28" height="24"/><rect x="216" y="4" width="28" height="24"/><rect x="48" y="48" width="28" height="24"/><rect x="76" y="48" width="28" height="24"/><rect x="104" y="48" width="28" height="24"/><rect x="132" y="48" width="28" height="24"/><rect x="160" y="48" width="28" height="24"/><rect x="188" y="48" width="28" height="24"/><rect x="216" y="48" width="28" height="24"/></g><g text-anchor="middle"><text x="62" y="21">a</text><text x="90" y="21">b</text><text x="118" y="21">a</text><text x="146" y="21">b</text><text x="174" y="21">a</text><text x="202" y="21">b</text><text x="230" y="21">c</text><text x="62" y="65">-</text><text x="90" y="65">0</text><text x="118" y="65">4</text><text x="146" y="65">0</text><text x="174" y="65">2</text><text x="202" y="65">0</text><text x="230" y="65">0</text></g></g></svg>
 
 > The visualizer shows the concatenated string and fills in the Z-array step by step, marking the $[l,r]$ window and the match positions.
 
@@ -45,13 +45,13 @@ Maintain an $[l, r]$ window (the rightmost segment known to match a prefix) so i
 
 | Aspect | Complexity |
 | --- | --- |
-| build Z-array | $O(n)$ |
+| build Z-array | $O(n+m)$ |
 | string matching | $O(n+m)$ |
 | space | $O(n+m)$ |
 
-$$T(n) = O(n)$$
+$$T(n, m) = O(n + m)$$
 
-The $[l,r]$ window makes each character be compared only a constant number of times.
+$n$ is the text length and $m$ the pattern length; the $[l, r]$ window means each character is compared only a constant number of times, so the whole pass is linear.
 
 ---
 

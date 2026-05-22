@@ -9734,7 +9734,7 @@ const SLIDES_DB = {
         "blocks": [
           {
             "type": "svg",
-            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 290 90\" width=\"290\"><g font-family=\"monospace\" font-size=\"12\"><text x=\"0\" y=\"16\">string</text><text x=\"0\" y=\"60\">Z</text><g stroke=\"#cbd5e1\" fill=\"none\"><rect x=\"48\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"76\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"104\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"132\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"160\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"188\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"216\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"48\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"76\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"104\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"132\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"160\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"188\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"216\" y=\"48\" width=\"28\" height=\"24\"/></g><g text-anchor=\"middle\"><text x=\"62\" y=\"21\">a</text><text x=\"90\" y=\"21\">b</text><text x=\"118\" y=\"21\">a</text><text x=\"146\" y=\"21\">b</text><text x=\"174\" y=\"21\">a</text><text x=\"202\" y=\"21\">b</text><text x=\"230\" y=\"21\">c</text><text x=\"62\" y=\"65\">-</text><text x=\"90\" y=\"65\">0</text><text x=\"118\" y=\"65\">3</text><text x=\"146\" y=\"65\">0</text><text x=\"174\" y=\"65\">1</text><text x=\"202\" y=\"65\">0</text><text x=\"230\" y=\"65\">0</text></g></g></svg>"
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 290 90\" width=\"290\"><g font-family=\"monospace\" font-size=\"12\"><text x=\"0\" y=\"16\">string</text><text x=\"0\" y=\"60\">Z</text><g stroke=\"#cbd5e1\" fill=\"none\"><rect x=\"48\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"76\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"104\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"132\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"160\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"188\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"216\" y=\"4\" width=\"28\" height=\"24\"/><rect x=\"48\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"76\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"104\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"132\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"160\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"188\" y=\"48\" width=\"28\" height=\"24\"/><rect x=\"216\" y=\"48\" width=\"28\" height=\"24\"/></g><g text-anchor=\"middle\"><text x=\"62\" y=\"21\">a</text><text x=\"90\" y=\"21\">b</text><text x=\"118\" y=\"21\">a</text><text x=\"146\" y=\"21\">b</text><text x=\"174\" y=\"21\">a</text><text x=\"202\" y=\"21\">b</text><text x=\"230\" y=\"21\">c</text><text x=\"62\" y=\"65\">-</text><text x=\"90\" y=\"65\">0</text><text x=\"118\" y=\"65\">4</text><text x=\"146\" y=\"65\">0</text><text x=\"174\" y=\"65\">2</text><text x=\"202\" y=\"65\">0</text><text x=\"230\" y=\"65\">0</text></g></g></svg>"
           },
           {
             "type": "note",
@@ -9755,17 +9755,17 @@ const SLIDES_DB = {
               { "zh": "複雜度", "en": "Complexity" }
             ],
             "rows": [
-              [ { "zh": "建立 Z 陣列", "en": "build Z-array" }, { "zh": "$O(n)$", "en": "$O(n)$" } ],
+              [ { "zh": "建立 Z 陣列", "en": "build Z-array" }, { "zh": "$O(n+m)$", "en": "$O(n+m)$" } ],
               [ { "zh": "字串比對", "en": "string matching" }, { "zh": "$O(n+m)$", "en": "$O(n+m)$" } ],
               [ { "zh": "空間", "en": "space" }, { "zh": "$O(n+m)$", "en": "$O(n+m)$" } ]
             ]
           },
           {
             "type": "math",
-            "tex": "T(n) = O(n)",
+            "tex": "T(n, m) = O(n + m)",
             "caption": {
-              "zh": "$[l,r]$ 視窗使每個字元只被比較常數次。",
-              "en": "The $[l,r]$ window makes each character be compared only a constant number of times."
+              "zh": "$n$ 為文字長度、$m$ 為樣式長度；$[l, r]$ 視窗使每個字元至多被比較常數次，因此整趟計算為線性。",
+              "en": "$n$ is the text length and $m$ the pattern length; the $[l, r]$ window means each character is compared only a constant number of times, so the whole pass is linear."
             }
           }
         ]
