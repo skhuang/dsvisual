@@ -4263,7 +4263,7 @@ const SLIDES_DB = {
           {
             "type": "paragraph",
             "text": {
-              "zh": "線段樹是一種二元樹結構,把陣列的每個區間對應到一個節點,讓區間查詢與區間更新都能在 $O(\\log n)$ 內完成。",
+              "zh": "線段樹是一種二元樹結構，把陣列的每個區間對應到一個節點，讓區間查詢與區間更新都能在 $O(\\log n)$ 內完成。",
               "en": "A segment tree is a binary tree that maps each range of an array to a node, so both range queries and range updates run in $O(\\log n)$."
             }
           }
@@ -4275,15 +4275,15 @@ const SLIDES_DB = {
           {
             "type": "paragraph",
             "text": {
-              "zh": "每個節點負責一個區間 $[lo, hi]$ 並存放該區間的聚合值(此處為區間和);葉節點對應單一元素,內部節點的值由兩個子節點合併而成。",
+              "zh": "每個節點負責一個區間 $[lo, hi]$ 並存放該區間的聚合值（此處為區間和）；葉節點對應單一元素，內部節點的值由兩個子節點合併而成。",
               "en": "Each node owns a range $[lo, hi]$ and stores that range's aggregate (here, the sum); leaves map to single elements, and an internal node's value is merged from its two children."
             }
           },
           {
             "type": "bullets",
             "items": [
-              { "zh": "區間查詢:從根下降,完全被覆蓋的節點直接取值,不相交則略過。", "en": "Range query: descend from the root — a fully covered node is taken whole, a disjoint node is skipped." },
-              { "zh": "lazy propagation:區間更新時在被覆蓋的節點掛上「lazy 標記」,延後傳給子節點。", "en": "Lazy propagation: a range update tags a covered node with a lazy mark, deferring the work to its children." },
+              { "zh": "區間查詢：從根下降，完全被覆蓋的節點直接取值，不相交則略過。", "en": "Range query: descend from the root — a fully covered node is taken whole, a disjoint node is skipped." },
+              { "zh": "lazy propagation：區間更新時在被覆蓋的節點掛上「lazy 標記」，延後傳給子節點。", "en": "Lazy propagation: a range update tags a covered node with a lazy mark, deferring the work to its children." },
               { "zh": "lazy 標記在之後查詢或更新下降經過該節點時才被推下去。", "en": "A lazy tag is pushed down only when a later query or update descends through that node." }
             ]
           }
@@ -4295,9 +4295,9 @@ const SLIDES_DB = {
           {
             "type": "steps",
             "items": [
-              { "zh": "區間更新 $[ql, qr]$:完全被覆蓋的節點掛 lazy 標記並更新其聚合值。", "en": "Range update $[ql, qr]$: a fully covered node gets a lazy tag and its aggregate is updated." },
-              { "zh": "部分相交的節點先把自己的 lazy 標記推給子節點,再遞迴。", "en": "A partially overlapping node first pushes its own lazy tag to its children, then recurses." },
-              { "zh": "區間查詢時同樣下降,經過帶 lazy 標記的節點就推下標記,確保讀到的值正確。", "en": "A range query descends the same way, pushing down any lazy tag it passes so the value it reads is correct." }
+              { "zh": "區間更新 $[ql, qr]$：完全被覆蓋的節點掛 lazy 標記並更新其聚合值。", "en": "Range update $[ql, qr]$: a fully covered node gets a lazy tag and its aggregate is updated." },
+              { "zh": "部分相交的節點先把自己的 lazy 標記推給子節點，再遞迴。", "en": "A partially overlapping node first pushes its own lazy tag to its children, then recurses." },
+              { "zh": "區間查詢時同樣下降，經過帶 lazy 標記的節點就推下標記，確保讀到的值正確。", "en": "A range query descends the same way, pushing down any lazy tag it passes so the value it reads is correct." }
             ]
           },
           {
@@ -4316,7 +4316,7 @@ const SLIDES_DB = {
           {
             "type": "note",
             "text": {
-              "zh": "visualizer 以一棵 15 節點的線段樹腳本化呈現:查詢 → 區間更新 → 再查詢,讓 lazy 標記的產生與下推清楚可見。",
+              "zh": "visualizer 以一棵 15 節點的線段樹腳本化呈現：查詢 → 區間更新 → 再查詢，讓 lazy 標記的產生與下推清楚可見。",
               "en": "The visualizer runs a scripted 15-node segment tree — query, then range update, then query again — making the creation and push-down of lazy tags clearly visible."
             }
           }
@@ -4334,7 +4334,7 @@ const SLIDES_DB = {
             "rows": [
               [ { "zh": "建樹", "en": "build" }, { "zh": "$O(n)$", "en": "$O(n)$" } ],
               [ { "zh": "區間查詢", "en": "range query" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" } ],
-              [ { "zh": "區間更新(lazy)", "en": "range update (lazy)" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" } ],
+              [ { "zh": "區間更新（lazy）", "en": "range update (lazy)" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" } ],
               [ { "zh": "空間", "en": "space" }, { "zh": "$O(n)$", "en": "$O(n)$" } ]
             ]
           },
@@ -4342,7 +4342,7 @@ const SLIDES_DB = {
             "type": "math",
             "tex": "T_{\\text{query}}(n) = O(\\log n)",
             "caption": {
-              "zh": "查詢路徑在每一層最多展開常數個節點,故與樹高 $\\log n$ 成正比。",
+              "zh": "查詢路徑在每一層最多展開常數個節點，故與樹高 $\\log n$ 成正比。",
               "en": "A query expands only a constant number of nodes per level, so its cost is proportional to the tree height $\\log n$."
             }
           }
@@ -4364,10 +4364,10 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點:同時支援區間查詢與區間更新,皆為 $O(\\log n)$。", "en": "Pro: supports both range queries and range updates, each in $O(\\log n)$." },
-              { "zh": "優點:聚合函式可替換(和、最小值、最大值、GCD 等)。", "en": "Pro: the aggregate is swappable — sum, min, max, gcd, and so on." },
-              { "zh": "缺點:實作較 Fenwick 樹複雜,常數較大。", "en": "Con: more complex to implement than a Fenwick tree, with a larger constant factor." },
-              { "zh": "適用:需要區間更新、或需要非加法聚合的場景。", "en": "Use when range updates are needed, or when the aggregate is not plain addition." }
+              { "zh": "優點：同時支援區間查詢與區間更新，皆為 $O(\\log n)$。", "en": "Pro: supports both range queries and range updates, each in $O(\\log n)$." },
+              { "zh": "優點：聚合函式可替換（和、最小值、最大值、GCD 等）。", "en": "Pro: the aggregate is swappable — sum, min, max, gcd, and so on." },
+              { "zh": "缺點：實作較 Fenwick 樹複雜，常數較大。", "en": "Con: more complex to implement than a Fenwick tree, with a larger constant factor." },
+              { "zh": "適用：需要區間更新、或需要非加法聚合的場景。", "en": "Use when range updates are needed, or when the aggregate is not plain addition." }
             ]
           }
         ]
@@ -4378,7 +4378,7 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "把陣列區間組成二元樹,查詢與更新沿樹高進行。", "en": "Array ranges form a binary tree; queries and updates run along the tree height." },
+              { "zh": "把陣列區間組成二元樹，查詢與更新沿樹高進行。", "en": "Array ranges form a binary tree; queries and updates run along the tree height." },
               { "zh": "lazy propagation 把區間更新延後到真正需要時才下推。", "en": "Lazy propagation defers a range update, pushing it down only when needed." },
               { "zh": "區間查詢與區間更新皆為 $O(\\log n)$。", "en": "Both range query and range update are $O(\\log n)$." }
             ]
