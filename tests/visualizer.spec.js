@@ -597,6 +597,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.bellman-dcell[data-dist="1"]')).toContainText('6');
     });
 
+    test('Graphs: Floyd-Warshall renders a distance matrix and steps per k', async ({ page }) => {
+        await loadMethod(page, 'graph-floyd-warshall');
+        const card = page.locator('[data-method-section="graph-floyd-warshall"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_floyd_warshall.cpp');
+        await expect(card.locator('.floyd-cell')).toHaveCount(16);
+        await expect(card.locator('[data-testid="floyd-msg"]')).toContainText('initial');
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="floyd-msg"]')).toContainText('k = 0');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
@@ -619,6 +629,12 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await loadMethod(page, 'search-aho');
         await loadMethod(page, 'search-linear');
         await expect(page.locator('#search-container')).toHaveCount(1);
+        await loadMethod(page, 'tree-segment');
+        await loadMethod(page, 'tree-bst');
+        await expect(page.locator('#tree-nodes-container')).toHaveCount(1);
+        await loadMethod(page, 'graph-prim');
+        await loadMethod(page, 'graph');
+        await expect(page.locator('#graph-edges')).toHaveCount(1);
         expect(errors).toEqual([]);
     });
 

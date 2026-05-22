@@ -138,6 +138,7 @@ const METHOD_GROUPS = [
             { id: 'graph-topo', title: 'Topological Sort', file: 'graph_topo.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-prim', title: "Prim's MST", file: 'graph_prim.cpp', visualizer: 'graph-step', controls: 'graph-step' },
             { id: 'graph-bellman-ford', title: 'Bellman-Ford', file: 'graph_bellman_ford.cpp', visualizer: 'graph-step', controls: 'graph-step' },
+            { id: 'graph-floyd-warshall', title: 'Floyd-Warshall', file: 'graph_floyd_warshall.cpp', visualizer: 'matrix', controls: 'matrix' },
         ],
     },
     {
@@ -291,6 +292,7 @@ function getCodeForMethod(methodId) {
         'graph-topo': codeGraphTopo,
         'graph-prim': codeGraphPrim,
         'graph-bellman-ford': codeGraphBellmanFord,
+        'graph-floyd-warshall': codeGraphFloydWarshall,
         'hash-chain': codeHashChain,
         'hash-open': codeHashOpen,
         'hash-bucket': codeHashBucket,
@@ -1763,6 +1765,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'graph_bellman_ford.cpp';
             codeDisplay.textContent = codeGraphBellmanFord;
         }
+        else if (currentMode === 'graph-floyd-warshall') {
+            codeTitle.textContent = 'graph_floyd_warshall.cpp';
+            codeDisplay.textContent = codeGraphFloydWarshall;
+        }
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) { 
             treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden'); 
             if(currentMode === 'tree-bst') { codeTitle.textContent = 'tree_bst.cpp'; codeDisplay.textContent = codeTreeBST; }
@@ -2002,6 +2008,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
         else if (currentMode === 'graph-prim') renderPrim();
         else if (currentMode === 'graph-bellman-ford') renderBellmanFord();
+        else if (currentMode === 'graph-floyd-warshall') renderFloydWarshall();
         else if (currentMode === 'tree-dsu') renderDSU();
         else if (currentMode === 'tree-segment') renderSegmentTree();
         else if (currentMode === 'tree-fenwick') renderFenwick();
@@ -3904,6 +3911,79 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         function reset() { idx = 0; draw(); }
         wrap.appendChild(buildStepControls(step, reset, 400));
+        draw();
+    }
+
+    function renderFloydWarshall() {
+        const host = acquireDynamicVizHost();
+        const V = 4;
+        const labels = ['A', 'B', 'C', 'D'];
+        const INF = Infinity;
+        const init = [
+            [0, 3, INF, 7],
+            [8, 0, 2, INF],
+            [5, INF, 0, 1],
+            [2, INF, INF, 0],
+        ];
+        const frames = [{ k: -1, dist: init.map((r) => r.slice()), changed: [],
+            msg: 'initial distance matrix (direct edges only)' }];
+        let dist = init.map((r) => r.slice());
+        for (let k = 0; k < V; k++) {
+            const changed = [];
+            const next = dist.map((r) => r.slice());
+            for (let i = 0; i < V; i++) {
+                for (let j = 0; j < V; j++) {
+                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                        next[i][j] = dist[i][k] + dist[k][j];
+                        changed.push(i + ',' + j);
+                    }
+                }
+            }
+            dist = next;
+            frames.push({ k: k, dist: dist.map((r) => r.slice()), changed: changed,
+                msg: 'k = ' + k + '  (' + labels[k] + ' as intermediate) — ' +
+                     changed.length + ' cell(s) improved' });
+        }
+        let idx = 0;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'floyd-wrap';
+        wrap.innerHTML =
+            '<div class="floyd-grid"></div>' +
+            '<div class="floyd-msg" data-testid="floyd-msg">&nbsp;</div>';
+        host.appendChild(wrap);
+        const gridEl = wrap.querySelector('.floyd-grid');
+        const msgEl = wrap.querySelector('.floyd-msg');
+
+        function draw() {
+            const f = frames[idx];
+            let html = '<div class="floyd-hcell"></div>';
+            for (let j = 0; j < V; j++) {
+                html += '<div class="floyd-hcell' + (j === f.k ? ' floyd-pivot' : '') + '">' +
+                        labels[j] + '</div>';
+            }
+            for (let i = 0; i < V; i++) {
+                html += '<div class="floyd-hcell' + (i === f.k ? ' floyd-pivot' : '') + '">' +
+                        labels[i] + '</div>';
+                for (let j = 0; j < V; j++) {
+                    const val = f.dist[i][j] === INF ? '∞' : f.dist[i][j];
+                    const cls = 'floyd-cell' +
+                        (f.changed.indexOf(i + ',' + j) >= 0 ? ' floyd-changed' : '') +
+                        ((i === f.k || j === f.k) ? ' floyd-pivotline' : '');
+                    html += '<div class="' + cls + '" data-cell="' + i + '-' + j + '">' + val + '</div>';
+                }
+            }
+            gridEl.innerHTML = html;
+            msgEl.textContent = f.msg;
+        }
+        function step() {
+            if (idx >= frames.length - 1) return false;
+            idx++;
+            draw();
+            return idx < frames.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 800));
         draw();
     }
 
