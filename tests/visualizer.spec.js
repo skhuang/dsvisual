@@ -531,7 +531,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await card.locator('[data-action="cms-add"]').click();
         await card.locator('[data-action="cms-add"]').click();
         await card.locator('[data-action="cms-estimate"]').click();
-        await expect(card.locator('[data-testid="cms-readout"]')).toContainText('estimate');
+        await expect(card.locator('[data-testid="cms-readout"]')).toContainText('= 2');
         await expect(card.locator('.cms-cell.cms-hit')).toHaveCount(3);
     });
 
