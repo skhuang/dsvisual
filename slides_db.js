@@ -9277,6 +9277,139 @@ const SLIDES_DB = {
       }
     ]
   },
+  "bloom-filter": {
+    "category": "Hash & Probabilistic",
+    "title": { "zh": "布隆過濾器", "en": "Bloom Filter" },
+    "slides": [
+      {
+        "heading": { "zh": "布隆過濾器", "en": "Bloom Filter" },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "布隆過濾器是一種空間效率極高的機率型集合,用來測試「某元素是否屬於集合」。它可能回報誤判存在(false positive),但絕不會漏判(false negative)。",
+              "en": "A Bloom filter is a highly space-efficient probabilistic set used to test set membership. It may report a false positive but never a false negative."
+            }
+          }
+        ]
+      },
+      {
+        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "blocks": [
+          {
+            "type": "paragraph",
+            "text": {
+              "zh": "結構是一個 $m$ 位元的位元陣列加上 $k$ 個獨立雜湊函式。插入元素時把 $k$ 個雜湊位置設為 1;查詢時檢查那 $k$ 個位置是否全為 1。",
+              "en": "The structure is an $m$-bit array plus $k$ independent hash functions. Insertion sets the $k$ hashed bits to 1; a query checks whether those $k$ bits are all 1."
+            }
+          },
+          {
+            "type": "bullets",
+            "items": [
+              { "zh": "$k$ 個位元全為 1 → 「可能存在」,也可能是其他元素恰好湊齊。", "en": "All $k$ bits are 1 → \"possibly present\" — other elements may have set those bits." },
+              { "zh": "任一位元為 0 → 「絕對不存在」。", "en": "Any bit is 0 → \"definitely not present\"." },
+              { "zh": "不支援刪除:清除位元會誤傷共用該位元的其他元素。", "en": "No deletion: clearing a bit would corrupt other elements sharing it." }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              { "zh": "插入 $x$:計算 $h_1(x)$、$h_2(x)$、$h_3(x)$,把這 3 個位元設為 1。", "en": "Insert $x$: compute $h_1(x)$, $h_2(x)$, $h_3(x)$ and set those 3 bits to 1." },
+              { "zh": "查詢 $y$:計算 $y$ 的 3 個雜湊位置。", "en": "Query $y$: compute the 3 hashed positions of $y$." },
+              { "zh": "3 個位元全為 1 回報「可能存在」;任一為 0 回報「絕對不存在」。", "en": "All 3 bits 1 → \"possibly present\"; any bit 0 → \"definitely not present\"." }
+            ]
+          },
+          {
+            "type": "mermaid",
+            "code": "flowchart TD\n  A[\"query y\"] --> B[\"compute h1 h2 h3\"]\n  B --> C[\"all 3 bits = 1?\"]\n  C --> D[\"possibly present\"]\n  C --> E[\"definitely not present\"]"
+          }
+        ]
+      },
+      {
+        "heading": { "zh": "示意圖", "en": "Layout" },
+        "blocks": [
+          {
+            "type": "svg",
+            "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 360 70\" width=\"360\"><g font-family=\"monospace\" font-size=\"12\"><text x=\"0\" y=\"16\">insert \"dog\" sets bits 4, 17, 29</text><rect x=\"0\" y=\"28\" width=\"352\" height=\"24\" fill=\"none\" stroke=\"#cbd5e1\"/><rect x=\"44\" y=\"28\" width=\"22\" height=\"24\" fill=\"#dbeafe\" stroke=\"#3b82f6\"/><rect x=\"187\" y=\"28\" width=\"22\" height=\"24\" fill=\"#dbeafe\" stroke=\"#3b82f6\"/><rect x=\"319\" y=\"28\" width=\"22\" height=\"24\" fill=\"#dbeafe\" stroke=\"#3b82f6\"/></g></svg>"
+          },
+          {
+            "type": "note",
+            "text": {
+              "zh": "visualizer 以 32 格位元陣列呈現;Insert 把 3 個雜湊位元點亮,Query 高亮被檢查的 3 格並回報結果。",
+              "en": "The visualizer shows a 32-cell bit array; Insert lights up the 3 hashed bits, Query highlights the 3 checked cells and reports the verdict."
+            }
+          }
+        ]
+      },
+      {
+        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "blocks": [
+          {
+            "type": "table",
+            "headers": [
+              { "zh": "項目", "en": "Aspect" },
+              { "zh": "複雜度", "en": "Complexity" }
+            ],
+            "rows": [
+              [ { "zh": "插入 / 查詢時間", "en": "insert / query time" }, { "zh": "$O(k)$", "en": "$O(k)$" } ],
+              [ { "zh": "空間", "en": "space" }, { "zh": "$O(m)$ 位元", "en": "$O(m)$ bits" } ],
+              [ { "zh": "漏判(false negative)", "en": "false negative" }, { "zh": "不可能", "en": "impossible" } ]
+            ]
+          },
+          {
+            "type": "math",
+            "tex": "P_{\\text{fp}} \\approx \\left(1 - e^{-kn/m}\\right)^k",
+            "caption": {
+              "zh": "誤判率隨已插入元素數 $n$ 上升;在固定 $m$ 下存在最佳的 $k$。",
+              "en": "The false-positive rate rises with the number of inserted elements $n$; for a fixed $m$ there is an optimal $k$."
+            }
+          }
+        ]
+      },
+      {
+        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "blocks": [
+          {
+            "type": "code",
+            "lang": "cpp",
+            "code": "void insert(const std::string& key) {\n    bits[hash1(key)] = true;\n    bits[hash2(key)] = true;\n    bits[hash3(key)] = true;\n}\n\nbool possiblyContains(const std::string& key) const {\n    return bits[hash1(key)] && bits[hash2(key)] && bits[hash3(key)];\n}"
+          }
+        ]
+      },
+      {
+        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              { "zh": "優點:空間遠小於儲存完整元素集合。", "en": "Pro: uses far less space than storing the full element set." },
+              { "zh": "優點:插入與查詢皆為固定時間 $O(k)$。", "en": "Pro: insertion and query are both constant-time $O(k)$." },
+              { "zh": "缺點:有誤判,且無法刪除元素。", "en": "Con: false positives occur, and elements cannot be removed." },
+              { "zh": "適用:快取前置過濾、去重、判斷「絕對沒看過」的場景。", "en": "Use for cache pre-filtering, deduplication, and \"definitely never seen\" checks." }
+            ]
+          }
+        ]
+      },
+      {
+        "heading": { "zh": "小結", "en": "Summary" },
+        "blocks": [
+          {
+            "type": "bullets",
+            "items": [
+              { "zh": "位元陣列加多個雜湊函式構成的機率型集合。", "en": "A probabilistic set built from a bit array plus several hash functions." },
+              { "zh": "「絕對不存在」可信;「可能存在」需容忍誤判。", "en": "\"Definitely absent\" is certain; \"possibly present\" must tolerate false positives." },
+              { "zh": "以準確度換取極小的空間佔用。", "en": "Trades accuracy for a very small space footprint." }
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "sort-bubble": {
     "category": "Sorting",
     "title": {
