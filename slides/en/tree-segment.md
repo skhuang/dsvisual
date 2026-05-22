@@ -60,8 +60,12 @@ A query expands only a constant number of nodes per level, so its cost is propor
 
 ```cpp
 void update(int node, int lo, int hi, int ql, int qr, long long val) {
-    if (qr < lo || hi < ql) return;
-    if (ql <= lo && hi <= qr) { applyLazy(node, lo, hi, val); return; }
+    if (qr < lo || hi < ql)
+        return;
+    if (ql <= lo && hi <= qr) {
+        applyLazy(node, lo, hi, val);
+        return;
+    }
     pushDown(node, lo, hi);
     int mid = (lo + hi) / 2;
     update(2 * node, lo, mid, ql, qr, val);

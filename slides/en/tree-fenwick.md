@@ -60,13 +60,15 @@ Each jump clears one set bit of `i`, so at most $\log n$ jumps.
 ```cpp
 // add delta at 1-indexed position i, walking up via i += i & -i
 void update(int i, long long delta) {
-    for (; i <= n; i += i & -i) bit[i] += delta;
+    for (; i <= n; i += i & -i)
+        bit[i] += delta;
 }
 
 // sum of [1, i], walking down via i -= i & -i
 long long prefixSum(int i) {
     long long s = 0;
-    for (; i > 0; i -= i & -i) s += bit[i];
+    for (; i > 0; i -= i & -i)
+        s += bit[i];
     return s;
 }
 ```

@@ -62,7 +62,8 @@ $$T(V, E) = O(E \log V)$$
 for (int count = 0; count < V; count++) {
     int u = -1;
     for (int v = 0; v < V; v++)
-        if (!inMST[v] && (u == -1 || key[v] < key[u])) u = v;
+        if (!inMST[v] && (u == -1 || key[v] < key[u]))
+            u = v;
     inMST[u] = true;
     for (int v = 0; v < V; v++)
         if (w[u][v] && !inMST[v] && w[u][v] < key[v]) {

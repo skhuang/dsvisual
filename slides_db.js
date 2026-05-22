@@ -4255,10 +4255,16 @@ const SLIDES_DB = {
   },
   "tree-segment": {
     "category": "Trees",
-    "title": { "zh": "線段樹", "en": "Segment Tree" },
+    "title": {
+      "zh": "線段樹",
+      "en": "Segment Tree"
+    },
     "slides": [
       {
-        "heading": { "zh": "線段樹", "en": "Segment Tree" },
+        "heading": {
+          "zh": "線段樹",
+          "en": "Segment Tree"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -4270,7 +4276,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -4282,22 +4291,43 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "區間查詢：從根下降，完全被覆蓋的節點直接取值，不相交則略過。", "en": "Range query: descend from the root — a fully covered node is taken whole, a disjoint node is skipped." },
-              { "zh": "lazy propagation：區間更新時在被覆蓋的節點掛上「lazy 標記」，延後傳給子節點。", "en": "Lazy propagation: a range update tags a covered node with a lazy mark, deferring the work to its children." },
-              { "zh": "lazy 標記在之後查詢或更新下降經過該節點時才被推下去。", "en": "A lazy tag is pushed down only when a later query or update descends through that node." }
+              {
+                "zh": "區間查詢：從根下降，完全被覆蓋的節點直接取值，不相交則略過。",
+                "en": "Range query: descend from the root — a fully covered node is taken whole, a disjoint node is skipped."
+              },
+              {
+                "zh": "lazy propagation：區間更新時在被覆蓋的節點掛上「lazy 標記」，延後傳給子節點。",
+                "en": "Lazy propagation: a range update tags a covered node with a lazy mark, deferring the work to its children."
+              },
+              {
+                "zh": "lazy 標記在之後查詢或更新下降經過該節點時才被推下去。",
+                "en": "A lazy tag is pushed down only when a later query or update descends through that node."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "區間更新 $[ql, qr]$：完全被覆蓋的節點掛 lazy 標記並更新其聚合值。", "en": "Range update $[ql, qr]$: a fully covered node gets a lazy tag and its aggregate is updated." },
-              { "zh": "部分相交的節點先把自己的 lazy 標記推給子節點，再遞迴。", "en": "A partially overlapping node first pushes its own lazy tag to its children, then recurses." },
-              { "zh": "區間查詢時同樣下降，經過帶 lazy 標記的節點就推下標記，確保讀到的值正確。", "en": "A range query descends the same way, pushing down any lazy tag it passes so the value it reads is correct." }
+              {
+                "zh": "區間更新 $[ql, qr]$：完全被覆蓋的節點掛 lazy 標記並更新其聚合值。",
+                "en": "Range update $[ql, qr]$: a fully covered node gets a lazy tag and its aggregate is updated."
+              },
+              {
+                "zh": "部分相交的節點先把自己的 lazy 標記推給子節點，再遞迴。",
+                "en": "A partially overlapping node first pushes its own lazy tag to its children, then recurses."
+              },
+              {
+                "zh": "區間查詢時同樣下降，經過帶 lazy 標記的節點就推下標記，確保讀到的值正確。",
+                "en": "A range query descends the same way, pushing down any lazy tag it passes so the value it reads is correct."
+              }
             ]
           },
           {
@@ -4307,7 +4337,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -4323,19 +4356,64 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "操作", "en": "Operation" },
-              { "zh": "複雜度", "en": "Complexity" }
+              {
+                "zh": "操作",
+                "en": "Operation"
+              },
+              {
+                "zh": "複雜度",
+                "en": "Complexity"
+              }
             ],
             "rows": [
-              [ { "zh": "建樹", "en": "build" }, { "zh": "$O(n)$", "en": "$O(n)$" } ],
-              [ { "zh": "區間查詢", "en": "range query" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" } ],
-              [ { "zh": "區間更新（lazy）", "en": "range update (lazy)" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(n)$", "en": "$O(n)$" } ]
+              [
+                {
+                  "zh": "建樹",
+                  "en": "build"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "區間查詢",
+                  "en": "range query"
+                },
+                {
+                  "zh": "$O(\\log n)$",
+                  "en": "$O(\\log n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "區間更新（lazy）",
+                  "en": "range update (lazy)"
+                },
+                {
+                  "zh": "$O(\\log n)$",
+                  "en": "$O(\\log n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                }
+              ]
             ]
           },
           {
@@ -4349,38 +4427,68 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
             "lang": "cpp",
-            "code": "void update(int node, int lo, int hi, int ql, int qr, long long val) {\n    if (qr < lo || hi < ql) return;\n    if (ql <= lo && hi <= qr) { applyLazy(node, lo, hi, val); return; }\n    pushDown(node, lo, hi);\n    int mid = (lo + hi) / 2;\n    update(2 * node, lo, mid, ql, qr, val);\n    update(2 * node + 1, mid + 1, hi, ql, qr, val);\n    tree[node] = tree[2 * node] + tree[2 * node + 1];\n}"
+            "code": "void update(int node, int lo, int hi, int ql, int qr, long long val) {\n    if (qr < lo || hi < ql)\n        return;\n    if (ql <= lo && hi <= qr) {\n        applyLazy(node, lo, hi, val);\n        return;\n    }\n    pushDown(node, lo, hi);\n    int mid = (lo + hi) / 2;\n    update(2 * node, lo, mid, ql, qr, val);\n    update(2 * node + 1, mid + 1, hi, ql, qr, val);\n    tree[node] = tree[2 * node] + tree[2 * node + 1];\n}"
           }
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點：同時支援區間查詢與區間更新，皆為 $O(\\log n)$。", "en": "Pro: supports both range queries and range updates, each in $O(\\log n)$." },
-              { "zh": "優點：聚合函式可替換（和、最小值、最大值、GCD 等）。", "en": "Pro: the aggregate is swappable — sum, min, max, gcd, and so on." },
-              { "zh": "缺點：實作較 Fenwick 樹複雜，常數較大。", "en": "Con: more complex to implement than a Fenwick tree, with a larger constant factor." },
-              { "zh": "適用：需要區間更新、或需要非加法聚合的場景。", "en": "Use when range updates are needed, or when the aggregate is not plain addition." }
+              {
+                "zh": "優點：同時支援區間查詢與區間更新，皆為 $O(\\log n)$。",
+                "en": "Pro: supports both range queries and range updates, each in $O(\\log n)$."
+              },
+              {
+                "zh": "優點：聚合函式可替換（和、最小值、最大值、GCD 等）。",
+                "en": "Pro: the aggregate is swappable — sum, min, max, gcd, and so on."
+              },
+              {
+                "zh": "缺點：實作較 Fenwick 樹複雜，常數較大。",
+                "en": "Con: more complex to implement than a Fenwick tree, with a larger constant factor."
+              },
+              {
+                "zh": "適用：需要區間更新、或需要非加法聚合的場景。",
+                "en": "Use when range updates are needed, or when the aggregate is not plain addition."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "把陣列區間組成二元樹，查詢與更新沿樹高進行。", "en": "Array ranges form a binary tree; queries and updates run along the tree height." },
-              { "zh": "lazy propagation 把區間更新延後到真正需要時才下推。", "en": "Lazy propagation defers a range update, pushing it down only when needed." },
-              { "zh": "區間查詢與區間更新皆為 $O(\\log n)$。", "en": "Both range query and range update are $O(\\log n)$." }
+              {
+                "zh": "把陣列區間組成二元樹，查詢與更新沿樹高進行。",
+                "en": "Array ranges form a binary tree; queries and updates run along the tree height."
+              },
+              {
+                "zh": "lazy propagation 把區間更新延後到真正需要時才下推。",
+                "en": "Lazy propagation defers a range update, pushing it down only when needed."
+              },
+              {
+                "zh": "區間查詢與區間更新皆為 $O(\\log n)$。",
+                "en": "Both range query and range update are $O(\\log n)$."
+              }
             ]
           }
         ]
@@ -19486,10 +19594,16 @@ const SLIDES_DB = {
   },
   "tree-fenwick": {
     "category": "Trees",
-    "title": { "zh": "Fenwick 樹", "en": "Fenwick Tree" },
+    "title": {
+      "zh": "Fenwick 樹",
+      "en": "Fenwick Tree"
+    },
     "slides": [
       {
-        "heading": { "zh": "Fenwick 樹", "en": "Fenwick Tree" },
+        "heading": {
+          "zh": "Fenwick 樹",
+          "en": "Fenwick Tree"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -19501,7 +19615,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -19513,21 +19630,39 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "前綴和透過 `i -= i & -i` 往下走。", "en": "A prefix sum walks down via `i -= i & -i`." },
-              { "zh": "單點更新透過 `i += i & -i` 往上走。", "en": "A point update walks up via `i += i & -i`." },
-              { "zh": "比線段樹更簡潔、常數更低，但只適用於可逆的聚合（如求和）。", "en": "Far simpler and lower-constant than a segment tree, but only for invertible aggregates like sum." }
+              {
+                "zh": "前綴和透過 `i -= i & -i` 往下走。",
+                "en": "A prefix sum walks down via `i -= i & -i`."
+              },
+              {
+                "zh": "單點更新透過 `i += i & -i` 往上走。",
+                "en": "A point update walks up via `i += i & -i`."
+              },
+              {
+                "zh": "比線段樹更簡潔、常數更低，但只適用於可逆的聚合（如求和）。",
+                "en": "Far simpler and lower-constant than a segment tree, but only for invertible aggregates like sum."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "`prefixSum(i)` 從 `i` 出發，累加 `bit[i]`，再跳到 `i - lowbit(i)`，重複直到 `i` 為 0。", "en": "`prefixSum(i)` starts at `i`, adds `bit[i]`, then jumps to `i - lowbit(i)`, repeating until 0." },
-              { "zh": "`update(i, delta)` 把 `delta` 加到 `bit[i]`，再跳到 `i + lowbit(i)`，重複直到超過 `n`。", "en": "`update(i, delta)` adds `delta` to `bit[i]`, then jumps to `i + lowbit(i)`, repeating past `n`." }
+              {
+                "zh": "`prefixSum(i)` 從 `i` 出發，累加 `bit[i]`，再跳到 `i - lowbit(i)`，重複直到 `i` 為 0。",
+                "en": "`prefixSum(i)` starts at `i`, adds `bit[i]`, then jumps to `i - lowbit(i)`, repeating until 0."
+              },
+              {
+                "zh": "`update(i, delta)` 把 `delta` 加到 `bit[i]`，再跳到 `i + lowbit(i)`，重複直到超過 `n`。",
+                "en": "`update(i, delta)` adds `delta` to `bit[i]`, then jumps to `i + lowbit(i)`, repeating past `n`."
+              }
             ]
           },
           {
@@ -19537,7 +19672,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -19553,19 +19691,64 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "操作", "en": "Operation" },
-              { "zh": "複雜度", "en": "Complexity" }
+              {
+                "zh": "操作",
+                "en": "Operation"
+              },
+              {
+                "zh": "複雜度",
+                "en": "Complexity"
+              }
             ],
             "rows": [
-              [ { "zh": "單點更新", "en": "point update" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" } ],
-              [ { "zh": "前綴和查詢", "en": "prefix sum" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" } ],
-              [ { "zh": "建樹", "en": "build" }, { "zh": "$O(n \\log n)$", "en": "$O(n \\log n)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(n)$", "en": "$O(n)$" } ]
+              [
+                {
+                  "zh": "單點更新",
+                  "en": "point update"
+                },
+                {
+                  "zh": "$O(\\log n)$",
+                  "en": "$O(\\log n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "前綴和查詢",
+                  "en": "prefix sum"
+                },
+                {
+                  "zh": "$O(\\log n)$",
+                  "en": "$O(\\log n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "建樹",
+                  "en": "build"
+                },
+                {
+                  "zh": "$O(n \\log n)$",
+                  "en": "$O(n \\log n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                }
+              ]
             ]
           },
           {
@@ -19579,37 +19762,64 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
             "lang": "cpp",
-            "code": "// add delta at 1-indexed position i, walking up via i += i & -i\nvoid update(int i, long long delta) {\n    for (; i <= n; i += i & -i) bit[i] += delta;\n}\n\n// sum of [1, i], walking down via i -= i & -i\nlong long prefixSum(int i) {\n    long long s = 0;\n    for (; i > 0; i -= i & -i) s += bit[i];\n    return s;\n}"
+            "code": "// add delta at 1-indexed position i, walking up via i += i & -i\nvoid update(int i, long long delta) {\n    for (; i <= n; i += i & -i)\n        bit[i] += delta;\n}\n\n// sum of [1, i], walking down via i -= i & -i\nlong long prefixSum(int i) {\n    long long s = 0;\n    for (; i > 0; i -= i & -i)\n        s += bit[i];\n    return s;\n}"
           }
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點：結構精巧、執行快速、容易實作。", "en": "Pro: tiny, fast, easy to implement." },
-              { "zh": "缺點：只適用於可逆的聚合（求和），沒有原生的區間更新。", "en": "Con: only invertible aggregates (sum), no native range update." },
-              { "zh": "適用：前綴和、逆序對計數、頻率表等線段樹過於笨重的場景。", "en": "Use: prefix sums / inversion counting / frequency tables where a segment tree would be overkill." }
+              {
+                "zh": "優點：結構精巧、執行快速、容易實作。",
+                "en": "Pro: tiny, fast, easy to implement."
+              },
+              {
+                "zh": "缺點：只適用於可逆的聚合（求和），沒有原生的區間更新。",
+                "en": "Con: only invertible aggregates (sum), no native range update."
+              },
+              {
+                "zh": "適用：前綴和、逆序對計數、頻率表等線段樹過於笨重的場景。",
+                "en": "Use: prefix sums / inversion counting / frequency tables where a segment tree would be overkill."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "一個陣列搭配 `i & -i` 技巧。", "en": "One array plus the `i & -i` trick." },
-              { "zh": "前綴和往下走，單點更新往上走。", "en": "Walk down for a prefix sum, up for an update." },
-              { "zh": "兩個方向皆為 $O(\\log n)$。", "en": "Both ways are $O(\\log n)$." }
+              {
+                "zh": "一個陣列搭配 `i & -i` 技巧。",
+                "en": "One array plus the `i & -i` trick."
+              },
+              {
+                "zh": "前綴和往下走，單點更新往上走。",
+                "en": "Walk down for a prefix sum, up for an update."
+              },
+              {
+                "zh": "兩個方向皆為 $O(\\log n)$。",
+                "en": "Both ways are $O(\\log n)$."
+              }
             ]
           }
         ]
@@ -19618,10 +19828,16 @@ const SLIDES_DB = {
   },
   "graph-prim": {
     "category": "Graphs",
-    "title": { "zh": "Prim 最小生成樹", "en": "Prim's MST" },
+    "title": {
+      "zh": "Prim 最小生成樹",
+      "en": "Prim's MST"
+    },
     "slides": [
       {
-        "heading": { "zh": "Prim 最小生成樹", "en": "Prim's MST" },
+        "heading": {
+          "zh": "Prim 最小生成樹",
+          "en": "Prim's MST"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -19633,7 +19849,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -19645,23 +19864,47 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "每一步挑選擁有最小該邊的樹外頂點並把它納入。", "en": "Each step picks the outside vertex with the smallest such edge and absorbs it." },
-              { "zh": "切割性質保證所選的邊是安全的。", "en": "The cut property guarantees the chosen edge is safe." },
-              { "zh": "與 Kruskal 形成對比，後者對所有邊做全域排序。", "en": "Contrasts with Kruskal, which sorts all edges globally." }
+              {
+                "zh": "每一步挑選擁有最小該邊的樹外頂點並把它納入。",
+                "en": "Each step picks the outside vertex with the smallest such edge and absorbs it."
+              },
+              {
+                "zh": "切割性質保證所選的邊是安全的。",
+                "en": "The cut property guarantees the chosen edge is safe."
+              },
+              {
+                "zh": "與 Kruskal 形成對比，後者對所有邊做全域排序。",
+                "en": "Contrasts with Kruskal, which sorts all edges globally."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "從任一頂點開始建樹。", "en": "Start the tree from any vertex." },
-              { "zh": "在所有橫跨樹/非樹切割的邊中，挑出權重最小的一條。", "en": "Among all edges crossing the tree/non-tree cut, pick the minimum-weight one." },
-              { "zh": "把它的端點加入樹。", "en": "Add its endpoint to the tree." },
-              { "zh": "重複直到所有頂點都進入樹。", "en": "Repeat until all vertices are in." }
+              {
+                "zh": "從任一頂點開始建樹。",
+                "en": "Start the tree from any vertex."
+              },
+              {
+                "zh": "在所有橫跨樹/非樹切割的邊中，挑出權重最小的一條。",
+                "en": "Among all edges crossing the tree/non-tree cut, pick the minimum-weight one."
+              },
+              {
+                "zh": "把它的端點加入樹。",
+                "en": "Add its endpoint to the tree."
+              },
+              {
+                "zh": "重複直到所有頂點都進入樹。",
+                "en": "Repeat until all vertices are in."
+              }
             ]
           },
           {
@@ -19671,7 +19914,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -19687,18 +19933,54 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "實作方式", "en": "Implementation" },
-              { "zh": "複雜度", "en": "Complexity" }
+              {
+                "zh": "實作方式",
+                "en": "Implementation"
+              },
+              {
+                "zh": "複雜度",
+                "en": "Complexity"
+              }
             ],
             "rows": [
-              [ { "zh": "二元堆", "en": "binary heap" }, { "zh": "$O(E \\log V)$", "en": "$O(E \\log V)$" } ],
-              [ { "zh": "鄰接矩陣掃描", "en": "adjacency-matrix scan" }, { "zh": "$O(V^2)$", "en": "$O(V^2)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(V + E)$", "en": "$O(V + E)$" } ]
+              [
+                {
+                  "zh": "二元堆",
+                  "en": "binary heap"
+                },
+                {
+                  "zh": "$O(E \\log V)$",
+                  "en": "$O(E \\log V)$"
+                }
+              ],
+              [
+                {
+                  "zh": "鄰接矩陣掃描",
+                  "en": "adjacency-matrix scan"
+                },
+                {
+                  "zh": "$O(V^2)$",
+                  "en": "$O(V^2)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(V + E)$",
+                  "en": "$O(V + E)$"
+                }
+              ]
             ]
           },
           {
@@ -19712,37 +19994,64 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
             "lang": "cpp",
-            "code": "for (int count = 0; count < V; count++) {\n    int u = -1;\n    for (int v = 0; v < V; v++)\n        if (!inMST[v] && (u == -1 || key[v] < key[u])) u = v;\n    inMST[u] = true;\n    for (int v = 0; v < V; v++)\n        if (w[u][v] && !inMST[v] && w[u][v] < key[v]) {\n            key[v] = w[u][v];\n            parent[v] = u;\n        }\n}"
+            "code": "for (int count = 0; count < V; count++) {\n    int u = -1;\n    for (int v = 0; v < V; v++)\n        if (!inMST[v] && (u == -1 || key[v] < key[u]))\n            u = v;\n    inMST[u] = true;\n    for (int v = 0; v < V; v++)\n        if (w[u][v] && !inMST[v] && w[u][v] < key[v]) {\n            key[v] = w[u][v];\n            parent[v] = u;\n        }\n}"
           }
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點：簡單、在稠密圖上自然高效、始終成長為一棵連通樹。", "en": "Pro: simple, naturally efficient on dense graphs, always grows one connected tree." },
-              { "zh": "缺點：在稀疏圖上要快就需要優先佇列。", "en": "Con: needs a priority queue to be fast on sparse graphs." },
-              { "zh": "適用：連通加權圖的最小生成樹，尤其是稠密圖。", "en": "Use: MST on connected weighted graphs, especially dense ones." }
+              {
+                "zh": "優點：簡單、在稠密圖上自然高效、始終成長為一棵連通樹。",
+                "en": "Pro: simple, naturally efficient on dense graphs, always grows one connected tree."
+              },
+              {
+                "zh": "缺點：在稀疏圖上要快就需要優先佇列。",
+                "en": "Con: needs a priority queue to be fast on sparse graphs."
+              },
+              {
+                "zh": "適用：連通加權圖的最小生成樹，尤其是稠密圖。",
+                "en": "Use: MST on connected weighted graphs, especially dense ones."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "成長單一棵樹。", "en": "Grow one tree." },
-              { "zh": "反覆加入最便宜的橫跨邊。", "en": "Repeatedly add the cheapest crossing edge." },
-              { "zh": "切割性質讓每一次選擇都安全。", "en": "The cut property keeps every choice safe." }
+              {
+                "zh": "成長單一棵樹。",
+                "en": "Grow one tree."
+              },
+              {
+                "zh": "反覆加入最便宜的橫跨邊。",
+                "en": "Repeatedly add the cheapest crossing edge."
+              },
+              {
+                "zh": "切割性質讓每一次選擇都安全。",
+                "en": "The cut property keeps every choice safe."
+              }
             ]
           }
         ]
@@ -19751,10 +20060,16 @@ const SLIDES_DB = {
   },
   "graph-bellman-ford": {
     "category": "Graphs",
-    "title": { "zh": "Bellman-Ford 演算法", "en": "Bellman-Ford" },
+    "title": {
+      "zh": "Bellman-Ford 演算法",
+      "en": "Bellman-Ford"
+    },
     "slides": [
       {
-        "heading": { "zh": "Bellman-Ford 演算法", "en": "Bellman-Ford" },
+        "heading": {
+          "zh": "Bellman-Ford 演算法",
+          "en": "Bellman-Ford"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -19766,7 +20081,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -19778,22 +20096,43 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "一輪會把每條邊鬆弛一次。", "en": "One pass relaxes every edge once." },
-              { "zh": "經過 `V-1` 輪後所有最短路徑都已收斂（最短路徑至多有 `V-1` 條邊）。", "en": "After `V-1` passes all shortest paths have converged (a shortest path has at most `V-1` edges)." },
-              { "zh": "第 `V` 輪若仍能鬆弛某條邊，就證明存在負環。", "en": "A `V`-th pass that still relaxes something proves a negative cycle exists." }
+              {
+                "zh": "一輪會把每條邊鬆弛一次。",
+                "en": "One pass relaxes every edge once."
+              },
+              {
+                "zh": "經過 `V-1` 輪後所有最短路徑都已收斂（最短路徑至多有 `V-1` 條邊）。",
+                "en": "After `V-1` passes all shortest paths have converged (a shortest path has at most `V-1` edges)."
+              },
+              {
+                "zh": "第 `V` 輪若仍能鬆弛某條邊，就證明存在負環。",
+                "en": "A `V`-th pass that still relaxes something proves a negative cycle exists."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "把 `dist[source]` 設為 0，其餘全部設為無限大。", "en": "Set `dist[source] = 0` and all others to infinity." },
-              { "zh": "重複 `V-1` 次：鬆弛每一條邊。", "en": "Repeat `V-1` times — relax every edge." },
-              { "zh": "可選擇再跑一輪以檢查負環。", "en": "Optionally run one more pass to check for a negative cycle." }
+              {
+                "zh": "把 `dist[source]` 設為 0，其餘全部設為無限大。",
+                "en": "Set `dist[source] = 0` and all others to infinity."
+              },
+              {
+                "zh": "重複 `V-1` 次：鬆弛每一條邊。",
+                "en": "Repeat `V-1` times — relax every edge."
+              },
+              {
+                "zh": "可選擇再跑一輪以檢查負環。",
+                "en": "Optionally run one more pass to check for a negative cycle."
+              }
             ]
           },
           {
@@ -19803,7 +20142,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -19819,18 +20161,54 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "項目", "en": "Item" },
-              { "zh": "結果", "en": "Result" }
+              {
+                "zh": "項目",
+                "en": "Item"
+              },
+              {
+                "zh": "結果",
+                "en": "Result"
+              }
             ],
             "rows": [
-              [ { "zh": "時間", "en": "time" }, { "zh": "$O(V \\cdot E)$", "en": "$O(V \\cdot E)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(V)$", "en": "$O(V)$" } ],
-              [ { "zh": "處理負邊權", "en": "handles negative weights" }, { "zh": "是", "en": "yes" } ]
+              [
+                {
+                  "zh": "時間",
+                  "en": "time"
+                },
+                {
+                  "zh": "$O(V \\cdot E)$",
+                  "en": "$O(V \\cdot E)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(V)$",
+                  "en": "$O(V)$"
+                }
+              ],
+              [
+                {
+                  "zh": "處理負邊權",
+                  "en": "handles negative weights"
+                },
+                {
+                  "zh": "是",
+                  "en": "yes"
+                }
+              ]
             ]
           },
           {
@@ -19844,7 +20222,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
@@ -19854,27 +20235,51 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點：能處理負邊權、能偵測負環、實作簡單。", "en": "Pro: handles negative weights, detects negative cycles, simple to code." },
-              { "zh": "缺點：比 Dijkstra 慢。", "en": "Con: slower than Dijkstra." },
-              { "zh": "適用：含負邊的圖，或需要負環偵測時。", "en": "Use: graphs with negative edges, or when negative-cycle detection is required." }
+              {
+                "zh": "優點：能處理負邊權、能偵測負環、實作簡單。",
+                "en": "Pro: handles negative weights, detects negative cycles, simple to code."
+              },
+              {
+                "zh": "缺點：比 Dijkstra 慢。",
+                "en": "Con: slower than Dijkstra."
+              },
+              {
+                "zh": "適用：含負邊的圖，或需要負環偵測時。",
+                "en": "Use: graphs with negative edges, or when negative-cycle detection is required."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "對每條邊鬆弛 `V-1` 輪。", "en": "Relax every edge for `V-1` passes." },
-              { "zh": "能收斂是因為最短路徑至多有 `V-1` 條邊。", "en": "Converges because a shortest path has at most `V-1` edges." },
-              { "zh": "若還能再鬆弛就代表存在負環。", "en": "A further relaxation signals a negative cycle." }
+              {
+                "zh": "對每條邊鬆弛 `V-1` 輪。",
+                "en": "Relax every edge for `V-1` passes."
+              },
+              {
+                "zh": "能收斂是因為最短路徑至多有 `V-1` 條邊。",
+                "en": "Converges because a shortest path has at most `V-1` edges."
+              },
+              {
+                "zh": "若還能再鬆弛就代表存在負環。",
+                "en": "A further relaxation signals a negative cycle."
+              }
             ]
           }
         ]
@@ -19883,10 +20288,16 @@ const SLIDES_DB = {
   },
   "graph-floyd-warshall": {
     "category": "Graphs",
-    "title": { "zh": "Floyd-Warshall 演算法", "en": "Floyd-Warshall" },
+    "title": {
+      "zh": "Floyd-Warshall 演算法",
+      "en": "Floyd-Warshall"
+    },
     "slides": [
       {
-        "heading": { "zh": "Floyd-Warshall 演算法", "en": "Floyd-Warshall" },
+        "heading": {
+          "zh": "Floyd-Warshall 演算法",
+          "en": "Floyd-Warshall"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -19898,7 +20309,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -19910,22 +20324,43 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "更新式為 `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`。", "en": "The update is `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`." },
-              { "zh": "處理完頂點 `k` 後，矩陣存放只用 `0..k` 作為中間點的最短路徑。", "en": "After vertex `k` is processed, the matrix holds shortest paths using only intermediates `0..k`." },
-              { "zh": "可處理負邊（在無負環的前提下）。", "en": "Works with negative edges (no negative cycle)." }
+              {
+                "zh": "更新式為 `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`。",
+                "en": "The update is `dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])`."
+              },
+              {
+                "zh": "處理完頂點 `k` 後，矩陣存放只用 `0..k` 作為中間點的最短路徑。",
+                "en": "After vertex `k` is processed, the matrix holds shortest paths using only intermediates `0..k`."
+              },
+              {
+                "zh": "可處理負邊（在無負環的前提下）。",
+                "en": "Works with negative edges (no negative cycle)."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "以直接邊權初始化矩陣（無邊處設為無限大）。", "en": "Initialise the matrix with direct edge weights (infinity where no edge)." },
-              { "zh": "對 `k` 從 `0` 到 `V-1`，經由 `k` 鬆弛每一對 `(i, j)`。", "en": "For `k` from `0` to `V-1`, relax every pair `(i, j)` through `k`." },
-              { "zh": "最後一個 `k` 處理完後，矩陣即存放全點對最短距離。", "en": "After the last `k`, the matrix holds all-pairs shortest distances." }
+              {
+                "zh": "以直接邊權初始化矩陣（無邊處設為無限大）。",
+                "en": "Initialise the matrix with direct edge weights (infinity where no edge)."
+              },
+              {
+                "zh": "對 `k` 從 `0` 到 `V-1`，經由 `k` 鬆弛每一對 `(i, j)`。",
+                "en": "For `k` from `0` to `V-1`, relax every pair `(i, j)` through `k`."
+              },
+              {
+                "zh": "最後一個 `k` 處理完後，矩陣即存放全點對最短距離。",
+                "en": "After the last `k`, the matrix holds all-pairs shortest distances."
+              }
             ]
           },
           {
@@ -19935,7 +20370,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -19951,18 +20389,54 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "項目", "en": "Item" },
-              { "zh": "結果", "en": "Result" }
+              {
+                "zh": "項目",
+                "en": "Item"
+              },
+              {
+                "zh": "結果",
+                "en": "Result"
+              }
             ],
             "rows": [
-              [ { "zh": "時間", "en": "time" }, { "zh": "$O(V^3)$", "en": "$O(V^3)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(V^2)$", "en": "$O(V^2)$" } ],
-              [ { "zh": "全點對", "en": "all-pairs" }, { "zh": "是", "en": "yes" } ]
+              [
+                {
+                  "zh": "時間",
+                  "en": "time"
+                },
+                {
+                  "zh": "$O(V^3)$",
+                  "en": "$O(V^3)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(V^2)$",
+                  "en": "$O(V^2)$"
+                }
+              ],
+              [
+                {
+                  "zh": "全點對",
+                  "en": "all-pairs"
+                },
+                {
+                  "zh": "是",
+                  "en": "yes"
+                }
+              ]
             ]
           },
           {
@@ -19976,7 +20450,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
@@ -19986,27 +20463,51 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點：一次算出每一對、實作極為簡單、可處理負邊。", "en": "Pro: computes every pair at once, trivial to implement, handles negative edges." },
-              { "zh": "缺點：$O(V^3)$，對大型圖不切實際。", "en": "Con: $O(V^3)$ — impractical for large graphs." },
-              { "zh": "適用：小型稠密圖，或需要全點對距離時。", "en": "Use: small dense graphs, or when all-pairs distances are needed." }
+              {
+                "zh": "優點：一次算出每一對、實作極為簡單、可處理負邊。",
+                "en": "Pro: computes every pair at once, trivial to implement, handles negative edges."
+              },
+              {
+                "zh": "缺點：$O(V^3)$，對大型圖不切實際。",
+                "en": "Con: $O(V^3)$ — impractical for large graphs."
+              },
+              {
+                "zh": "適用：小型稠密圖，或需要全點對距離時。",
+                "en": "Use: small dense graphs, or when all-pairs distances are needed."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "讓每個頂點 `k` 輪流作為中間點。", "en": "Let each vertex `k` serve as an intermediate." },
-              { "zh": "每個 `k` 都鬆弛整個矩陣。", "en": "Relax the whole matrix per `k`." },
-              { "zh": "以 $O(V^3)$ 求出全點對最短路徑。", "en": "All-pairs shortest paths in $O(V^3)$." }
+              {
+                "zh": "讓每個頂點 `k` 輪流作為中間點。",
+                "en": "Let each vertex `k` serve as an intermediate."
+              },
+              {
+                "zh": "每個 `k` 都鬆弛整個矩陣。",
+                "en": "Relax the whole matrix per `k`."
+              },
+              {
+                "zh": "以 $O(V^3)$ 求出全點對最短路徑。",
+                "en": "All-pairs shortest paths in $O(V^3)$."
+              }
             ]
           }
         ]

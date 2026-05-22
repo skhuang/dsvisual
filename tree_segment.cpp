@@ -9,7 +9,10 @@ class SegmentTree {
     vector<long long> tree, lazy;
 
     void build(const vector<int>& a, int node, int lo, int hi) {
-        if (lo == hi) { tree[node] = a[lo]; return; }
+        if (lo == hi) {
+            tree[node] = a[lo];
+            return;
+        }
         int mid = (lo + hi) / 2;
         build(a, 2 * node, lo, mid);
         build(a, 2 * node + 1, mid + 1, hi);
@@ -20,15 +23,20 @@ class SegmentTree {
         lazy[node] += val;
     }
     void pushDown(int node, int lo, int hi) {
-        if (lazy[node] == 0) return;
+        if (lazy[node] == 0)
+            return;
         int mid = (lo + hi) / 2;
         applyLazy(2 * node, lo, mid, lazy[node]);
         applyLazy(2 * node + 1, mid + 1, hi, lazy[node]);
         lazy[node] = 0;
     }
     void update(int node, int lo, int hi, int ql, int qr, long long val) {
-        if (qr < lo || hi < ql) return;
-        if (ql <= lo && hi <= qr) { applyLazy(node, lo, hi, val); return; }
+        if (qr < lo || hi < ql)
+            return;
+        if (ql <= lo && hi <= qr) {
+            applyLazy(node, lo, hi, val);
+            return;
+        }
         pushDown(node, lo, hi);
         int mid = (lo + hi) / 2;
         update(2 * node, lo, mid, ql, qr, val);
@@ -36,8 +44,10 @@ class SegmentTree {
         tree[node] = tree[2 * node] + tree[2 * node + 1];
     }
     long long query(int node, int lo, int hi, int ql, int qr) {
-        if (qr < lo || hi < ql) return 0;
-        if (ql <= lo && hi <= qr) return tree[node];
+        if (qr < lo || hi < ql)
+            return 0;
+        if (ql <= lo && hi <= qr)
+            return tree[node];
         pushDown(node, lo, hi);
         int mid = (lo + hi) / 2;
         return query(2 * node, lo, mid, ql, qr) +
@@ -58,8 +68,8 @@ public:
 int main() {
     vector<int> a = {5, 8, 6, 3, 2, 7, 2, 6};
     SegmentTree st(a);
-    cout << "sum[2,5] = " << st.rangeQuery(2, 5) << "\n";          // 18
+    cout << "sum[2,5] = " << st.rangeQuery(2, 5) << "\n"; // 18
     st.rangeUpdate(1, 4, 3);
-    cout << "after +3 on [1,4], sum[2,5] = " << st.rangeQuery(2, 5) << "\n";  // 27
+    cout << "after +3 on [1,4], sum[2,5] = " << st.rangeQuery(2, 5) << "\n"; // 27
     return 0;
 }
