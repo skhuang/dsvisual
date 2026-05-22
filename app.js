@@ -136,6 +136,7 @@ const METHOD_GROUPS = [
             { id: 'graph-kruskal', title: 'Kruskal MST', file: 'graph_kruskal.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-dijkstra', title: 'Dijkstra (Shortest Path)', file: 'graph_dijkstra.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-topo', title: 'Topological Sort', file: 'graph_topo.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-prim', title: "Prim's MST", file: 'graph_prim.cpp', visualizer: 'graph-step', controls: 'graph-step' },
         ],
     },
     {
@@ -287,6 +288,7 @@ function getCodeForMethod(methodId) {
         'graph-kruskal': codeGraphKruskal,
         'graph-dijkstra': codeGraphDijkstra,
         'graph-topo': codeGraphTopo,
+        'graph-prim': codeGraphPrim,
         'hash-chain': codeHashChain,
         'hash-open': codeHashOpen,
         'hash-bucket': codeHashBucket,
@@ -1751,6 +1753,10 @@ document.addEventListener('DOMContentLoaded', () => {
             graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
             btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Edge (Directed)';
         }
+        else if (currentMode === 'graph-prim') {
+            codeTitle.textContent = 'graph_prim.cpp';
+            codeDisplay.textContent = codeGraphPrim;
+        }
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) { 
             treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden'); 
             if(currentMode === 'tree-bst') { codeTitle.textContent = 'tree_bst.cpp'; codeDisplay.textContent = codeTreeBST; }
@@ -1988,6 +1994,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'count-min-sketch') renderCountMinSketch();
         else if (currentMode === 'graph-traversal') renderGraphDual();
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
+        else if (currentMode === 'graph-prim') renderPrim();
         else if (currentMode === 'tree-dsu') renderDSU();
         else if (currentMode === 'tree-segment') renderSegmentTree();
         else if (currentMode === 'tree-fenwick') renderFenwick();
@@ -3488,6 +3495,39 @@ document.addEventListener('DOMContentLoaded', () => {
         draw();
     }
 
+    function buildWeightedGraphSvg(nodes, edges, directed) {
+        function nodeById(id) { return nodes.find((nd) => nd.id === id); }
+        let svg = '<svg class="wgraph-svg" viewBox="0 0 320 250" width="100%" ' +
+                  'xmlns="http://www.w3.org/2000/svg">';
+        if (directed) {
+            svg += '<defs><marker id="wg-arrow" markerWidth="9" markerHeight="9" refX="8" refY="3" ' +
+                   'orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker></defs>';
+        }
+        for (const e of edges) {
+            const a = nodeById(e.u), b = nodeById(e.v);
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const len = Math.sqrt(dx * dx + dy * dy) || 1;
+            const ux = dx / len, uy = dy / len;
+            const x1 = (a.x + ux * 18).toFixed(1), y1 = (a.y + uy * 18).toFixed(1);
+            const x2 = (b.x - ux * 18).toFixed(1), y2 = (b.y - uy * 18).toFixed(1);
+            svg += '<line class="wgraph-edge" data-edge="' + e.u + '-' + e.v + '" x1="' + x1 +
+                   '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 +
+                   '" stroke="#94a3b8" stroke-width="2"' +
+                   (directed ? ' marker-end="url(#wg-arrow)"' : '') + '/>';
+            const mx = ((a.x + b.x) / 2).toFixed(1), my = ((a.y + b.y) / 2 - 4).toFixed(1);
+            svg += '<text class="wgraph-weight" x="' + mx + '" y="' + my +
+                   '" text-anchor="middle" font-size="11" fill="#475569">' + e.w + '</text>';
+        }
+        for (const nd of nodes) {
+            svg += '<circle class="wgraph-node" data-node="' + nd.id + '" cx="' + nd.x + '" cy="' +
+                   nd.y + '" r="16" fill="#fff" stroke="#1e40af" stroke-width="2"/>';
+            svg += '<text class="wgraph-nlabel" x="' + nd.x + '" y="' + (nd.y + 5) +
+                   '" text-anchor="middle" font-size="13" font-weight="700">' + nd.label + '</text>';
+        }
+        svg += '</svg>';
+        return svg;
+    }
+
     function renderSegmentTree() {
         const host = acquireDynamicVizHost();
         const arr = [5, 8, 6, 3, 2, 7, 2, 6];
@@ -3695,6 +3735,81 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         function reset() { idx = 0; draw(); }
         wrap.appendChild(buildStepControls(step, reset, 600));
+        draw();
+    }
+
+    function renderPrim() {
+        const host = acquireDynamicVizHost();
+        const nodes = [
+            { id: 0, label: '0', x: 160, y: 35 },
+            { id: 1, label: '1', x: 270, y: 110 },
+            { id: 2, label: '2', x: 225, y: 215 },
+            { id: 3, label: '3', x: 95, y: 215 },
+            { id: 4, label: '4', x: 50, y: 110 },
+        ];
+        const edges = [
+            { u: 0, v: 1, w: 2 }, { u: 0, v: 3, w: 6 }, { u: 1, v: 2, w: 3 },
+            { u: 1, v: 3, w: 8 }, { u: 1, v: 4, w: 5 }, { u: 2, v: 4, w: 7 },
+            { u: 3, v: 4, w: 9 },
+        ];
+        const adj = {};
+        nodes.forEach((nd) => { adj[nd.id] = []; });
+        edges.forEach((e) => {
+            adj[e.u].push({ to: e.v, w: e.w });
+            adj[e.v].push({ to: e.u, w: e.w });
+        });
+        const inTree = {};
+        const steps = [{ node: 0, edge: null, total: 0 }];
+        inTree[0] = true;
+        let total = 0;
+        for (let c = 1; c < nodes.length; c++) {
+            let best = null;
+            for (const id in inTree) {
+                for (const nb of adj[id]) {
+                    if (!inTree[nb.to] && (!best || nb.w < best.w)) {
+                        best = { from: parseInt(id, 10), to: nb.to, w: nb.w };
+                    }
+                }
+            }
+            inTree[best.to] = true;
+            total += best.w;
+            steps.push({ node: best.to, edge: [best.from, best.to], total: total });
+        }
+        let idx = 0;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'prim-wrap';
+        wrap.innerHTML = buildWeightedGraphSvg(nodes, edges, false) +
+            '<div class="prim-stats" data-testid="prim-stats">MST weight: ' +
+            '<span class="prim-weight">0</span></div>';
+        host.appendChild(wrap);
+        const weightEl = wrap.querySelector('.prim-weight');
+
+        function draw() {
+            wrap.querySelectorAll('.wgraph-node').forEach((c) => c.classList.remove('wgraph-in'));
+            wrap.querySelectorAll('.wgraph-edge').forEach((l) =>
+                l.classList.remove('wgraph-in', 'wgraph-cur'));
+            for (let s = 0; s <= idx; s++) {
+                const st = steps[s];
+                const nodeEl = wrap.querySelector('.wgraph-node[data-node="' + st.node + '"]');
+                if (nodeEl) nodeEl.classList.add('wgraph-in');
+                if (st.edge) {
+                    const eEl = wrap.querySelector(
+                        '.wgraph-edge[data-edge="' + st.edge[0] + '-' + st.edge[1] + '"], ' +
+                        '.wgraph-edge[data-edge="' + st.edge[1] + '-' + st.edge[0] + '"]');
+                    if (eEl) eEl.classList.add(s === idx ? 'wgraph-cur' : 'wgraph-in');
+                }
+            }
+            weightEl.textContent = steps[idx].total;
+        }
+        function step() {
+            if (idx >= steps.length - 1) return false;
+            idx++;
+            draw();
+            return idx < steps.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 700));
         draw();
     }
 

@@ -1972,3 +1972,13 @@ pre.code-panel-body[class*="language-"] {
 .fenwick-cell.fenwick-active { background: #34d399; border-color: #059669; color: #fff; }
 .fenwick-span { font-family: monospace; font-size: 9px; color: #94a3b8; }
 .fenwick-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
+
+/* Spec 4 — shared weighted graph */
+.wgraph-svg { max-width: 340px; }
+.wgraph-node.wgraph-in { fill: #34d399; }
+.wgraph-edge.wgraph-in { stroke: #059669; stroke-width: 3; }
+.wgraph-edge.wgraph-cur { stroke: #f59e0b; stroke-width: 4; }
+
+/* Spec 4 — Prim's MST */
+.prim-wrap { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.prim-stats { font-family: monospace; font-size: 13px; color: #475569; }
