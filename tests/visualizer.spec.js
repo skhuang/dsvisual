@@ -545,6 +545,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('[data-testid="zalgo-stats"]')).toContainText('computed: 1');
     });
 
+    test('String: Aho-Corasick renders the trie and steps through build + scan', async ({ page }) => {
+        await loadMethod(page, 'search-aho');
+        const card = page.locator('[data-method-section="search-aho"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_aho.cpp');
+        await expect(card.locator('.aho-svg circle')).toHaveCount(10);
+        await expect(card.locator('[data-testid="aho-phase"]')).toContainText('Phase 1');
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="aho-phase"]')).toBeVisible();
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
@@ -558,6 +568,13 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await loadMethod(page, 'queue');
         await expect(page.locator('#queue-container')).toHaveCount(1);
         await loadMethod(page, 'search-kmp');
+        await loadMethod(page, 'search-linear');
+        await expect(page.locator('#search-container')).toHaveCount(1);
+        await loadMethod(page, 'bloom-filter');
+        await loadMethod(page, 'hash-chain');
+        await expect(page.locator('#hash-ch-container')).toHaveCount(1);
+        await loadMethod(page, 'search-zalgo');
+        await loadMethod(page, 'search-aho');
         await loadMethod(page, 'search-linear');
         await expect(page.locator('#search-container')).toHaveCount(1);
         expect(errors).toEqual([]);

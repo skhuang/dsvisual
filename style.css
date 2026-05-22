@@ -1943,3 +1943,13 @@ pre.code-panel-body[class*="language-"] {
 .zalgo-cell.zalgo-cur { border-color: #f59e0b; border-width: 2px; }
 .zalgo-cell.zalgo-match { background: #bbf7d0; border-color: #22c55e; font-weight: 700; }
 .zalgo-stats { font-family: monospace; font-size: 13px; color: #475569; }
+
+/* Spec 3 — Aho-Corasick */
+.aho-wrap { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.aho-phase { font-size: 13px; font-weight: 600; color: #1e40af; }
+.aho-svg { max-width: 340px; }
+.aho-textrow { display: flex; gap: 4px; }
+.aho-char { width: 26px; height: 30px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #cbd5e1; border-radius: 3px; font-family: monospace; font-weight: 700; background: #f8fafc; }
+.aho-char.aho-char-cur { background: #34d399; border-color: #059669; color: #fff; }
+.aho-stats { font-family: monospace; font-size: 13px; color: #475569; }
