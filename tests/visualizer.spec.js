@@ -535,6 +535,15 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.cms-cell.cms-hit')).toHaveCount(3);
     });
 
+    test('String: Z-Algorithm renders the concatenated string with a Z-array and steps', async ({ page }) => {
+        await loadMethod(page, 'search-zalgo');
+        const card = page.locator('[data-method-section="search-zalgo"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('search_zalgo.cpp');
+        await expect(card.locator('.zalgo-chr .zalgo-cell')).toHaveCount(29);
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="zalgo-stats"]')).toContainText('computed: 1');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));

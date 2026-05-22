@@ -188,6 +188,7 @@ const METHOD_GROUPS = [
             { id: 'search-bm', title: 'Boyer-Moore', file: 'search_bm.cpp', visualizer: 'string-search', controls: 'string-search' },
             { id: 'search-rk', title: 'Rabin-Karp', file: 'search_rk.cpp', visualizer: 'string-search', controls: 'string-search' },
             { id: 'search-strcompare', title: 'String Matching Compared', file: 'search_strcompare.cpp', visualizer: 'string-compare', controls: 'string-compare' },
+            { id: 'search-zalgo', title: 'Z-Algorithm', file: 'search_zalgo.cpp', visualizer: 'string-search', controls: 'string-search' },
         ],
     },
     {
@@ -293,6 +294,7 @@ function getCodeForMethod(methodId) {
         'search-bm': codeSearchBM,
         'search-rk': codeSearchRK,
         'search-strcompare': codeSearchStrCompare,
+        'search-zalgo': codeSearchZAlgo,
         'sort-bubble': codeSortBubble,
         'sort-select': codeSortSelect,
         'sort-insert': codeSortInsert,
@@ -1783,6 +1785,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'search_strcompare.cpp';
             codeDisplay.textContent = codeSearchStrCompare;
         }
+        else if (currentMode === 'search-zalgo') {
+            codeTitle.textContent = 'search_zalgo.cpp';
+            codeDisplay.textContent = codeSearchZAlgo;
+        }
         else if (currentMode === 'list-array') { codeTitle.textContent = 'list_array.cpp'; codeDisplay.textContent = codeListArray; listArrContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'list-linked') { codeTitle.textContent = 'list_linked.cpp'; codeDisplay.textContent = codeListLinked; listLLContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'deque') {
@@ -1971,6 +1977,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'search-bm') renderBM();
         else if (currentMode === 'search-rk') renderRK();
         else if (currentMode === 'search-strcompare') renderStringCompare();
+        else if (currentMode === 'search-zalgo') renderZAlgo();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
@@ -3280,6 +3287,73 @@ document.addEventListener('DOMContentLoaded', () => {
                                     '  |  actual = ' + actual;
             showStatus('Estimate ' + est + ' (actual ' + actual + ')', '#f59e0b');
         };
+    }
+
+    function renderZAlgo() {
+        const host = acquireDynamicVizHost();
+        const pattern = 'ABABCABAB';
+        const text = 'ABABDABACDABABCABAB';
+        const s = pattern + '$' + text;
+        const n = s.length, m = pattern.length;
+        const z = new Array(n).fill(0);
+        const trace = [];
+        (function () {
+            let l = 0, r = 0;
+            for (let i = 1; i < n; i++) {
+                if (i < r) z[i] = Math.min(r - i, z[i - l]);
+                while (i + z[i] < n && s[z[i]] === s[i + z[i]]) z[i]++;
+                if (i + z[i] > r) { l = i; r = i + z[i]; }
+                trace[i] = { l: l, r: r };
+            }
+        })();
+
+        let cur = 1;  // next index to reveal
+
+        const wrap = document.createElement('div');
+        wrap.className = 'zalgo-wrap';
+        wrap.innerHTML =
+            '<div class="zalgo-grid"></div>' +
+            '<div class="zalgo-stats" data-testid="zalgo-stats">computed: <span class="zalgo-count">0</span>' +
+                ' &nbsp;|&nbsp; matches: <span class="zalgo-matches">[]</span></div>';
+        host.appendChild(wrap);
+        const gridEl = wrap.querySelector('.zalgo-grid');
+        const countEl = wrap.querySelector('.zalgo-count');
+        const matchesEl = wrap.querySelector('.zalgo-matches');
+
+        function draw() {
+            const box = cur > 1 ? trace[cur - 1] : { l: 0, r: 0 };
+            let chr = '<div class="zalgo-row zalgo-chr">';
+            let zr = '<div class="zalgo-row zalgo-z">';
+            const matches = [];
+            for (let k = 0; k < n; k++) {
+                const inBox = box.r > box.l && k >= box.l && k < box.r;
+                chr += '<span class="zalgo-cell' + (inBox ? ' zalgo-box' : '') +
+                       (k === cur && cur < n ? ' zalgo-cur' : '') + '">' + s[k] + '</span>';
+                let zval = '-';
+                if (k > 0 && k < cur) {
+                    zval = z[k];
+                    if (z[k] === m) matches.push(k - m - 1);
+                } else if (k >= cur) {
+                    zval = '?';
+                }
+                zr += '<span class="zalgo-cell' + (k < cur && k > 0 && z[k] === m ? ' zalgo-match' : '') +
+                      '">' + zval + '</span>';
+            }
+            chr += '</div>';
+            zr += '</div>';
+            gridEl.innerHTML = chr + zr;
+            countEl.textContent = Math.max(0, cur - 1);
+            matchesEl.textContent = '[' + matches.join(',') + ']';
+        }
+        function step() {
+            if (cur >= n) return false;
+            cur++;
+            draw();
+            return cur < n;
+        }
+        function reset() { cur = 1; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 350));
+        draw();
     }
 
     function renderKMP() {
