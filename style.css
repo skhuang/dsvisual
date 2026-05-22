@@ -1982,3 +1982,12 @@ pre.code-panel-body[class*="language-"] {
 /* Spec 4 — Prim's MST */
 .prim-wrap { display: flex; flex-direction: column; gap: 8px; align-items: center; }
 .prim-stats { font-family: monospace; font-size: 13px; color: #475569; }
+
+/* Spec 4 — Bellman-Ford */
+.bellman-wrap { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.bellman-darr { display: flex; gap: 6px; }
+.bellman-dcol { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.bellman-didx { font-family: monospace; font-size: 11px; color: #64748b; }
+.bellman-dcell { width: 44px; height: 32px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #cbd5e1; border-radius: 4px; background: #f8fafc; font-family: monospace; font-weight: 700; }
+.bellman-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }

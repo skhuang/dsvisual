@@ -585,6 +585,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('[data-testid="prim-stats"]')).toContainText('2');
     });
 
+    test('Graphs: Bellman-Ford renders a directed graph + distance array and steps', async ({ page }) => {
+        await loadMethod(page, 'graph-bellman-ford');
+        const card = page.locator('[data-method-section="graph-bellman-ford"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_bellman_ford.cpp');
+        await expect(card.locator('.wgraph-node')).toHaveCount(5);
+        await expect(card.locator('.bellman-dcell')).toHaveCount(5);
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="bellman-msg"]')).toContainText('pass');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));

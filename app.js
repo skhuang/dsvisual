@@ -137,6 +137,7 @@ const METHOD_GROUPS = [
             { id: 'graph-dijkstra', title: 'Dijkstra (Shortest Path)', file: 'graph_dijkstra.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-topo', title: 'Topological Sort', file: 'graph_topo.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-prim', title: "Prim's MST", file: 'graph_prim.cpp', visualizer: 'graph-step', controls: 'graph-step' },
+            { id: 'graph-bellman-ford', title: 'Bellman-Ford', file: 'graph_bellman_ford.cpp', visualizer: 'graph-step', controls: 'graph-step' },
         ],
     },
     {
@@ -289,6 +290,7 @@ function getCodeForMethod(methodId) {
         'graph-dijkstra': codeGraphDijkstra,
         'graph-topo': codeGraphTopo,
         'graph-prim': codeGraphPrim,
+        'graph-bellman-ford': codeGraphBellmanFord,
         'hash-chain': codeHashChain,
         'hash-open': codeHashOpen,
         'hash-bucket': codeHashBucket,
@@ -1757,6 +1759,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'graph_prim.cpp';
             codeDisplay.textContent = codeGraphPrim;
         }
+        else if (currentMode === 'graph-bellman-ford') {
+            codeTitle.textContent = 'graph_bellman_ford.cpp';
+            codeDisplay.textContent = codeGraphBellmanFord;
+        }
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) { 
             treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden'); 
             if(currentMode === 'tree-bst') { codeTitle.textContent = 'tree_bst.cpp'; codeDisplay.textContent = codeTreeBST; }
@@ -1995,6 +2001,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'graph-traversal') renderGraphDual();
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
         else if (currentMode === 'graph-prim') renderPrim();
+        else if (currentMode === 'graph-bellman-ford') renderBellmanFord();
         else if (currentMode === 'tree-dsu') renderDSU();
         else if (currentMode === 'tree-segment') renderSegmentTree();
         else if (currentMode === 'tree-fenwick') renderFenwick();
@@ -3810,6 +3817,82 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         function reset() { idx = 0; draw(); }
         wrap.appendChild(buildStepControls(step, reset, 700));
+        draw();
+    }
+
+    function renderBellmanFord() {
+        const host = acquireDynamicVizHost();
+        const nodes = [
+            { id: 0, label: '0', x: 45, y: 70 },
+            { id: 1, label: '1', x: 160, y: 35 },
+            { id: 2, label: '2', x: 160, y: 160 },
+            { id: 3, label: '3', x: 275, y: 60 },
+            { id: 4, label: '4', x: 275, y: 185 },
+        ];
+        const edges = [
+            { u: 0, v: 1, w: 6 }, { u: 0, v: 2, w: 7 }, { u: 1, v: 2, w: 8 },
+            { u: 1, v: 3, w: 5 }, { u: 1, v: 4, w: -4 }, { u: 2, v: 3, w: -3 },
+            { u: 2, v: 4, w: 9 }, { u: 3, v: 1, w: -2 }, { u: 4, v: 0, w: 2 },
+            { u: 4, v: 3, w: 7 },
+        ];
+        const V = nodes.length;
+        const INF = Infinity;
+        const dist = new Array(V).fill(INF);
+        dist[0] = 0;
+        const frames = [{ dist: dist.slice(), edge: null, msg: 'init: dist[0] = 0, others ∞' }];
+        for (let pass = 1; pass <= V - 1; pass++) {
+            let changed = false;
+            for (const e of edges) {
+                if (dist[e.u] !== INF && dist[e.u] + e.w < dist[e.v]) {
+                    dist[e.v] = dist[e.u] + e.w;
+                    changed = true;
+                    frames.push({ dist: dist.slice(), edge: [e.u, e.v],
+                        msg: 'pass ' + pass + ': relax ' + e.u + '→' + e.v +
+                             '   dist[' + e.v + '] = ' + dist[e.v] });
+                } else {
+                    frames.push({ dist: dist.slice(), edge: [e.u, e.v],
+                        msg: 'pass ' + pass + ': edge ' + e.u + '→' + e.v + ' — no improvement' });
+                }
+            }
+            if (!changed) break;
+        }
+        let idx = 0;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'bellman-wrap';
+        wrap.innerHTML = buildWeightedGraphSvg(nodes, edges, true) +
+            '<div class="bellman-darr"></div>' +
+            '<div class="bellman-msg" data-testid="bellman-msg">&nbsp;</div>';
+        host.appendChild(wrap);
+        const darrEl = wrap.querySelector('.bellman-darr');
+        const msgEl = wrap.querySelector('.bellman-msg');
+
+        function draw() {
+            const f = frames[idx];
+            wrap.querySelectorAll('.wgraph-edge').forEach((l) => l.classList.remove('wgraph-cur'));
+            if (f.edge) {
+                const eEl = wrap.querySelector('.wgraph-edge[data-edge="' + f.edge[0] + '-' + f.edge[1] + '"]');
+                if (eEl) eEl.classList.add('wgraph-cur');
+            }
+            let html = '';
+            for (let v = 0; v < V; v++) {
+                const val = f.dist[v] === INF ? '∞' : f.dist[v];
+                html += '<div class="bellman-dcol">' +
+                        '<span class="bellman-didx">' + v + '</span>' +
+                        '<span class="bellman-dcell" data-dist="' + v + '">' + val + '</span>' +
+                        '</div>';
+            }
+            darrEl.innerHTML = html;
+            msgEl.textContent = f.msg;
+        }
+        function step() {
+            if (idx >= frames.length - 1) return false;
+            idx++;
+            draw();
+            return idx < frames.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 400));
         draw();
     }
 
