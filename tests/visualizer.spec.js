@@ -507,6 +507,19 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('.bloom-cell.bloom-hit').first()).toBeVisible();
     });
 
+    test('Probabilistic: Count-Min Sketch renders a 3x8 grid and estimates frequency', async ({ page }) => {
+        await loadMethod(page, 'count-min-sketch');
+        const card = page.locator('[data-method-section="count-min-sketch"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('count_min_sketch.cpp');
+        await expect(card.locator('.cms-cell')).toHaveCount(24);
+        await card.locator('[data-cms-val]').fill('apple');
+        await card.locator('[data-action="cms-add"]').click();
+        await card.locator('[data-action="cms-add"]').click();
+        await card.locator('[data-action="cms-estimate"]').click();
+        await expect(card.locator('[data-testid="cms-readout"]')).toContainText('estimate');
+        await expect(card.locator('.cms-cell.cms-hit')).toHaveCount(3);
+    });
+
     test('Probabilistic: Skip List renders 4 levels and supports insert + stepped search', async ({ page }) => {
         await loadMethod(page, 'skip-list');
         const card = page.locator('[data-method-section="skip-list"]');

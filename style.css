@@ -1921,3 +1921,13 @@ pre.code-panel-body[class*="language-"] {
 .skiplist-arrow.skiplist-skip { color: #cbd5e1; }
 .skiplist-status { font-family: monospace; font-size: 13px; color: #475569; min-height: 1.2em; }
 .skiplist-controls { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Spec 3 — Count-Min Sketch */
+.cms-wrap { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.cms-grid { display: grid; grid-template-columns: auto repeat(8, 32px); gap: 3px; }
+.cms-rowlabel { display: flex; align-items: center; font-family: monospace; font-size: 12px; color: #64748b; }
+.cms-cell { width: 32px; height: 30px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #cbd5e1; border-radius: 3px; font-family: monospace; background: #f8fafc; }
+.cms-cell.cms-hit { background: #fde68a; border-color: #f59e0b; font-weight: 700; }
+.cms-readout { font-family: monospace; font-size: 13px; color: #475569; min-height: 1.2em; }
+.cms-controls { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
