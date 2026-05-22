@@ -3553,10 +3553,10 @@ document.addEventListener('DOMContentLoaded', () => {
         frames[frames.length - 1].msg += '   result = ' + r3;
 
         const POS = {
-            1: [299, 22], 2: [151, 84], 3: [447, 84],
-            4: [77, 146], 5: [225, 146], 6: [373, 146], 7: [521, 146],
-            8: [40, 208], 9: [114, 208], 10: [188, 208], 11: [262, 208],
-            12: [336, 208], 13: [410, 208], 14: [484, 208], 15: [558, 208],
+            1: [299, 34], 2: [151, 96], 3: [447, 96],
+            4: [77, 158], 5: [225, 158], 6: [373, 158], 7: [521, 158],
+            8: [40, 220], 9: [114, 220], 10: [188, 220], 11: [262, 220],
+            12: [336, 220], 13: [410, 220], 14: [484, 220], 15: [558, 220],
         };
         let idx = 0;
 
@@ -3573,7 +3573,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function draw() {
             const f = frames[idx];
-            let svg = '<svg class="segtree-svg" viewBox="0 0 600 240" width="100%" ' +
+            let svg = '<svg class="segtree-svg" viewBox="0 0 600 252" width="100%" ' +
                       'xmlns="http://www.w3.org/2000/svg">';
             for (let node = 2; node <= 15; node++) {
                 const p = POS[node >> 1], c = POS[node];
