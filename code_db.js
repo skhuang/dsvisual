@@ -4827,8 +4827,10 @@ const codeGraphBellmanFord = `#include <iostream>
 #include <climits>
 using namespace std;
 
-// Bellman-Ford computes single-source shortest paths and, unlike
-// Dijkstra, tolerates negative edge weights. V-1 passes relax every edge.
+// Bellman-Ford computes single-source shortest paths and tolerates
+// negative edge weights, unlike Dijkstra. After V-1 relaxation passes
+// the distances are final; one more pass that can still relax an edge
+// proves the graph contains a negative cycle.
 struct Edge {
     int u, v, w;
 };
@@ -4850,8 +4852,16 @@ int main() {
         }
     }
 
+    // a V-th pass that can still relax an edge proves a negative cycle
+    bool hasNegativeCycle = false;
+    for (const Edge& e : edges) {
+        if (dist[e.u] != INT_MAX && dist[e.u] + e.w < dist[e.v])
+            hasNegativeCycle = true;
+    }
+
     for (int v = 0; v < V; v++)
         cout << "dist[" << v << "] = " << dist[v] << "\\n";
+    cout << "negative cycle: " << (hasNegativeCycle ? "yes" : "no") << "\\n";
     return 0;
 }
 `;
