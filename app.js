@@ -121,6 +121,7 @@ const METHOD_GROUPS = [
             { id: 'tree-bplus', title: 'B+ Tree', file: 'tree_bplus.cpp', visualizer: 'advanced-tree', controls: 'tree' },
             { id: 'tree-dsu', title: 'Disjoint Set (Union-Find)', file: 'tree_dsu.cpp', visualizer: 'dsu', controls: 'dsu' },
             { id: 'tree-segment', title: 'Segment Tree', file: 'tree_segment.cpp', visualizer: 'segtree', controls: 'segtree' },
+            { id: 'tree-fenwick', title: 'Fenwick Tree (BIT)', file: 'tree_fenwick.cpp', visualizer: 'fenwick', controls: 'fenwick' },
         ],
     },
     {
@@ -277,6 +278,7 @@ function getCodeForMethod(methodId) {
         'tree-bplus': codeTreeBPlus,
         'tree-dsu': codeTreeDSU,
         'tree-segment': codeTreeSegment,
+        'tree-fenwick': codeTreeFenwick,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -1775,6 +1777,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'tree_segment.cpp';
             codeDisplay.textContent = codeTreeSegment;
         }
+        else if (currentMode === 'tree-fenwick') {
+            codeTitle.textContent = 'tree_fenwick.cpp';
+            codeDisplay.textContent = codeTreeFenwick;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-kmp') {
@@ -1984,6 +1990,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
         else if (currentMode === 'tree-dsu') renderDSU();
         else if (currentMode === 'tree-segment') renderSegmentTree();
+        else if (currentMode === 'tree-fenwick') renderFenwick();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -3599,6 +3606,85 @@ document.addEventListener('DOMContentLoaded', () => {
             svg += '</svg>';
             gridEl.innerHTML = svg;
             phaseEl.textContent = f.phase;
+            msgEl.textContent = f.msg;
+        }
+        function step() {
+            if (idx >= frames.length - 1) return false;
+            idx++;
+            draw();
+            return idx < frames.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 600));
+        draw();
+    }
+
+    function renderFenwick() {
+        const host = acquireDynamicVizHost();
+        const arr = [3, 2, 5, 1, 7, 4, 6, 2];
+        const n = arr.length;
+        const bit = new Array(n + 1).fill(0);
+        function lowbit(i) { return i & -i; }
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j <= n; j += lowbit(j)) bit[j] += arr[i];
+        }
+
+        const frames = [];
+        function snapshot(phase, active, acc, msg) {
+            frames.push({ bit: bit.slice(), phase: phase, active: active, acc: acc, msg: msg });
+        }
+        snapshot('Ready', 0, null, 'Fenwick tree built — press Step');
+
+        // Phase 1: prefixSum(7)
+        let s = 0;
+        for (let i = 7; i > 0; i -= lowbit(i)) {
+            s += bit[i];
+            snapshot('Phase 1: prefixSum(7)', i, s,
+                'add bit[' + i + '] = ' + bit[i] + '  (lowbit ' + lowbit(i) + ')  → sum ' + s);
+        }
+        frames[frames.length - 1].msg += '   result = ' + s;
+
+        // Phase 2: update(3, +5)
+        for (let i = 3; i <= n; i += lowbit(i)) {
+            bit[i] += 5;
+            snapshot('Phase 2: update(3, +5)', i, null,
+                'bit[' + i + '] += 5 → ' + bit[i] + '  (lowbit ' + lowbit(i) + ')');
+        }
+
+        // Phase 3: prefixSum(7)
+        s = 0;
+        for (let i = 7; i > 0; i -= lowbit(i)) {
+            s += bit[i];
+            snapshot('Phase 3: prefixSum(7)', i, s,
+                'add bit[' + i + '] = ' + bit[i] + '  (lowbit ' + lowbit(i) + ')  → sum ' + s);
+        }
+        frames[frames.length - 1].msg += '   result = ' + s;
+
+        let idx = 0;
+        const wrap = document.createElement('div');
+        wrap.className = 'fenwick-wrap';
+        wrap.innerHTML =
+            '<div class="fenwick-phase" data-testid="fenwick-phase"></div>' +
+            '<div class="fenwick-row"></div>' +
+            '<div class="fenwick-msg" data-testid="fenwick-msg">&nbsp;</div>';
+        host.appendChild(wrap);
+        const rowEl = wrap.querySelector('.fenwick-row');
+        const phaseEl = wrap.querySelector('.fenwick-phase');
+        const msgEl = wrap.querySelector('.fenwick-msg');
+
+        function draw() {
+            const f = frames[idx];
+            let html = '';
+            for (let i = 1; i <= n; i++) {
+                html += '<div class="fenwick-col">' +
+                        '<span class="fenwick-idx">' + i + '</span>' +
+                        '<span class="fenwick-cell' + (i === f.active ? ' fenwick-active' : '') +
+                        '" data-cell="' + i + '">' + f.bit[i] + '</span>' +
+                        '<span class="fenwick-span">(' + (i - lowbit(i)) + ',' + i + ']</span>' +
+                        '</div>';
+            }
+            rowEl.innerHTML = html;
+            phaseEl.textContent = f.phase + (f.acc !== null ? '   running sum: ' + f.acc : '');
             msgEl.textContent = f.msg;
         }
         function step() {

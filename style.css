@@ -1960,3 +1960,15 @@ pre.code-panel-body[class*="language-"] {
 .segtree-grid { width: 100%; overflow-x: auto; }
 .segtree-svg { max-width: 600px; }
 .segtree-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
+
+/* Spec 4 — Fenwick Tree */
+.fenwick-wrap { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.fenwick-phase { font-size: 13px; font-weight: 600; color: #1e40af; }
+.fenwick-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.fenwick-col { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.fenwick-idx { font-family: monospace; font-size: 11px; color: #64748b; }
+.fenwick-cell { width: 40px; height: 34px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #3b82f6; border-radius: 4px; background: #eff6ff; font-family: monospace; font-weight: 700; }
+.fenwick-cell.fenwick-active { background: #34d399; border-color: #059669; color: #fff; }
+.fenwick-span { font-family: monospace; font-size: 9px; color: #94a3b8; }
+.fenwick-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }

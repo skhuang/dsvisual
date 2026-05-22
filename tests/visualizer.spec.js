@@ -565,6 +565,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('[data-testid="segtree-phase"]')).toContainText('Phase 1');
     });
 
+    test('Trees: Fenwick Tree renders 8 indexed cells and steps', async ({ page }) => {
+        await loadMethod(page, 'tree-fenwick');
+        const card = page.locator('[data-method-section="tree-fenwick"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('tree_fenwick.cpp');
+        await expect(card.locator('.fenwick-cell')).toHaveCount(8);
+        await expect(card.locator('[data-testid="fenwick-phase"]')).toContainText('Ready');
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="fenwick-phase"]')).toContainText('Phase 1');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
