@@ -9279,10 +9279,16 @@ const SLIDES_DB = {
   },
   "bloom-filter": {
     "category": "Hash & Probabilistic",
-    "title": { "zh": "布隆過濾器", "en": "Bloom Filter" },
+    "title": {
+      "zh": "布隆過濾器",
+      "en": "Bloom Filter"
+    },
     "slides": [
       {
-        "heading": { "zh": "布隆過濾器", "en": "Bloom Filter" },
+        "heading": {
+          "zh": "布隆過濾器",
+          "en": "Bloom Filter"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9294,7 +9300,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9306,22 +9315,43 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "$k$ 個位元全為 1 → 「可能存在」,也可能是其他元素恰好湊齊。", "en": "All $k$ bits are 1 → \"possibly present\" — other elements may have set those bits." },
-              { "zh": "任一位元為 0 → 「絕對不存在」。", "en": "Any bit is 0 → \"definitely not present\"." },
-              { "zh": "不支援刪除:清除位元會誤傷共用該位元的其他元素。", "en": "No deletion: clearing a bit would corrupt other elements sharing it." }
+              {
+                "zh": "$k$ 個位元全為 1 → 「可能存在」,也可能是其他元素恰好湊齊。",
+                "en": "All $k$ bits are 1 → \"possibly present\" — other elements may have set those bits."
+              },
+              {
+                "zh": "任一位元為 0 → 「絕對不存在」。",
+                "en": "Any bit is 0 → \"definitely not present\"."
+              },
+              {
+                "zh": "不支援刪除:清除位元會誤傷共用該位元的其他元素。",
+                "en": "No deletion: clearing a bit would corrupt other elements sharing it."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "插入 $x$:計算 $h_1(x)$、$h_2(x)$、$h_3(x)$,把這 3 個位元設為 1。", "en": "Insert $x$: compute $h_1(x)$, $h_2(x)$, $h_3(x)$ and set those 3 bits to 1." },
-              { "zh": "查詢 $y$:計算 $y$ 的 3 個雜湊位置。", "en": "Query $y$: compute the 3 hashed positions of $y$." },
-              { "zh": "3 個位元全為 1 回報「可能存在」;任一為 0 回報「絕對不存在」。", "en": "All 3 bits 1 → \"possibly present\"; any bit 0 → \"definitely not present\"." }
+              {
+                "zh": "插入 $x$:計算 $h_1(x)$、$h_2(x)$、$h_3(x)$,把這 3 個位元設為 1。",
+                "en": "Insert $x$: compute $h_1(x)$, $h_2(x)$, $h_3(x)$ and set those 3 bits to 1."
+              },
+              {
+                "zh": "查詢 $y$:計算 $y$ 的 3 個雜湊位置。",
+                "en": "Query $y$: compute the 3 hashed positions of $y$."
+              },
+              {
+                "zh": "3 個位元全為 1 回報「可能存在」;任一為 0 回報「絕對不存在」。",
+                "en": "All 3 bits 1 → \"possibly present\"; any bit 0 → \"definitely not present\"."
+              }
             ]
           },
           {
@@ -9331,7 +9361,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -9347,18 +9380,54 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "項目", "en": "Aspect" },
-              { "zh": "複雜度", "en": "Complexity" }
+              {
+                "zh": "項目",
+                "en": "Aspect"
+              },
+              {
+                "zh": "複雜度",
+                "en": "Complexity"
+              }
             ],
             "rows": [
-              [ { "zh": "插入 / 查詢時間", "en": "insert / query time" }, { "zh": "$O(k)$", "en": "$O(k)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(m)$ 位元", "en": "$O(m)$ bits" } ],
-              [ { "zh": "漏判(false negative)", "en": "false negative" }, { "zh": "不可能", "en": "impossible" } ]
+              [
+                {
+                  "zh": "插入 / 查詢時間",
+                  "en": "insert / query time"
+                },
+                {
+                  "zh": "$O(k)$",
+                  "en": "$O(k)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(m)$ 位元",
+                  "en": "$O(m)$ bits"
+                }
+              ],
+              [
+                {
+                  "zh": "漏判(false negative)",
+                  "en": "false negative"
+                },
+                {
+                  "zh": "不可能",
+                  "en": "impossible"
+                }
+              ]
             ]
           },
           {
@@ -9372,7 +9441,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
@@ -9382,28 +9454,55 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點:空間遠小於儲存完整元素集合。", "en": "Pro: uses far less space than storing the full element set." },
-              { "zh": "優點:插入與查詢皆為固定時間 $O(k)$。", "en": "Pro: insertion and query are both constant-time $O(k)$." },
-              { "zh": "缺點:有誤判,且無法刪除元素。", "en": "Con: false positives occur, and elements cannot be removed." },
-              { "zh": "適用:快取前置過濾、去重、判斷「絕對沒看過」的場景。", "en": "Use for cache pre-filtering, deduplication, and \"definitely never seen\" checks." }
+              {
+                "zh": "優點:空間遠小於儲存完整元素集合。",
+                "en": "Pro: uses far less space than storing the full element set."
+              },
+              {
+                "zh": "優點:插入與查詢皆為固定時間 $O(k)$。",
+                "en": "Pro: insertion and query are both constant-time $O(k)$."
+              },
+              {
+                "zh": "缺點:有誤判,且無法刪除元素。",
+                "en": "Con: false positives occur, and elements cannot be removed."
+              },
+              {
+                "zh": "適用:快取前置過濾、去重、判斷「絕對沒看過」的場景。",
+                "en": "Use for cache pre-filtering, deduplication, and \"definitely never seen\" checks."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "位元陣列加多個雜湊函式構成的機率型集合。", "en": "A probabilistic set built from a bit array plus several hash functions." },
-              { "zh": "「絕對不存在」可信;「可能存在」需容忍誤判。", "en": "\"Definitely absent\" is certain; \"possibly present\" must tolerate false positives." },
-              { "zh": "以準確度換取極小的空間佔用。", "en": "Trades accuracy for a very small space footprint." }
+              {
+                "zh": "位元陣列加多個雜湊函式構成的機率型集合。",
+                "en": "A probabilistic set built from a bit array plus several hash functions."
+              },
+              {
+                "zh": "「絕對不存在」可信;「可能存在」需容忍誤判。",
+                "en": "\"Definitely absent\" is certain; \"possibly present\" must tolerate false positives."
+              },
+              {
+                "zh": "以準確度換取極小的空間佔用。",
+                "en": "Trades accuracy for a very small space footprint."
+              }
             ]
           }
         ]
@@ -9412,10 +9511,16 @@ const SLIDES_DB = {
   },
   "skip-list": {
     "category": "Hash & Probabilistic",
-    "title": { "zh": "跳躍列表", "en": "Skip List" },
+    "title": {
+      "zh": "跳躍列表",
+      "en": "Skip List"
+    },
     "slides": [
       {
-        "heading": { "zh": "跳躍列表", "en": "Skip List" },
+        "heading": {
+          "zh": "跳躍列表",
+          "en": "Skip List"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9427,7 +9532,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9439,22 +9547,43 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "每個節點的高度由擲硬幣決定。", "en": "Each node's height is decided by coin flips." },
-              { "zh": "每個節點期望約有 2 個指標。", "en": "Each node has about 2 pointers on expectation." },
-              { "zh": "不需旋轉即可(機率上)保持平衡。", "en": "It stays balanced (probabilistically) without any rotations." }
+              {
+                "zh": "每個節點的高度由擲硬幣決定。",
+                "en": "Each node's height is decided by coin flips."
+              },
+              {
+                "zh": "每個節點期望約有 2 個指標。",
+                "en": "Each node has about 2 pointers on expectation."
+              },
+              {
+                "zh": "不需旋轉即可(機率上)保持平衡。",
+                "en": "It stays balanced (probabilistically) without any rotations."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "從表頭的最高層開始。", "en": "Start at the head on the highest level." },
-              { "zh": "當下一個節點的鍵值小於目標時往右移,否則往下降一層。", "en": "Move right while the next node's key < target, otherwise drop down a level." },
-              { "zh": "到達第 0 層後,檢查下一個節點是否等於目標。", "en": "At level 0, check whether the next node equals the target." }
+              {
+                "zh": "從表頭的最高層開始。",
+                "en": "Start at the head on the highest level."
+              },
+              {
+                "zh": "當下一個節點的鍵值小於目標時往右移,否則往下降一層。",
+                "en": "Move right while the next node's key < target, otherwise drop down a level."
+              },
+              {
+                "zh": "到達第 0 層後,檢查下一個節點是否等於目標。",
+                "en": "At level 0, check whether the next node equals the target."
+              }
             ]
           },
           {
@@ -9464,7 +9593,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -9480,20 +9612,84 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "操作", "en": "Operation" },
-              { "zh": "期望", "en": "Expected" },
-              { "zh": "最差", "en": "Worst" }
+              {
+                "zh": "操作",
+                "en": "Operation"
+              },
+              {
+                "zh": "期望",
+                "en": "Expected"
+              },
+              {
+                "zh": "最差",
+                "en": "Worst"
+              }
             ],
             "rows": [
-              [ { "zh": "搜尋", "en": "search" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" }, { "zh": "$O(n)$", "en": "$O(n)$" } ],
-              [ { "zh": "插入", "en": "insert" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" }, { "zh": "$O(n)$", "en": "$O(n)$" } ],
-              [ { "zh": "刪除", "en": "delete" }, { "zh": "$O(\\log n)$", "en": "$O(\\log n)$" }, { "zh": "$O(n)$", "en": "$O(n)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(n)$", "en": "$O(n)$" }, { "zh": "$O(n)$", "en": "$O(n)$" } ]
+              [
+                {
+                  "zh": "搜尋",
+                  "en": "search"
+                },
+                {
+                  "zh": "$O(\\log n)$",
+                  "en": "$O(\\log n)$"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "插入",
+                  "en": "insert"
+                },
+                {
+                  "zh": "$O(\\log n)$",
+                  "en": "$O(\\log n)$"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "刪除",
+                  "en": "delete"
+                },
+                {
+                  "zh": "$O(\\log n)$",
+                  "en": "$O(\\log n)$"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                },
+                {
+                  "zh": "$O(n)$",
+                  "en": "$O(n)$"
+                }
+              ]
             ]
           },
           {
@@ -9507,7 +9703,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
@@ -9517,27 +9716,51 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點:比平衡樹更易實作,且支援有序走訪。", "en": "Pro: simpler to implement than balanced trees, and supports ordered traversal." },
-              { "zh": "缺點:最差情況會退化,效能取決於亂數品質。", "en": "Con: the worst case degrades, and performance depends on RNG quality." },
-              { "zh": "適用:需要有序映射,但想避開紅黑樹複雜度的場景。", "en": "Use when you need an ordered map but want to avoid red-black-tree complexity." }
+              {
+                "zh": "優點:比平衡樹更易實作,且支援有序走訪。",
+                "en": "Pro: simpler to implement than balanced trees, and supports ordered traversal."
+              },
+              {
+                "zh": "缺點:最差情況會退化,效能取決於亂數品質。",
+                "en": "Con: the worst case degrades, and performance depends on RNG quality."
+              },
+              {
+                "zh": "適用:需要有序映射,但想避開紅黑樹複雜度的場景。",
+                "en": "Use when you need an ordered map but want to avoid red-black-tree complexity."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "由多層「快速車道」構成的連結串列。", "en": "A multi-level express-lane linked list." },
-              { "zh": "以隨機層級取代旋轉來維持平衡。", "en": "Random levels replace rotations for balance." },
-              { "zh": "搜尋、插入、刪除的期望複雜度為 $O(\\log n)$。", "en": "Search, insert, and delete are expected $O(\\log n)$." }
+              {
+                "zh": "由多層「快速車道」構成的連結串列。",
+                "en": "A multi-level express-lane linked list."
+              },
+              {
+                "zh": "以隨機層級取代旋轉來維持平衡。",
+                "en": "Random levels replace rotations for balance."
+              },
+              {
+                "zh": "搜尋、插入、刪除的期望複雜度為 $O(\\log n)$。",
+                "en": "Search, insert, and delete are expected $O(\\log n)$."
+              }
             ]
           }
         ]
@@ -9546,10 +9769,16 @@ const SLIDES_DB = {
   },
   "count-min-sketch": {
     "category": "Hash & Probabilistic",
-    "title": { "zh": "Count-Min Sketch", "en": "Count-Min Sketch" },
+    "title": {
+      "zh": "Count-Min Sketch",
+      "en": "Count-Min Sketch"
+    },
     "slides": [
       {
-        "heading": { "zh": "Count-Min Sketch", "en": "Count-Min Sketch" },
+        "heading": {
+          "zh": "Count-Min Sketch",
+          "en": "Count-Min Sketch"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9561,7 +9790,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9573,22 +9805,43 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "更新時在每一列各加 1。", "en": "An update adds 1 in each row." },
-              { "zh": "估計時取 $d$ 個格子的最小值。", "en": "An estimate takes the minimum of the $d$ cells." },
-              { "zh": "碰撞只會灌大計數,因此最小值最接近真實值。", "en": "Collisions only inflate counts, so the minimum is closest to the true value." }
+              {
+                "zh": "更新時在每一列各加 1。",
+                "en": "An update adds 1 in each row."
+              },
+              {
+                "zh": "估計時取 $d$ 個格子的最小值。",
+                "en": "An estimate takes the minimum of the $d$ cells."
+              },
+              {
+                "zh": "碰撞只會灌大計數,因此最小值最接近真實值。",
+                "en": "Collisions only inflate counts, so the minimum is closest to the true value."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "update($x$):對每一列 $r$ 計算 $h_r(x)$ 並把該格加 1。", "en": "update($x$): for each row $r$ compute $h_r(x)$ and increment that cell." },
-              { "zh": "estimate($x$):讀取那 $d$ 個格子。", "en": "estimate($x$): read those $d$ cells." },
-              { "zh": "回傳這 $d$ 個格子的最小值。", "en": "Return the minimum of those $d$ cells." }
+              {
+                "zh": "update($x$):對每一列 $r$ 計算 $h_r(x)$ 並把該格加 1。",
+                "en": "update($x$): for each row $r$ compute $h_r(x)$ and increment that cell."
+              },
+              {
+                "zh": "estimate($x$):讀取那 $d$ 個格子。",
+                "en": "estimate($x$): read those $d$ cells."
+              },
+              {
+                "zh": "回傳這 $d$ 個格子的最小值。",
+                "en": "Return the minimum of those $d$ cells."
+              }
             ]
           },
           {
@@ -9598,7 +9851,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -9614,18 +9870,54 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "項目", "en": "Aspect" },
-              { "zh": "複雜度", "en": "Complexity" }
+              {
+                "zh": "項目",
+                "en": "Aspect"
+              },
+              {
+                "zh": "複雜度",
+                "en": "Complexity"
+              }
             ],
             "rows": [
-              [ { "zh": "更新 / 估計時間", "en": "update / estimate time" }, { "zh": "$O(d)$", "en": "$O(d)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(d \\cdot w)$", "en": "$O(d \\cdot w)$" } ],
-              [ { "zh": "低估", "en": "underestimation" }, { "zh": "不可能", "en": "impossible" } ]
+              [
+                {
+                  "zh": "更新 / 估計時間",
+                  "en": "update / estimate time"
+                },
+                {
+                  "zh": "$O(d)$",
+                  "en": "$O(d)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(d \\cdot w)$",
+                  "en": "$O(d \\cdot w)$"
+                }
+              ],
+              [
+                {
+                  "zh": "低估",
+                  "en": "underestimation"
+                },
+                {
+                  "zh": "不可能",
+                  "en": "impossible"
+                }
+              ]
             ]
           },
           {
@@ -9639,7 +9931,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
@@ -9649,27 +9944,51 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點:空間固定,與不同項目的數量無關。", "en": "Pro: fixed space, independent of the number of distinct items." },
-              { "zh": "缺點:有高估誤差,無法做精確查詢。", "en": "Con: overestimation error, and no exact queries." },
-              { "zh": "適用:資料流上的重量級元素統計、近似頻率。", "en": "Use for heavy-hitter statistics over data streams and approximate frequencies." }
+              {
+                "zh": "優點:空間固定,與不同項目的數量無關。",
+                "en": "Pro: fixed space, independent of the number of distinct items."
+              },
+              {
+                "zh": "缺點:有高估誤差,無法做精確查詢。",
+                "en": "Con: overestimation error, and no exact queries."
+              },
+              {
+                "zh": "適用:資料流上的重量級元素統計、近似頻率。",
+                "en": "Use for heavy-hitter statistics over data streams and approximate frequencies."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "由二維計數矩陣加多個雜湊函式構成。", "en": "A 2-D counter matrix plus multiple hash functions." },
-              { "zh": "取最小值可抵銷碰撞造成的超量計數。", "en": "Taking the min cancels collision-driven overcounting." },
-              { "zh": "以誤差換取極小且固定的空間。", "en": "Trades error for tiny, fixed space." }
+              {
+                "zh": "由二維計數矩陣加多個雜湊函式構成。",
+                "en": "A 2-D counter matrix plus multiple hash functions."
+              },
+              {
+                "zh": "取最小值可抵銷碰撞造成的超量計數。",
+                "en": "Taking the min cancels collision-driven overcounting."
+              },
+              {
+                "zh": "以誤差換取極小且固定的空間。",
+                "en": "Trades error for tiny, fixed space."
+              }
             ]
           }
         ]
@@ -9678,10 +9997,16 @@ const SLIDES_DB = {
   },
   "search-zalgo": {
     "category": "Searching & String Matching",
-    "title": { "zh": "Z 演算法", "en": "Z-Algorithm" },
+    "title": {
+      "zh": "Z 演算法",
+      "en": "Z-Algorithm"
+    },
     "slides": [
       {
-        "heading": { "zh": "Z 演算法", "en": "Z-Algorithm" },
+        "heading": {
+          "zh": "Z 演算法",
+          "en": "Z-Algorithm"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9693,7 +10018,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9705,22 +10033,43 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "當 $i$ 落在 $[l,r]$ 內時,從鏡射值 $Z[i-l]$ 開始。", "en": "When $i$ is inside $[l,r]$, start from the mirror value $Z[i-l]$." },
-              { "zh": "當 $i$ 落在視窗外時,從零開始逐字元比較。", "en": "When $i$ is outside the window, compare characters from zero." },
-              { "zh": "比較完成後更新 $[l,r]$。", "en": "Update $[l,r]$ after comparing." }
+              {
+                "zh": "當 $i$ 落在 $[l,r]$ 內時,從鏡射值 $Z[i-l]$ 開始。",
+                "en": "When $i$ is inside $[l,r]$, start from the mirror value $Z[i-l]$."
+              },
+              {
+                "zh": "當 $i$ 落在視窗外時,從零開始逐字元比較。",
+                "en": "When $i$ is outside the window, compare characters from zero."
+              },
+              {
+                "zh": "比較完成後更新 $[l,r]$。",
+                "en": "Update $[l,r]$ after comparing."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "把 `pattern`、一個分隔符、`text` 串接成一個字串。", "en": "Concatenate `pattern`, a separator character, and `text` into one string." },
-              { "zh": "計算這個串接字串的 Z 陣列。", "en": "Compute the Z-array of the concatenation." },
-              { "zh": "每個 $Z[i]$ 等於樣式長度的索引即是一處相符。", "en": "Every index where $Z[i]$ equals the pattern length is a match." }
+              {
+                "zh": "把 `pattern`、一個分隔符、`text` 串接成一個字串。",
+                "en": "Concatenate `pattern`, a separator character, and `text` into one string."
+              },
+              {
+                "zh": "計算這個串接字串的 Z 陣列。",
+                "en": "Compute the Z-array of the concatenation."
+              },
+              {
+                "zh": "每個 $Z[i]$ 等於樣式長度的索引即是一處相符。",
+                "en": "Every index where $Z[i]$ equals the pattern length is a match."
+              }
             ]
           },
           {
@@ -9730,7 +10079,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -9746,18 +10098,54 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "項目", "en": "Aspect" },
-              { "zh": "複雜度", "en": "Complexity" }
+              {
+                "zh": "項目",
+                "en": "Aspect"
+              },
+              {
+                "zh": "複雜度",
+                "en": "Complexity"
+              }
             ],
             "rows": [
-              [ { "zh": "建立 Z 陣列", "en": "build Z-array" }, { "zh": "$O(n+m)$", "en": "$O(n+m)$" } ],
-              [ { "zh": "字串比對", "en": "string matching" }, { "zh": "$O(n+m)$", "en": "$O(n+m)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(n+m)$", "en": "$O(n+m)$" } ]
+              [
+                {
+                  "zh": "建立 Z 陣列",
+                  "en": "build Z-array"
+                },
+                {
+                  "zh": "$O(n+m)$",
+                  "en": "$O(n+m)$"
+                }
+              ],
+              [
+                {
+                  "zh": "字串比對",
+                  "en": "string matching"
+                },
+                {
+                  "zh": "$O(n+m)$",
+                  "en": "$O(n+m)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(n+m)$",
+                  "en": "$O(n+m)$"
+                }
+              ]
             ]
           },
           {
@@ -9771,37 +10159,64 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
             "lang": "cpp",
-            "code": "std::vector<int> computeZ(const std::string& s) {\n    int n = static_cast<int>(s.size());\n    std::vector<int> z(n, 0);\n    int l = 0, r = 0;\n    for (int i = 1; i < n; i++) {\n        if (i < r) z[i] = std::min(r - i, z[i - l]);\n        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) z[i]++;\n        if (i + z[i] > r) { l = i; r = i + z[i]; }\n    }\n    return z;\n}"
+            "code": "std::vector<int> computeZ(const std::string& s) {\n    int n = static_cast<int>(s.size());\n    std::vector<int> z(n, 0);\n    int l = 0, r = 0;\n    for (int i = 1; i < n; i++) {\n        if (i < r)\n            z[i] = std::min(r - i, z[i - l]);\n        while (i + z[i] < n && s[z[i]] == s[i + z[i]])\n            z[i]++;\n        if (i + z[i] > r) {\n            l = i;\n            r = i + z[i];\n        }\n    }\n    return z;\n}"
           }
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點:概念簡單、線性時間,且不需失敗函式表。", "en": "Pro: simple concept, linear time, and no failure-function table." },
-              { "zh": "缺點:需要額外的串接字串與 $O(n+m)$ 空間。", "en": "Con: needs the extra concatenated string and $O(n+m)$ space." },
-              { "zh": "適用:單樣式比對、字串週期與前綴分析。", "en": "Use for single-pattern matching, string periodicity, and prefix analysis." }
+              {
+                "zh": "優點:概念簡單、線性時間,且不需失敗函式表。",
+                "en": "Pro: simple concept, linear time, and no failure-function table."
+              },
+              {
+                "zh": "缺點:需要額外的串接字串與 $O(n+m)$ 空間。",
+                "en": "Con: needs the extra concatenated string and $O(n+m)$ space."
+              },
+              {
+                "zh": "適用:單樣式比對、字串週期與前綴分析。",
+                "en": "Use for single-pattern matching, string periodicity, and prefix analysis."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "Z 陣列給出「前綴相符的長度」。", "en": "The Z-array gives the length of the prefix match." },
-              { "zh": "$[l,r]$ 視窗達成線性時間。", "en": "The $[l,r]$ window achieves linear time." },
-              { "zh": "串接「樣式 + 分隔符 + 文字」即可完成比對。", "en": "Concatenating pattern, separator, and text does the matching." }
+              {
+                "zh": "Z 陣列給出「前綴相符的長度」。",
+                "en": "The Z-array gives the length of the prefix match."
+              },
+              {
+                "zh": "$[l,r]$ 視窗達成線性時間。",
+                "en": "The $[l,r]$ window achieves linear time."
+              },
+              {
+                "zh": "串接「樣式 + 分隔符 + 文字」即可完成比對。",
+                "en": "Concatenating pattern, separator, and text does the matching."
+              }
             ]
           }
         ]
@@ -9810,10 +10225,16 @@ const SLIDES_DB = {
   },
   "search-aho": {
     "category": "Searching & String Matching",
-    "title": { "zh": "Aho-Corasick 演算法", "en": "Aho-Corasick" },
+    "title": {
+      "zh": "Aho-Corasick 演算法",
+      "en": "Aho-Corasick"
+    },
     "slides": [
       {
-        "heading": { "zh": "Aho-Corasick 演算法", "en": "Aho-Corasick" },
+        "heading": {
+          "zh": "Aho-Corasick 演算法",
+          "en": "Aho-Corasick"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9825,7 +10246,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "核心概念", "en": "Core Concept" },
+        "heading": {
+          "zh": "核心概念",
+          "en": "Core Concept"
+        },
         "blocks": [
           {
             "type": "paragraph",
@@ -9837,22 +10261,43 @@ const SLIDES_DB = {
           {
             "type": "bullets",
             "items": [
-              { "zh": "失敗連結以 BFS 由淺至深計算。", "en": "Failure links are computed by BFS, shallow-to-deep." },
-              { "zh": "輸出連結沿失敗鏈合併,因此不會漏掉任何相符。", "en": "Output links are merged along the failure chain, so no match is missed." },
-              { "zh": "掃描期間文字指標永不向後移動。", "en": "The text pointer never moves backward during the scan." }
+              {
+                "zh": "失敗連結以 BFS 由淺至深計算。",
+                "en": "Failure links are computed by BFS, shallow-to-deep."
+              },
+              {
+                "zh": "輸出連結沿失敗鏈合併,因此不會漏掉任何相符。",
+                "en": "Output links are merged along the failure chain, so no match is missed."
+              },
+              {
+                "zh": "掃描期間文字指標永不向後移動。",
+                "en": "The text pointer never moves backward during the scan."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "運作流程", "en": "Operation Flow" },
+        "heading": {
+          "zh": "運作流程",
+          "en": "Operation Flow"
+        },
         "blocks": [
           {
             "type": "steps",
             "items": [
-              { "zh": "把每個樣式插入字典樹。", "en": "Insert every pattern into the trie." },
-              { "zh": "以 BFS 計算每個節點的失敗連結並合併輸出。", "en": "BFS-compute each node's failure link and merge outputs." },
-              { "zh": "掃描文字,沿 goto 前進或沿失敗連結跳回,抵達輸出節點時回報相符。", "en": "Scan the text, advancing along goto or jumping back along failure links, reporting a match whenever an output node is reached." }
+              {
+                "zh": "把每個樣式插入字典樹。",
+                "en": "Insert every pattern into the trie."
+              },
+              {
+                "zh": "以 BFS 計算每個節點的失敗連結並合併輸出。",
+                "en": "BFS-compute each node's failure link and merge outputs."
+              },
+              {
+                "zh": "掃描文字,沿 goto 前進或沿失敗連結跳回,抵達輸出節點時回報相符。",
+                "en": "Scan the text, advancing along goto or jumping back along failure links, reporting a match whenever an output node is reached."
+              }
             ]
           },
           {
@@ -9862,7 +10307,10 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "示意圖", "en": "Layout" },
+        "heading": {
+          "zh": "示意圖",
+          "en": "Layout"
+        },
         "blocks": [
           {
             "type": "svg",
@@ -9878,18 +10326,54 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "複雜度分析", "en": "Complexity Analysis" },
+        "heading": {
+          "zh": "複雜度分析",
+          "en": "Complexity Analysis"
+        },
         "blocks": [
           {
             "type": "table",
             "headers": [
-              { "zh": "項目", "en": "Aspect" },
-              { "zh": "複雜度", "en": "Complexity" }
+              {
+                "zh": "項目",
+                "en": "Aspect"
+              },
+              {
+                "zh": "複雜度",
+                "en": "Complexity"
+              }
             ],
             "rows": [
-              [ { "zh": "建立時間", "en": "build time" }, { "zh": "$O(\\sum |P_i|)$", "en": "$O(\\sum |P_i|)$" } ],
-              [ { "zh": "掃描", "en": "scan" }, { "zh": "$O(|text| + \\#matches)$", "en": "$O(|text| + \\#matches)$" } ],
-              [ { "zh": "空間", "en": "space" }, { "zh": "$O(\\sum |P_i| \\cdot \\sigma)$", "en": "$O(\\sum |P_i| \\cdot \\sigma)$" } ]
+              [
+                {
+                  "zh": "建立時間",
+                  "en": "build time"
+                },
+                {
+                  "zh": "$O(\\sum |P_i|)$",
+                  "en": "$O(\\sum |P_i|)$"
+                }
+              ],
+              [
+                {
+                  "zh": "掃描",
+                  "en": "scan"
+                },
+                {
+                  "zh": "$O(|text| + \\#matches)$",
+                  "en": "$O(|text| + \\#matches)$"
+                }
+              ],
+              [
+                {
+                  "zh": "空間",
+                  "en": "space"
+                },
+                {
+                  "zh": "$O(\\sum |P_i| \\cdot \\sigma)$",
+                  "en": "$O(\\sum |P_i| \\cdot \\sigma)$"
+                }
+              ]
             ]
           },
           {
@@ -9903,37 +10387,64 @@ const SLIDES_DB = {
         ]
       },
       {
-        "heading": { "zh": "程式碼", "en": "Source Code" },
+        "heading": {
+          "zh": "程式碼",
+          "en": "Source Code"
+        },
         "blocks": [
           {
             "type": "code",
             "lang": "cpp",
-            "code": "void build() {\n    std::queue<Node*> q;\n    root->fail = root;\n    for (auto& kv : root->children) {\n        kv.second->fail = root;\n        q.push(kv.second);\n    }\n    while (!q.empty()) {\n        Node* cur = q.front();\n        q.pop();\n        for (auto& kv : cur->children) {\n            char c = kv.first;\n            Node* child = kv.second;\n            Node* f = cur->fail;\n            while (f != root && !f->children.count(c)) f = f->fail;\n            if (f->children.count(c) && f->children[c] != child)\n                child->fail = f->children[c];\n            else\n                child->fail = root;\n            for (int idx : child->fail->output) child->output.push_back(idx);\n            q.push(child);\n        }\n    }\n}"
+            "code": "void build() {\n    std::queue<Node*> q;\n    root->fail = root;\n    for (auto& kv : root->children) {\n        kv.second->fail = root;\n        q.push(kv.second);\n    }\n    while (!q.empty()) {\n        Node* cur = q.front();\n        q.pop();\n        for (auto& kv : cur->children) {\n            char c = kv.first;\n            Node* child = kv.second;\n            Node* f = cur->fail;\n            while (f != root && !f->children.count(c))\n                f = f->fail;\n            if (f->children.count(c) && f->children[c] != child)\n                child->fail = f->children[c];\n            else\n                child->fail = root;\n            for (int idx : child->fail->output)\n                child->output.push_back(idx);\n            q.push(child);\n        }\n    }\n}"
           }
         ]
       },
       {
-        "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+        "heading": {
+          "zh": "優缺點與使用時機",
+          "en": "Pros, Cons & When to Use"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "優點:單次掃描即可處理多個樣式,文字永不倒退。", "en": "Pro: handles many patterns in one scan, and the text never rewinds." },
-              { "zh": "缺點:必須先建構自動機,空間隨樣式總長與字母表增長。", "en": "Con: must build the automaton, and space grows with total pattern length and alphabet." },
-              { "zh": "適用:多關鍵字過濾、入侵偵測、字典比對。", "en": "Use for multi-keyword filtering, intrusion detection, and dictionary matching." }
+              {
+                "zh": "優點:單次掃描即可處理多個樣式,文字永不倒退。",
+                "en": "Pro: handles many patterns in one scan, and the text never rewinds."
+              },
+              {
+                "zh": "缺點:必須先建構自動機,空間隨樣式總長與字母表增長。",
+                "en": "Con: must build the automaton, and space grows with total pattern length and alphabet."
+              },
+              {
+                "zh": "適用:多關鍵字過濾、入侵偵測、字典比對。",
+                "en": "Use for multi-keyword filtering, intrusion detection, and dictionary matching."
+              }
             ]
           }
         ]
       },
       {
-        "heading": { "zh": "小結", "en": "Summary" },
+        "heading": {
+          "zh": "小結",
+          "en": "Summary"
+        },
         "blocks": [
           {
             "type": "bullets",
             "items": [
-              { "zh": "字典樹的 goto 邊加上 BFS 建立的失敗連結。", "en": "Trie goto edges plus BFS-built failure links." },
-              { "zh": "單次線性掃描即可找出每個樣式。", "en": "One linear scan finds every pattern." },
-              { "zh": "它是 KMP 推廣到多樣式的版本。", "en": "It is KMP generalized to multiple patterns." }
+              {
+                "zh": "字典樹的 goto 邊加上 BFS 建立的失敗連結。",
+                "en": "Trie goto edges plus BFS-built failure links."
+              },
+              {
+                "zh": "單次線性掃描即可找出每個樣式。",
+                "en": "One linear scan finds every pattern."
+              },
+              {
+                "zh": "它是 KMP 推廣到多樣式的版本。",
+                "en": "It is KMP generalized to multiple patterns."
+              }
             ]
           }
         ]

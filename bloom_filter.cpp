@@ -1,6 +1,6 @@
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
 // A Bloom filter: a space-efficient probabilistic set. A query may report a
@@ -11,17 +11,20 @@ class BloomFilter {
 
     int hash1(const string& s) const {
         unsigned long h = 5381;
-        for (char c : s) h = h * 33 + static_cast<unsigned char>(c);
+        for (char c : s)
+            h = h * 33 + static_cast<unsigned char>(c);
         return static_cast<int>(h % SIZE);
     }
     int hash2(const string& s) const {
         unsigned long h = 0;
-        for (char c : s) h = h * 31 + static_cast<unsigned char>(c);
+        for (char c : s)
+            h = h * 31 + static_cast<unsigned char>(c);
         return static_cast<int>(h % SIZE);
     }
     int hash3(const string& s) const {
         unsigned long h = 7;
-        for (char c : s) h = h * 17 + static_cast<unsigned char>(c) + 1;
+        for (char c : s)
+            h = h * 17 + static_cast<unsigned char>(c) + 1;
         return static_cast<int>(h % SIZE);
     }
 

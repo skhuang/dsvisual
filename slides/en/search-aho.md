@@ -72,12 +72,14 @@ void build() {
             char c = kv.first;
             Node* child = kv.second;
             Node* f = cur->fail;
-            while (f != root && !f->children.count(c)) f = f->fail;
+            while (f != root && !f->children.count(c))
+                f = f->fail;
             if (f->children.count(c) && f->children[c] != child)
                 child->fail = f->children[c];
             else
                 child->fail = root;
-            for (int idx : child->fail->output) child->output.push_back(idx);
+            for (int idx : child->fail->output)
+                child->output.push_back(idx);
             q.push(child);
         }
     }

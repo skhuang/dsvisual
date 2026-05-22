@@ -1,8 +1,8 @@
 #include <iostream>
 #include <map>
 #include <queue>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
 // Aho-Corasick: a trie of all patterns plus BFS-computed failure links, so a
@@ -25,7 +25,8 @@ public:
         patterns.push_back(p);
         Node* cur = root;
         for (char c : p) {
-            if (!cur->children.count(c)) cur->children[c] = new Node();
+            if (!cur->children.count(c))
+                cur->children[c] = new Node();
             cur = cur->children[c];
         }
         cur->output.push_back(idx);
@@ -45,12 +46,14 @@ public:
                 char c = kv.first;
                 Node* child = kv.second;
                 Node* f = cur->fail;
-                while (f != root && !f->children.count(c)) f = f->fail;
+                while (f != root && !f->children.count(c))
+                    f = f->fail;
                 if (f->children.count(c) && f->children[c] != child)
                     child->fail = f->children[c];
                 else
                     child->fail = root;
-                for (int idx : child->fail->output) child->output.push_back(idx);
+                for (int idx : child->fail->output)
+                    child->output.push_back(idx);
                 q.push(child);
             }
         }
@@ -60,8 +63,10 @@ public:
         Node* cur = root;
         for (int i = 0; i < static_cast<int>(text.size()); i++) {
             char c = text[i];
-            while (cur != root && !cur->children.count(c)) cur = cur->fail;
-            if (cur->children.count(c)) cur = cur->children[c];
+            while (cur != root && !cur->children.count(c))
+                cur = cur->fail;
+            if (cur->children.count(c))
+                cur = cur->children[c];
             for (int idx : cur->output) {
                 int start = i - static_cast<int>(patterns[idx].size()) + 1;
                 cout << "match \"" << patterns[idx] << "\" at " << start << "\n";
@@ -77,6 +82,6 @@ int main() {
     ac.addPattern("his");
     ac.addPattern("hers");
     ac.build();
-    ac.search("ushers");  // she@1, he@2, hers@2
+    ac.search("ushers"); // she@1, he@2, hers@2
     return 0;
 }

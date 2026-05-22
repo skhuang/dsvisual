@@ -4325,8 +4325,8 @@ int main() {
 `;
 
 const codeBloomFilter = `#include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
 // A Bloom filter: a space-efficient probabilistic set. A query may report a
@@ -4337,17 +4337,20 @@ class BloomFilter {
 
     int hash1(const string& s) const {
         unsigned long h = 5381;
-        for (char c : s) h = h * 33 + static_cast<unsigned char>(c);
+        for (char c : s)
+            h = h * 33 + static_cast<unsigned char>(c);
         return static_cast<int>(h % SIZE);
     }
     int hash2(const string& s) const {
         unsigned long h = 0;
-        for (char c : s) h = h * 31 + static_cast<unsigned char>(c);
+        for (char c : s)
+            h = h * 31 + static_cast<unsigned char>(c);
         return static_cast<int>(h % SIZE);
     }
     int hash3(const string& s) const {
         unsigned long h = 7;
-        for (char c : s) h = h * 17 + static_cast<unsigned char>(c) + 1;
+        for (char c : s)
+            h = h * 17 + static_cast<unsigned char>(c) + 1;
         return static_cast<int>(h % SIZE);
     }
 
@@ -4379,9 +4382,9 @@ int main() {
 }
 `;
 
-const codeSkipList = `#include <iostream>
+const codeSkipList = `#include <cstdlib>
+#include <iostream>
 #include <vector>
-#include <cstdlib>
 using namespace std;
 
 // A skip list: an ordered map built from a multi-level linked list. Each node
@@ -4393,13 +4396,14 @@ struct Node {
 };
 
 class SkipList {
-    static const int MAX_LEVEL = 3;  // levels 0..3
+    static const int MAX_LEVEL = 3; // levels 0..3
     Node* head;
     int level;
 
     int randomLevel() {
         int lvl = 0;
-        while ((rand() & 1) && lvl < MAX_LEVEL) lvl++;
+        while ((rand() & 1) && lvl < MAX_LEVEL)
+            lvl++;
         return lvl;
     }
 
@@ -4410,12 +4414,14 @@ public:
         vector<Node*> update(MAX_LEVEL + 1, head);
         Node* cur = head;
         for (int i = level; i >= 0; i--) {
-            while (cur->forward[i] && cur->forward[i]->key < key) cur = cur->forward[i];
+            while (cur->forward[i] && cur->forward[i]->key < key)
+                cur = cur->forward[i];
             update[i] = cur;
         }
         int lvl = randomLevel();
         if (lvl > level) {
-            for (int i = level + 1; i <= lvl; i++) update[i] = head;
+            for (int i = level + 1; i <= lvl; i++)
+                update[i] = head;
             level = lvl;
         }
         Node* node = new Node(key, lvl);
@@ -4428,7 +4434,8 @@ public:
     bool search(int key) {
         Node* cur = head;
         for (int i = level; i >= 0; i--) {
-            while (cur->forward[i] && cur->forward[i]->key < key) cur = cur->forward[i];
+            while (cur->forward[i] && cur->forward[i]->key < key)
+                cur = cur->forward[i];
         }
         cur = cur->forward[0];
         return cur && cur->key == key;
@@ -4438,36 +4445,41 @@ public:
         vector<Node*> update(MAX_LEVEL + 1, head);
         Node* cur = head;
         for (int i = level; i >= 0; i--) {
-            while (cur->forward[i] && cur->forward[i]->key < key) cur = cur->forward[i];
+            while (cur->forward[i] && cur->forward[i]->key < key)
+                cur = cur->forward[i];
             update[i] = cur;
         }
         cur = cur->forward[0];
-        if (!cur || cur->key != key) return;
+        if (!cur || cur->key != key)
+            return;
         for (int i = 0; i <= level; i++) {
-            if (update[i]->forward[i] != cur) break;
+            if (update[i]->forward[i] != cur)
+                break;
             update[i]->forward[i] = cur->forward[i];
         }
         delete cur;
-        while (level > 0 && !head->forward[level]) level--;
+        while (level > 0 && !head->forward[level])
+            level--;
     }
 };
 
 int main() {
     SkipList sl;
     int keys[] = {3, 7, 12, 19, 25};
-    for (int k : keys) sl.insert(k);
+    for (int k : keys)
+        sl.insert(k);
 
-    cout << "search 12? " << sl.search(12) << "\\n";  // 1
-    cout << "search 20? " << sl.search(20) << "\\n";  // 0
+    cout << "search 12? " << sl.search(12) << "\\n"; // 1
+    cout << "search 20? " << sl.search(20) << "\\n"; // 0
     sl.remove(12);
-    cout << "search 12 after remove? " << sl.search(12) << "\\n";  // 0
+    cout << "search 12 after remove? " << sl.search(12) << "\\n"; // 0
     return 0;
 }
 `;
 
-const codeCountMinSketch = `#include <iostream>
+const codeCountMinSketch = `#include <algorithm>
+#include <iostream>
 #include <string>
-#include <algorithm>
 using namespace std;
 
 // A Count-Min Sketch: a probabilistic frequency table. estimate() never
@@ -4479,44 +4491,50 @@ class CountMinSketch {
 
     int hash(int row, const string& s) const {
         unsigned long h = static_cast<unsigned long>(row + 1) * 2654435761UL;
-        for (char c : s) h = h * 31 + static_cast<unsigned char>(c);
+        for (char c : s)
+            h = h * 31 + static_cast<unsigned char>(c);
         return static_cast<int>(h % WIDTH);
     }
 
 public:
     CountMinSketch() {
         for (int r = 0; r < DEPTH; r++)
-            for (int c = 0; c < WIDTH; c++) table[r][c] = 0;
+            for (int c = 0; c < WIDTH; c++)
+                table[r][c] = 0;
     }
 
     void update(const string& key) {
-        for (int r = 0; r < DEPTH; r++) table[r][hash(r, key)]++;
+        for (int r = 0; r < DEPTH; r++)
+            table[r][hash(r, key)]++;
     }
 
     int estimate(const string& key) const {
         int est = table[0][hash(0, key)];
-        for (int r = 1; r < DEPTH; r++) est = min(est, table[r][hash(r, key)]);
+        for (int r = 1; r < DEPTH; r++)
+            est = min(est, table[r][hash(r, key)]);
         return est;
     }
 };
 
 int main() {
     CountMinSketch cms;
-    for (int i = 0; i < 5; i++) cms.update("apple");
-    for (int i = 0; i < 2; i++) cms.update("banana");
+    for (int i = 0; i < 5; i++)
+        cms.update("apple");
+    for (int i = 0; i < 2; i++)
+        cms.update("banana");
     cms.update("cherry");
 
-    cout << "apple  ~ " << cms.estimate("apple") << "\\n";   // >= 5
-    cout << "banana ~ " << cms.estimate("banana") << "\\n";  // >= 2
-    cout << "grape  ~ " << cms.estimate("grape") << "\\n";   // >= 0
+    cout << "apple  ~ " << cms.estimate("apple") << "\\n";  // >= 5
+    cout << "banana ~ " << cms.estimate("banana") << "\\n"; // >= 2
+    cout << "grape  ~ " << cms.estimate("grape") << "\\n";  // >= 0
     return 0;
 }
 `;
 
-const codeSearchZAlgo = `#include <iostream>
-#include <vector>
+const codeSearchZAlgo = `#include <algorithm>
+#include <iostream>
 #include <string>
-#include <algorithm>
+#include <vector>
 using namespace std;
 
 // The Z-array: Z[i] is the length of the longest substring starting at i that
@@ -4526,9 +4544,14 @@ vector<int> computeZ(const string& s) {
     vector<int> z(n, 0);
     int l = 0, r = 0;
     for (int i = 1; i < n; i++) {
-        if (i < r) z[i] = min(r - i, z[i - l]);
-        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) z[i]++;
-        if (i + z[i] > r) { l = i; r = i + z[i]; }
+        if (i < r)
+            z[i] = min(r - i, z[i - l]);
+        while (i + z[i] < n && s[z[i]] == s[i + z[i]])
+            z[i]++;
+        if (i + z[i] > r) {
+            l = i;
+            r = i + z[i];
+        }
     }
     return z;
 }
@@ -4542,7 +4565,8 @@ vector<int> zSearch(const string& text, const string& pattern) {
     vector<int> matches;
     int m = static_cast<int>(pattern.size());
     for (int i = 0; i < static_cast<int>(combined.size()); i++) {
-        if (z[i] == m) matches.push_back(i - m - 1);  // translate back into text
+        if (z[i] == m)
+            matches.push_back(i - m - 1); // translate back into text
     }
     return matches;
 }
@@ -4553,8 +4577,9 @@ int main() {
     vector<int> matches = zSearch(text, pattern);
 
     cout << "matches at:";
-    for (int idx : matches) cout << " " << idx;
-    cout << "\\n";  // matches at index 10
+    for (int idx : matches)
+        cout << " " << idx;
+    cout << "\\n"; // matches at index 10
     return 0;
 }
 `;
@@ -4562,8 +4587,8 @@ int main() {
 const codeSearchAho = `#include <iostream>
 #include <map>
 #include <queue>
-#include <vector>
 #include <string>
+#include <vector>
 using namespace std;
 
 // Aho-Corasick: a trie of all patterns plus BFS-computed failure links, so a
@@ -4586,7 +4611,8 @@ public:
         patterns.push_back(p);
         Node* cur = root;
         for (char c : p) {
-            if (!cur->children.count(c)) cur->children[c] = new Node();
+            if (!cur->children.count(c))
+                cur->children[c] = new Node();
             cur = cur->children[c];
         }
         cur->output.push_back(idx);
@@ -4606,12 +4632,14 @@ public:
                 char c = kv.first;
                 Node* child = kv.second;
                 Node* f = cur->fail;
-                while (f != root && !f->children.count(c)) f = f->fail;
+                while (f != root && !f->children.count(c))
+                    f = f->fail;
                 if (f->children.count(c) && f->children[c] != child)
                     child->fail = f->children[c];
                 else
                     child->fail = root;
-                for (int idx : child->fail->output) child->output.push_back(idx);
+                for (int idx : child->fail->output)
+                    child->output.push_back(idx);
                 q.push(child);
             }
         }
@@ -4621,8 +4649,10 @@ public:
         Node* cur = root;
         for (int i = 0; i < static_cast<int>(text.size()); i++) {
             char c = text[i];
-            while (cur != root && !cur->children.count(c)) cur = cur->fail;
-            if (cur->children.count(c)) cur = cur->children[c];
+            while (cur != root && !cur->children.count(c))
+                cur = cur->fail;
+            if (cur->children.count(c))
+                cur = cur->children[c];
             for (int idx : cur->output) {
                 int start = i - static_cast<int>(patterns[idx].size()) + 1;
                 cout << "match \\"" << patterns[idx] << "\\" at " << start << "\\n";
@@ -4638,7 +4668,7 @@ int main() {
     ac.addPattern("his");
     ac.addPattern("hers");
     ac.build();
-    ac.search("ushers");  // she@1, he@2, hers@2
+    ac.search("ushers"); // she@1, he@2, hers@2
     return 0;
 }
 `;
