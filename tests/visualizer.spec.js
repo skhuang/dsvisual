@@ -540,6 +540,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="search-zalgo"]');
         await expect(card.locator('.code-panel-filename')).toContainText('search_zalgo.cpp');
         await expect(card.locator('.zalgo-chr .zalgo-cell')).toHaveCount(29);
+        await expect(card.locator('.zalgo-z .zalgo-cell')).toHaveCount(29);
         await card.locator('[data-action="step"]').click();
         await expect(card.locator('[data-testid="zalgo-stats"]')).toContainText('computed: 1');
     });
