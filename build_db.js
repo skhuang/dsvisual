@@ -73,7 +73,12 @@ const mappings = {
     'skip_list.cpp': 'codeSkipList',
     'count_min_sketch.cpp': 'codeCountMinSketch',
     'search_zalgo.cpp': 'codeSearchZAlgo',
-    'search_aho.cpp': 'codeSearchAho'
+    'search_aho.cpp': 'codeSearchAho',
+    'tree_segment.cpp': 'codeTreeSegment',
+    'tree_fenwick.cpp': 'codeTreeFenwick',
+    'graph_prim.cpp': 'codeGraphPrim',
+    'graph_bellman_ford.cpp': 'codeGraphBellmanFord',
+    'graph_floyd_warshall.cpp': 'codeGraphFloydWarshall'
 };
 
 let out = '// Auto-generated code DB for visualization\n';

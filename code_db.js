@@ -4673,3 +4673,216 @@ int main() {
 }
 `;
 
+const codeTreeSegment = `#include <iostream>
+#include <vector>
+using namespace std;
+
+// A segment tree over an array, aggregating range sums, with lazy
+// propagation so a whole range can be updated in O(log n).
+class SegmentTree {
+    int n;
+    vector<long long> tree, lazy;
+
+    void build(const vector<int>& a, int node, int lo, int hi) {
+        if (lo == hi) { tree[node] = a[lo]; return; }
+        int mid = (lo + hi) / 2;
+        build(a, 2 * node, lo, mid);
+        build(a, 2 * node + 1, mid + 1, hi);
+        tree[node] = tree[2 * node] + tree[2 * node + 1];
+    }
+    void applyLazy(int node, int lo, int hi, long long val) {
+        tree[node] += (long long)(hi - lo + 1) * val;
+        lazy[node] += val;
+    }
+    void pushDown(int node, int lo, int hi) {
+        if (lazy[node] == 0) return;
+        int mid = (lo + hi) / 2;
+        applyLazy(2 * node, lo, mid, lazy[node]);
+        applyLazy(2 * node + 1, mid + 1, hi, lazy[node]);
+        lazy[node] = 0;
+    }
+    void update(int node, int lo, int hi, int ql, int qr, long long val) {
+        if (qr < lo || hi < ql) return;
+        if (ql <= lo && hi <= qr) { applyLazy(node, lo, hi, val); return; }
+        pushDown(node, lo, hi);
+        int mid = (lo + hi) / 2;
+        update(2 * node, lo, mid, ql, qr, val);
+        update(2 * node + 1, mid + 1, hi, ql, qr, val);
+        tree[node] = tree[2 * node] + tree[2 * node + 1];
+    }
+    long long query(int node, int lo, int hi, int ql, int qr) {
+        if (qr < lo || hi < ql) return 0;
+        if (ql <= lo && hi <= qr) return tree[node];
+        pushDown(node, lo, hi);
+        int mid = (lo + hi) / 2;
+        return query(2 * node, lo, mid, ql, qr) +
+               query(2 * node + 1, mid + 1, hi, ql, qr);
+    }
+
+public:
+    SegmentTree(const vector<int>& a) {
+        n = a.size();
+        tree.assign(4 * n, 0);
+        lazy.assign(4 * n, 0);
+        build(a, 1, 0, n - 1);
+    }
+    void rangeUpdate(int l, int r, long long val) { update(1, 0, n - 1, l, r, val); }
+    long long rangeQuery(int l, int r) { return query(1, 0, n - 1, l, r); }
+};
+
+int main() {
+    vector<int> a = {5, 8, 6, 3, 2, 7, 2, 6};
+    SegmentTree st(a);
+    cout << "sum[2,5] = " << st.rangeQuery(2, 5) << "\\n";          // 18
+    st.rangeUpdate(1, 4, 3);
+    cout << "after +3 on [1,4], sum[2,5] = " << st.rangeQuery(2, 5) << "\\n";  // 27
+    return 0;
+}
+`;
+
+const codeTreeFenwick = `#include <iostream>
+#include <vector>
+using namespace std;
+
+// A Fenwick tree (Binary Indexed Tree), 1-indexed. The expression
+// i & -i isolates the lowest set bit, which is the span each slot covers.
+class FenwickTree {
+    int n;
+    vector<long long> bit;
+
+public:
+    FenwickTree(const vector<int>& a) {
+        n = a.size();
+        bit.assign(n + 1, 0);
+        for (int i = 0; i < n; i++) update(i + 1, a[i]);
+    }
+    // add delta at 1-indexed position i, walking up via i += i & -i
+    void update(int i, long long delta) {
+        for (; i <= n; i += i & -i) bit[i] += delta;
+    }
+    // sum of [1, i], walking down via i -= i & -i
+    long long prefixSum(int i) {
+        long long s = 0;
+        for (; i > 0; i -= i & -i) s += bit[i];
+        return s;
+    }
+    long long rangeSum(int l, int r) { return prefixSum(r) - prefixSum(l - 1); }
+};
+
+int main() {
+    vector<int> a = {3, 2, 5, 1, 7, 4, 6, 2};
+    FenwickTree ft(a);
+    cout << "prefixSum(7) = " << ft.prefixSum(7) << "\\n";   // 28
+    ft.update(3, 5);
+    cout << "after +5 at index 3, prefixSum(7) = " << ft.prefixSum(7) << "\\n";  // 33
+    return 0;
+}
+`;
+
+const codeGraphPrim = `#include <iostream>
+#include <vector>
+#include <climits>
+using namespace std;
+
+// Prim's algorithm grows a minimum spanning tree one vertex at a time,
+// always adding the cheapest edge that crosses out of the current tree.
+int main() {
+    const int V = 5;
+    // adjacency matrix of an undirected weighted graph (0 = no edge)
+    int w[V][V] = {
+        {0, 2, 0, 6, 0},
+        {2, 0, 3, 8, 5},
+        {0, 3, 0, 0, 7},
+        {6, 8, 0, 0, 9},
+        {0, 5, 7, 9, 0},
+    };
+    vector<bool> inMST(V, false);
+    vector<int> key(V, INT_MAX), parent(V, -1);
+    key[0] = 0;
+
+    for (int count = 0; count < V; count++) {
+        int u = -1;
+        for (int v = 0; v < V; v++)
+            if (!inMST[v] && (u == -1 || key[v] < key[u])) u = v;
+        inMST[u] = true;
+        for (int v = 0; v < V; v++)
+            if (w[u][v] && !inMST[v] && w[u][v] < key[v]) {
+                key[v] = w[u][v];
+                parent[v] = u;
+            }
+    }
+
+    int total = 0;
+    for (int v = 1; v < V; v++) {
+        cout << "edge " << parent[v] << "-" << v << " weight " << key[v] << "\\n";
+        total += key[v];
+    }
+    cout << "MST total weight = " << total << "\\n";  // 16
+    return 0;
+}
+`;
+
+const codeGraphBellmanFord = `#include <iostream>
+#include <vector>
+#include <climits>
+using namespace std;
+
+// Bellman-Ford computes single-source shortest paths and, unlike
+// Dijkstra, tolerates negative edge weights. V-1 passes relax every edge.
+struct Edge {
+    int u, v, w;
+};
+
+int main() {
+    const int V = 5;
+    // directed weighted edges, including a negative weight; no negative cycle
+    vector<Edge> edges = {
+        {0, 1, 6}, {0, 2, 7}, {1, 2, 8}, {1, 3, 5}, {1, 4, -4},
+        {2, 3, -3}, {2, 4, 9}, {3, 1, -2}, {4, 0, 2}, {4, 3, 7},
+    };
+    vector<int> dist(V, INT_MAX);
+    dist[0] = 0;
+
+    for (int pass = 1; pass <= V - 1; pass++) {
+        for (const Edge& e : edges) {
+            if (dist[e.u] != INT_MAX && dist[e.u] + e.w < dist[e.v])
+                dist[e.v] = dist[e.u] + e.w;
+        }
+    }
+
+    for (int v = 0; v < V; v++)
+        cout << "dist[" << v << "] = " << dist[v] << "\\n";
+    return 0;
+}
+`;
+
+const codeGraphFloydWarshall = `#include <iostream>
+using namespace std;
+
+// Floyd-Warshall computes all-pairs shortest paths by letting each
+// vertex k in turn serve as an intermediate point on every path.
+int main() {
+    const int V = 4;
+    const int INF = 1000000;
+    // directed weighted adjacency matrix; INF means no direct edge
+    int dist[V][V] = {
+        {0,   3,   INF, 7},
+        {8,   0,   2,   INF},
+        {5,   INF, 0,   1},
+        {2,   INF, INF, 0},
+    };
+
+    for (int k = 0; k < V; k++)
+        for (int i = 0; i < V; i++)
+            for (int j = 0; j < V; j++)
+                if (dist[i][k] + dist[k][j] < dist[i][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) cout << dist[i][j] << "\\t";
+        cout << "\\n";
+    }
+    return 0;
+}
+`;
+
