@@ -2,30 +2,12 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 async function loadMethod(page, methodId) {
-    const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
-    const methodSelect = page.locator('[data-testid="method-select"]');
-    const count = await categoryButtons.count();
-
-    async function trySelect() {
-        const hasOption = await methodSelect.locator(`option[value="${methodId}"]`).count();
-        if (!hasOption) return false;
-        await methodSelect.selectOption(methodId);
-        const card = page.locator(`[data-method-section="${methodId}"]`);
-        await expect(card).toHaveAttribute('data-runtime-state', 'active');
-        return true;
-    }
-
-    for (let i = 0; i < count; i++) {
-        await categoryButtons.nth(i).click();
-        if (await trySelect()) return;
-        const subTabs = page.locator('.category-subtab-row.visible .category-subtab-btn');
-        const tabCount = await subTabs.count();
-        for (let t = 0; t < tabCount; t++) {
-            await subTabs.nth(t).click();
-            if (await trySelect()) return;
-        }
-    }
-    throw new Error(`Method ${methodId} not found in method dropdown`);
+    const navItem = page.locator(
+        `.category-nav-item:has(.category-nav-method[data-method-id="${methodId}"])`);
+    await navItem.locator('.category-nav-btn').click();
+    await navItem.locator(`.category-nav-method[data-method-id="${methodId}"]`).click();
+    const card = page.locator(`[data-method-section="${methodId}"]`);
+    await expect(card).toHaveAttribute('data-runtime-state', 'active');
 }
 
 test.describe('Data Structure Visualizer Full Suite', () => {
@@ -51,19 +33,16 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(categoryNav).toBeVisible();
         await expect(categoryNav.locator('.category-nav-btn')).toHaveCount(9);
         await expect(categoryNav.locator('[data-testid="method-select"]')).toHaveCount(0);
-        await expect(methodSections.locator('[data-testid="method-select"]')).toBeVisible();
+        await expect(methodSections.locator('[data-testid="method-heading-title"]')).toBeVisible();
         await expect(methodSections.locator('[data-method-section="stack-array"]')).toBeVisible();
         await expect(categoryNav.locator('button[data-method], .category-nav-submenu')).toHaveCount(0);
 
-        await categoryNav.getByRole('button', { name: 'Sorting' }).click();
-        await page.waitForSelector('[data-method-section]', { timeout: 5000 });
-        await expect(methodSections.locator('[data-testid="method-select"] option[value="sort-bubble"]')).toHaveCount(1);
-        await methodSections.locator('[data-testid="method-select"]').selectOption('sort-bubble');
+        await loadMethod(page, 'sort-bubble');
+        await expect(methodSections.locator('[data-testid="method-heading-title"]')).toHaveText(/Bubble/i);
         await expect(methodSections.locator('[data-method-section="sort-bubble"]')).toBeVisible();
         await expect(page.locator('[data-method-section="sort-bubble"]')).toHaveAttribute('data-runtime-state', 'active');
 
-        await categoryNav.getByRole('button', { name: 'Trees' }).click();
-        await page.waitForSelector('[data-method-section]', { timeout: 5000 });
+        await loadMethod(page, 'tree-bst');
         await expect(methodSections.locator('[data-method-section="tree-bst"]')).toBeVisible();
     });
 
@@ -117,34 +96,62 @@ test.describe('Data Structure Visualizer Full Suite', () => {
             ['Design Patterns', 'pattern-singleton'],
         ];
 
-        for (const [category, methodId] of expectedFirstMethods) {
-            await page.locator('[data-testid="category-nav"]').getByRole('button', { name: category }).click();
-            await page.waitForSelector('[data-method-section]', { timeout: 5000 });
+        for (const [, methodId] of expectedFirstMethods) {
+            await loadMethod(page, methodId);
             await expect(page.locator('[data-testid="method-sections"] [data-method-section]')).toHaveCount(1);
             await expect(page.locator(`[data-method-section="${methodId}"]`)).toHaveAttribute('data-runtime-state', 'active');
         }
     });
 
+    test('Nav: category pill click toggles its dropdown; clicking a method button navigates', async ({ page }) => {
+        const navItem = page.locator('.category-nav-item[data-group="trees"]');
+        await navItem.locator('.category-nav-btn').click();
+        await expect(navItem).toHaveClass(/\bopen\b/);
+        await expect(navItem.locator('.category-nav-dropdown')).toBeVisible();
+        await navItem.locator('.category-nav-method[data-method-id="tree-avl"]').click();
+        await expect(page.locator('[data-method-section="tree-avl"]')).toHaveAttribute('data-runtime-state', 'active');
+        await expect(navItem).not.toHaveClass(/\bopen\b/);
+    });
+
+    test('Nav: clicking outside the nav or pressing Esc closes any open dropdown', async ({ page }) => {
+        const navItem = page.locator('.category-nav-item[data-group="trees"]');
+        await navItem.locator('.category-nav-btn').click();
+        await expect(navItem).toHaveClass(/\bopen\b/);
+        await page.mouse.click(10, 600);
+        await expect(navItem).not.toHaveClass(/\bopen\b/);
+        await navItem.locator('.category-nav-btn').click();
+        await expect(navItem).toHaveClass(/\bopen\b/);
+        await page.keyboard.press('Escape');
+        await expect(navItem).not.toHaveClass(/\bopen\b/);
+    });
+
     test('Design Patterns sub-tabs: switch the method list by GoF category', async ({ page }) => {
         const nav = page.locator('[data-testid="category-nav"]');
-        await nav.getByRole('button', { name: 'Design Patterns', exact: true }).click();
+        // Navigate into Design Patterns so that the sub-tab row becomes visible.
+        await loadMethod(page, 'pattern-singleton');
 
         const subTabs = page.locator('.category-subtab-row.visible .category-subtab-btn');
         await expect(subTabs).toHaveCount(4);
 
-        const methodSelect = page.locator('[data-testid="method-select"]');
-        // Default sub-tab is Creational.
-        await expect(methodSelect.locator('option[value="pattern-singleton"]')).toHaveCount(1);
+        // The patterns dropdown groups all GoF + architectural methods under section headers,
+        // so representative methods from each sub-group must be present.
+        const patternsItem = nav.locator('.category-nav-item[data-group="patterns"]');
+        await patternsItem.locator('.category-nav-btn').click();
+        await expect(patternsItem.locator('.category-nav-method[data-method-id="pattern-singleton"]')).toHaveCount(1);
+        await expect(patternsItem.locator('.category-nav-method[data-method-id="pattern-adapter"]')).toHaveCount(1);
+        await expect(patternsItem.locator('.category-nav-method[data-method-id="pattern-observer"]')).toHaveCount(1);
+        // Close the dropdown before clicking sub-tabs.
+        await page.keyboard.press('Escape');
 
+        // Clicking a sub-tab activates that sub-group and loads its first method.
         await subTabs.getByText('Structural', { exact: true }).click();
-        await expect(methodSelect.locator('option[value="pattern-adapter"]')).toHaveCount(1);
-        await expect(methodSelect.locator('option[value="pattern-singleton"]')).toHaveCount(0);
+        await expect(page.locator('[data-method-section="pattern-adapter"]')).toHaveAttribute('data-runtime-state', 'active');
 
         await subTabs.getByText('Behavioral', { exact: true }).click();
-        await expect(methodSelect.locator('option[value="pattern-observer"]')).toHaveCount(1);
+        await expect(page.locator('[data-method-section="pattern-observer"]')).toHaveAttribute('data-runtime-state', 'active');
 
-        // Leaving Design Patterns hides the sub-tab row.
-        await nav.getByRole('button', { name: 'Sorting', exact: true }).click();
+        // Leaving Design Patterns (loading a non-patterns method) hides the sub-tab row.
+        await loadMethod(page, 'sort-bubble');
         await expect(page.locator('.category-subtab-row.visible')).toHaveCount(0);
     });
 

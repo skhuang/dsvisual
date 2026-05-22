@@ -3,23 +3,18 @@ const path = require('path');
 
 const FILE_URL = 'file://' + path.resolve(__dirname, '..', 'index.html');
 
+async function loadMethod(page, methodId) {
+    const navItem = page.locator(
+        `.category-nav-item:has(.category-nav-method[data-method-id="${methodId}"])`);
+    await navItem.locator('.category-nav-btn').click();
+    await navItem.locator(`.category-nav-method[data-method-id="${methodId}"]`).click();
+    const card = page.locator(`[data-method-section="${methodId}"]`);
+    await expect(card).toHaveAttribute('data-runtime-state', 'active');
+}
+
 async function openStackArraySlides(page) {
   await page.goto(FILE_URL);
-  const categoryButtons = page.locator('[data-testid="category-nav"] .category-nav-btn');
-  const methodSelect = page.locator('[data-testid="method-select"]');
-  const count = await categoryButtons.count();
-  let found = false;
-  for (let i = 0; i < count; i++) {
-    await categoryButtons.nth(i).click();
-    if (await methodSelect.locator('option[value="stack-array"]').count()) {
-      await methodSelect.selectOption('stack-array');
-      found = true;
-      break;
-    }
-  }
-  if (!found) throw new Error('Method stack-array not found in method dropdown');
-  const card = page.locator('[data-method-section="stack-array"]');
-  await expect(card).toHaveAttribute('data-runtime-state', 'active');
+  await loadMethod(page, 'stack-array');
   await page.locator('.method-slides-btn[data-method="stack-array"]').click();
   await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
 }

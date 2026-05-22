@@ -352,6 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const categoryButtons = new Map();
     const subTabButtons = new Map();
+    const methodDropdownButtons = new Map();
+    let dropdownGlobalListenersRegistered = false;
 
     function setActiveCategory(groupId) {
         const group = getMethodGroupById(groupId);
@@ -474,33 +476,10 @@ document.addEventListener('DOMContentLoaded', () => {
         titleRow.className = 'method-title-row';
         const title = document.createElement('h2');
         title.textContent = group.title;
-        const methodSelect = document.createElement('select');
-        methodSelect.className = 'category-method-select method-heading-select';
-        methodSelect.dataset.testid = 'method-select';
-        methodSelect.dataset.group = group.id;
-        methodSelect.id = `method-select-${group.id}`;
-        methodSelect.setAttribute('aria-label', `Select ${group.title} method`);
-        group.methods.forEach((candidate) => {
-            const option = document.createElement('option');
-            option.value = candidate.id;
-            option.textContent = candidate.title;
-            methodSelect.appendChild(option);
-        });
-        methodSelect.value = method.id;
-        methodSelect.addEventListener('change', (event) => {
-            const nextMethodId = event.target.value;
-            setActiveCategory(getMethodGroupForMode(nextMethodId).id);
-            selectMethod(nextMethodId);
-            scrollToCategory(getMethodGroupForMode(nextMethodId).id);
-        });
-        const methodLabel = document.createElement('label');
-        methodLabel.className = 'method-select-label';
-        methodLabel.htmlFor = methodSelect.id;
-        methodLabel.textContent = 'Method';
-        const methodPicker = document.createElement('div');
-        methodPicker.className = 'method-heading-picker';
-        methodPicker.appendChild(methodLabel);
-        methodPicker.appendChild(methodSelect);
+        const methodPicker = document.createElement('span');
+        methodPicker.className = 'method-heading-title';
+        methodPicker.dataset.testid = 'method-heading-title';
+        methodPicker.textContent = method.title;
         const countText = document.createElement('p');
         countText.textContent = `${group.methods.length} methods available`;
         titleRow.appendChild(title);
@@ -732,6 +711,7 @@ document.addEventListener('DOMContentLoaded', () => {
         categoryNav.innerHTML = '';
         categoryButtons.clear();
         subTabButtons.clear();
+        methodDropdownButtons.clear();
 
         function activateGroup(groupId, methodId) {
             const group = getMethodGroupById(groupId);
@@ -744,24 +724,72 @@ document.addEventListener('DOMContentLoaded', () => {
             scrollToCategory(group.id);
         }
 
+        function closeAllDropdowns() {
+            categoryNav.querySelectorAll('.category-nav-item.open')
+                .forEach((it) => it.classList.remove('open'));
+        }
+
+        function buildPillItem(parentId, parentTitle, subGroups) {
+            const item = document.createElement('div');
+            item.className = 'category-nav-item';
+            item.dataset.group = parentId;
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'category-nav-btn';
+            btn.dataset.group = parentId;
+            btn.textContent = parentTitle;
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const wasOpen = item.classList.contains('open');
+                closeAllDropdowns();
+                if (!wasOpen) item.classList.add('open');
+            });
+
+            const dropdown = document.createElement('div');
+            dropdown.className = 'category-nav-dropdown' +
+                (subGroups.length > 1 ? ' category-nav-dropdown-grouped' : '');
+
+            subGroups.forEach((sg) => {
+                if (subGroups.length > 1) {
+                    const header = document.createElement('div');
+                    header.className = 'category-nav-group-header';
+                    header.textContent = sg.title;
+                    dropdown.appendChild(header);
+                }
+                sg.methods.forEach((m) => {
+                    const mb = document.createElement('button');
+                    mb.type = 'button';
+                    mb.className = 'category-nav-method';
+                    mb.dataset.methodId = m.id;
+                    mb.textContent = m.title;
+                    mb.addEventListener('click', () => {
+                        activateGroup(sg.id, m.id);
+                        closeAllDropdowns();
+                    });
+                    methodDropdownButtons.set(m.id, mb);
+                    dropdown.appendChild(mb);
+                });
+            });
+
+            item.appendChild(btn);
+            item.appendChild(dropdown);
+            categoryButtons.set(parentId, btn);
+            return item;
+        }
+
         const subTabRow = document.createElement('div');
         subTabRow.className = 'category-subtab-row';
         subTabRow.dataset.testid = 'category-subtab-row';
-        const renderedParents = new Set();
 
+        const renderedParents = new Set();
         METHOD_GROUPS.forEach((group) => {
             if (group.parent) {
                 if (!renderedParents.has(group.parent)) {
                     renderedParents.add(group.parent);
-                    const firstChild = METHOD_GROUPS.find((g) => g.parent === group.parent);
-                    const parentBtn = document.createElement('button');
-                    parentBtn.type = 'button';
-                    parentBtn.className = 'category-nav-btn';
-                    parentBtn.dataset.group = group.parent;
-                    parentBtn.textContent = group.parentTitle;
-                    parentBtn.addEventListener('click', () => activateGroup(firstChild.id));
-                    categoryButtons.set(group.parent, parentBtn);
-                    categoryNav.appendChild(parentBtn);
+                    const subGroups = METHOD_GROUPS.filter((g) => g.parent === group.parent);
+                    const item = buildPillItem(group.parent, group.parentTitle, subGroups);
+                    categoryNav.appendChild(item);
                 }
                 const tabBtn = document.createElement('button');
                 tabBtn.type = 'button';
@@ -773,18 +801,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 subTabButtons.set(group.id, tabBtn);
                 subTabRow.appendChild(tabBtn);
             } else {
-                const groupBtn = document.createElement('button');
-                groupBtn.type = 'button';
-                groupBtn.className = 'category-nav-btn';
-                groupBtn.dataset.group = group.id;
-                groupBtn.textContent = group.title;
-                groupBtn.addEventListener('click', () => activateGroup(group.id));
-                categoryButtons.set(group.id, groupBtn);
-                categoryNav.appendChild(groupBtn);
+                const item = buildPillItem(group.id, group.title, [group]);
+                categoryNav.appendChild(item);
             }
         });
 
         categoryNav.appendChild(subTabRow);
+
+        if (!dropdownGlobalListenersRegistered) {
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.category-nav-item')) closeAllDropdowns();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeAllDropdowns();
+            });
+            dropdownGlobalListenersRegistered = true;
+        }
 
         const initialGroup = getMethodGroupForMode('stack-array');
         setActiveCategory(initialGroup.id);
@@ -1249,6 +1281,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if(currentMode.includes('sort-') && sortArrData.length === 0) generateSortArray();
         renderAll();
         statusMsg.textContent = "Switched to " + currentMode; statusMsg.style.color = '#34d399';
+        methodDropdownButtons.forEach((btn, mid) => {
+            btn.classList.toggle('is-current-method', mid === currentMode);
+        });
         if(currentMode === 'tree-splay') btnTreeSearch.classList.remove('hidden'); else btnTreeSearch.classList.add('hidden');
     }
 

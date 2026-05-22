@@ -1953,3 +1953,47 @@ pre.code-panel-body[class*="language-"] {
   border: 1px solid #cbd5e1; border-radius: 3px; font-family: monospace; font-weight: 700; background: #f8fafc; }
 .aho-char.aho-char-cur { background: #34d399; border-color: #059669; color: #fff; }
 .aho-stats { font-family: monospace; font-size: 13px; color: #475569; }
+
+/* Category nav hover/tap dropdown */
+.category-nav-item { position: relative; display: inline-block; }
+.category-nav-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 50;
+    min-width: 180px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 4px 0;
+    margin-top: 4px;
+}
+.category-nav-item:hover .category-nav-dropdown,
+.category-nav-item.open .category-nav-dropdown { display: block; }
+.category-nav-method {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 6px 12px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-size: 14px;
+    color: #1e293b;
+    white-space: nowrap;
+}
+.category-nav-method:hover { background: #eff6ff; color: #1d4ed8; }
+.category-nav-method.is-current-method { background: #dbeafe; font-weight: 600; }
+.category-nav-group-header {
+    padding: 8px 12px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.05em;
+}
+.method-heading-title { font-size: 16px; font-weight: 600; color: #1e293b; }
