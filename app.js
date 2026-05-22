@@ -752,9 +752,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
             subGroups.forEach((sg) => {
                 if (subGroups.length > 1) {
-                    const header = document.createElement('div');
+                    const header = document.createElement('button');
+                    header.type = 'button';
                     header.className = 'category-nav-group-header';
+                    header.dataset.subgroup = sg.id;
                     header.textContent = sg.title;
+                    header.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        activateGroup(sg.id);
+                        closeAllDropdowns();
+                    });
                     dropdown.appendChild(header);
                 }
                 sg.methods.forEach((m) => {

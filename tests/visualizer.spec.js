@@ -155,6 +155,19 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('.category-subtab-row.visible')).toHaveCount(0);
     });
 
+    test('Design Patterns dropdown: clicking a section header activates that sub-group', async ({ page }) => {
+        const nav = page.locator('[data-testid="category-nav"]');
+        const patternsItem = nav.locator('.category-nav-item[data-group="patterns"]');
+        await patternsItem.locator('.category-nav-btn').click();
+        await expect(patternsItem).toHaveClass(/\bopen\b/);
+
+        await patternsItem.locator('.category-nav-group-header[data-subgroup="patterns-structural"]').click();
+
+        await expect(patternsItem).not.toHaveClass(/\bopen\b/);
+        await expect(page.locator('[data-method-section="pattern-adapter"]')).toHaveAttribute('data-runtime-state', 'active');
+        await expect(page.locator('.category-subtab-row.visible .category-subtab-btn.active')).toHaveText('Structural');
+    });
+
     test('Trie Trees: Submits string prefix and generates character-marked edges', async ({ page }) => {
         await loadMethod(page, 'tree-trie');
         const trieCard = page.locator('[data-method-section="tree-trie"]');
