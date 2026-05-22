@@ -3504,6 +3504,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function buildWeightedGraphSvg(nodes, edges, directed) {
         function nodeById(id) { return nodes.find((nd) => nd.id === id); }
+        function hasEdge(u, v) { return edges.some((ed) => ed.u === u && ed.v === v); }
         let svg = '<svg class="wgraph-svg" viewBox="0 0 320 250" width="100%" ' +
                   'xmlns="http://www.w3.org/2000/svg">';
         if (directed) {
@@ -3515,13 +3516,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const dx = b.x - a.x, dy = b.y - a.y;
             const len = Math.sqrt(dx * dx + dy * dy) || 1;
             const ux = dx / len, uy = dy / len;
-            const x1 = (a.x + ux * 18).toFixed(1), y1 = (a.y + uy * 18).toFixed(1);
-            const x2 = (b.x - ux * 18).toFixed(1), y2 = (b.y - uy * 18).toFixed(1);
+            let ox = 0, oy = 0;
+            if (directed && hasEdge(e.v, e.u)) {
+                // anti-parallel pair: offset each edge to opposite sides of the shared path
+                const ln = nodeById(Math.min(e.u, e.v)), hn = nodeById(Math.max(e.u, e.v));
+                const cdx = hn.x - ln.x, cdy = hn.y - ln.y;
+                const clen = Math.sqrt(cdx * cdx + cdy * cdy) || 1;
+                const off = 7 * (e.u < e.v ? 1 : -1);
+                ox = (-cdy / clen) * off;
+                oy = (cdx / clen) * off;
+            }
+            const x1 = (a.x + ux * 18 + ox).toFixed(1), y1 = (a.y + uy * 18 + oy).toFixed(1);
+            const x2 = (b.x - ux * 18 + ox).toFixed(1), y2 = (b.y - uy * 18 + oy).toFixed(1);
             svg += '<line class="wgraph-edge" data-edge="' + e.u + '-' + e.v + '" x1="' + x1 +
                    '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 +
                    '" stroke="#94a3b8" stroke-width="2"' +
                    (directed ? ' marker-end="url(#wg-arrow)"' : '') + '/>';
-            const mx = ((a.x + b.x) / 2).toFixed(1), my = ((a.y + b.y) / 2 - 4).toFixed(1);
+            const mx = ((a.x + b.x) / 2 + ox).toFixed(1), my = ((a.y + b.y) / 2 + oy - 4).toFixed(1);
             svg += '<text class="wgraph-weight" x="' + mx + '" y="' + my +
                    '" text-anchor="middle" font-size="11" fill="#475569">' + e.w + '</text>';
         }

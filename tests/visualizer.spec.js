@@ -590,9 +590,11 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="graph-bellman-ford"]');
         await expect(card.locator('.code-panel-filename')).toContainText('graph_bellman_ford.cpp');
         await expect(card.locator('.wgraph-node')).toHaveCount(5);
+        await expect(card.locator('.wgraph-edge')).toHaveCount(10);
         await expect(card.locator('.bellman-dcell')).toHaveCount(5);
         await card.locator('[data-action="step"]').click();
         await expect(card.locator('[data-testid="bellman-msg"]')).toContainText('pass');
+        await expect(card.locator('.bellman-dcell[data-dist="1"]')).toContainText('6');
     });
 
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
