@@ -695,4 +695,15 @@ test.describe('Data Structure Visualizer Full Suite', () => {
             .toHaveText('線性結構');
     });
 
+    test('i18n: toggling language re-renders mode-specific button labels', async ({ page }) => {
+        // Default mode is stack-array; default lang is en.
+        await expect(page.locator('#btn-std-add')).toHaveText('Push()');
+        await page.evaluate(() => window.I18N.setLanguage('zh'));
+        // Push()/Pop() intentionally keep English in the zh table.
+        await expect(page.locator('#btn-std-add')).toHaveText('Push()');
+        // Switch to a mode whose label DOES differ in zh.
+        await loadMethod(page, 'graph');
+        await expect(page.locator('#btn-graph-add')).toHaveText('加入邊');
+    });
+
 });
