@@ -120,6 +120,8 @@ const METHOD_GROUPS = [
             { id: 'tree-btree', title: 'B-Tree', file: 'tree_btree.cpp', visualizer: 'advanced-tree', controls: 'tree' },
             { id: 'tree-bplus', title: 'B+ Tree', file: 'tree_bplus.cpp', visualizer: 'advanced-tree', controls: 'tree' },
             { id: 'tree-dsu', title: 'Disjoint Set (Union-Find)', file: 'tree_dsu.cpp', visualizer: 'dsu', controls: 'dsu' },
+            { id: 'tree-segment', title: 'Segment Tree', file: 'tree_segment.cpp', visualizer: 'segtree', controls: 'segtree' },
+            { id: 'tree-fenwick', title: 'Fenwick Tree (BIT)', file: 'tree_fenwick.cpp', visualizer: 'fenwick', controls: 'fenwick' },
         ],
     },
     {
@@ -134,6 +136,9 @@ const METHOD_GROUPS = [
             { id: 'graph-kruskal', title: 'Kruskal MST', file: 'graph_kruskal.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-dijkstra', title: 'Dijkstra (Shortest Path)', file: 'graph_dijkstra.cpp', visualizer: 'graph', controls: 'graph' },
             { id: 'graph-topo', title: 'Topological Sort', file: 'graph_topo.cpp', visualizer: 'graph', controls: 'graph' },
+            { id: 'graph-prim', title: "Prim's MST", file: 'graph_prim.cpp', visualizer: 'graph-step', controls: 'graph-step' },
+            { id: 'graph-bellman-ford', title: 'Bellman-Ford', file: 'graph_bellman_ford.cpp', visualizer: 'graph-step', controls: 'graph-step' },
+            { id: 'graph-floyd-warshall', title: 'Floyd-Warshall', file: 'graph_floyd_warshall.cpp', visualizer: 'matrix', controls: 'matrix' },
         ],
     },
     {
@@ -275,6 +280,8 @@ function getCodeForMethod(methodId) {
         'tree-btree': codeTreeBTree,
         'tree-bplus': codeTreeBPlus,
         'tree-dsu': codeTreeDSU,
+        'tree-segment': codeTreeSegment,
+        'tree-fenwick': codeTreeFenwick,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -283,6 +290,9 @@ function getCodeForMethod(methodId) {
         'graph-kruskal': codeGraphKruskal,
         'graph-dijkstra': codeGraphDijkstra,
         'graph-topo': codeGraphTopo,
+        'graph-prim': codeGraphPrim,
+        'graph-bellman-ford': codeGraphBellmanFord,
+        'graph-floyd-warshall': codeGraphFloydWarshall,
         'hash-chain': codeHashChain,
         'hash-open': codeHashOpen,
         'hash-bucket': codeHashBucket,
@@ -1747,6 +1757,18 @@ document.addEventListener('DOMContentLoaded', () => {
             graphSource.classList.add('hidden'); graphTarget.classList.add('hidden');
             btnGraphClear.classList.remove('hidden'); btnGraphAdd.textContent = 'Add Edge (Directed)';
         }
+        else if (currentMode === 'graph-prim') {
+            codeTitle.textContent = 'graph_prim.cpp';
+            codeDisplay.textContent = codeGraphPrim;
+        }
+        else if (currentMode === 'graph-bellman-ford') {
+            codeTitle.textContent = 'graph_bellman_ford.cpp';
+            codeDisplay.textContent = codeGraphBellmanFord;
+        }
+        else if (currentMode === 'graph-floyd-warshall') {
+            codeTitle.textContent = 'graph_floyd_warshall.cpp';
+            codeDisplay.textContent = codeGraphFloydWarshall;
+        }
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) { 
             treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden'); 
             if(currentMode === 'tree-bst') { codeTitle.textContent = 'tree_bst.cpp'; codeDisplay.textContent = codeTreeBST; }
@@ -1768,6 +1790,14 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-dsu') {
             codeTitle.textContent = 'tree_dsu.cpp';
             codeDisplay.textContent = codeTreeDSU;
+        }
+        else if (currentMode === 'tree-segment') {
+            codeTitle.textContent = 'tree_segment.cpp';
+            codeDisplay.textContent = codeTreeSegment;
+        }
+        else if (currentMode === 'tree-fenwick') {
+            codeTitle.textContent = 'tree_fenwick.cpp';
+            codeDisplay.textContent = codeTreeFenwick;
         }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
@@ -1976,7 +2006,12 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'count-min-sketch') renderCountMinSketch();
         else if (currentMode === 'graph-traversal') renderGraphDual();
         else if (currentMode === 'graph' || currentMode === 'graph-kruskal' || currentMode === 'graph-dijkstra' || currentMode === 'graph-topo' || currentMode === 'graph-adjlist' || currentMode === 'graph-bfs' || currentMode === 'graph-dfs') renderGraph();
+        else if (currentMode === 'graph-prim') renderPrim();
+        else if (currentMode === 'graph-bellman-ford') renderBellmanFord();
+        else if (currentMode === 'graph-floyd-warshall') renderFloydWarshall();
         else if (currentMode === 'tree-dsu') renderDSU();
+        else if (currentMode === 'tree-segment') renderSegmentTree();
+        else if (currentMode === 'tree-fenwick') renderFenwick();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -3471,6 +3506,484 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         function reset() { idx = 0; draw(); }
         wrap.appendChild(buildStepControls(step, reset, 500));
+        draw();
+    }
+
+    function buildWeightedGraphSvg(nodes, edges, directed) {
+        function nodeById(id) { return nodes.find((nd) => nd.id === id); }
+        function hasEdge(u, v) { return edges.some((ed) => ed.u === u && ed.v === v); }
+        let svg = '<svg class="wgraph-svg" viewBox="0 0 320 250" width="100%" ' +
+                  'xmlns="http://www.w3.org/2000/svg">';
+        if (directed) {
+            svg += '<defs><marker id="wg-arrow" markerWidth="9" markerHeight="9" refX="8" refY="3" ' +
+                   'orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker></defs>';
+        }
+        for (const e of edges) {
+            const a = nodeById(e.u), b = nodeById(e.v);
+            const dx = b.x - a.x, dy = b.y - a.y;
+            const len = Math.sqrt(dx * dx + dy * dy) || 1;
+            const ux = dx / len, uy = dy / len;
+            let ox = 0, oy = 0;
+            if (directed && hasEdge(e.v, e.u)) {
+                // anti-parallel pair: offset each edge to opposite sides of the shared path
+                const ln = nodeById(Math.min(e.u, e.v)), hn = nodeById(Math.max(e.u, e.v));
+                const cdx = hn.x - ln.x, cdy = hn.y - ln.y;
+                const clen = Math.sqrt(cdx * cdx + cdy * cdy) || 1;
+                const off = 7 * (e.u < e.v ? 1 : -1);
+                ox = (-cdy / clen) * off;
+                oy = (cdx / clen) * off;
+            }
+            const x1 = (a.x + ux * 18 + ox).toFixed(1), y1 = (a.y + uy * 18 + oy).toFixed(1);
+            const x2 = (b.x - ux * 18 + ox).toFixed(1), y2 = (b.y - uy * 18 + oy).toFixed(1);
+            svg += '<line class="wgraph-edge" data-edge="' + e.u + '-' + e.v + '" x1="' + x1 +
+                   '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 +
+                   '" stroke="#94a3b8" stroke-width="2"' +
+                   (directed ? ' marker-end="url(#wg-arrow)"' : '') + '/>';
+            const mx = ((a.x + b.x) / 2 + ox).toFixed(1), my = ((a.y + b.y) / 2 + oy - 4).toFixed(1);
+            svg += '<text class="wgraph-weight" x="' + mx + '" y="' + my +
+                   '" text-anchor="middle" font-size="11" fill="#475569">' + e.w + '</text>';
+        }
+        for (const nd of nodes) {
+            svg += '<circle class="wgraph-node" data-node="' + nd.id + '" cx="' + nd.x + '" cy="' +
+                   nd.y + '" r="16" fill="#fff" stroke="#1e40af" stroke-width="2"/>';
+            svg += '<text class="wgraph-nlabel" x="' + nd.x + '" y="' + (nd.y + 5) +
+                   '" text-anchor="middle" font-size="13" font-weight="700">' + nd.label + '</text>';
+        }
+        svg += '</svg>';
+        return svg;
+    }
+
+    function renderSegmentTree() {
+        const host = acquireDynamicVizHost();
+        const arr = [5, 8, 6, 3, 2, 7, 2, 6];
+        const n = arr.length;
+        const lo = new Array(16), hi = new Array(16);
+        (function setRanges(node, l, r) {
+            lo[node] = l; hi[node] = r;
+            if (l === r) return;
+            const mid = (l + r) >> 1;
+            setRanges(2 * node, l, mid);
+            setRanges(2 * node + 1, mid + 1, r);
+        })(1, 0, n - 1);
+
+        const tree = new Array(16).fill(0);
+        const lazy = new Array(16).fill(0);
+        (function build(node) {
+            if (lo[node] === hi[node]) { tree[node] = arr[lo[node]]; return; }
+            build(2 * node);
+            build(2 * node + 1);
+            tree[node] = tree[2 * node] + tree[2 * node + 1];
+        })(1);
+
+        const frames = [];
+        function snapshot(phase, active, msg) {
+            frames.push({ tree: tree.slice(), lazy: lazy.slice(), phase: phase, active: active, msg: msg });
+        }
+        function applyLazy(node, val) {
+            tree[node] += (hi[node] - lo[node] + 1) * val;
+            lazy[node] += val;
+        }
+        function pushDown(node, phase) {
+            if (lazy[node] === 0) return;
+            applyLazy(2 * node, lazy[node]);
+            applyLazy(2 * node + 1, lazy[node]);
+            lazy[node] = 0;
+            snapshot(phase, node, 'push lazy tag down from node ' + node);
+        }
+        function query(node, ql, qr, phase) {
+            if (qr < lo[node] || hi[node] < ql) {
+                snapshot(phase, node, 'node ' + node + ' [' + lo[node] + ',' + hi[node] + '] disjoint — skip');
+                return 0;
+            }
+            if (ql <= lo[node] && hi[node] <= qr) {
+                snapshot(phase, node, 'node ' + node + ' fully covered — take ' + tree[node]);
+                return tree[node];
+            }
+            pushDown(node, phase);
+            snapshot(phase, node, 'node ' + node + ' partial — recurse into children');
+            return query(2 * node, ql, qr, phase) + query(2 * node + 1, ql, qr, phase);
+        }
+        function update(node, ql, qr, val, phase) {
+            if (qr < lo[node] || hi[node] < ql) return;
+            if (ql <= lo[node] && hi[node] <= qr) {
+                applyLazy(node, val);
+                snapshot(phase, node, 'node ' + node + ' fully covered — apply lazy +' + val);
+                return;
+            }
+            pushDown(node, phase);
+            update(2 * node, ql, qr, val, phase);
+            update(2 * node + 1, ql, qr, val, phase);
+            tree[node] = tree[2 * node] + tree[2 * node + 1];
+            snapshot(phase, node, 'node ' + node + ' pull up — sum now ' + tree[node]);
+        }
+
+        snapshot('Ready', -1, 'segment tree built — press Step');
+        const r1 = query(1, 2, 5, 'Phase 1: range query sum[2,5]');
+        frames[frames.length - 1].msg += '   result = ' + r1;
+        update(1, 1, 4, 3, 'Phase 2: range update [1,4] += 3');
+        const r3 = query(1, 2, 5, 'Phase 3: range query sum[2,5]');
+        frames[frames.length - 1].msg += '   result = ' + r3;
+
+        const POS = {
+            1: [299, 34], 2: [151, 96], 3: [447, 96],
+            4: [77, 158], 5: [225, 158], 6: [373, 158], 7: [521, 158],
+            8: [40, 220], 9: [114, 220], 10: [188, 220], 11: [262, 220],
+            12: [336, 220], 13: [410, 220], 14: [484, 220], 15: [558, 220],
+        };
+        let idx = 0;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'segtree-wrap';
+        wrap.innerHTML =
+            '<div class="segtree-phase" data-testid="segtree-phase"></div>' +
+            '<div class="segtree-grid"></div>' +
+            '<div class="segtree-msg" data-testid="segtree-msg">&nbsp;</div>';
+        host.appendChild(wrap);
+        const gridEl = wrap.querySelector('.segtree-grid');
+        const phaseEl = wrap.querySelector('.segtree-phase');
+        const msgEl = wrap.querySelector('.segtree-msg');
+
+        function draw() {
+            const f = frames[idx];
+            let svg = '<svg class="segtree-svg" viewBox="0 0 600 252" width="100%" ' +
+                      'xmlns="http://www.w3.org/2000/svg">';
+            for (let node = 2; node <= 15; node++) {
+                const p = POS[node >> 1], c = POS[node];
+                svg += '<line x1="' + p[0] + '" y1="' + (p[1] + 15) + '" x2="' + c[0] +
+                       '" y2="' + (c[1] - 15) + '" stroke="#cbd5e1" stroke-width="1.5"/>';
+            }
+            for (let node = 1; node <= 15; node++) {
+                const c = POS[node];
+                const isActive = node === f.active;
+                svg += '<rect class="segtree-node" data-node="' + node + '" x="' + (c[0] - 28) +
+                       '" y="' + (c[1] - 15) + '" width="56" height="30" rx="4" fill="' +
+                       (isActive ? '#34d399' : '#fff') + '" stroke="#1e40af" stroke-width="1.5"/>';
+                svg += '<text x="' + c[0] + '" y="' + (c[1] - 19) + '" text-anchor="middle" ' +
+                       'font-size="9" fill="#64748b">[' + lo[node] + ',' + hi[node] + ']</text>';
+                svg += '<text x="' + c[0] + '" y="' + (c[1] + 5) + '" text-anchor="middle" ' +
+                       'font-size="13" font-weight="700" fill="' + (isActive ? '#fff' : '#1e293b') +
+                       '">' + f.tree[node] + '</text>';
+                if (f.lazy[node] !== 0) {
+                    svg += '<text x="' + (c[0] + 23) + '" y="' + (c[1] - 5) + '" text-anchor="middle" ' +
+                           'font-size="9" font-weight="700" fill="#f59e0b">+' + f.lazy[node] + '</text>';
+                }
+            }
+            svg += '</svg>';
+            gridEl.innerHTML = svg;
+            phaseEl.textContent = f.phase;
+            msgEl.textContent = f.msg;
+        }
+        function step() {
+            if (idx >= frames.length - 1) return false;
+            idx++;
+            draw();
+            return idx < frames.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 600));
+        draw();
+    }
+
+    function renderFenwick() {
+        const host = acquireDynamicVizHost();
+        const arr = [3, 2, 5, 1, 7, 4, 6, 2];
+        const n = arr.length;
+        const bit = new Array(n + 1).fill(0);
+        function lowbit(i) { return i & -i; }
+        for (let i = 0; i < n; i++) {
+            for (let j = i + 1; j <= n; j += lowbit(j)) bit[j] += arr[i];
+        }
+
+        const frames = [];
+        function snapshot(phase, active, acc, msg) {
+            frames.push({ bit: bit.slice(), phase: phase, active: active, acc: acc, msg: msg });
+        }
+        snapshot('Ready', 0, null, 'Fenwick tree built — press Step');
+
+        // Phase 1: prefixSum(7)
+        let s = 0;
+        for (let i = 7; i > 0; i -= lowbit(i)) {
+            s += bit[i];
+            snapshot('Phase 1: prefixSum(7)', i, s,
+                'add bit[' + i + '] = ' + bit[i] + '  (lowbit ' + lowbit(i) + ')  → sum ' + s);
+        }
+        frames[frames.length - 1].msg += '   result = ' + s;
+
+        // Phase 2: update(3, +5)
+        for (let i = 3; i <= n; i += lowbit(i)) {
+            bit[i] += 5;
+            snapshot('Phase 2: update(3, +5)', i, null,
+                'bit[' + i + '] += 5 → ' + bit[i] + '  (lowbit ' + lowbit(i) + ')');
+        }
+
+        // Phase 3: prefixSum(7)
+        s = 0;
+        for (let i = 7; i > 0; i -= lowbit(i)) {
+            s += bit[i];
+            snapshot('Phase 3: prefixSum(7)', i, s,
+                'add bit[' + i + '] = ' + bit[i] + '  (lowbit ' + lowbit(i) + ')  → sum ' + s);
+        }
+        frames[frames.length - 1].msg += '   result = ' + s;
+
+        let idx = 0;
+        const wrap = document.createElement('div');
+        wrap.className = 'fenwick-wrap';
+        wrap.innerHTML =
+            '<div class="fenwick-phase" data-testid="fenwick-phase"></div>' +
+            '<div class="fenwick-row"></div>' +
+            '<div class="fenwick-msg" data-testid="fenwick-msg">&nbsp;</div>';
+        host.appendChild(wrap);
+        const rowEl = wrap.querySelector('.fenwick-row');
+        const phaseEl = wrap.querySelector('.fenwick-phase');
+        const msgEl = wrap.querySelector('.fenwick-msg');
+
+        function draw() {
+            const f = frames[idx];
+            let html = '';
+            for (let i = 1; i <= n; i++) {
+                html += '<div class="fenwick-col">' +
+                        '<span class="fenwick-idx">' + i + '</span>' +
+                        '<span class="fenwick-cell' + (i === f.active ? ' fenwick-active' : '') +
+                        '" data-cell="' + i + '">' + f.bit[i] + '</span>' +
+                        '<span class="fenwick-span">(' + (i - lowbit(i)) + ',' + i + ']</span>' +
+                        '</div>';
+            }
+            rowEl.innerHTML = html;
+            phaseEl.textContent = f.phase + (f.acc !== null ? '   running sum: ' + f.acc : '');
+            msgEl.textContent = f.msg;
+        }
+        function step() {
+            if (idx >= frames.length - 1) return false;
+            idx++;
+            draw();
+            return idx < frames.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 600));
+        draw();
+    }
+
+    function renderPrim() {
+        const host = acquireDynamicVizHost();
+        const nodes = [
+            { id: 0, label: '0', x: 160, y: 35 },
+            { id: 1, label: '1', x: 270, y: 110 },
+            { id: 2, label: '2', x: 225, y: 215 },
+            { id: 3, label: '3', x: 95, y: 215 },
+            { id: 4, label: '4', x: 50, y: 110 },
+        ];
+        const edges = [
+            { u: 0, v: 1, w: 2 }, { u: 0, v: 3, w: 6 }, { u: 1, v: 2, w: 3 },
+            { u: 1, v: 3, w: 8 }, { u: 1, v: 4, w: 5 }, { u: 2, v: 4, w: 7 },
+            { u: 3, v: 4, w: 9 },
+        ];
+        const adj = {};
+        nodes.forEach((nd) => { adj[nd.id] = []; });
+        edges.forEach((e) => {
+            adj[e.u].push({ to: e.v, w: e.w });
+            adj[e.v].push({ to: e.u, w: e.w });
+        });
+        const inTree = {};
+        const steps = [{ node: 0, edge: null, total: 0 }];
+        inTree[0] = true;
+        let total = 0;
+        for (let c = 1; c < nodes.length; c++) {
+            let best = null;
+            for (const id in inTree) {
+                for (const nb of adj[id]) {
+                    if (!inTree[nb.to] && (!best || nb.w < best.w)) {
+                        best = { from: parseInt(id, 10), to: nb.to, w: nb.w };
+                    }
+                }
+            }
+            inTree[best.to] = true;
+            total += best.w;
+            steps.push({ node: best.to, edge: [best.from, best.to], total: total });
+        }
+        let idx = 0;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'prim-wrap';
+        wrap.innerHTML = buildWeightedGraphSvg(nodes, edges, false) +
+            '<div class="prim-stats" data-testid="prim-stats">MST weight: ' +
+            '<span class="prim-weight">0</span></div>';
+        host.appendChild(wrap);
+        const weightEl = wrap.querySelector('.prim-weight');
+
+        function draw() {
+            wrap.querySelectorAll('.wgraph-node').forEach((c) => c.classList.remove('wgraph-in'));
+            wrap.querySelectorAll('.wgraph-edge').forEach((l) =>
+                l.classList.remove('wgraph-in', 'wgraph-cur'));
+            for (let s = 0; s <= idx; s++) {
+                const st = steps[s];
+                const nodeEl = wrap.querySelector('.wgraph-node[data-node="' + st.node + '"]');
+                if (nodeEl) nodeEl.classList.add('wgraph-in');
+                if (st.edge) {
+                    const eEl = wrap.querySelector(
+                        '.wgraph-edge[data-edge="' + st.edge[0] + '-' + st.edge[1] + '"], ' +
+                        '.wgraph-edge[data-edge="' + st.edge[1] + '-' + st.edge[0] + '"]');
+                    if (eEl) eEl.classList.add(s === idx ? 'wgraph-cur' : 'wgraph-in');
+                }
+            }
+            weightEl.textContent = steps[idx].total;
+        }
+        function step() {
+            if (idx >= steps.length - 1) return false;
+            idx++;
+            draw();
+            return idx < steps.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 700));
+        draw();
+    }
+
+    function renderBellmanFord() {
+        const host = acquireDynamicVizHost();
+        const nodes = [
+            { id: 0, label: '0', x: 45, y: 70 },
+            { id: 1, label: '1', x: 160, y: 35 },
+            { id: 2, label: '2', x: 160, y: 160 },
+            { id: 3, label: '3', x: 275, y: 60 },
+            { id: 4, label: '4', x: 275, y: 185 },
+        ];
+        const edges = [
+            { u: 0, v: 1, w: 6 }, { u: 0, v: 2, w: 7 }, { u: 1, v: 2, w: 8 },
+            { u: 1, v: 3, w: 5 }, { u: 1, v: 4, w: -4 }, { u: 2, v: 3, w: -3 },
+            { u: 2, v: 4, w: 9 }, { u: 3, v: 1, w: -2 }, { u: 4, v: 0, w: 2 },
+            { u: 4, v: 3, w: 7 },
+        ];
+        const V = nodes.length;
+        const INF = Infinity;
+        const dist = new Array(V).fill(INF);
+        dist[0] = 0;
+        const frames = [{ dist: dist.slice(), edge: null, msg: 'init: dist[0] = 0, others ∞' }];
+        for (let pass = 1; pass <= V - 1; pass++) {
+            let changed = false;
+            for (const e of edges) {
+                if (dist[e.u] !== INF && dist[e.u] + e.w < dist[e.v]) {
+                    dist[e.v] = dist[e.u] + e.w;
+                    changed = true;
+                    frames.push({ dist: dist.slice(), edge: [e.u, e.v],
+                        msg: 'pass ' + pass + ': relax ' + e.u + '→' + e.v +
+                             '   dist[' + e.v + '] = ' + dist[e.v] });
+                } else {
+                    frames.push({ dist: dist.slice(), edge: [e.u, e.v],
+                        msg: 'pass ' + pass + ': edge ' + e.u + '→' + e.v + ' — no improvement' });
+                }
+            }
+            if (!changed) break;
+        }
+        let idx = 0;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'bellman-wrap';
+        wrap.innerHTML = buildWeightedGraphSvg(nodes, edges, true) +
+            '<div class="bellman-darr"></div>' +
+            '<div class="bellman-msg" data-testid="bellman-msg">&nbsp;</div>';
+        host.appendChild(wrap);
+        const darrEl = wrap.querySelector('.bellman-darr');
+        const msgEl = wrap.querySelector('.bellman-msg');
+
+        function draw() {
+            const f = frames[idx];
+            wrap.querySelectorAll('.wgraph-edge').forEach((l) => l.classList.remove('wgraph-cur'));
+            if (f.edge) {
+                const eEl = wrap.querySelector('.wgraph-edge[data-edge="' + f.edge[0] + '-' + f.edge[1] + '"]');
+                if (eEl) eEl.classList.add('wgraph-cur');
+            }
+            let html = '';
+            for (let v = 0; v < V; v++) {
+                const val = f.dist[v] === INF ? '∞' : f.dist[v];
+                html += '<div class="bellman-dcol">' +
+                        '<span class="bellman-didx">' + v + '</span>' +
+                        '<span class="bellman-dcell" data-dist="' + v + '">' + val + '</span>' +
+                        '</div>';
+            }
+            darrEl.innerHTML = html;
+            msgEl.textContent = f.msg;
+        }
+        function step() {
+            if (idx >= frames.length - 1) return false;
+            idx++;
+            draw();
+            return idx < frames.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 400));
+        draw();
+    }
+
+    function renderFloydWarshall() {
+        const host = acquireDynamicVizHost();
+        const V = 4;
+        const labels = ['A', 'B', 'C', 'D'];
+        const INF = Infinity;
+        const init = [
+            [0, 3, INF, 7],
+            [8, 0, 2, INF],
+            [5, INF, 0, 1],
+            [2, INF, INF, 0],
+        ];
+        const frames = [{ k: -1, dist: init.map((r) => r.slice()), changed: [],
+            msg: 'initial distance matrix (direct edges only)' }];
+        let dist = init.map((r) => r.slice());
+        for (let k = 0; k < V; k++) {
+            const changed = [];
+            const next = dist.map((r) => r.slice());
+            for (let i = 0; i < V; i++) {
+                for (let j = 0; j < V; j++) {
+                    if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                        next[i][j] = dist[i][k] + dist[k][j];
+                        changed.push(i + ',' + j);
+                    }
+                }
+            }
+            dist = next;
+            frames.push({ k: k, dist: dist.map((r) => r.slice()), changed: changed,
+                msg: 'k = ' + k + '  (' + labels[k] + ' as intermediate) — ' +
+                     changed.length + ' cell(s) improved' });
+        }
+        let idx = 0;
+
+        const wrap = document.createElement('div');
+        wrap.className = 'floyd-wrap';
+        wrap.innerHTML =
+            '<div class="floyd-grid"></div>' +
+            '<div class="floyd-msg" data-testid="floyd-msg">&nbsp;</div>';
+        host.appendChild(wrap);
+        const gridEl = wrap.querySelector('.floyd-grid');
+        const msgEl = wrap.querySelector('.floyd-msg');
+
+        function draw() {
+            const f = frames[idx];
+            let html = '<div class="floyd-hcell"></div>';
+            for (let j = 0; j < V; j++) {
+                html += '<div class="floyd-hcell' + (j === f.k ? ' floyd-pivot' : '') + '">' +
+                        labels[j] + '</div>';
+            }
+            for (let i = 0; i < V; i++) {
+                html += '<div class="floyd-hcell' + (i === f.k ? ' floyd-pivot' : '') + '">' +
+                        labels[i] + '</div>';
+                for (let j = 0; j < V; j++) {
+                    const val = f.dist[i][j] === INF ? '∞' : f.dist[i][j];
+                    const cls = 'floyd-cell' +
+                        (f.changed.indexOf(i + ',' + j) >= 0 ? ' floyd-changed' : '') +
+                        ((i === f.k || j === f.k) ? ' floyd-pivotline' : '');
+                    html += '<div class="' + cls + '" data-cell="' + i + '-' + j + '">' + val + '</div>';
+                }
+            }
+            gridEl.innerHTML = html;
+            msgEl.textContent = f.msg;
+        }
+        function step() {
+            if (idx >= frames.length - 1) return false;
+            idx++;
+            draw();
+            return idx < frames.length - 1;
+        }
+        function reset() { idx = 0; draw(); }
+        wrap.appendChild(buildStepControls(step, reset, 800));
         draw();
     }
 
