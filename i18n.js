@@ -2,7 +2,7 @@
     'use strict';
 
     const STORAGE_KEY = 'dsvisual-lang';
-    const SUPPORTED = ['zh', 'en'];
+    const SUPPORTED = Object.freeze(['zh', 'en']);
 
     let TRANSLATIONS = { zh: {}, en: {} };
     let currentLang = detectInitialLanguage();
