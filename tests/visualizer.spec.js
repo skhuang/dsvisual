@@ -13,6 +13,9 @@ async function loadMethod(page, methodId) {
 test.describe('Data Structure Visualizer Full Suite', () => {
     
     test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => {
+            try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {}
+        });
         // Correctly assemble cross-platform absolute URI mapping mapping directly to your HTML
         const fileUri = 'file://' + path.resolve(__dirname, '../index.html');
         await page.goto(fileUri);

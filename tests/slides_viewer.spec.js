@@ -12,6 +12,12 @@ async function loadMethod(page, methodId) {
     await expect(card).toHaveAttribute('data-runtime-state', 'active');
 }
 
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {}
+  });
+});
+
 async function openStackArraySlides(page) {
   await page.goto(FILE_URL);
   await loadMethod(page, 'stack-array');

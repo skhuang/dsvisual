@@ -18,6 +18,9 @@ test.describe('Responsive Viewport: iPhone 12', () => {
   test.use(iphone12);
 
   test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {}
+    });
     await page.goto(fileUri);
   });
 
@@ -56,6 +59,9 @@ test.describe('Responsive Viewport: iPad Mini', () => {
   test.use(ipadMini);
 
   test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {}
+    });
     await page.goto(fileUri);
   });
 

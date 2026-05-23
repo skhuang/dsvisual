@@ -22,6 +22,9 @@ async function loadMethod(page, methodId) {
 
 test.describe('Heap Visualizer Suite', () => {
     test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => {
+            try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {}
+        });
         const fileUri = 'file://' + path.resolve(__dirname, '../index.html');
         await page.goto(fileUri);
     });
