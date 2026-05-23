@@ -2134,6 +2134,12 @@ pre.code-panel-body[class*="language-"] {
 .lang-menu-option.is-current-lang { background: #dbeafe; font-weight: 600; }
 
 /* ----- Overview page ----- */
+/* Utility: hide an element regardless of its CSS display rule. The HTML
+   `hidden` attribute loses to class-based display: flex/block selectors,
+   so we need an explicit !important class for sections that opt out
+   of layout entirely. */
+.is-collapsed { display: none !important; }
+
 .overview-section {
     padding: 24px 20px 60px;
     max-width: 1200px;

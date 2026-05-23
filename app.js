@@ -370,7 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const overviewPillButtons = new Map();
     let dropdownGlobalListenersRegistered = false;
 
-    const runtimeStageEl = document.querySelector('.runtime-stage');
     const overviewSection = document.getElementById('overview-section');
     const overviewGrid = document.querySelector('[data-testid="overview-grid"]');
 
@@ -426,8 +425,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showOverview() {
         if (!overviewSection) return;
-        if (runtimeStageEl) runtimeStageEl.hidden = true;
-        if (methodSections) methodSections.hidden = true;
+        if (methodSections) methodSections.classList.add('is-collapsed');
         overviewSection.hidden = false;
         overviewPillButtons.forEach((b) => {
             b.classList.add('active');
@@ -444,13 +442,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const subTabRow = categoryNav && categoryNav.querySelector('.category-subtab-row');
         if (subTabRow) subTabRow.classList.remove('visible');
         renderOverview();
+        // Scroll so the user lands at the top of the overview, not mid-page.
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function hideOverview() {
         if (!overviewSection || overviewSection.hidden) return;
         overviewSection.hidden = true;
-        if (runtimeStageEl) runtimeStageEl.hidden = false;
-        if (methodSections) methodSections.hidden = false;
+        if (methodSections) methodSections.classList.remove('is-collapsed');
         overviewPillButtons.forEach((b) => {
             b.classList.remove('active');
             b.setAttribute('aria-current', 'false');

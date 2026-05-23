@@ -80,10 +80,12 @@ test.describe('i18n', () => {
         // Leftmost pill is Overview, labeled "Overview" in en.
         const firstPill = page.locator('.app-category-nav .category-nav-btn').first();
         await expect(firstPill).toHaveText('Overview');
-        // Click → overview-section visible, runtime-stage hidden.
+        // Click → overview-section visible, method-sections actually hidden
+        // (not just hidden=true on the element — must be display:none too,
+        // since .method-sections has display:flex that would otherwise win).
         await firstPill.click();
         await expect(page.locator('[data-testid="overview-section"]')).toBeVisible();
-        await expect(page.locator('.runtime-stage')).toBeHidden();
+        await expect(page.locator('[data-testid="method-sections"]')).toBeHidden();
         // Grid has 9 categories and 78 tiles (one per method).
         await expect(page.locator('[data-testid="overview-grid"] .overview-category')).toHaveCount(9);
         await expect(page.locator('[data-testid="overview-grid"] .overview-tile')).toHaveCount(78);
