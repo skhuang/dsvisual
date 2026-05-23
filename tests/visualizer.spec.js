@@ -113,6 +113,27 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(navItem).not.toHaveClass(/\bopen\b/);
     });
 
+    test('Nav: hovering pill then walking the mouse across the 4px gap keeps the dropdown open', async ({ page }) => {
+        const navItem = page.locator('.category-nav-item[data-group="trees"]');
+        const dropdown = navItem.locator('.category-nav-dropdown');
+        const btn = navItem.locator('.category-nav-btn');
+        await btn.hover();
+        const btnBox = await btn.boundingBox();
+        const method = navItem.locator('.category-nav-method[data-method-id="tree-avl"]');
+        const mBox = await method.boundingBox();
+        const x0 = btnBox.x + btnBox.width / 2;
+        const y0 = btnBox.y + btnBox.height / 2;
+        const x1 = mBox.x + mBox.width / 2;
+        const y1 = mBox.y + mBox.height / 2;
+        // Walk the cursor in 30 small steps so it actually traverses the 4px gap
+        // between pill bottom and dropdown top. A single hover() would teleport past it.
+        for (let i = 1; i <= 30; i++) {
+            const t = i / 30;
+            await page.mouse.move(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
+        }
+        await expect(dropdown).toBeVisible();
+    });
+
     test('Nav: clicking outside the nav or pressing Esc closes any open dropdown', async ({ page }) => {
         const navItem = page.locator('.category-nav-item[data-group="trees"]');
         await navItem.locator('.category-nav-btn').click();

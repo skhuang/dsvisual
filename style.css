@@ -1953,6 +1953,15 @@ pre.code-panel-body[class*="language-"] {
 
 /* Category nav hover/tap dropdown */
 .category-nav-item { position: relative; display: inline-block; }
+.category-nav-item::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    pointer-events: auto;
+}
 .category-nav-dropdown {
     display: none;
     position: absolute;
@@ -1968,14 +1977,6 @@ pre.code-panel-body[class*="language-"] {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 4px 0;
     margin-top: 4px;
-}
-.category-nav-dropdown::before {
-    content: '';
-    position: absolute;
-    top: -4px;
-    left: 0;
-    right: 0;
-    height: 4px;
 }
 .category-nav-item:hover .category-nav-dropdown,
 .category-nav-item.open .category-nav-dropdown { display: block; }
