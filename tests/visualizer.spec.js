@@ -596,6 +596,58 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('[data-testid="aho-phase"]')).toContainText('1/9');
     });
 
+    test('Trees: Segment Tree renders 15 nodes and steps through query/update', async ({ page }) => {
+        await loadMethod(page, 'tree-segment');
+        const card = page.locator('[data-method-section="tree-segment"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('tree_segment.cpp');
+        await expect(card.locator('.segtree-node')).toHaveCount(15);
+        await expect(card.locator('[data-testid="segtree-phase"]')).toContainText('Ready');
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="segtree-phase"]')).toContainText('Phase 1');
+    });
+
+    test('Trees: Fenwick Tree renders 8 indexed cells and steps', async ({ page }) => {
+        await loadMethod(page, 'tree-fenwick');
+        const card = page.locator('[data-method-section="tree-fenwick"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('tree_fenwick.cpp');
+        await expect(card.locator('.fenwick-cell')).toHaveCount(8);
+        await expect(card.locator('[data-testid="fenwick-phase"]')).toContainText('Ready');
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="fenwick-phase"]')).toContainText('Phase 1');
+    });
+
+    test('Graphs: Prim MST renders a weighted graph and steps', async ({ page }) => {
+        await loadMethod(page, 'graph-prim');
+        const card = page.locator('[data-method-section="graph-prim"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_prim.cpp');
+        await expect(card.locator('.wgraph-node')).toHaveCount(5);
+        await expect(card.locator('.wgraph-edge')).toHaveCount(7);
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="prim-stats"]')).toContainText('2');
+    });
+
+    test('Graphs: Bellman-Ford renders a directed graph + distance array and steps', async ({ page }) => {
+        await loadMethod(page, 'graph-bellman-ford');
+        const card = page.locator('[data-method-section="graph-bellman-ford"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_bellman_ford.cpp');
+        await expect(card.locator('.wgraph-node')).toHaveCount(5);
+        await expect(card.locator('.wgraph-edge')).toHaveCount(10);
+        await expect(card.locator('.bellman-dcell')).toHaveCount(5);
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="bellman-msg"]')).toContainText('pass');
+        await expect(card.locator('.bellman-dcell[data-dist="1"]')).toContainText('6');
+    });
+
+    test('Graphs: Floyd-Warshall renders a distance matrix and steps per k', async ({ page }) => {
+        await loadMethod(page, 'graph-floyd-warshall');
+        const card = page.locator('[data-method-section="graph-floyd-warshall"]');
+        await expect(card.locator('.code-panel-filename')).toContainText('graph_floyd_warshall.cpp');
+        await expect(card.locator('.floyd-cell')).toHaveCount(16);
+        await expect(card.locator('[data-testid="floyd-msg"]')).toContainText('initial');
+        await card.locator('[data-action="step"]').click();
+        await expect(card.locator('[data-testid="floyd-msg"]')).toContainText('k = 0');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
@@ -618,6 +670,12 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await loadMethod(page, 'search-aho');
         await loadMethod(page, 'search-linear');
         await expect(page.locator('#search-container')).toHaveCount(1);
+        await loadMethod(page, 'tree-segment');
+        await loadMethod(page, 'tree-bst');
+        await expect(page.locator('#tree-nodes-container')).toHaveCount(1);
+        await loadMethod(page, 'graph-prim');
+        await loadMethod(page, 'graph');
+        await expect(page.locator('#graph-edges')).toHaveCount(1);
         expect(errors).toEqual([]);
     });
 
