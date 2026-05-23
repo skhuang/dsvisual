@@ -165,7 +165,11 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(patternsItem.locator('.category-nav-method[data-method-id="pattern-singleton"]')).toHaveCount(1);
         await expect(patternsItem.locator('.category-nav-method[data-method-id="pattern-adapter"]')).toHaveCount(1);
         await expect(patternsItem.locator('.category-nav-method[data-method-id="pattern-observer"]')).toHaveCount(1);
-        // Close the dropdown before clicking sub-tabs.
+        // Close the dropdown before clicking sub-tabs. Escape removes the .open
+        // class, but CSS :hover on the pill keeps the dropdown visible while
+        // Playwright's cursor is still over it — move the cursor off-nav first
+        // so the dropdown actually disappears and stops covering the sub-tabs.
+        await page.mouse.move(10, 600);
         await page.keyboard.press('Escape');
 
         // Clicking a sub-tab activates that sub-group and loads its first method.
