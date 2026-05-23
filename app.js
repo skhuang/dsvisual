@@ -662,6 +662,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     updateLangToggleLabel();
 
+    const langMenu = document.querySelector('.lang-menu');
+    const langMenuCurrent = document.querySelector('.lang-menu-current');
+    const langMenuOptions = document.querySelectorAll('.lang-menu-option');
+
+    function langDisplayName(lang) {
+        return lang === 'zh' ? '中文' : 'English';
+    }
+
+    function updateLangMenuLabel() {
+        const cur = window.I18N ? window.I18N.getCurrentLanguage() : 'en';
+        if (langMenuCurrent) langMenuCurrent.textContent = langDisplayName(cur);
+        langMenuOptions.forEach((opt) => {
+            opt.classList.toggle('is-current-lang', opt.dataset.lang === cur);
+        });
+    }
+    updateLangMenuLabel();
+
+    langMenuOptions.forEach((opt) => {
+        opt.addEventListener('click', () => {
+            const next = opt.dataset.lang;
+            if (window.I18N) window.I18N.setLanguage(next);
+            if (langMenu) langMenu.classList.remove('open');
+        });
+    });
+
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-code-copy]');
       if (!btn) return;
@@ -869,6 +894,7 @@ document.addEventListener('DOMContentLoaded', () => {
             switchMode(currentMode);
         }
         updateLangToggleLabel();
+        updateLangMenuLabel();
         if (slideViewer && !slideViewer.hidden && slideMethodId) {
             slideDeck = buildSlides(slideMethodId);
             if (slideIndex >= slideDeck.length) slideIndex = slideDeck.length - 1;

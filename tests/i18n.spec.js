@@ -71,4 +71,27 @@ test.describe('i18n', () => {
             .toHaveText('Linear Structures');
         await context.close();
     });
+
+    test('persistent lang-menu in header switches language on click', async ({ page }) => {
+        await page.addInitScript(() => {
+            try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {}
+        });
+        await page.goto(FILE_URI);
+        const menu = page.locator('[data-testid="lang-menu"]');
+        await expect(menu).toBeVisible();
+        // Trigger shows the CURRENT language ("English" / "中文"), unlike the
+        // slide-viewer toggle which shows the TARGET.
+        await expect(menu.locator('.lang-menu-current')).toHaveText('English');
+        // Hover the menu to reveal the dropdown (CSS :hover-driven), then click the zh option.
+        await menu.hover();
+        await menu.locator('.lang-menu-option[data-lang="zh"]').click();
+        await expect(page.locator('html')).toHaveAttribute('lang', 'zh-Hant');
+        await expect(menu.locator('.lang-menu-current')).toHaveText('中文');
+        // Re-hover to reveal the dropdown again so we can read .is-current-lang.
+        await menu.hover();
+        await expect(menu.locator('.lang-menu-option[data-lang="zh"]'))
+            .toHaveClass(/\bis-current-lang\b/);
+        await expect(menu.locator('.lang-menu-option[data-lang="en"]'))
+            .not.toHaveClass(/\bis-current-lang\b/);
+    });
 });

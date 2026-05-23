@@ -17,9 +17,23 @@
                 <h1 data-i18n-key="app.title">C++ Algorithms Visualizer</h1>
                 <p data-i18n-key="app.subtitle">Data Structures (Stack, Queue, Graph, Tree, List) & Validated Algorithm Sandbox.</p>
             </div>
-            <button id="settings-toggle" type="button" class="settings-toggle"
-                    data-i18n-aria-label="aria.settings-toggle"
-                    aria-label="Open settings">⚙</button>
+            <div class="app-header__actions">
+                <div class="lang-menu" data-testid="lang-menu">
+                    <button type="button" class="lang-menu-btn"
+                            data-i18n-aria-label="aria.lang-toggle"
+                            aria-label="Switch language">
+                        <span class="lang-menu-current">English</span>
+                        <span class="lang-menu-caret" aria-hidden="true">▾</span>
+                    </button>
+                    <div class="lang-menu-dropdown" role="menu">
+                        <button type="button" class="lang-menu-option" role="menuitem" data-lang="en">English</button>
+                        <button type="button" class="lang-menu-option" role="menuitem" data-lang="zh">中文</button>
+                    </div>
+                </div>
+                <button id="settings-toggle" type="button" class="settings-toggle"
+                        data-i18n-aria-label="aria.settings-toggle"
+                        aria-label="Open settings">⚙</button>
+            </div>
         </header>
 
         <nav id="category-nav" class="app-category-nav"
