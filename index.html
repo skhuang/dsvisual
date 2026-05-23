@@ -15,7 +15,7 @@
         <header class="app-header">
             <div class="app-header__text">
                 <h1 data-i18n-key="app.title">C++ Algorithms Visualizer</h1>
-                <p>Data Structures (Stack, Queue, Graph, Tree, List) & Validated Algorithm Sandbox.</p>
+                <p data-i18n-key="app.subtitle">Data Structures (Stack, Queue, Graph, Tree, List) & Validated Algorithm Sandbox.</p>
             </div>
             <button id="settings-toggle" type="button" class="settings-toggle"
                     data-i18n-aria-label="aria.settings-toggle"
@@ -85,7 +85,7 @@
                         <button id="btn-sort-pause" class="btn secondary" disabled data-i18n-key="btn.pause">Pause</button>
                         <button id="btn-sort-stop" class="btn exception" disabled data-i18n-key="btn.stop">Stop</button>
                         <div style="display: flex; align-items: center; gap: 10px; margin-left: 10px;">
-                            <span style="font-size: 0.8rem; color: #cbd5e1;">Delay</span>
+                            <span style="font-size: 0.8rem; color: #cbd5e1;" data-i18n-key="settings.delay">Delay</span>
                             <input type="range" id="sort-speed" min="10" max="600" value="100" style="width: 100px;">
                         </div>
                     </div>
@@ -100,9 +100,9 @@
                         <button id="btn-heap-insert" class="btn primary" data-i18n-key="btn.insert-call">Insert()</button>
                         <button id="btn-heap-peek" class="btn secondary" data-i18n-key="btn.peek">Peek()</button>
                         <button id="btn-heap-extract" class="btn secondary" data-i18n-key="btn.extract">Extract()</button>
-                        <button id="btn-heap-merge" class="btn secondary">Merge(+extra)</button>
-                        <button id="btn-heap-change" class="btn secondary">Decrease/Increase</button>
-                        <button id="btn-heap-delete" class="btn exception">Delete(value)</button>
+                        <button id="btn-heap-merge" class="btn secondary" data-i18n-key="btn.heap-merge">Merge(+extra)</button>
+                        <button id="btn-heap-change" class="btn secondary" data-i18n-key="btn.heap-change">Decrease/Increase</button>
+                        <button id="btn-heap-delete" class="btn exception" data-i18n-key="btn.heap-delete">Delete(value)</button>
                         <button id="btn-heap-find-min" class="btn secondary" style="font-size: 0.8rem;">Find-Min</button>
                         <button id="btn-heap-stats" class="btn secondary" style="font-size: 0.8rem;">Heap Stats</button>
                         <button id="btn-heap-tutorial" class="btn primary" style="font-size: 0.8rem;">Start Tutorial</button>

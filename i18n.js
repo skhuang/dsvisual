@@ -119,11 +119,13 @@
 
             // Chrome
             'app.title':                    'C++ Algorithms Visualizer',
+            'app.subtitle':                 'Data Structures (Stack, Queue, …)',
             'app.methods-available':        '{count} methods available',
             'aria.settings-toggle':         'Open settings',
             'aria.category-nav':            'Data structure categories',
             'aria.lang-toggle':             'Switch language',
             'aria.viz-host':                'Active interactive visualization',
+            'settings.delay':               'Delay',
             'settings.title':               'Settings',
             'settings.density':             'Code panel line-height',
             'settings.preview':             'Preview',
@@ -163,6 +165,9 @@
             'btn.start':                    'Start()',
             'btn.peek':                     'Peek()',
             'btn.extract':                  'Extract()',
+            'btn.heap-merge':               'Merge(+extra)',
+            'btn.heap-change':              'Decrease/Increase',
+            'btn.heap-delete':              'Delete(value)',
             'btn.copy':                     'Copy',
             'btn.copied':                   '✓ Copied',
 
@@ -294,11 +299,13 @@
 
             // Chrome
             'app.title':                    'C++ 演算法視覺化',
+            'app.subtitle':                 '資料結構（Stack、Queue、…）',
             'app.methods-available':        '共 {count} 種方法可選',
             'aria.settings-toggle':         '開啟設定',
             'aria.category-nav':            '資料結構分類',
             'aria.lang-toggle':             '切換語言',
             'aria.viz-host':                '互動式視覺化區域',
+            'settings.delay':               '延遲',
             'settings.title':               '設定',
             'settings.density':             '程式碼面板行距',
             'settings.preview':             '預覽',
@@ -338,6 +345,9 @@
             'btn.start':                    'Start()',
             'btn.peek':                     'Peek()',
             'btn.extract':                  'Extract()',
+            'btn.heap-merge':               'Merge(+extra)',
+            'btn.heap-change':              '減值/增值',
+            'btn.heap-delete':              'Delete(value)',
             'btn.copy':                     '複製',
             'btn.copied':                   '✓ 已複製',
 
