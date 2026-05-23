@@ -72,9 +72,6 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
     position: sticky;
     top: 0;
     z-index: 100;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scrollbar-width: thin;
 }
 .category-nav-btn {
     flex: 0 0 auto;
@@ -840,7 +837,7 @@ pre { margin: 0; font-family: 'Fira Code', monospace; font-size: 0.9rem; line-he
 @media (max-width: 639px) {
     .app-category-nav {
         align-items: center;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         padding: 8px 12px;
         gap: 6px;
     }
@@ -1953,6 +1950,67 @@ pre.code-panel-body[class*="language-"] {
   border: 1px solid #cbd5e1; border-radius: 3px; font-family: monospace; font-weight: 700; background: #f8fafc; }
 .aho-char.aho-char-cur { background: #34d399; border-color: #059669; color: #fff; }
 .aho-stats { font-family: monospace; font-size: 13px; color: #475569; }
+
+/* Category nav hover/tap dropdown */
+.category-nav-item { position: relative; display: inline-block; }
+.category-nav-item::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 4px;
+    pointer-events: auto;
+}
+.category-nav-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 50;
+    min-width: 180px;
+    max-height: 70vh;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 4px 0;
+    margin-top: 4px;
+}
+.category-nav-item:hover .category-nav-dropdown,
+.category-nav-item.open .category-nav-dropdown { display: block; }
+.category-nav-method {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 6px 12px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-size: 14px;
+    color: #1e293b;
+    white-space: nowrap;
+}
+.category-nav-method:hover { background: #eff6ff; color: #1d4ed8; }
+.category-nav-method.is-current-method { background: #dbeafe; font-weight: 600; }
+.category-nav-group-header {
+    display: block;
+    width: 100%;
+    padding: 8px 12px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.05em;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+}
+.category-nav-group-header:hover { background: #eff6ff; color: #1d4ed8; }
+.method-heading-title { font-size: 16px; font-weight: 600; color: #1e293b; }
 
 /* Spec 4 — Segment Tree */
 .segtree-wrap { display: flex; flex-direction: column; gap: 8px; align-items: center; }

@@ -149,9 +149,11 @@ test.describe('UX polish — visualizer zoom', () => {
         for (let i = 0; i < 5; i++) await inBtn.click();
         await expect(reset).toHaveText('150%');
 
-        // Switch to a different method via the method-select dropdown
-        const methodSelect = page.locator('[data-testid="method-select"]').first();
-        await methodSelect.selectOption('queue');
+        // Switch to a different method via the category-nav dropdown
+        const queueNavItem = page.locator(
+            '.category-nav-item:has(.category-nav-method[data-method-id="queue"])');
+        await queueNavItem.locator('.category-nav-btn').click();
+        await queueNavItem.locator('.category-nav-method[data-method-id="queue"]').click();
         await page.waitForSelector('[data-method-section="queue"][data-runtime-state="active"]');
         const newReset = page.locator('[data-method-section="queue"] .viz-zoom-controls button[data-zoom="reset"]');
         await expect(newReset).toHaveText('100%');
