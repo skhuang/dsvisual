@@ -35,7 +35,7 @@ test('slide deck has multiple pages and navigates', async ({ page }) => {
 test('language toggle switches slide content', async ({ page }) => {
   await openStackArraySlides(page);
   await expect(page.locator('#slide-viewer-title')).toHaveText('堆疊(陣列實作)');
-  await page.locator('[data-testid="slide-lang-toggle"]').click();
+  await page.locator('[data-testid="lang-toggle"]').click();
   await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array Implementation)');
 });
 

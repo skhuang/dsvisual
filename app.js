@@ -348,6 +348,10 @@ function getCodeForMethod(methodId) {
 
 // MAIN DOM INTERACTION
 document.addEventListener('DOMContentLoaded', () => {
+    if (window.I18N) {
+        window.I18N.applyTranslations(document);
+    }
+
     const categoryNav = document.getElementById('category-nav');
     const methodSections = document.getElementById('method-sections');
     const slideViewer = document.getElementById('slide-viewer');

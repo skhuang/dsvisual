@@ -651,6 +651,11 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('[data-testid="floyd-msg"]')).toContainText('k = 0');
     });
 
+    test('i18n: settings drawer title is translated by data-i18n-key walker', async ({ page }) => {
+        // Default pin is 'en' from beforeEach.
+        await expect(page.locator('#settings-drawer-title')).toHaveText('Settings');
+    });
+
     test('Navigation: switching from Spec-2a dynamic visualizers back to static ones does not crash', async ({ page }) => {
         const errors = [];
         page.on('pageerror', (e) => errors.push(e.message));
