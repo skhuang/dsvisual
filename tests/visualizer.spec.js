@@ -687,4 +687,12 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         expect(errors).toEqual([]);
     });
 
+    test('i18n: toggling language re-renders nav pill text', async ({ page }) => {
+        await expect(page.locator('.category-nav-item[data-group="linear"] .category-nav-btn'))
+            .toHaveText('Linear Structures');
+        await page.evaluate(() => window.I18N.setLanguage('zh'));
+        await expect(page.locator('.category-nav-item[data-group="linear"] .category-nav-btn'))
+            .toHaveText('線性結構');
+    });
+
 });

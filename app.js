@@ -489,13 +489,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const titleRow = document.createElement('div');
         titleRow.className = 'method-title-row';
         const title = document.createElement('h2');
-        title.textContent = group.title;
+        const groupLabel = t('group.' + group.id);
+        const methodLabel = t('method.' + method.id);
+        title.textContent = groupLabel;
         const methodPicker = document.createElement('span');
         methodPicker.className = 'method-heading-title';
         methodPicker.dataset.testid = 'method-heading-title';
-        methodPicker.textContent = method.title;
+        methodPicker.textContent = methodLabel;
         const countText = document.createElement('p');
-        countText.textContent = `${group.methods.length} methods available`;
+        countText.textContent = t('app.methods-available', { count: group.methods.length });
         titleRow.appendChild(title);
         titleRow.appendChild(methodPicker);
         titleGroup.appendChild(titleRow);
@@ -511,8 +513,8 @@ document.addEventListener('DOMContentLoaded', () => {
         section.innerHTML = `
             <div class="method-section-header">
                 <div>
-                    <span class="method-section-kicker">${group.title}</span>
-                    <h3>${method.title}</h3>
+                    <span class="method-section-kicker">${groupLabel}</span>
+                    <h3>${methodLabel}</h3>
                 </div>
                 <div class="method-section-actions">
                     <div class="viz-zoom-controls" role="toolbar" aria-label="Zoom controls">
@@ -524,9 +526,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             <div class="method-section-grid">
-                <div class="method-section-visual" aria-label="${method.title} visualization shell">
+                <div class="method-section-visual" aria-label="${methodLabel} visualization shell">
                     <span>${method.visualizer}</span>
-                    <strong>${method.title}</strong>
+                    <strong>${methodLabel}</strong>
                 </div>
                 <div class="code-panel" data-language="cpp">
                     <div class="code-panel-header">
@@ -572,8 +574,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function buildSlides(methodId) {
         const entry = window.SLIDES_RENDERED && window.SLIDES_RENDERED[methodId];
         if (!entry || !entry.slides[slideLang] || entry.slides[slideLang].length === 0) {
-            return [{ title: getMethodById(methodId)?.title || 'Slides',
-                      body: '<p>No slides available.</p>' }];
+            return [{ title: t('method.' + methodId) || methodId,
+                      body: '<p>' + t('slide.no-slides') + '</p>' }];
         }
         return entry.slides[slideLang];
     }
@@ -770,7 +772,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     header.type = 'button';
                     header.className = 'category-nav-group-header';
                     header.dataset.subgroup = sg.id;
-                    header.textContent = sg.title;
+                    header.textContent = t('group.' + sg.id);
                     header.addEventListener('click', (e) => {
                         e.stopPropagation();
                         activateGroup(sg.id);
@@ -783,7 +785,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     mb.type = 'button';
                     mb.className = 'category-nav-method';
                     mb.dataset.methodId = m.id;
-                    mb.textContent = m.title;
+                    mb.textContent = t('method.' + m.id);
                     mb.addEventListener('click', () => {
                         activateGroup(sg.id, m.id);
                         closeAllDropdowns();
@@ -809,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!renderedParents.has(group.parent)) {
                     renderedParents.add(group.parent);
                     const subGroups = METHOD_GROUPS.filter((g) => g.parent === group.parent);
-                    const item = buildPillItem(group.parent, group.parentTitle, subGroups);
+                    const item = buildPillItem(group.parent, t('group.' + group.parent), subGroups);
                     categoryNav.appendChild(item);
                 }
                 const tabBtn = document.createElement('button');
@@ -817,12 +819,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 tabBtn.className = 'category-subtab-btn';
                 tabBtn.dataset.subgroup = group.id;
                 tabBtn.dataset.parent = group.parent;
-                tabBtn.textContent = group.title;
+                tabBtn.textContent = t('group.' + group.id);
                 tabBtn.addEventListener('click', () => activateGroup(group.id));
                 subTabButtons.set(group.id, tabBtn);
                 subTabRow.appendChild(tabBtn);
             } else {
-                const item = buildPillItem(group.id, group.title, [group]);
+                const item = buildPillItem(group.id, t('group.' + group.id), [group]);
                 categoryNav.appendChild(item);
             }
         });
@@ -854,6 +856,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bindSettingsDrawer();
     bindDensitySlider();
     renderCategoryNav();
+    document.addEventListener('languagechange', renderCategoryNav);
 
     // Containers
     const arrayContainer = document.getElementById('array-container'); const linkedListContainer = document.getElementById('linkedlist-container');
