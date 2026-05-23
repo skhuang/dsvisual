@@ -559,7 +559,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let slideDeck = [];
     let slideIndex = 0;
-    let slideLang = 'zh';
     let slideMethodId = null;
     const slideLangToggle = document.getElementById('slide-lang-toggle');
 
@@ -572,12 +571,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function buildSlides(methodId) {
+        const lang = window.I18N ? window.I18N.getCurrentLanguage() : 'en';
         const entry = window.SLIDES_RENDERED && window.SLIDES_RENDERED[methodId];
-        if (!entry || !entry.slides[slideLang] || entry.slides[slideLang].length === 0) {
+        if (!entry || !entry.slides[lang] || entry.slides[lang].length === 0) {
             return [{ title: t('method.' + methodId) || methodId,
                       body: '<p>' + t('slide.no-slides') + '</p>' }];
         }
-        return entry.slides[slideLang];
+        return entry.slides[lang];
     }
 
     function renderSlide() {
@@ -648,15 +648,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (slideLangToggle) {
         slideLangToggle.addEventListener('click', () => {
-            slideLang = slideLang === 'zh' ? 'en' : 'zh';
-            slideLangToggle.setAttribute('data-lang', slideLang);
-            if (slideMethodId) {
-                slideDeck = buildSlides(slideMethodId);
-                if (slideIndex >= slideDeck.length) slideIndex = slideDeck.length - 1;
-                renderSlide();
-            }
+            const next = window.I18N.getCurrentLanguage() === 'zh' ? 'en' : 'zh';
+            window.I18N.setLanguage(next);
         });
     }
+
+    function updateLangToggleLabel() {
+        if (!slideLangToggle) return;
+        const cur = window.I18N ? window.I18N.getCurrentLanguage() : 'en';
+        // Label shows the TARGET language using the "switch to X" idiom.
+        slideLangToggle.textContent = cur === 'zh' ? 'EN' : '中';
+        slideLangToggle.setAttribute('data-lang', cur);
+    }
+    updateLangToggleLabel();
 
     document.addEventListener('click', (e) => {
       const btn = e.target.closest('[data-code-copy]');
@@ -863,6 +867,12 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCategoryNav();
         if (typeof currentMode === 'string' && currentMode) {
             switchMode(currentMode);
+        }
+        updateLangToggleLabel();
+        if (slideViewer && !slideViewer.hidden && slideMethodId) {
+            slideDeck = buildSlides(slideMethodId);
+            if (slideIndex >= slideDeck.length) slideIndex = slideDeck.length - 1;
+            renderSlide();
         }
     });
 

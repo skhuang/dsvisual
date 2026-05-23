@@ -79,8 +79,8 @@ test.describe('Data Structure Visualizer Full Suite', () => {
 
         await methodSections.locator('[data-method-section="stack-array"] .method-slides-btn').click();
         await expect(slideViewer).toBeVisible();
-        await expect(page.locator('#slide-viewer-title')).toHaveText('堆疊(陣列實作)');
-        await expect(page.locator('#slide-viewer-body')).toContainText('堆疊');
+        await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array Implementation)');
+        await expect(page.locator('#slide-viewer-body')).toContainText('stack');
 
         await page.locator('.slide-viewer-close').click();
         await expect(slideViewer).not.toBeVisible();
@@ -704,6 +704,18 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         // Switch to a mode whose label DOES differ in zh.
         await loadMethod(page, 'graph');
         await expect(page.locator('#btn-graph-add')).toHaveText('加入邊');
+    });
+
+    test('i18n: clicking toggle flips language and updates label', async ({ page }) => {
+        // Open the slide viewer so the toggle button is visible.
+        await page.locator('[data-method-section="stack-array"] .method-slides-btn').click();
+        await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
+        const toggle = page.locator('[data-testid="lang-toggle"]');
+        // Default pin is 'en' → label reads 中 (the target language).
+        await expect(toggle).toHaveText('中');
+        await toggle.click();
+        await expect(toggle).toHaveText('EN');
+        await expect(page.locator('html')).toHaveAttribute('lang', 'zh-Hant');
     });
 
 });
