@@ -476,6 +476,33 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('#pattern-di-svg rect')).toHaveCount(3);
     });
 
+    test('Trees: BST renders edges between parent/child after inserts', async ({ page }) => {
+        await loadMethod(page, 'tree-bst');
+        // Insert a small tree.
+        for (const v of [30, 70, 20, 40, 80]) {
+            await page.locator('#tree-val').fill(String(v));
+            await page.locator('#btn-tree-add').click();
+            await page.waitForTimeout(80);
+        }
+        // 4 parent→child edges for a 5-node tree. The dashTree animation used
+        // to keep stroke-dashoffset at 100px (lines invisible) because the
+        // continuous-redraw loop recreated them every frame before the
+        // animation could complete — that's the bug this test guards.
+        const lines = page.locator('#tree-edges line.tree-edge');
+        await expect(lines).toHaveCount(4);
+        const offsets = await lines.evaluateAll((els) =>
+            els.map((el) => getComputedStyle(el).strokeDashoffset));
+        // Empty/zero/auto means "no dash offset" — line is fully drawn.
+        for (const off of offsets) {
+            expect(['0px', '0', 'auto', 'none', '']).toContain(off);
+        }
+    });
+
+    test('Graphs: undirected graph starts with default edges visible', async ({ page }) => {
+        await loadMethod(page, 'graph');
+        await expect(page.locator('#graph-edges line.graph-edge')).toHaveCount(6);
+    });
+
     test('Trees: Disjoint Set renders 8 nodes initially and supports union', async ({ page }) => {
         await loadMethod(page, 'tree-dsu');
         const card = page.locator('[data-method-section="tree-dsu"]');

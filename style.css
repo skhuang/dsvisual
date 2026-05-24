@@ -549,7 +549,7 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 /* Tree */
 .tree-container { width: 400px; height: 300px; position: relative; }
 #tree-edges { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none;}
-.tree-edge { stroke: #94a3b8; stroke-width: 2; transition: all 0.5s ease; animation: dashTree 0.5s linear forwards; }
+.tree-edge { stroke: #94a3b8; stroke-width: 2; transition: all 0.5s ease; }
 #tree-nodes-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none;}
 .tree-node { width: 40px; height: 40px; background: var(--node-bg); border: 2px solid white; border-radius: 50%; position: absolute; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); transition: top 0.5s ease, left 0.5s ease, background 0.5s ease, border-color 0.5s ease; z-index: 10; }
 .tree-node.red { background: #ef4444; border-color: #fca5a5; }
@@ -743,7 +743,6 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 }
 
 @keyframes dash { to { stroke-dashoffset: -10; } }
-@keyframes dashTree { from { stroke-dasharray: 100; stroke-dashoffset: 100; } to { stroke-dasharray: 100; stroke-dashoffset: 0; } }
 @keyframes slideDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 @keyframes popIn { from { transform: scale(0); opacity: 0;} to { transform: scale(1); opacity: 1;} }
 @keyframes slideUpFade { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-50px); opacity: 0; } }
