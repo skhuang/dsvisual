@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "decks": [
+    {
+      "id": "tree-bst-instructor",
+      "method": "tree-bst",
+      "files": {
+        "en": "tree-bst-instructor.en.md",
+        "zh": "tree-bst-instructor.zh.md"
+      },
+      "titleEn": "BST — instructor notes",
+      "titleZh": "BST —— 講師補充"
+    },
+    {
+      "id": "graph-dijkstra-extra",
+      "method": "graph-dijkstra",
+      "files": {
+        "en": "graph-dijkstra-extra.en.md",
+        "zh": "graph-dijkstra-extra.zh.md"
+      },
+      "titleEn": "Dijkstra — proof sketch",
+      "titleZh": "Dijkstra —— 證明梗概"
+    }
+  ]
+}
