@@ -1121,7 +1121,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Core sets
     let stackData = []; let qArr = new Array(5).fill(null); let qFront = 0; let qRear = -1; let qCount = 0;
-    let edges = []; let weightedEdges = []; let mstEdgeKeys = new Set(); let graphCandidateEdgeKey = null;
+    // Pentagon + one diagonal — connected, has cycles, good for BFS/DFS/MST demos.
+    // Used as the default starting state for every graph mode (so users see a
+    // non-trivial graph instead of 5 isolated nodes) and as the target of
+    // btnGraphClear ("Reset Graph" → restore defaults, not empty).
+    const DEFAULT_EDGES = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [0, 2]];
+    const DEFAULT_WEIGHTED_EDGES = [
+        { u: 0, v: 1, w: 4 }, { u: 1, v: 2, w: 1 }, { u: 2, v: 3, w: 6 },
+        { u: 3, v: 4, w: 2 }, { u: 4, v: 0, w: 3 }, { u: 0, v: 2, w: 5 },
+    ];
+    function freshEdges() { return DEFAULT_EDGES.map((e) => e.slice()); }
+    function freshWeightedEdges() { return DEFAULT_WEIGHTED_EDGES.map((e) => ({ ...e })); }
+    let edges = freshEdges(); let weightedEdges = freshWeightedEdges();
+    let mstEdgeKeys = new Set(); let graphCandidateEdgeKey = null;
     let dijkstraDistances = new Map(); let dijkstraVisited = new Set(); let shortestPathEdges = new Set(); 
     let topoOrder = []; let topoVisited = new Set(); let topoEdges = []; let bstRoot = null; let mainListData = []; let sortArrData = [];
     let hashChData = Array.from({length: 5}, () => []); // Array of arrays representing Chains
@@ -1447,7 +1459,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function switchMode(nextMode) {
         if (heapTutorialState.active && nextMode !== heapTutorialState.mode) exitHeapTutorial(true);
         visualizerRuntime.setMode(nextMode);
-        stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0; edges = []; weightedEdges = []; mstEdgeKeys.clear(); graphCandidateEdgeKey = null; bstRoot = null; 
+        stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0; edges = freshEdges(); weightedEdges = freshWeightedEdges(); mstEdgeKeys.clear(); graphCandidateEdgeKey = null; bstRoot = null;
         if(currentMode === 'list-array' || currentMode === 'list-linked') mainListData = [];
         if(currentMode === 'hash-chain') hashChData = Array.from({length: 5}, () => []);
         if(currentMode === 'hash-open') hashOaData = new Array(5).fill(null);
@@ -1545,8 +1557,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     btnGraphClear.addEventListener('click', () => {
-        edges = [];
-        weightedEdges = [];
+        edges = freshEdges();
+        weightedEdges = freshWeightedEdges();
         mstEdgeKeys.clear();
         graphCandidateEdgeKey = null;
         dijkstraDistances.clear();
