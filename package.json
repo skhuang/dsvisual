@@ -9,7 +9,9 @@
     "test:all": "npm run test:unit && npm test",
     "build:slides": "node build_slides.js",
     "slides:pdf": "marp --pdf --allow-local-files --input-dir slides/zh -o slides/pdf/zh && marp --pdf --allow-local-files --input-dir slides/en -o slides/pdf/en",
-    "format:code": "node format_code.js"
+    "format:code": "node format_code.js",
+    "inject-env": "node scripts/inject-env.mjs",
+    "pages:prepare": "npm run inject-env && npm run build:slides"
   },
   "repository": {
     "type": "git",
@@ -29,6 +31,7 @@
     "@playwright/test": "^1.59.1",
     "clang-format": "^1.8.0",
     "katex": "^0.16.47",
-    "prismjs": "^1.30.0"
+    "prismjs": "^1.30.0",
+    "firebase": "^11.7.1"
   }
 }
