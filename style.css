@@ -2203,3 +2203,74 @@ pre.code-panel-body[class*="language-"] {
     border-color: var(--primary-hover, #2980b9);
     color: #fff;
 }
+
+/* ── Cloud sign-in drawer ── */
+.cloud-toggle {
+  background: none; border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff; width: 38px; height: 38px; border-radius: 8px;
+  font-size: 1.1rem; cursor: pointer; transition: background 0.15s;
+}
+.cloud-toggle:hover, .cloud-toggle:focus-visible {
+  background: rgba(255, 255, 255, 0.15); outline: none;
+}
+
+.cloud-drawer {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+}
+.cloud-drawer[hidden] { display: none; }
+.cloud-drawer-backdrop {
+  position: absolute; inset: 0; background: rgba(15, 23, 42, 0.6);
+  border: 0; cursor: pointer;
+}
+.cloud-drawer-panel {
+  position: relative; z-index: 1;
+  background: var(--card-bg, #fff);
+  border-radius: var(--app-radius-lg, 10px);
+  width: min(420px, 100%); padding: 0;
+  box-shadow: var(--app-shadow-lg, 0 14px 30px rgba(2, 6, 23, 0.28));
+  outline: none;
+}
+.cloud-drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--card-border, #d7e0ea);
+}
+.cloud-drawer-header h2 {
+  margin: 0; font-size: 1rem; color: var(--text-main, #1f2937);
+}
+.cloud-drawer-close {
+  width: 32px; height: 32px; border: 1px solid var(--card-border, #d7e0ea);
+  border-radius: 6px; background: transparent; font-size: 1.1rem; cursor: pointer;
+  color: var(--text-muted, #51606f);
+}
+.cloud-drawer-close:hover { background: var(--surface-hover, #f1f5f9); }
+.cloud-drawer-body {
+  padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem;
+  font-size: 0.9rem; color: var(--text-main, #1f2937);
+}
+.cloud-drawer-note { margin: 0; color: var(--text-muted, #51606f); }
+.cloud-drawer-user { margin: 0; font-weight: 600; }
+.cloud-drawer-error { margin: 0; color: #b91c1c; font-size: 0.85rem; }
+
+/* ── Slide-viewer deck picker bar (multi-deck) + private chip ── */
+.slide-deck-bar {
+  display: flex; gap: 0; flex-wrap: wrap; padding: 0.5rem 1rem; margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--card-border, #d7e0ea);
+}
+.slide-deck-btn {
+  padding: 0.34rem 0.7rem; border: 1px solid var(--card-border, #d7e0ea);
+  border-right: 0; background: var(--card-bg, #fff);
+  color: var(--text-muted, #51606f); font-size: 0.78rem; cursor: pointer;
+}
+.slide-deck-btn:last-child { border-right: 1px solid var(--card-border, #d7e0ea); }
+.slide-deck-btn:first-child { border-radius: 6px 0 0 6px; }
+.slide-deck-btn:last-child  { border-radius: 0 6px 6px 0; }
+.slide-deck-btn--active { background: var(--primary-color, #3498db); color: #fff; font-weight: 600; }
+.slide-deck-btn--private { background: #faf5ff; color: #6b21a8; }
+.slide-deck-btn--private.slide-deck-btn--active { background: #6b21a8; color: #fff; }
+.slide-deck-btn--signin { background: #fef3c7; color: #92400e; font-style: italic; font-weight: 600; }
+.slide-deck-btn--signin:hover { background: #fde68a; }
+.slide-deck-btn--denied, .slide-deck-btn--error {
+  background: #f1f5f9; color: #94a3b8; cursor: not-allowed;
+}
+.slide-deck-btn__sub { font-size: 0.72rem; opacity: 0.85; margin-left: 0.25rem; }
