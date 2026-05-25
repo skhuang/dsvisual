@@ -183,13 +183,17 @@ async function renderMermaidWithCli(sources) {
   const path = require('path');
   const { execFileSync } = require('child_process');
   const mmdc = path.join(__dirname, 'node_modules', '.bin', 'mmdc');
+  // -p / --puppeteerConfigFile carries the --no-sandbox args needed on
+  // GitHub Actions runners (Ubuntu restricts unprivileged user namespaces);
+  // harmless on macOS/Linux dev machines.
+  const puppeteerCfg = path.join(__dirname, 'puppeteer-config.json');
   const map = new Map();
   for (const src of sources) {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'mmd-'));
     const inFile = path.join(tmp, 'in.mmd');
     const outFile = path.join(tmp, 'out.svg');
     fs.writeFileSync(inFile, src);
-    execFileSync(mmdc, ['-i', inFile, '-o', outFile, '-b', 'transparent'], { stdio: 'pipe' });
+    execFileSync(mmdc, ['-i', inFile, '-o', outFile, '-b', 'transparent', '-p', puppeteerCfg], { stdio: 'pipe' });
     map.set(src, fs.readFileSync(outFile, 'utf8').trim());
     fs.rmSync(tmp, { recursive: true, force: true });
   }
