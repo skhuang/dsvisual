@@ -1,0 +1,252 @@
+// Minimal, dependency-free Marp-markdown parser for dsvisual private slides.
+// Ported from rdvisual src/framework/slideMarkdown.js.
+(function () {
+  'use strict';
+
+// Minimal, dependency-free renderer for the Marp-markdown subset the
+// docs/slides decks use. Not a general markdown engine.
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// LaTeX-math symbol commands the decks use, mapped to their Unicode glyph.
+const TEX_SYMBOLS = {
+  cup: '∪', cap: '∩', cdot: '·', times: '×', div: '÷',
+  le: '≤', ge: '≥', ne: '≠', neq: '≠', to: '→', mapsto: '↦', leftarrow: '←',
+  sum: '∑', prod: '∏', in: '∈', notin: '∉', approx: '≈', equiv: '≡',
+  pm: '±', infty: '∞', ldots: '…', cdots: '⋯', land: '∧', lor: '∨',
+  lnot: '¬', forall: '∀', exists: '∃', emptyset: '∅', subseteq: '⊆',
+  setminus: '∖', bigcup: '⋃', bigcap: '⋂', mid: '∣',
+  alpha: 'α', beta: 'β', lambda: 'λ', mu: 'μ', sigma: 'σ', theta: 'θ',
+};
+
+// Delimiter-sizing prefixes (\left \right \bigl …): the renderer ignores the
+// sizing and keeps the bracket character that follows.
+const TEX_DELIM_SIZING = new Set([
+  'left', 'right', 'big', 'Big', 'bigg', 'Bigg', 'bigl', 'bigr',
+  'Bigl', 'Bigr', 'biggl', 'biggr',
+]);
+
+// Minimal, dependency-free LaTeX-math → HTML converter for the small subset
+// the docs/slides decks use: \frac, \text, super/subscripts and the symbols
+// above. Not a general TeX engine.
+function texToHtml(tex) {
+  let i = 0;
+  function group(untilBrace) {
+    let html = '';
+    while (i < tex.length) {
+      const c = tex[i];
+      if (c === '}') { i++; if (untilBrace) return html; continue; }
+      if (c === '{') { i++; html += group(true); continue; }
+      if (c === '\\') {
+        i++;
+        const m = /^[a-zA-Z]+/.exec(tex.slice(i));
+        if (!m) {
+          // \<non-letter>: TeX spacing commands (\, \: \; and backslash-space)
+          // become a space, \! is a negative thin space (nothing), and any
+          // other \<char> stays literal (\{ \} \% …).
+          const ch = tex[i] || '';
+          if (ch === ',' || ch === ':' || ch === ';' || ch === ' ') html += ' ';
+          else if (ch !== '!') html += escapeHtml(ch);
+          i++;
+          continue;
+        }
+        const cmd = m[0];
+        i += cmd.length;
+        if (cmd === 'frac' || cmd === 'tfrac' || cmd === 'dfrac') {
+          const num = arg();
+          const den = arg();
+          html += `<span class="tex-frac"><span class="tex-frac-num">${num}</span>`
+            + `<span class="tex-frac-den">${den}</span></span>`;
+        } else if (cmd === 'text' || cmd === 'mathrm' || cmd === 'operatorname' || cmd === 'mathit') {
+          html += `<span class="tex-text">${arg()}</span>`;
+        } else if (TEX_DELIM_SIZING.has(cmd)) {
+          /* delimiter sizing — ignore; the bracket char itself follows */
+        } else if (TEX_SYMBOLS[cmd]) {
+          html += TEX_SYMBOLS[cmd];
+        } else {
+          html += escapeHtml(cmd);
+        }
+        continue;
+      }
+      if (c === '^' || c === '_') {
+        i++;
+        const tag = c === '^' ? 'sup' : 'sub';
+        html += `<${tag}>${arg()}</${tag}>`;
+        continue;
+      }
+      html += escapeHtml(c);
+      i++;
+    }
+    return html;
+  }
+  // Read one argument: a {…} group, a \command, or a single character.
+  function arg() {
+    while (tex[i] === ' ') i++;
+    if (tex[i] === '{') { i++; return group(true); }
+    if (tex[i] === '\\') {
+      i++;
+      const m = /^[a-zA-Z]+/.exec(tex.slice(i));
+      if (m) { i += m[0].length; return TEX_SYMBOLS[m[0]] || escapeHtml(m[0]); }
+      const ch = tex[i] || ''; i++; return escapeHtml(ch);
+    }
+    const ch = tex[i] || ''; i++; return escapeHtml(ch);
+  }
+  return group(false).trim();
+}
+
+// MATH_OPEN / DOLLAR are Private-Use-Area sentinels: they cannot occur
+// in deck markdown and survive both escapeHtml and the formatting rules.
+const MATH_OPEN = '\uE000';
+const DOLLAR = '\uE001';
+
+// Inline formatting. Pulls $…$ math out first (so it is not HTML-escaped or
+// touched by the other rules), escapes, applies image/link/code/bold/italic,
+// then restores the math.
+function renderInline(text) {
+  const math = [];
+  // The open $ must not be followed by whitespace and the close $ not be
+  // preceded by it, so prose prices like "$50 each" stay literal.
+  let t = text.replace(/\$(?!\s)([^$\n]*?)(?<!\s)\$/g, (_, expr) => {
+    math.push(`<span class="slide-math">${texToHtml(expr)}</span>`);
+    return `${MATH_OPEN}${math.length - 1}${MATH_OPEN}`;
+  });
+  t = t.replace(/\\\$/g, DOLLAR); // \$ — a literal dollar sign
+  let h = escapeHtml(t);
+  h = h.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, src) => `<img alt="${alt}" src="${src}">`);
+  h = h.replace(/\[([^\]]+)\]\(([^)]+)\)/g,
+    (_, t2, u) => `<a href="${u}" target="_blank" rel="noopener">${t2}</a>`);
+  h = h.replace(/`([^`]+)`/g, '<code>$1</code>');
+  h = h.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>');
+  h = h.replace(new RegExp(`${MATH_OPEN}(\\d+)${MATH_OPEN}`, 'g'), (_, n) => math[Number(n)]);
+  h = h.replace(new RegExp(DOLLAR, 'g'), '$');
+  return h;
+}
+
+function splitRow(line) {
+  return line.replace(/^\s*\|?/, '').replace(/\|?\s*$/, '').split('|').map((c) => c.trim());
+}
+
+// A line that is a complete `$$…$$` display-math formula on its own.
+function isSingleLineDisplayMath(line) {
+  const t = line.trim();
+  return t.length > 4 && t.startsWith('$$') && t.endsWith('$$');
+}
+
+function isBlockStart(line) {
+  return /^(#{1,6}\s|>|\s*([-*+]|\d+\.)\s|```)/.test(line)
+    || line.includes('|') || line.trim() === '$$'
+    || isSingleLineDisplayMath(line);
+}
+
+function renderMarkdown(md) {
+  const lines = md.split('\n');
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (!line.trim()) { i++; continue; }
+
+    if (line.trim().startsWith('```')) {
+      const code = [];
+      i++;
+      while (i < lines.length && !lines[i].trim().startsWith('```')) { code.push(lines[i]); i++; }
+      i++;
+      out.push(`<pre class="slide-code"><code>${escapeHtml(code.join('\n'))}</code></pre>`);
+      continue;
+    }
+
+    // Display math, multi-line: a `$$` line, its TeX body, a closing `$$` line.
+    if (line.trim() === '$$') {
+      const tex = [];
+      i++;
+      while (i < lines.length && lines[i].trim() !== '$$') { tex.push(lines[i]); i++; }
+      i++;
+      out.push(`<div class="slide-math-block">${texToHtml(tex.join(' '))}</div>`);
+      continue;
+    }
+
+    // Display math, single-line: the whole formula on one `$$…$$` line.
+    if (isSingleLineDisplayMath(line)) {
+      out.push(`<div class="slide-math-block">${texToHtml(line.trim().slice(2, -2))}</div>`);
+      i++;
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,6})\s+(.*)$/);
+    if (heading) {
+      out.push(`<h${heading[1].length}>${renderInline(heading[2])}</h${heading[1].length}>`);
+      i++;
+      continue;
+    }
+
+    if (/^(\*\*\*|---|___)\s*$/.test(line)) { out.push('<hr>'); i++; continue; }
+
+    if (line.startsWith('>')) {
+      const bq = [];
+      while (i < lines.length && lines[i].startsWith('>')) { bq.push(lines[i].replace(/^>\s?/, '')); i++; }
+      out.push(`<blockquote>${renderInline(bq.join(' '))}</blockquote>`);
+      continue;
+    }
+
+    if (line.includes('|') && i + 1 < lines.length
+        && /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(lines[i + 1])) {
+      const header = splitRow(line);
+      i += 2;
+      const rows = [];
+      while (i < lines.length && lines[i].includes('|') && lines[i].trim()) {
+        rows.push(splitRow(lines[i]));
+        i++;
+      }
+      const thead = `<tr>${header.map((c) => `<th>${renderInline(c)}</th>`).join('')}</tr>`;
+      const tbody = rows.map((r) => `<tr>${r.map((c) => `<td>${renderInline(c)}</td>`).join('')}</tr>`).join('');
+      out.push(`<table class="slide-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>`);
+      continue;
+    }
+
+    if (/^\s*([-*+]|\d+\.)\s+/.test(line)) {
+      const ordered = /^\s*\d+\.\s+/.test(line);
+      const items = [];
+      while (i < lines.length && /^\s*([-*+]|\d+\.)\s+/.test(lines[i])) {
+        items.push(lines[i].replace(/^\s*([-*+]|\d+\.)\s+/, ''));
+        i++;
+      }
+      const tag = ordered ? 'ol' : 'ul';
+      out.push(`<${tag}>${items.map((it) => `<li>${renderInline(it)}</li>`).join('')}</${tag}>`);
+      continue;
+    }
+
+    const para = [];
+    while (i < lines.length && lines[i].trim() && !isBlockStart(lines[i])) {
+      para.push(lines[i]);
+      i++;
+    }
+    if (para.length) out.push(`<p>${renderInline(para.join(' '))}</p>`);
+    else { i++; }
+  }
+  return out.join('');
+}
+
+// Parse a whole Marp deck: strip front-matter, split slides on `---`,
+// peel out <!-- speaker notes --> per slide.
+function parseDeck(raw) {
+  let body = raw;
+  if (body.startsWith('---')) {
+    const close = body.indexOf('\n---', 3);
+    if (close !== -1) {
+      const nl = body.indexOf('\n', close + 1);
+      body = nl !== -1 ? body.slice(nl + 1) : '';
+    }
+  }
+  const slides = body.split(/\n---\n/).map((chunk) => {
+    const notes = [];
+    const content = chunk.replace(/<!--([\s\S]*?)-->/g, (_, n) => { notes.push(n.trim()); return ''; });
+    return { html: renderMarkdown(content.trim()), notes: notes.filter(Boolean).join('\n\n') };
+  }).filter((s) => s.html.trim());
+  return { slides };
+}
+
+  window.slideMarkdown = { parseDeck };
+})();
