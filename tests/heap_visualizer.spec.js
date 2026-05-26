@@ -41,7 +41,7 @@ test.describe('Heap Visualizer Suite', () => {
             await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
             await expect(page.locator('#slide-viewer-title')).toContainText(mode.title);
 
-            await page.locator('.slide-viewer-close').click();
+            await page.locator('.slideviewer-close').click();
             await expect(page.locator('[data-testid="slide-viewer"]')).toBeHidden();
         });
     }

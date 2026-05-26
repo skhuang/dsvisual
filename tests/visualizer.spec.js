@@ -83,7 +83,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array Implementation)');
         await expect(page.locator('#slide-viewer-body')).toContainText('stack');
 
-        await page.locator('.slide-viewer-close').click();
+        await page.locator('.slideviewer-close').click();
         await expect(slideViewer).not.toBeVisible();
     });
 

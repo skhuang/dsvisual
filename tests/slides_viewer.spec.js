@@ -50,3 +50,24 @@ test('math renders via KaTeX and mermaid renders as SVG', async ({ page }) => {
   await page.locator('#slide-next').click();
   await expect(page.locator('#slide-viewer-body .katex').first()).toBeVisible();
 });
+
+test('slide stage has 16:9 aspect ratio', async ({ page }) => {
+  await openStackArraySlides(page);
+  await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
+
+  const stage = page.locator('.slideviewer-stage');
+  await expect(stage).toBeVisible();
+
+  const slide = page.locator('.slideviewer-slide').first();
+  const box = await slide.boundingBox();
+  // Allow ±2% tolerance for browser rounding
+  const ratio = box.width / box.height;
+  expect(ratio).toBeGreaterThan(16/9 * 0.98);
+  expect(ratio).toBeLessThan(16/9 * 1.02);
+});
+
+test('notes toggle hidden on public deck (no notes)', async ({ page }) => {
+  await openStackArraySlides(page);
+  await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
+  await expect(page.locator('[data-testid="slideviewer-notes-toggle"]')).toBeHidden();
+});
