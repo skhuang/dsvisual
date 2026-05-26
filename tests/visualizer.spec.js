@@ -80,7 +80,8 @@ test.describe('Data Structure Visualizer Full Suite', () => {
 
         await methodSections.locator('[data-method-section="stack-array"] .method-slides-btn').click();
         await expect(slideViewer).toBeVisible();
-        await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array Implementation)');
+        // Bar now shows deckTitle only; slide.title is injected as h1 in the slide body.
+        await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array)');
         await expect(page.locator('#slide-viewer-body')).toContainText('stack');
 
         await page.locator('.slideviewer-close').click();

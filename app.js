@@ -724,6 +724,16 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+        }[c]));
+    }
+
     function deckTitle(deck) {
         const lang = window.I18N ? window.I18N.getCurrentLanguage() : 'en';
         const base = (lang === 'zh') ? deck.titleZh : deck.titleEn;
@@ -764,8 +774,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const deck = slideDeckList[slideDeckIndex];
         const slide = deck.slides[slideIndex] || { title: '', body: '', notes: '' };
 
-        // Title — stays in bar, shows deck title for multi-deck, slide title fallback
-        slideViewerTitle.textContent = slide.title || deckTitle(deck);
+        // Bar shows deck name as small label (per-slide title goes in body below).
+        slideViewerTitle.textContent = deckTitle(deck);
 
         // Progress / counter — now in foot meta
         slideViewerProgress.textContent = t('slide.progress', {
@@ -804,8 +814,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Slide body — directly into .slideviewer-slide (slideViewerBody has that class)
-        slideViewerBody.innerHTML = slide.body;
+        // Slide body — inject slide.title as <h1> if present (matches rdvisual
+        // presentation style: title is large, in the slide content area).
+        // Private Marp decks have title inline in slide.html, so slide.title is
+        // undefined and no injection happens.
+        const titleHtml = slide.title
+            ? `<h1 class="slide-title">${escapeHtml(slide.title)}</h1>`
+            : '';
+        slideViewerBody.innerHTML = titleHtml + slide.body;
         slideViewerBody.scrollTop = 0;
 
         // Notes panel — show toggle if slide has notes; hide both panel and toggle if not.

@@ -2107,6 +2107,9 @@ pre.code-panel-body[class*="language-"] {
   box-shadow: 0 12px 34px rgba(15, 23, 42, 0.14);
 }
 .slideviewer-slide h1 { font-size: 1.8rem; margin: 0 0 0.75rem; }
+/* App-injected slide title (see renderSlide in app.js) — inherits .slideviewer-slide h1 sizing
+   but resets top margin so it hugs the slide top edge. */
+.slideviewer-slide h1.slide-title { margin-top: 0; }
 .slideviewer-slide h2 { font-size: 1.35rem; margin: 0 0 0.65rem; }
 .slideviewer-slide h3, .slideviewer-slide h4 { font-size: 1rem; margin: 0.75rem 0 0.45rem; }
 .slideviewer-slide p,
