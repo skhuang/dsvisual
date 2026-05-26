@@ -56,7 +56,20 @@ Private decks (parsed via `slideMarkdown.js`) do populate `slide.notes` from `<!
 
 ### Decision 6: Counter format = i18n string `slides.counter`
 
-Move "1 / 10" progress from header to `.slideviewer-counter` in foot. New i18n key `slides.counter` with substitution `{n}` and `{total}`. Existing `slide.progress` key remains for now (unused after this change — schedule deletion in a follow-up to avoid scope creep here).
+Move "1 / 10" progress from header to `.slideviewer-counter` in foot. New i18n key `slides.counter` with substitution `{n}` and `{total}`. Existing `slide.progress` key remains for now and is still the one actually used by `renderSlide()` (so the spec's note about deletion is stale — `slides.counter` was not actually added, the existing key works fine).
+
+### Decision 7: Per-slide title renders inside body as `<h1>`, not in the bar (added post-implementation)
+
+After Tasks 1-6 landed, side-by-side comparison with rdvisual surfaced a regression: dsvisual was keeping `slide.title` in `.slideviewer-title` (small bar label, `0.9rem`). rdvisual presents slide titles inside the slide content area at full h1 size (`1.8rem` from the canonical `.slideviewer-slide h1` rule).
+
+Fix (Task 7):
+- `.slideviewer-title` shows only `deckTitle(deck)` (method name as a persistent small bar label)
+- `renderSlide()` injects `<h1 class="slide-title">{escapeHtml(slide.title)}</h1>` at the top of `slide.body` when `slide.title` is present
+- Private Marp decks are unaffected — `slideMarkdown.parseDeck` returns `{html, notes}` without a separate `title`, so the injection skips and the body's own `#` heading renders normally
+- `escapeHtml` utility added to `app.js` (no existing helper)
+- CSS: `.slideviewer-slide h1.slide-title { margin-top: 0; }` resets top margin so the injected h1 hugs the slide's top edge
+
+Tradeoff: when `slide.title === deckTitle(deck)` (typical for cover slides), the title text appears in two places (small in bar, large in body). This is the standard "title slide" look of presentations and matches rdvisual behavior.
 
 ## New DOM (after)
 
@@ -146,6 +159,7 @@ After merge, opening a slide in dsvisual must show:
 - [ ] Blockquotes: blue left border, light-blue background
 - [ ] Footer nav buttons styled `outline` with `#1d4ed8` border
 - [ ] Counter ("1 / 10") in foot right side
+- [ ] Per-slide title renders as large `<h1 class="slide-title">` inside the slide content area; bar shows method name (`deckTitle(deck)`) as small label only (Decision 7)
 - [ ] On a private Marp deck with `<!-- notes -->`, the "Notes" toggle appears in foot; clicking shows amber notes panel between stage and foot
 - [ ] On a public deck (no `slide.notes`), the toggle is hidden
 - [ ] At viewport width ≤ 680px: full-height drawer layout, no 16:9 constraint, vertical foot stack

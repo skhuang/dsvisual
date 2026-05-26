@@ -45,6 +45,8 @@ Open the BST page → click the **Slides** mode/tab to launch the modal.
 
 - [ ] **10. Counter in foot right side** — the "Slide 1 / 8" text appears in the bottom-right of the modal (in foot meta), not in the top header where it used to be.
 
+- [ ] **10b. Per-slide title large in body, method name small in bar** (Decision 7) — the bar at the top shows the method name (e.g. "Stack (Array)") in small label font. The slide title (e.g. "Stack (Array Implementation)") appears as a large `<h1>` at the top of the slide content area. Verify visual hierarchy: body h1 is noticeably larger than bar text. (On cover slides where slide.title === deck.title, the same text intentionally appears in both places — small bar label + big body heading. This matches presentation "title slide" convention.)
+
 - [ ] **11. Notes panel on private Marp deck** — [see Part B item 2 below] requires a Drive-fetched deck.
 
 - [ ] **12. Notes toggle hidden on public deck** — when viewing BST (public method), the "Notes" / "備註" button in the foot's right side should be **hidden** (`display: none`). You should NOT see it on any of the 8 slides.
