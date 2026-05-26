@@ -384,28 +384,36 @@
             </section>
         </div>
 
-        <div id="slide-viewer" class="slide-viewer" data-testid="slide-viewer" hidden>
-            <button type="button" class="slide-viewer-backdrop" data-slide-close aria-label="Close slides"></button>
-            <section class="slide-viewer-panel" role="dialog" aria-modal="true" aria-labelledby="slide-viewer-title" tabindex="-1">
-                <header class="slide-viewer-header">
-                    <div>
-                        <p id="slide-viewer-progress">Slide 1 / 1</p>
-                        <h2 id="slide-viewer-title">Method slides</h2>
+        <div id="slide-viewer" class="slideviewer-overlay" data-testid="slide-viewer" hidden>
+            <div class="slideviewer-panel" role="dialog" aria-modal="true" aria-labelledby="slide-viewer-title" tabindex="-1">
+                <div class="slideviewer-bar">
+                    <h2 id="slide-viewer-title" class="slideviewer-title">Method slides</h2>
+                    <button type="button" id="slide-lang-toggle" class="slide-lang-toggle"
+                            data-testid="lang-toggle"
+                            data-i18n-aria-label="aria.lang-toggle"
+                            aria-label="Switch language">EN</button>
+                    <button type="button" class="slideviewer-close" data-slide-close
+                            data-testid="slideviewer-close" aria-label="Close slides">×</button>
+                </div>
+                <div class="slideviewer-stage">
+                    <div id="slide-viewer-body" class="slideviewer-slide" data-testid="slideviewer-slide"></div>
+                </div>
+                <div class="slideviewer-notes" data-testid="slideviewer-notes" hidden></div>
+                <div class="slideviewer-foot">
+                    <div class="slideviewer-foot__nav">
+                        <button type="button" id="slide-prev" class="slideviewer-nav-btn"
+                                data-testid="slideviewer-prev">Previous</button>
+                        <button type="button" id="slide-next" class="slideviewer-nav-btn"
+                                data-testid="slideviewer-next">Next</button>
                     </div>
-                    <div class="slide-viewer-header-actions">
-                        <button type="button" id="slide-lang-toggle" class="slide-lang-toggle"
-                                data-testid="lang-toggle"
-                                data-i18n-aria-label="aria.lang-toggle"
-                                aria-label="Switch language">EN</button>
-                        <button type="button" class="slide-viewer-close" data-slide-close aria-label="Close slides">×</button>
+                    <div class="slideviewer-foot__meta">
+                        <span id="slide-viewer-progress" class="slideviewer-counter">Slide 1 / 1</span>
+                        <button type="button" class="slideviewer-notes-toggle"
+                                data-testid="slideviewer-notes-toggle"
+                                data-i18n-key="slide.notes-toggle" hidden>Notes</button>
                     </div>
-                </header>
-                <div id="slide-viewer-body" class="slide-viewer-body"></div>
-                <footer class="slide-viewer-footer">
-                    <button type="button" id="slide-prev" class="btn secondary">Previous</button>
-                    <button type="button" id="slide-next" class="btn primary">Next</button>
-                </footer>
-            </section>
+                </div>
+            </div>
         </div>
     </div>
 

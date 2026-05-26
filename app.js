@@ -358,6 +358,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const slideViewerTitle = document.getElementById('slide-viewer-title');
     const slideViewerProgress = document.getElementById('slide-viewer-progress');
     const slideViewerBody = document.getElementById('slide-viewer-body');
+    const slideViewerNotes = slideViewer ? slideViewer.querySelector('.slideviewer-notes') : null;
+    const slideNotesToggle = slideViewer ? slideViewer.querySelector('.slideviewer-notes-toggle') : null;
+    if (slideViewerNotes) {
+        slideViewerNotes.setAttribute('aria-label', 'Slide speaker notes');
+        slideViewerNotes.setAttribute('role', 'region');
+    }
     const slidePrev = document.getElementById('slide-prev');
     const slideNext = document.getElementById('slide-next');
     const slideCloseButtons = document.querySelectorAll('[data-slide-close]');
@@ -718,6 +724,16 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;',
+        }[c]));
+    }
+
     function deckTitle(deck) {
         const lang = window.I18N ? window.I18N.getCurrentLanguage() : 'en';
         const base = (lang === 'zh') ? deck.titleZh : deck.titleEn;
@@ -730,62 +746,99 @@ document.addEventListener('DOMContentLoaded', () => {
         if (slidePrivateSignInNeeded) items.push({ __signInRow: true });
         const html = items.map((d, i) => {
             if (d.__signInRow) {
-                return '<button type="button" class="slide-deck-btn slide-deck-btn--signin"' +
-                       ' data-testid="slide-signin-row">' + t('slide.private-signin-row') + '</button>';
+                return '<button type="button" class="slideviewer-deck-btn slideviewer-deck-btn--signin"' +
+                       ' data-testid="slideviewer-signin-row">' + t('slide.private-signin-row') + '</button>';
             }
-            const classes = ['slide-deck-btn'];
-            if (i === slideDeckIndex) classes.push('slide-deck-btn--active');
-            if (d.kind === 'private') classes.push('slide-deck-btn--private');
-            if (d.kind === 'private' && d.access === 'denied') classes.push('slide-deck-btn--denied');
-            if (d.kind === 'private' && d.access === 'error')  classes.push('slide-deck-btn--error');
+            const classes = ['slideviewer-deck-btn'];
+            if (i === slideDeckIndex) classes.push('slideviewer-deck-btn--active');
+            if (d.kind === 'private') classes.push('slideviewer-deck-btn--private');
+            if (d.kind === 'private' && d.access === 'denied') classes.push('slideviewer-deck-btn--denied');
+            if (d.kind === 'private' && d.access === 'error')  classes.push('slideviewer-deck-btn--error');
             const disabled = (d.kind === 'private' && (d.access === 'denied' || d.access === 'error'));
             const suffix =
                 (d.kind === 'private' && d.access === 'denied')
-                    ? ' <span class="slide-deck-btn__sub">— ' + t('slide.private-no-access') + '</span>'
+                    ? ' <span class="slideviewer-deck-btn__sub">— ' + t('slide.private-no-access') + '</span>'
                 : (d.kind === 'private' && d.access === 'error')
-                    ? ' <span class="slide-deck-btn__sub">— ' + t('slide.private-fetch-error') + '</span>'
+                    ? ' <span class="slideviewer-deck-btn__sub">— ' + t('slide.private-fetch-error') + '</span>'
                 : '';
             return '<button type="button" class="' + classes.join(' ') + '"' +
                    ' data-deck-index="' + i + '" data-testid="slide-deck-' + i + '"' +
                    (disabled ? ' disabled' : '') + '>' +
                    deckTitle(d) + suffix + '</button>';
         }).join('');
-        return '<div class="slide-deck-bar" role="tablist" data-testid="slide-deck-bar">' + html + '</div>';
+        return '<div class="slideviewer-decks" data-testid="slideviewer-decks">' + html + '</div>';
     }
 
     function renderSlide() {
         if (!slideViewer || slideDeckList.length === 0) return;
         const deck = slideDeckList[slideDeckIndex];
-        const slide = deck.slides[slideIndex] || { title: '', body: '' };
-        slideViewerTitle.textContent = slide.title || deckTitle(deck);
+        const slide = deck.slides[slideIndex] || { title: '', body: '', notes: '' };
+
+        // Bar shows deck name as small label (per-slide title goes in body below).
+        slideViewerTitle.textContent = deckTitle(deck);
+
+        // Progress / counter — now in foot meta
         slideViewerProgress.textContent = t('slide.progress', {
             n: slideIndex + 1,
             total: deck.slides.length,
         });
-        slideViewerBody.innerHTML = renderDeckBar() + slide.body;
-        // Wire deck-bar clicks.
-        slideViewerBody.querySelectorAll('[data-deck-index]').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const idx = parseInt(btn.getAttribute('data-deck-index'), 10);
-                if (slideDeckList[idx] &&
-                    !(slideDeckList[idx].kind === 'private' &&
-                      (slideDeckList[idx].access === 'denied' || slideDeckList[idx].access === 'error'))) {
-                    slideDeckIndex = idx;
-                    slideIndex = 0;
-                    renderSlide();
-                }
+
+        // Deck bar — rendered into bar between title and lang-toggle.
+        // Single-deck case: omit (title stands alone, matching rdvisual).
+        const bar = slideViewer.querySelector('.slideviewer-bar');
+        const existingDecks = bar.querySelector('.slideviewer-decks');
+        if (existingDecks) existingDecks.remove();
+        if (slideDeckList.length > 1 || slidePrivateSignInNeeded) {
+            const decksHtml = renderDeckBar();
+            // renderDeckBar returns '<div class="slideviewer-decks">…</div>'; insert
+            // after title so order is: title, decks, lang-toggle, close.
+            slideViewerTitle.insertAdjacentHTML('afterend', decksHtml);
+            bar.querySelectorAll('[data-deck-index]').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.getAttribute('data-deck-index'), 10);
+                    if (slideDeckList[idx] &&
+                        !(slideDeckList[idx].kind === 'private' &&
+                          (slideDeckList[idx].access === 'denied' || slideDeckList[idx].access === 'error'))) {
+                        slideDeckIndex = idx;
+                        slideIndex = 0;
+                        renderSlide();
+                    }
+                });
             });
-        });
-        const signinRow = slideViewerBody.querySelector('[data-testid="slide-signin-row"]');
-        if (signinRow) {
-            signinRow.addEventListener('click', () => {
-                closeSlides();
-                if (typeof window.openCloudDrawer === 'function') window.openCloudDrawer();
-            });
+            const signinRow = bar.querySelector('[data-testid="slideviewer-signin-row"]');
+            if (signinRow) {
+                signinRow.addEventListener('click', () => {
+                    closeSlides();
+                    if (typeof window.openCloudDrawer === 'function') window.openCloudDrawer();
+                });
+            }
         }
+
+        // Slide body — inject slide.title as <h1> if present (matches rdvisual
+        // presentation style: title is large, in the slide content area).
+        // Private Marp decks have title inline in slide.html, so slide.title is
+        // undefined and no injection happens.
+        const titleHtml = slide.title
+            ? `<h1 class="slide-title">${escapeHtml(slide.title)}</h1>`
+            : '';
+        slideViewerBody.innerHTML = titleHtml + slide.body;
+        slideViewerBody.scrollTop = 0;
+
+        // Notes panel — show toggle if slide has notes; hide both panel and toggle if not.
+        const hasNotes = Boolean(slide.notes && slide.notes.trim());
+        if (hasNotes) {
+            slideViewerNotes.textContent = slide.notes;
+            slideNotesToggle.hidden = false;
+            // Don't auto-open on slide change — respect prior toggle state.
+            // Panel visibility tracked via slideViewerNotes.hidden.
+        } else {
+            slideViewerNotes.textContent = '';
+            slideViewerNotes.hidden = true;
+            slideNotesToggle.hidden = true;
+        }
+
         slidePrev.disabled = slideIndex === 0;
         slideNext.disabled = slideIndex >= deck.slides.length - 1;
-        slideViewerBody.scrollTop = 0;
     }
 
     async function fetchAndMergePrivate(methodId) {
@@ -815,10 +868,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // Compute sign-in state synchronously so first paint is correct.
         const ctx = getPrivateContext();
         slidePrivateSignInNeeded = Boolean(ctx.folderId) && !ctx.token;
+        if (slideViewerNotes) slideViewerNotes.hidden = true;
         renderSlide();
         slideViewer.hidden = false;
         slideViewer.classList.add('open');
-        slideViewer.querySelector('.slide-viewer-panel').focus();
+        slideViewer.querySelector('.slideviewer-panel').focus();
         slideViewer.addEventListener('keydown', handleSlideKeydown);
         // Kick off async private-deck fetch + merge.
         if (ctx.folderId && ctx.token) {
@@ -848,6 +902,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     slideCloseButtons.forEach((button) => button.addEventListener('click', closeSlides));
+
+    // Click anywhere on overlay background (but not the panel) closes the modal.
+    // Replaces the removed .slide-viewer-backdrop button.
+    slideViewer.addEventListener('click', (e) => {
+        if (e.target === slideViewer) closeSlides();
+    });
+
     slidePrev.addEventListener('click', () => {
         const deck = slideDeckList[slideDeckIndex];
         if (deck && slideIndex > 0) { slideIndex--; renderSlide(); }
@@ -856,6 +917,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const deck = slideDeckList[slideDeckIndex];
         if (deck && slideIndex < deck.slides.length - 1) { slideIndex++; renderSlide(); }
     });
+
+    if (slideNotesToggle) {
+        slideNotesToggle.addEventListener('click', () => {
+            slideViewerNotes.hidden = !slideViewerNotes.hidden;
+        });
+    }
 
     if (slideLangToggle) {
         slideLangToggle.addEventListener('click', () => {

@@ -16,8 +16,8 @@ test.describe('cloud + private slides', () => {
     // Slide viewer opens.
     await expect(page.getByTestId('slide-viewer')).toBeVisible();
     // No sign-in row, no deck-picker bar (single public deck only).
-    await expect(page.getByTestId('slide-signin-row')).toHaveCount(0);
-    await expect(page.getByTestId('slide-deck-bar')).toHaveCount(0);
+    await expect(page.getByTestId('slideviewer-signin-row')).toHaveCount(0);
+    await expect(page.getByTestId('slideviewer-decks')).toHaveCount(0);
   });
 
   test('cloud drawer: ☁ button opens and closes the drawer', async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe('cloud + private slides', () => {
     await page.evaluate(() => { window.dsvisualCloudConfig.drive.privateSlidesFolderId = 'FAKE_FOLDER_ID'; });
     await firstSlideBtn.click();
     // Sign-in row visible.
-    const signinRow = page.getByTestId('slide-signin-row');
+    const signinRow = page.getByTestId('slideviewer-signin-row');
     await expect(signinRow).toBeVisible();
     // Clicking it closes slide viewer + opens cloud drawer.
     await signinRow.click();

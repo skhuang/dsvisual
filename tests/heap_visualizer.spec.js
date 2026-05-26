@@ -39,9 +39,10 @@ test.describe('Heap Visualizer Suite', () => {
 
             await card.locator('.method-slides-btn').click();
             await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
-            await expect(page.locator('#slide-viewer-title')).toContainText(mode.title);
+            // Bar now shows deckTitle only; slide.title is injected as <h1> in the body.
+            await expect(page.locator('.slideviewer-slide h1.slide-title').first()).toContainText(mode.title);
 
-            await page.locator('.slide-viewer-close').click();
+            await page.locator('.slideviewer-close').click();
             await expect(page.locator('[data-testid="slide-viewer"]')).toBeHidden();
         });
     }

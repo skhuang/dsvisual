@@ -48,9 +48,10 @@ test.describe('Responsive Viewport: iPhone 12', () => {
 
     await page.locator('[data-method-section="stack-array"] .method-slides-btn').click();
     await expect(page.locator('[data-testid="slide-viewer"]')).toBeVisible();
-    await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array Implementation)');
+    // Bar now shows deckTitle only; slide.title is injected as h1 in the slide body.
+    await expect(page.locator('#slide-viewer-title')).toHaveText('Stack (Array)');
 
-    await page.locator('.slide-viewer-close').click();
+    await page.locator('.slideviewer-close').click();
     await expect(page.locator('[data-testid="slide-viewer"]')).toBeHidden();
   });
 });
