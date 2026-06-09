@@ -87,13 +87,24 @@
 
 刪除清單(共 6):`chapter01_5_stl_oop_patterns.md`、`chap06_graphs_chapter6.md`、`graphs_chapter6.md`、`graphs_cpp_advanced.md`、`internal_sorting_r2.md`、`internal_sorting.md`。
 
-## 5. ch06 真合併細節
+## 5. ch06 整併細節(修正:ext1 取代 base)
 
-- `chap06_graphs_chapter6_ext1.md`(3144 行,= 教科書 base + 內嵌 C++)幾乎涵蓋 `chap06_graphs_chapter6.md`(1409 行 base),但 base 獨有 **§6.4 Activity Network / Critical Path** 一節,ext1 沒有。base 獨有標題:
-  - `Supplementary Topics`、`Critical Path Concepts`、`Forward Pass — Trace (Textbook Fig. 6.32)`、`Computing $ee$: Forward Pass`、`Computing $le$: Backward Pass`、`Slack Table & Critical Activities`、`Software Testing Perspective (Bonus)`
-- **合併方式**:以 ext1 為基底,從 base 擷取上述連續投影片(含其前後的 `---` Marp 分隔),接到 ext1 §6.3 之後、結尾之前的適當位置,產生 `chap06_graphs_core.md`。frontmatter 沿用 ext1。
-- 合併後刪除 base 與 `graphs_chapter6.md`(= ext1 重複)。
-- 驗證:合併後檔案的去重標題集合 ⊇ base ∪ ext1 的標題集合(不得遺漏 base 的 §6.4 投影片)。
+**修正說明(2026-06-09 深入比對):** 初步以標題字串 `comm` 比對時,base 出現 7 個「獨有」標題,誤判為 base 含 ext1 缺少的 §6.4 內容。逐張人工比對後確認:**`chap06_graphs_chapter6_ext1.md`(3144 行)已完整且更詳盡地涵蓋 base(1409 行)的 §6.4 Activity Networks / Critical Path**——那 7 個標題只是用詞不同:
+
+| base 標題(舊用詞) | ext1 對應(更詳盡) |
+|---|---|
+| `Critical Path Concepts` | `Critical Path — Concepts and Notation` |
+| `Computing $ee$: Forward Pass`、`Forward Pass — Trace` | `🎬 AOE Walkthrough`、`Forward Pass — Idea (Animated)`、`Forward Pass — Summary Table` |
+| `Computing $le$: Backward Pass` | `Backward Pass — Idea` + `Step 1–5` 逐步 $le$ 計算 |
+| `Slack Table & Critical Activities` | `Combined $ee$/$le$ Table` + `Critical Paths Revealed` |
+| `Supplementary Topics` | `§6.6 Supplementary Topics` |
+| `Software Testing Perspective (Bonus)` | ext1 完整 `§6.7` 測試章(遠超 base bonus) |
+
+ext1 另含 base 沒有的 C++ 實作(Kahn's Topo、DFS Topo+cycle、Complete CPM Implementation)。
+
+- **結論**:ch06 為 **ext1 全面取代 base**,預期**零內容移植**。
+- **做法**:`chap06_graphs_chapter6_ext1.md` → 直接 rename 為 `chap06_graphs_core.md`;刪除 `chap06_graphs_chapter6.md`(base)與 `graphs_chapter6.md`(= ext1 重複)。
+- **保險步驟(無損保證)**:rename 前,逐一檢視 base 的 §6.4–§6.6 投影片(行 821–1331),確認每張在 ext1 都有對應或更佳版本;若發現任何 ext1 真正缺少的投影片(如 `Managerial Insights from CPM`),則把該張連同前後 `---` 附加到 ext1 的對應段落後再 rename。實作時以此判斷為準。
 
 ## 6. ch07 孤兒處理
 
