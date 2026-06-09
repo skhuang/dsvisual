@@ -4792,6 +4792,69 @@ int main() {
 }
 `;
 
+const codeTreeTraversal = `#include <iostream>
+#include <stack>
+#include <queue>
+struct Node { int val; Node* left; Node* right; Node(int v):val(v),left(nullptr),right(nullptr){} };
+
+void inorderRecursive(Node* n) {
+    if (!n) return;
+    inorderRecursive(n->left);
+    std::cout << n->val << ' ';
+    inorderRecursive(n->right);
+}
+
+void inorderIterative(Node* root) {
+    std::stack<Node*> st; Node* cur = root;
+    while (cur || !st.empty()) {
+        while (cur) { st.push(cur); cur = cur->left; }
+        cur = st.top(); st.pop();
+        std::cout << cur->val << ' ';
+        cur = cur->right;
+    }
+}
+
+void levelOrder(Node* root) {
+    if (!root) return;
+    std::queue<Node*> q; q.push(root);
+    while (!q.empty()) {
+        Node* n = q.front(); q.pop();
+        std::cout << n->val << ' ';
+        if (n->left) q.push(n->left);
+        if (n->right) q.push(n->right);
+    }
+}
+`;
+
+const codeHuffman = `#include <queue>
+#include <vector>
+#include <string>
+#include <unordered_map>
+struct HNode { int freq; char sym; HNode* l; HNode* r;
+    HNode(int f, char s):freq(f),sym(s),l(nullptr),r(nullptr){} };
+struct Cmp { bool operator()(HNode* a, HNode* b){ return a->freq > b->freq; } };
+
+HNode* buildHuffman(const std::unordered_map<char,int>& freq) {
+    std::priority_queue<HNode*, std::vector<HNode*>, Cmp> pq;
+    for (auto& kv : freq) pq.push(new HNode(kv.second, kv.first));
+    while (pq.size() > 1) {
+        HNode* a = pq.top(); pq.pop();
+        HNode* b = pq.top(); pq.pop();
+        HNode* m = new HNode(a->freq + b->freq, '\\0');
+        m->l = a; m->r = b;
+        pq.push(m);
+    }
+    return pq.empty() ? nullptr : pq.top();
+}
+
+void assignCodes(HNode* n, std::string p, std::unordered_map<char,std::string>& out) {
+    if (!n) return;
+    if (!n->l && !n->r) { out[n->sym] = p.empty() ? "0" : p; return; }
+    assignCodes(n->l, p + "0", out);
+    assignCodes(n->r, p + "1", out);
+}
+`;
+
 const codeGraphPrim = `#include <climits>
 #include <iostream>
 #include <vector>

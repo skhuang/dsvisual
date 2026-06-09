@@ -76,6 +76,8 @@ const mappings = {
     'search_aho.cpp': 'codeSearchAho',
     'tree_segment.cpp': 'codeTreeSegment',
     'tree_fenwick.cpp': 'codeTreeFenwick',
+    'tree_traversal.cpp': 'codeTreeTraversal',
+    'huffman.cpp': 'codeHuffman',
     'graph_prim.cpp': 'codeGraphPrim',
     'graph_bellman_ford.cpp': 'codeGraphBellmanFord',
     'graph_floyd_warshall.cpp': 'codeGraphFloydWarshall'
