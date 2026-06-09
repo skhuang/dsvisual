@@ -20516,4 +20516,65 @@ const SLIDES_DB = {
   }
 };
 
+SLIDES_DB["tree-traversal"] = {
+  "category": "Trees",
+  "title": { "zh": "二元樹走訪", "en": "Binary Tree Traversal" },
+  "slides": [
+    { "heading": { "zh": "什麼是樹走訪", "en": "What is Tree Traversal" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "走訪是以系統化順序恰好造訪每個節點一次。", "en": "Traversal visits every node exactly once in a systematic order." } },
+        { "type": "bullets", "items": [
+          { "zh": "前序:節點 → 左 → 右", "en": "Preorder: node → left → right" },
+          { "zh": "中序:左 → 節點 → 右(BST 得遞增序)", "en": "Inorder: left → node → right (sorted for a BST)" },
+          { "zh": "後序:左 → 右 → 節點", "en": "Postorder: left → right → node" },
+          { "zh": "層序:用佇列的廣度優先", "en": "Level-order: breadth-first using a queue" }
+        ] }
+      ] },
+    { "heading": { "zh": "遞迴 vs 迭代", "en": "Recursive vs Iterative" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "遞迴隱含使用呼叫堆疊;迭代則以顯式 stack(DFS)或 queue(層序)取代。", "en": "Recursion uses the implicit call stack; iteration replaces it with an explicit stack (DFS) or queue (level-order)." } },
+        { "type": "code", "lang": "cpp", "file": "tree_traversal.cpp", "code": "void inorderIterative(Node* root) {\n    std::stack<Node*> st; Node* cur = root;\n    while (cur || !st.empty()) {\n        while (cur) { st.push(cur); cur = cur->left; }\n        cur = st.top(); st.pop();\n        std::cout << cur->val << ' ';\n        cur = cur->right;\n    }\n}" }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "table",
+          "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "成本", "en": "Cost" } ],
+          "rows": [
+            [ { "zh": "時間", "en": "Time" }, { "zh": "O(N)", "en": "O(N)" } ],
+            [ { "zh": "空間(DFS)", "en": "Space (DFS)" }, { "zh": "O(h)", "en": "O(h)" } ],
+            [ { "zh": "空間(層序)", "en": "Space (BFS)" }, { "zh": "O(w)", "en": "O(w)" } ]
+          ] }
+      ] }
+  ]
+};
+SLIDES_DB["huffman"] = {
+  "category": "Trees",
+  "title": { "zh": "Huffman 編碼", "en": "Huffman Coding" },
+  "slides": [
+    { "heading": { "zh": "問題", "en": "The Problem" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "給定符號頻率,求最小總長度的前綴碼。", "en": "Given symbol frequencies, find a prefix-free code minimizing total encoded length." } },
+        { "type": "note", "text": { "zh": "前綴碼:沒有任一碼是另一碼的前綴,故可無歧義解碼。", "en": "Prefix-free: no code is a prefix of another, so decoding is unambiguous." } }
+      ] },
+    { "heading": { "zh": "貪婪建樹", "en": "Greedy Construction" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "每個符號各成一棵單節點樹,放入優先佇列。", "en": "Each symbol becomes a single-node tree in a priority queue." },
+          { "zh": "取出頻率最小的兩棵,合併成新節點(頻率相加)。", "en": "Remove the two lowest-frequency trees and merge them (frequencies add)." },
+          { "zh": "重複直到只剩一棵樹。", "en": "Repeat until a single tree remains." },
+          { "zh": "左邊記 0、右邊記 1,根到葉的路徑即為碼。", "en": "Label left 0, right 1; the root-to-leaf path is each symbol's code." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "huffman.cpp", "code": "while (pq.size() > 1) {\n    HNode* a = pq.top(); pq.pop();\n    HNode* b = pq.top(); pq.pop();\n    HNode* m = new HNode(a->freq + b->freq, '\\0');\n    m->l = a; m->r = b;\n    pq.push(m);\n}" }
+      ] },
+    { "heading": { "zh": "最優性與複雜度", "en": "Optimality & Complexity" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "貪婪每步取兩最小,可證得加權路徑長最小(最優前綴碼)。", "en": "Greedily merging the two smallest provably minimizes weighted path length (optimal prefix code)." } },
+        { "type": "math", "tex": "WPL = \\sum_i f_i \\cdot \\text{depth}(i)", "caption": { "zh": "目標:最小化加權路徑長", "en": "Objective: minimize weighted path length" } },
+        { "type": "bullets", "items": [
+          { "zh": "建樹:O(N log N)", "en": "Build: O(N log N)" },
+          { "zh": "空間:O(N)", "en": "Space: O(N)" }
+        ] }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;
