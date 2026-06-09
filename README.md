@@ -39,6 +39,8 @@ open index.html
 | TST | Ternary Search Tree |
 | B-Tree | Multi-way balanced tree |
 | B+ Tree | B-Tree variant with leaf-linked data |
+| Tree Traversal | Pre/In/Post/Level-order, recursive & iterative |
+| Huffman Coding | Greedy optimal prefix-code tree construction |
 
 ### Sorting Algorithms
 | Algorithm | Category |

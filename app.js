@@ -122,6 +122,8 @@ const METHOD_GROUPS = [
             { id: 'tree-dsu', title: 'Disjoint Set (Union-Find)', file: 'tree_dsu.cpp', visualizer: 'dsu', controls: 'dsu' },
             { id: 'tree-segment', title: 'Segment Tree', file: 'tree_segment.cpp', visualizer: 'segtree', controls: 'segtree' },
             { id: 'tree-fenwick', title: 'Fenwick Tree (BIT)', file: 'tree_fenwick.cpp', visualizer: 'fenwick', controls: 'fenwick' },
+            { id: 'tree-traversal', title: 'Tree Traversal', file: 'tree_traversal.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'huffman', title: 'Huffman Coding', file: 'huffman.cpp', visualizer: 'tree', controls: 'tree' },
         ],
     },
     {
@@ -282,6 +284,8 @@ function getCodeForMethod(methodId) {
         'tree-dsu': codeTreeDSU,
         'tree-segment': codeTreeSegment,
         'tree-fenwick': codeTreeFenwick,
+        'tree-traversal': codeTreeTraversal,
+        'huffman': codeHuffman,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -2220,6 +2224,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'tree_fenwick.cpp';
             codeDisplay.textContent = codeTreeFenwick;
         }
+        else if (currentMode === 'tree-traversal') {
+            codeTitle.textContent = 'tree_traversal.cpp';
+            codeDisplay.textContent = codeTreeTraversal;
+        }
+        else if (currentMode === 'huffman') {
+            codeTitle.textContent = 'huffman.cpp';
+            codeDisplay.textContent = codeHuffman;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-kmp') {
@@ -2433,6 +2445,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-dsu') renderDSU();
         else if (currentMode === 'tree-segment') renderSegmentTree();
         else if (currentMode === 'tree-fenwick') renderFenwick();
+        else if (currentMode === 'tree-traversal') renderTreeTraversal();
+        else if (currentMode === 'huffman') renderHuffman();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -3972,6 +3986,198 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         svg += '</svg>';
         return svg;
+    }
+
+    let _ttState = null;
+    function renderTreeTraversal() {
+        const host = acquireDynamicVizHost();
+        if (!_ttState) {
+            _ttState = { values: TreeTraversalViz.SAMPLE_VALUES.slice(), order: 'inorder', mode: 'recursive' };
+        }
+        const st = _ttState;
+        const root = TreeTraversalViz.buildTreeFromValues(st.values);
+        const frames = TreeTraversalViz.buildTraversalFrames(root, st.order, st.mode);
+        let idx = 0;
+        const langOf = (msg) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? msg.zh : msg.en;
+
+        host.innerHTML =
+            '<div class="tt-controls">' +
+              '<input type="text" class="tt-input" placeholder="50,30,70,..." value="' + st.values.join(',') + '">' +
+              '<button type="button" class="tt-build">Build</button>' +
+              '<button type="button" class="tt-rand">Random</button>' +
+              '<select class="tt-order">' +
+                '<option value="preorder">Preorder</option>' +
+                '<option value="inorder">Inorder</option>' +
+                '<option value="postorder">Postorder</option>' +
+                '<option value="levelorder">Level-order</option>' +
+              '</select>' +
+              '<select class="tt-mode">' +
+                '<option value="recursive">Recursive</option>' +
+                '<option value="iterative">Iterative</option>' +
+              '</select>' +
+            '</div>' +
+            '<div class="tt-stage"><svg class="tt-edges"></svg><div class="tt-nodes"></div></div>' +
+            '<div class="tt-aux"></div>' +
+            '<div class="tt-output"><strong>Output:</strong> <span class="tt-seq"></span></div>' +
+            '<div class="tt-phase"></div>';
+        host.querySelector('.tt-order').value = st.order;
+        host.querySelector('.tt-mode').value = st.mode;
+
+        const nodesMeta = [];
+        computeTreeLayout(root, 200, 30, 90, nodesMeta);
+        const nodesEl = host.querySelector('.tt-nodes');
+        const edgesEl = host.querySelector('.tt-edges');
+        const metaById = {};
+        nodesMeta.forEach(m => { metaById[m.id] = m; });
+        (function drawEdges() {
+            edgesEl.innerHTML = '';
+            (function walk(n) {
+                if (!n) return;
+                [n.left, n.right].forEach(c => {
+                    if (!c) return;
+                    const a = metaById[n.id], b = metaById[c.id];
+                    edgesEl.innerHTML += '<line x1="' + (a.x + 20) + '" y1="' + (a.y + 20) + '" x2="' + (b.x + 20) + '" y2="' + (b.y + 20) + '" stroke="#94a3b8" stroke-width="2"/>';
+                    walk(c);
+                });
+            })(root);
+        })();
+        nodesMeta.forEach(m => {
+            const d = document.createElement('div');
+            d.className = 'tree-node'; d.id = 'tt-node-' + m.id; d.textContent = m.val;
+            d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
+            nodesEl.appendChild(d);
+        });
+
+        function paint() {
+            const fr = frames[idx];
+            const seqEl = host.querySelector('.tt-seq');
+            if (!seqEl) return;
+            nodesMeta.forEach(m => {
+                const el = document.getElementById('tt-node-' + m.id);
+                if (!el) return;
+                el.classList.remove('active', 'visited');
+                if (fr.visited.includes(m.val)) el.classList.add('visited');
+                if (fr.current === m.id) el.classList.add('active');
+            });
+            seqEl.textContent = fr.visited.join(', ');
+            const auxLabel = { stack: 'Stack', queue: 'Queue', callstack: 'Call stack' }[fr.aux.kind];
+            host.querySelector('.tt-aux').innerHTML =
+                '<span class="tt-aux-label">' + auxLabel + ':</span> ' +
+                fr.aux.items.map(v => '<span class="tt-aux-cell">' + v + '</span>').join('');
+            host.querySelector('.tt-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+
+        function rebuild() {
+            st.order = host.querySelector('.tt-order').value;
+            st.mode = host.querySelector('.tt-mode').value;
+            renderTreeTraversal();
+        }
+        host.querySelector('.tt-order').onchange = rebuild;
+        host.querySelector('.tt-mode').onchange = rebuild;
+        host.querySelector('.tt-build').onclick = () => {
+            const vals = host.querySelector('.tt-input').value.split(',').map(s => parseInt(s.trim(), 10)).filter(n => Number.isFinite(n));
+            if (vals.length) { st.values = vals; renderTreeTraversal(); }
+        };
+        host.querySelector('.tt-rand').onclick = () => {
+            const n = 6 + Math.floor(Math.random() * 3);
+            const set = new Set();
+            while (set.size < n) set.add(10 + Math.floor(Math.random() * 90));
+            st.values = Array.from(set);
+            renderTreeTraversal();
+        };
+    }
+    let _hfState = null;
+    function renderHuffman() {
+        const host = acquireDynamicVizHost();
+        if (!_hfState) _hfState = { text: 'ABRACADABRA' };
+        const st = _hfState;
+        const freqs = HuffmanViz.computeFrequencies(st.text);
+        const result = HuffmanViz.buildHuffmanFrames(freqs);
+        const frames = result.frames, nodes = result.nodes, codes = result.codes;
+        let idx = 0;
+        const langOf = (msg) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? msg.zh : msg.en;
+
+        host.innerHTML =
+            '<div class="hf-controls">' +
+              '<input type="text" class="hf-input">' +
+              '<button type="button" class="hf-apply">Apply</button>' +
+            '</div>' +
+            '<div class="hf-pq"><strong>Priority queue:</strong> <span class="hf-pq-list"></span></div>' +
+            '<div class="hf-stage"><svg class="hf-edges"></svg><div class="hf-nodes"></div></div>' +
+            '<div class="hf-codes"></div>' +
+            '<div class="hf-phase"></div>';
+        host.querySelector('.hf-input').value = st.text;
+
+        const nodesEl = host.querySelector('.hf-nodes');
+        const edgesEl = host.querySelector('.hf-edges');
+
+        function layoutForest(rootIds) {
+            const meta = {};
+            const width = host.querySelector('.hf-stage').clientWidth || 760;
+            const slot = width / (rootIds.length + 1);
+            function place(id, x, y, dx, m) {
+                const n = nodes[id];
+                m[id] = { x: x, y: y, label: (n.sym !== null ? n.sym + ':' : '') + n.freq, isLeaf: n.sym !== null };
+                if (n.left) place(n.left, x - dx, y + 60, dx * 0.6, m);
+                if (n.right) place(n.right, x + dx, y + 60, dx * 0.6, m);
+            }
+            rootIds.forEach((rid, i) => { place(rid, (i + 1) * slot, 30, Math.max(40, slot / 2.4), meta); });
+            return meta;
+        }
+
+        function paint() {
+            const pqEl = host.querySelector('.hf-pq-list');
+            if (!pqEl) return;
+            const fr = frames[idx];
+            pqEl.innerHTML = fr.pq.map(p =>
+                '<span class="hf-pq-card">' + (p.sym !== null ? escapeHtml(p.sym) + ':' : '') + p.freq + '</span>').join('');
+            const meta = layoutForest(fr.forestRoots);
+            nodesEl.innerHTML = ''; edgesEl.innerHTML = '';
+            Object.keys(meta).forEach(id => {
+                const m = meta[id];
+                const d = document.createElement('div');
+                d.className = 'tree-node hf-node' + (m.isLeaf ? ' leaf' : '');
+                if (fr.picked && fr.picked.includes(id)) d.classList.add('picked');
+                if (fr.merged === id) d.classList.add('merged');
+                d.textContent = m.label;
+                d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
+                nodesEl.appendChild(d);
+                const n = nodes[id];
+                [n.left, n.right].forEach(c => {
+                    if (c && meta[c]) edgesEl.innerHTML += '<line x1="' + (m.x + 20) + '" y1="' + (m.y + 20) + '" x2="' + (meta[c].x + 20) + '" y2="' + (meta[c].y + 20) + '" stroke="#94a3b8" stroke-width="2"/>';
+                });
+            });
+            if (fr.phase === 'done') {
+                const totalBits = Object.entries(codes).reduce((s, pair) => {
+                    const sym = pair[0], c = pair[1];
+                    const f = freqs.find(x => x.sym === sym); return s + c.length * (f ? f.freq : 0);
+                }, 0);
+                const fixedBits = freqs.reduce((s, f) => s + f.freq, 0) * Math.max(1, Math.ceil(Math.log2(Math.max(1, freqs.length))));
+                host.querySelector('.hf-codes').innerHTML =
+                    '<table class="hf-code-table"><thead><tr><th>Symbol</th><th>Freq</th><th>Code</th></tr></thead><tbody>' +
+                    freqs.map(f => '<tr><td>' + escapeHtml(f.sym) + '</td><td>' + f.freq + '</td><td><code>' + codes[f.sym] + '</code></td></tr>').join('') +
+                    '</tbody></table>' +
+                    '<div class="hf-stats">Huffman: ' + totalBits + ' bits vs fixed-length: ' + fixedBits + ' bits</div>';
+            } else {
+                host.querySelector('.hf-codes').innerHTML = '';
+            }
+            host.querySelector('.hf-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 800));
+        paint();
+
+        host.querySelector('.hf-apply').onclick = () => {
+            const v = host.querySelector('.hf-input').value;
+            if (v && v.length) { st.text = v; renderHuffman(); }
+        };
     }
 
     function renderSegmentTree() {
