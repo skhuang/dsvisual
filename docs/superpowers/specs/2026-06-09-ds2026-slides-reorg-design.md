@@ -83,7 +83,9 @@
 | 09 | `chap09_symbol_tables_ai.md` | `chap09_symbol_tables_ai_agents.md` | rename |
 | 10 | `chap10_files.md` | `chap10_files_core.md` | rename |
 
-**結果**:25 份講義 → 19 份(刪 6 個檔:4 個 MD5 重複 + ch07 子集 1 + ch06 base 併入 1)。其中 ch06 為唯一的「真合併」。
+**結果**:31 份 `.md` → 25 份(刪 6 個檔:4 個 MD5 重複 + ch07 子集 `internal_sorting.md` 1 + ch06 base 併入 core 1)。其中 ch06 為唯一的「真合併」。
+
+刪除清單(共 6):`chapter01_5_stl_oop_patterns.md`、`chap06_graphs_chapter6.md`、`graphs_chapter6.md`、`graphs_cpp_advanced.md`、`internal_sorting_r2.md`、`internal_sorting.md`。
 
 ## 5. ch06 真合併細節
 
@@ -140,7 +142,7 @@ dsvisual 的 slides 以 `methodId` 在 app 內 modal 顯示(`window.SLIDES_RENDE
 
 ## 9. 驗證標準
 
-- 整理後 `ds2026` 僅含 19 份講義 `.md`,檔名全部符合 `chapNN_<主題>_<track>(_en)?.md`。
+- 整理後 `ds2026` 僅含 25 份講義 `.md`,檔名全部符合 `chapNN_<主題>_<track>(_en)?.md`。
 - 無 MD5 重複的 `.md`。
 - ch06 `core` 的去重標題集合涵蓋原 base ∪ ext1(特別是 §6.4 Activity Network 全部投影片)。
 - 每份講義仍為合法 Marp(frontmatter 完整、未被 rename/合併破壞)。
