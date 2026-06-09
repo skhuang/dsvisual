@@ -3988,7 +3988,106 @@ document.addEventListener('DOMContentLoaded', () => {
         return svg;
     }
 
-    function renderTreeTraversal() { const host = acquireDynamicVizHost(); host.textContent = 'tree-traversal (pending)'; }
+    let _ttState = null;
+    function renderTreeTraversal() {
+        const host = acquireDynamicVizHost();
+        if (!_ttState) {
+            _ttState = { values: TreeTraversalViz.SAMPLE_VALUES.slice(), order: 'inorder', mode: 'recursive' };
+        }
+        const st = _ttState;
+        const root = TreeTraversalViz.buildTreeFromValues(st.values);
+        const frames = TreeTraversalViz.buildTraversalFrames(root, st.order, st.mode);
+        let idx = 0;
+        const langOf = (msg) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? msg.zh : msg.en;
+
+        host.innerHTML =
+            '<div class="tt-controls">' +
+              '<input type="text" class="tt-input" placeholder="50,30,70,..." value="' + st.values.join(',') + '">' +
+              '<button type="button" class="tt-build">Build</button>' +
+              '<button type="button" class="tt-rand">Random</button>' +
+              '<select class="tt-order">' +
+                '<option value="preorder">Preorder</option>' +
+                '<option value="inorder">Inorder</option>' +
+                '<option value="postorder">Postorder</option>' +
+                '<option value="levelorder">Level-order</option>' +
+              '</select>' +
+              '<select class="tt-mode">' +
+                '<option value="recursive">Recursive</option>' +
+                '<option value="iterative">Iterative</option>' +
+              '</select>' +
+            '</div>' +
+            '<div class="tt-stage"><svg class="tt-edges"></svg><div class="tt-nodes"></div></div>' +
+            '<div class="tt-aux"></div>' +
+            '<div class="tt-output"><strong>Output:</strong> <span class="tt-seq"></span></div>' +
+            '<div class="tt-phase"></div>';
+        host.querySelector('.tt-order').value = st.order;
+        host.querySelector('.tt-mode').value = st.mode;
+
+        const nodesMeta = [];
+        computeTreeLayout(root, 200, 30, 90, nodesMeta);
+        const nodesEl = host.querySelector('.tt-nodes');
+        const edgesEl = host.querySelector('.tt-edges');
+        const metaById = {};
+        nodesMeta.forEach(m => { metaById[m.id] = m; });
+        (function drawEdges() {
+            edgesEl.innerHTML = '';
+            (function walk(n) {
+                if (!n) return;
+                [n.left, n.right].forEach(c => {
+                    if (!c) return;
+                    const a = metaById[n.id], b = metaById[c.id];
+                    edgesEl.innerHTML += '<line x1="' + (a.x + 20) + '" y1="' + (a.y + 20) + '" x2="' + (b.x + 20) + '" y2="' + (b.y + 20) + '" stroke="#94a3b8" stroke-width="2"/>';
+                    walk(c);
+                });
+            })(root);
+        })();
+        nodesMeta.forEach(m => {
+            const d = document.createElement('div');
+            d.className = 'tree-node'; d.id = 'tt-node-' + m.id; d.textContent = m.val;
+            d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
+            nodesEl.appendChild(d);
+        });
+
+        function paint() {
+            const fr = frames[idx];
+            nodesMeta.forEach(m => {
+                const el = document.getElementById('tt-node-' + m.id);
+                el.classList.remove('active', 'visited');
+                if (fr.visited.includes(m.val)) el.classList.add('visited');
+                if (fr.current === m.id) el.classList.add('active');
+            });
+            host.querySelector('.tt-seq').textContent = fr.visited.join(', ');
+            const auxLabel = { stack: 'Stack', queue: 'Queue', callstack: 'Call stack' }[fr.aux.kind];
+            host.querySelector('.tt-aux').innerHTML =
+                '<span class="tt-aux-label">' + auxLabel + ':</span> ' +
+                fr.aux.items.map(v => '<span class="tt-aux-cell">' + v + '</span>').join('');
+            host.querySelector('.tt-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+
+        function rebuild() {
+            st.order = host.querySelector('.tt-order').value;
+            st.mode = host.querySelector('.tt-mode').value;
+            renderTreeTraversal();
+        }
+        host.querySelector('.tt-order').onchange = rebuild;
+        host.querySelector('.tt-mode').onchange = rebuild;
+        host.querySelector('.tt-build').onclick = () => {
+            const vals = host.querySelector('.tt-input').value.split(',').map(s => parseInt(s.trim(), 10)).filter(n => Number.isFinite(n));
+            if (vals.length) { st.values = vals; renderTreeTraversal(); }
+        };
+        host.querySelector('.tt-rand').onclick = () => {
+            const n = 6 + Math.floor(Math.random() * 3);
+            const set = new Set();
+            while (set.size < n) set.add(10 + Math.floor(Math.random() * 90));
+            st.values = Array.from(set);
+            renderTreeTraversal();
+        };
+    }
     function renderHuffman() { const host = acquireDynamicVizHost(); host.textContent = 'huffman (pending)'; }
 
     function renderSegmentTree() {
