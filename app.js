@@ -4189,6 +4189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nodesG = host.querySelector('.aoe-nodes');
 
         function paint() {
+            if (!host.querySelector('.aoe-table')) return; // host wiped (method switched) — ignore stale tick
             const fr = frames[idx];
             const crit = new Set((fr.criticalEdges || []).map((e) => e.u + '-' + e.v));
             edgesG.innerHTML = net.edges.map((e) => {
