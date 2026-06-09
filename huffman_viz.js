@@ -15,7 +15,7 @@
     const nodes = {};
     function node(props) {
       const id = 'hf-' + seq++;
-      nodes[id] = Object.assign({ id: id, freq: 0, sym: null, left: null, right: null, seq: nodes._n = (nodes._n || 0) + 1 }, props);
+      nodes[id] = Object.assign({ id: id, freq: 0, sym: null, left: null, right: null, seq: seq }, props);
       return id;
     }
     let forest = freqs.map(f => node({ freq: f.freq, sym: f.sym }));

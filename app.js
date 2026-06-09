@@ -4050,13 +4050,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function paint() {
             const fr = frames[idx];
+            const seqEl = host.querySelector('.tt-seq');
+            if (!seqEl) return;
             nodesMeta.forEach(m => {
                 const el = document.getElementById('tt-node-' + m.id);
+                if (!el) return;
                 el.classList.remove('active', 'visited');
                 if (fr.visited.includes(m.val)) el.classList.add('visited');
                 if (fr.current === m.id) el.classList.add('active');
             });
-            host.querySelector('.tt-seq').textContent = fr.visited.join(', ');
+            seqEl.textContent = fr.visited.join(', ');
             const auxLabel = { stack: 'Stack', queue: 'Queue', callstack: 'Call stack' }[fr.aux.kind];
             host.querySelector('.tt-aux').innerHTML =
                 '<span class="tt-aux-label">' + auxLabel + ':</span> ' +
@@ -4101,13 +4104,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         host.innerHTML =
             '<div class="hf-controls">' +
-              '<input type="text" class="hf-input" value="' + st.text.replace(/"/g, '&quot;') + '">' +
+              '<input type="text" class="hf-input">' +
               '<button type="button" class="hf-apply">Apply</button>' +
             '</div>' +
             '<div class="hf-pq"><strong>Priority queue:</strong> <span class="hf-pq-list"></span></div>' +
             '<div class="hf-stage"><svg class="hf-edges"></svg><div class="hf-nodes"></div></div>' +
             '<div class="hf-codes"></div>' +
             '<div class="hf-phase"></div>';
+        host.querySelector('.hf-input').value = st.text;
 
         const nodesEl = host.querySelector('.hf-nodes');
         const edgesEl = host.querySelector('.hf-edges');
@@ -4127,9 +4131,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function paint() {
+            const pqEl = host.querySelector('.hf-pq-list');
+            if (!pqEl) return;
             const fr = frames[idx];
-            host.querySelector('.hf-pq-list').innerHTML = fr.pq.map(p =>
-                '<span class="hf-pq-card">' + (p.sym !== null ? p.sym + ':' : '') + p.freq + '</span>').join('');
+            pqEl.innerHTML = fr.pq.map(p =>
+                '<span class="hf-pq-card">' + (p.sym !== null ? escapeHtml(p.sym) + ':' : '') + p.freq + '</span>').join('');
             const meta = layoutForest(fr.forestRoots);
             nodesEl.innerHTML = ''; edgesEl.innerHTML = '';
             Object.keys(meta).forEach(id => {
@@ -4154,7 +4160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const fixedBits = freqs.reduce((s, f) => s + f.freq, 0) * Math.max(1, Math.ceil(Math.log2(Math.max(1, freqs.length))));
                 host.querySelector('.hf-codes').innerHTML =
                     '<table class="hf-code-table"><thead><tr><th>Symbol</th><th>Freq</th><th>Code</th></tr></thead><tbody>' +
-                    freqs.map(f => '<tr><td>' + f.sym + '</td><td>' + f.freq + '</td><td><code>' + codes[f.sym] + '</code></td></tr>').join('') +
+                    freqs.map(f => '<tr><td>' + escapeHtml(f.sym) + '</td><td>' + f.freq + '</td><td><code>' + codes[f.sym] + '</code></td></tr>').join('') +
                     '</tbody></table>' +
                     '<div class="hf-stats">Huffman: ' + totalBits + ' bits vs fixed-length: ' + fixedBits + ' bits</div>';
             } else {
