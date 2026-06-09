@@ -122,6 +122,8 @@ const METHOD_GROUPS = [
             { id: 'tree-dsu', title: 'Disjoint Set (Union-Find)', file: 'tree_dsu.cpp', visualizer: 'dsu', controls: 'dsu' },
             { id: 'tree-segment', title: 'Segment Tree', file: 'tree_segment.cpp', visualizer: 'segtree', controls: 'segtree' },
             { id: 'tree-fenwick', title: 'Fenwick Tree (BIT)', file: 'tree_fenwick.cpp', visualizer: 'fenwick', controls: 'fenwick' },
+            { id: 'tree-traversal', title: 'Tree Traversal', file: 'tree_traversal.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'huffman', title: 'Huffman Coding', file: 'huffman.cpp', visualizer: 'tree', controls: 'tree' },
         ],
     },
     {
@@ -282,6 +284,8 @@ function getCodeForMethod(methodId) {
         'tree-dsu': codeTreeDSU,
         'tree-segment': codeTreeSegment,
         'tree-fenwick': codeTreeFenwick,
+        'tree-traversal': codeTreeTraversal,
+        'huffman': codeHuffman,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -2220,6 +2224,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'tree_fenwick.cpp';
             codeDisplay.textContent = codeTreeFenwick;
         }
+        else if (currentMode === 'tree-traversal') {
+            codeTitle.textContent = 'tree_traversal.cpp';
+            codeDisplay.textContent = codeTreeTraversal;
+        }
+        else if (currentMode === 'huffman') {
+            codeTitle.textContent = 'huffman.cpp';
+            codeDisplay.textContent = codeHuffman;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-kmp') {
@@ -2433,6 +2445,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-dsu') renderDSU();
         else if (currentMode === 'tree-segment') renderSegmentTree();
         else if (currentMode === 'tree-fenwick') renderFenwick();
+        else if (currentMode === 'tree-traversal') renderTreeTraversal();
+        else if (currentMode === 'huffman') renderHuffman();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -3973,6 +3987,9 @@ document.addEventListener('DOMContentLoaded', () => {
         svg += '</svg>';
         return svg;
     }
+
+    function renderTreeTraversal() { const host = acquireDynamicVizHost(); host.textContent = 'tree-traversal (pending)'; }
+    function renderHuffman() { const host = acquireDynamicVizHost(); host.textContent = 'huffman (pending)'; }
 
     function renderSegmentTree() {
         const host = acquireDynamicVizHost();
