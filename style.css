@@ -2359,4 +2359,10 @@ pre.code-panel-body[class*="language-"] {
 .expr-cell { display: inline-block; min-width: 26px; padding: 3px 8px; margin: 2px; background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 5px; text-align: center; font-weight: 600; }
 .expr-cell.out { background: #dcfce7; border-color: #86efac; }
 .expr-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
+.aoe-stage { position: relative; width: 100%; overflow: hidden; }
+.aoe-svg { display: block; }
+.aoe-table { margin-top: 8px; }
+.aoe-tbl { border-collapse: collapse; }
+.aoe-tbl th, .aoe-tbl td { border: 1px solid #cbd5e1; padding: 3px 12px; text-align: center; }
+.aoe-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
 
