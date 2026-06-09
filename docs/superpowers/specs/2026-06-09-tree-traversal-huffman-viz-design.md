@@ -22,7 +22,18 @@
 
 ## 3. 整合方式
 
-**模組化**:兩個視覺化的核心邏輯各放一支獨立檔(`tree_traversal_viz.js`、`huffman_viz.js`),沿用既有 `heap_models.js` 拆檔先例與 segment/fenwick tree 的 **dynamic viz host** 模式(`acquireDynamicVizHost()`):每個視覺化在 `#dynamic-viz-host` 內自建控制列、畫布與面板。`app.js` 只加「註冊 + dispatch」最小接線。理由:app.js 已 ~326KB,兩個視覺化各自複雜且 UI 不符既有通用控制面板;獨立檔聚焦、好維護、好測試,且核心 frame 產生器可抽成純函式做單元測試。
+**模組化(對齊 `heap_models.js` 先例)**:經查證,`acquireDynamicVizHost()`、`buildStepControls()`、`computeTreeLayout()` 是 app.js 主 closure(IIFE)內的私有函式,獨立檔無法直接呼叫。`heap_models.js` 的既有模式是:**純模型/邏輯放獨立檔,DOM 繪製放 app.js**。因此:
+
+- **純 frame 產生器**放獨立檔 `tree_traversal_viz.js`、`huffman_viz.js`,採與 `heap_models.js` 相同的雙重匯出 IIFE:
+  ```js
+  (function (global) { /* pure fns */ const api = {...};
+    if (typeof module !== 'undefined' && module.exports) module.exports = api;
+    global.TreeTraversalViz = api; })(typeof window !== 'undefined' ? window : globalThis);
+  ```
+  瀏覽器端以 `window.TreeTraversalViz` / `window.HuffmanViz` 取用,Node 測試端以 `require()` 取用。
+- **DOM 繪製函式** `renderTreeTraversal()`、`renderHuffman()` 加在 **app.js 主 closure 內**,使用既有私有 helper `acquireDynamicVizHost()`(取得 `#dynamic-viz-host`)、`buildStepControls(onStep,onReset,intervalMs)`、`computeTreeLayout()`,並呼叫 `window.TreeTraversalViz.buildTraversalFrames(...)` 等純函式取得 frames。
+
+理由:app.js 已 ~326KB;把可測試的純邏輯隔離成獨立檔(可 `node --test`),繪製沿用既有 closure helper 與 dynamic-host 模式(segment/fenwick/bloom 為範本),改動最小且不破壞既有結構。
 
 ### 動畫模型
 
@@ -102,9 +113,9 @@ Frame = {
    - `{ id: 'tree-traversal', title: 'Tree Traversal', file: 'tree_traversal.cpp', visualizer: 'tree', controls: 'tree' }`
    - `{ id: 'huffman', title: 'Huffman Coding', file: 'huffman.cpp', visualizer: 'tree', controls: 'tree' }`
 2. `getCodeForMethod()` 加 `'tree-traversal': codeTreeTraversal`、`'huffman': codeHuffman`。
-3. `updateLayout()`:`currentMode` 為這兩者時 → 設定 code 面板檔名/內容,並呼叫對應模組的 `mount(host)`(取得 dynamic viz host)。隱藏所有通用 container/actions(沿用既有第一段全部隱藏邏輯即可)。
-4. `renderAll()`:dispatch 到模組的 render / 重新 mount。
-5. `index.html`:在 `app.js` 之前以 `<script src="tree_traversal_viz.js">`、`<script src="huffman_viz.js">` 載入(模組以全域物件如 `window.TreeTraversalViz`、`window.HuffmanViz` 暴露 `mount` / `unmount` 與純函式,供 app.js 與測試呼叫)。
+3. `updateLayout()`:這兩個 `currentMode` 各加一個 `else if` 分支,僅設定 `codeTitle.textContent` 與 `codeDisplay.textContent`(沿用 `tree-segment` 分支寫法;實際畫布在 `renderAll` 透過 dynamic host 繪製)。開頭既有的「全部隱藏 + 隱藏 dynHost」邏輯不需改。
+4. `renderAll()`:加 `else if (currentMode === 'tree-traversal') renderTreeTraversal();` 與 `else if (currentMode === 'huffman') renderHuffman();`(置於既有 `tree-segment`/`tree-fenwick` 分支附近,且在通用 `tree-*`/`includes('tree-')` 之前)。`renderTreeTraversal`/`renderHuffman` 為 app.js 內新增的繪製函式。
+5. `index.html`:在 `<script src="app.js">`(line 462)**之前**加 `<script src="tree_traversal_viz.js"></script>`、`<script src="huffman_viz.js"></script>`(置於 `code_db.js` 一帶,確保純函式全域物件先就緒)。
 
 ## 7. 資料 / 建置管線
 
