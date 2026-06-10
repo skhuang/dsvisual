@@ -136,6 +136,8 @@ const METHOD_GROUPS = [
             { id: 'tree-traversal', title: 'Tree Traversal', file: 'tree_traversal.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'huffman', title: 'Huffman Coding', file: 'huffman.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'tree-obst', title: 'Optimal BST', file: 'tree_obst.cpp', visualizer: 'obst', controls: 'obst' },
+            { id: 'tree-threaded', title: 'Threaded Binary Tree', file: 'tree_threaded.cpp', visualizer: 'threaded', controls: 'threaded' },
+            { id: 'tree-mway', title: 'm-way Search Tree', file: 'tree_mway.cpp', visualizer: 'mway', controls: 'mway' },
         ],
     },
     {
@@ -308,6 +310,8 @@ function getCodeForMethod(methodId) {
         'matrix-sparse': codeMatrixSparse,
         'poly-padd': codePolyPadd,
         'tree-obst': codeTreeObst,
+        'tree-threaded': codeTreeThreaded,
+        'tree-mway': codeTreeMway,
         'sort-external': codeSortExternal,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
@@ -2248,6 +2252,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'tree_obst.cpp';
             codeDisplay.textContent = codeTreeObst;
         }
+        else if (currentMode === 'tree-threaded') {
+            codeTitle.textContent = 'tree_threaded.cpp';
+            codeDisplay.textContent = codeTreeThreaded;
+        }
+        else if (currentMode === 'tree-mway') {
+            codeTitle.textContent = 'tree_mway.cpp';
+            codeDisplay.textContent = codeTreeMway;
+        }
         else if (currentMode === 'sort-external') {
             codeTitle.textContent = 'sort_external.cpp';
             codeDisplay.textContent = codeSortExternal;
@@ -2495,6 +2507,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'matrix-sparse') renderMatrixSparse();
         else if (currentMode === 'poly-padd') renderPolyPadd();
         else if (currentMode === 'tree-obst') renderTreeObst();
+        else if (currentMode === 'tree-threaded') renderTreeThreaded();
+        else if (currentMode === 'tree-mway') renderTreeMway();
         else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
@@ -4773,6 +4787,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (arr.length && Number.isFinite(target)) { st.arr = arr; st.target = target; renderSearchInterpolation(); }
         };
     }
+
+    function renderTreeThreaded() { const host = acquireDynamicVizHost(); host.textContent = 'tree-threaded (pending)'; }
+    function renderTreeMway() { const host = acquireDynamicVizHost(); host.textContent = 'tree-mway (pending)'; }
 
     function renderSegmentTree() {
         const host = acquireDynamicVizHost();
