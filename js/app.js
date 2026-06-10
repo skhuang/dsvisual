@@ -2486,7 +2486,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
-        else if (currentMode === 'maze-stack') renderMazeStack();
         else if (currentMode === 'list-doubly') renderListDoubly();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
