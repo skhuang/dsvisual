@@ -8,6 +8,7 @@
         en: {
             // Categories
             'group.linear':                 'Linear Structures',
+            'group.arrays':                 'Arrays',
             'group.trees':                  'Trees',
             'group.graphs':                 'Graphs',
             'group.hash':                   'Hash & Probabilistic',
@@ -79,6 +80,8 @@
 
             'method.tree-obst': 'Optimal BST',
             'method.sort-external': 'External Merge Sort',
+            'method.matrix-sparse': 'Sparse Matrix (Transpose)',
+            'method.poly-padd': 'Polynomial Addition',
 
             // Methods — Sorting
             'method.sort-bubble':           'Bubble Sort',
@@ -209,6 +212,7 @@
         zh: {
             // Categories
             'group.linear':                 '線性結構',
+            'group.arrays':                 '陣列',
             'group.trees':                  '樹',
             'group.graphs':                 '圖',
             'group.hash':                   '雜湊與機率資料結構',
@@ -280,6 +284,8 @@
 
             'method.tree-obst': '最佳二元搜尋樹',
             'method.sort-external': '外部合併排序',
+            'method.matrix-sparse': '稀疏矩陣(轉置)',
+            'method.poly-padd': '多項式相加',
 
             // Methods — Sorting
             'method.sort-bubble':           '氣泡排序',

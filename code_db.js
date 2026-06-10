@@ -5109,3 +5109,45 @@ std::vector<int> externalSort(std::vector<int> data, int M) {
 }
 `;
 
+const codeMatrixSparse = `#include <vector>
+
+// Sparse matrix as (row, col, value) triples, then FAST_TRANSPOSE in O(cols + terms).
+struct Triple { int r, c, v; };
+
+std::vector<Triple> fastTranspose(const std::vector<Triple>& a, int rows, int cols) {
+    std::vector<Triple> b(a.size());
+    std::vector<int> rowSize(cols, 0), startPos(cols, 0);
+    for (const auto& t : a) rowSize[t.c]++;
+    for (int c = 1; c < cols; c++) startPos[c] = startPos[c - 1] + rowSize[c - 1];
+    for (const auto& t : a) {
+        int dst = startPos[t.c]++;
+        b[dst] = { t.c, t.r, t.v };
+    }
+    (void)rows;
+    return b;
+}
+`;
+
+const codePolyPadd = `#include <vector>
+
+// Polynomial addition by merging two exponent-descending term lists.
+struct Term { int coef, exp; };
+
+std::vector<Term> padd(const std::vector<Term>& A, const std::vector<Term>& B) {
+    std::vector<Term> C;
+    size_t i = 0, j = 0;
+    while (i < A.size() && j < B.size()) {
+        if (A[i].exp > B[j].exp) C.push_back(A[i++]);
+        else if (A[i].exp < B[j].exp) C.push_back(B[j++]);
+        else {
+            int sum = A[i].coef + B[j].coef;
+            if (sum != 0) C.push_back({ sum, A[i].exp });
+            i++; j++;
+        }
+    }
+    while (i < A.size()) C.push_back(A[i++]);
+    while (j < B.size()) C.push_back(B[j++]);
+    return C;
+}
+`;
+

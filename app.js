@@ -108,6 +108,14 @@ const METHOD_GROUPS = [
         ],
     },
     {
+        id: 'arrays',
+        title: 'Arrays',
+        methods: [
+            { id: 'matrix-sparse', title: 'Sparse Matrix (Transpose)', file: 'matrix_sparse.cpp', visualizer: 'sparse', controls: 'sparse' },
+            { id: 'poly-padd', title: 'Polynomial Addition', file: 'poly_padd.cpp', visualizer: 'poly', controls: 'poly' },
+        ],
+    },
+    {
         id: 'trees',
         title: 'Trees',
         methods: [
@@ -291,6 +299,8 @@ function getCodeForMethod(methodId) {
         'tree-fenwick': codeTreeFenwick,
         'tree-traversal': codeTreeTraversal,
         'huffman': codeHuffman,
+        'matrix-sparse': codeMatrixSparse,
+        'poly-padd': codePolyPadd,
         'tree-obst': codeTreeObst,
         'sort-external': codeSortExternal,
         graph: codeGraph,
@@ -2214,6 +2224,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'huffman.cpp';
             codeDisplay.textContent = codeHuffman;
         }
+        else if (currentMode === 'matrix-sparse') {
+            codeTitle.textContent = 'matrix_sparse.cpp';
+            codeDisplay.textContent = codeMatrixSparse;
+        }
+        else if (currentMode === 'poly-padd') {
+            codeTitle.textContent = 'poly_padd.cpp';
+            codeDisplay.textContent = codePolyPadd;
+        }
         else if (currentMode === 'tree-obst') {
             codeTitle.textContent = 'tree_obst.cpp';
             codeDisplay.textContent = codeTreeObst;
@@ -2445,6 +2463,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-fenwick') renderFenwick();
         else if (currentMode === 'tree-traversal') renderTreeTraversal();
         else if (currentMode === 'huffman') renderHuffman();
+        else if (currentMode === 'matrix-sparse') renderMatrixSparse();
+        else if (currentMode === 'poly-padd') renderPolyPadd();
         else if (currentMode === 'tree-obst') renderTreeObst();
         else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
@@ -4428,6 +4448,110 @@ document.addEventListener('DOMContentLoaded', () => {
             const d = host.querySelector('.ext-data').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             const m = parseInt(host.querySelector('.ext-m').value, 10);
             if (d.length && m >= 1) { st.data = d; st.M = m; renderSortExternal(); }
+        };
+    }
+
+    let _sparseState = null;
+    function renderMatrixSparse() {
+        const host = acquireDynamicVizHost();
+        if (!_sparseState) _sparseState = { text: '0,0,3,0;5,0,0,0;0,2,0,4' };
+        const st = _sparseState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const matrix = st.text.split(';').map((row) => row.split(',').map((s) => parseInt(s.trim(), 10) || 0));
+        const rows = matrix.length, cols = matrix[0] ? matrix[0].length : 0;
+        const res = SparseViz.buildFastTransposeFrames(matrix);
+        const frames = res.frames;
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '"><button type="button" class="sm-apply">Apply</button>' +
+            '<span class="sm-hint">rows separated by ; , entries by ,</span></div>' +
+            '<div class="sm-cols"><div class="sm-dense"></div><div class="sm-triples"></div></div>' +
+            '<div class="sm-arrays"></div>' +
+            '<div class="sm-phase"></div>';
+
+        function gridHtml(mat, title) {
+            let h = '<div class="sm-grid-title">' + title + '</div><table class="sm-grid">';
+            for (let r = 0; r < mat.length; r++) { h += '<tr>'; for (let c = 0; c < mat[r].length; c++) { const v = mat[r][c]; h += '<td class="' + (v !== 0 ? 'nz' : 'z') + '">' + v + '</td>'; } h += '</tr>'; }
+            return h + '</table>';
+        }
+        function transposedSoFar(placed) {
+            const T = [];
+            for (let r = 0; r < cols; r++) T.push(new Array(rows).fill(0));
+            placed.forEach((t) => { if (t) T[t.r][t.c] = t.v; });
+            return T;
+        }
+
+        function paint() {
+            const fr = frames[idx];
+            if (!host.querySelector('.sm-dense')) return;
+            host.querySelector('.sm-dense').innerHTML = gridHtml(matrix, langOf({ zh: '原矩陣', en: 'Original' }));
+            let tr = '<div class="sm-grid-title">' + langOf({ zh: '三元組 (列,欄,值)', en: 'Triples (r,c,v)' }) + '</div><table class="sm-triple-tbl"><tr><th>r</th><th>c</th><th>v</th></tr>';
+            res.triples.forEach((t, s) => { tr += '<tr class="' + (fr.phase === 'place' && fr.scan === s ? 'sm-cur' : '') + '"><td>' + t.r + '</td><td>' + t.c + '</td><td>' + t.v + '</td></tr>'; });
+            tr += '</table>';
+            host.querySelector('.sm-triples').innerHTML = tr;
+            let a = '';
+            if (fr.rowSize && fr.rowSize.length) a += '<div class="sm-arr"><span class="sm-arr-label">rowSize</span> ' + fr.rowSize.map((v) => '<span class="sm-acell">' + v + '</span>').join('') + '</div>';
+            if (fr.startPos && fr.startPos.length) a += '<div class="sm-arr"><span class="sm-arr-label">startPos</span> ' + fr.startPos.map((v) => '<span class="sm-acell">' + v + '</span>').join('') + '</div>';
+            a += gridHtml(transposedSoFar(fr.placed || []), langOf({ zh: '轉置結果', en: 'Transposed' }));
+            host.querySelector('.sm-arrays').innerHTML = a;
+            host.querySelector('.sm-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+        host.querySelector('.sm-apply').onclick = () => {
+            const v = host.querySelector('.sm-input').value.trim();
+            if (v) { st.text = v; renderMatrixSparse(); }
+        };
+    }
+    let _polyState = null;
+    function renderPolyPadd() {
+        const host = acquireDynamicVizHost();
+        if (!_polyState) _polyState = { a: '3:2,2:1,1:0', b: '5:3,4:1' };
+        const st = _polyState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const A = PolyViz.parsePoly(st.a);
+        const B = PolyViz.parsePoly(st.b);
+        const res = PolyViz.buildPaddFrames(A, B);
+        const frames = res.frames;
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="pp-controls">' +
+              'A <input type="text" class="pp-a" value="' + st.a + '"> ' +
+              'B <input type="text" class="pp-b" value="' + st.b + '"> ' +
+              '<button type="button" class="pp-apply">Apply</button>' +
+              '<span class="sm-hint">terms as coef:exp, comma-separated</span>' +
+            '</div>' +
+            '<div class="pp-row"><span class="pp-label">A =</span> <span class="pp-a-terms"></span></div>' +
+            '<div class="pp-row"><span class="pp-label">B =</span> <span class="pp-b-terms"></span></div>' +
+            '<div class="pp-row"><span class="pp-label">A+B =</span> <span class="pp-result"></span></div>' +
+            '<div class="pp-phase"></div>';
+
+        function termCells(poly, ptr) {
+            return poly.map((t, k) => '<span class="pp-term' + (k === ptr ? ' pp-cur' : '') + '">' + PolyViz.formatPoly([t]) + '</span>').join('');
+        }
+
+        function paint() {
+            const fr = frames[idx];
+            if (!host.querySelector('.pp-a-terms')) return;
+            host.querySelector('.pp-a-terms').innerHTML = termCells(A, fr.i);
+            host.querySelector('.pp-b-terms').innerHTML = termCells(B, fr.j);
+            host.querySelector('.pp-result').innerHTML = (fr.result || []).map((t) => '<span class="pp-term out">' + PolyViz.formatPoly([t]) + '</span>').join('') || '<span class="pp-term out">0</span>';
+            host.querySelector('.pp-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+        host.querySelector('.pp-apply').onclick = () => {
+            const a = host.querySelector('.pp-a').value.trim();
+            const b = host.querySelector('.pp-b').value.trim();
+            if (a && b) { st.a = a; st.b = b; renderPolyPadd(); }
         };
     }
 

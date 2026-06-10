@@ -68,6 +68,12 @@ open index.html
 |-----------|-------------|
 | Infix → Postfix | Shunting-yard conversion + stack evaluation |
 
+### Arrays
+| Algorithm | Description |
+|-----------|-------------|
+| Sparse Matrix | Triple representation + FAST_TRANSPOSE |
+| Polynomial Addition | Two-pointer merge of term lists |
+
 ### Search Algorithms
 - Linear Search
 - Binary Search

@@ -756,4 +756,31 @@ const descDB = {
             <span class="badge space">Memory: O(M)</span>
         </div>
     `,
+    'matrix-sparse': `
+        <h3>Sparse Matrix &amp; Fast Transpose</h3>
+        <p>Store only nonzero entries as (row, col, value) triples; transpose in O(cols + terms).</p>
+        <hr>
+        <ul>
+            <li><strong>rowSize[c]:</strong> nonzeros per column → row counts of the transpose</li>
+            <li><strong>startPos[c]:</strong> prefix sums give each column's start slot</li>
+            <li><strong>Place:</strong> scatter each triple to its transposed position</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Transpose: O(cols + terms)</span>
+            <span class="badge space">Space: O(terms)</span>
+        </div>
+    `,
+    'poly-padd': `
+        <h3>Polynomial Addition</h3>
+        <p>Add two polynomials by merging exponent-descending term lists.</p>
+        <hr>
+        <ul>
+            <li><strong>Two pointers:</strong> compare leading exponents</li>
+            <li><strong>Equal exponents:</strong> add coefficients; drop zero results</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(m + n)</span>
+            <span class="badge space">Space: O(m + n)</span>
+        </div>
+    `,
 };

@@ -85,6 +85,8 @@ const mappings = {
     'graph_floyd_warshall.cpp': 'codeGraphFloydWarshall',
     'tree_obst.cpp': 'codeTreeObst',
     'sort_external.cpp': 'codeSortExternal',
+    'matrix_sparse.cpp': 'codeMatrixSparse',
+    'poly_padd.cpp': 'codePolyPadd',
 };
 
 let out = '// Auto-generated code DB for visualization\n';
