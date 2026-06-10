@@ -108,6 +108,14 @@ const METHOD_GROUPS = [
         ],
     },
     {
+        id: 'arrays',
+        title: 'Arrays',
+        methods: [
+            { id: 'matrix-sparse', title: 'Sparse Matrix (Transpose)', file: 'matrix_sparse.cpp', visualizer: 'sparse', controls: 'sparse' },
+            { id: 'poly-padd', title: 'Polynomial Addition', file: 'poly_padd.cpp', visualizer: 'poly', controls: 'poly' },
+        ],
+    },
+    {
         id: 'trees',
         title: 'Trees',
         methods: [
@@ -291,6 +299,8 @@ function getCodeForMethod(methodId) {
         'tree-fenwick': codeTreeFenwick,
         'tree-traversal': codeTreeTraversal,
         'huffman': codeHuffman,
+        'matrix-sparse': codeMatrixSparse,
+        'poly-padd': codePolyPadd,
         'tree-obst': codeTreeObst,
         'sort-external': codeSortExternal,
         graph: codeGraph,
@@ -2214,6 +2224,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'huffman.cpp';
             codeDisplay.textContent = codeHuffman;
         }
+        else if (currentMode === 'matrix-sparse') {
+            codeTitle.textContent = 'matrix_sparse.cpp';
+            codeDisplay.textContent = codeMatrixSparse;
+        }
+        else if (currentMode === 'poly-padd') {
+            codeTitle.textContent = 'poly_padd.cpp';
+            codeDisplay.textContent = codePolyPadd;
+        }
         else if (currentMode === 'tree-obst') {
             codeTitle.textContent = 'tree_obst.cpp';
             codeDisplay.textContent = codeTreeObst;
@@ -2445,6 +2463,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-fenwick') renderFenwick();
         else if (currentMode === 'tree-traversal') renderTreeTraversal();
         else if (currentMode === 'huffman') renderHuffman();
+        else if (currentMode === 'matrix-sparse') renderMatrixSparse();
+        else if (currentMode === 'poly-padd') renderPolyPadd();
         else if (currentMode === 'tree-obst') renderTreeObst();
         else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
@@ -4430,6 +4450,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (d.length && m >= 1) { st.data = d; st.M = m; renderSortExternal(); }
         };
     }
+
+    function renderMatrixSparse() { const host = acquireDynamicVizHost(); host.textContent = 'matrix-sparse (pending)'; }
+    function renderPolyPadd() { const host = acquireDynamicVizHost(); host.textContent = 'poly-padd (pending)'; }
 
     function renderSegmentTree() {
         const host = acquireDynamicVizHost();

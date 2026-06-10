@@ -8,6 +8,7 @@
         en: {
             // Categories
             'group.linear':                 'Linear Structures',
+            'group.arrays':                 'Arrays',
             'group.trees':                  'Trees',
             'group.graphs':                 'Graphs',
             'group.hash':                   'Hash & Probabilistic',
@@ -209,6 +210,7 @@
         zh: {
             // Categories
             'group.linear':                 '線性結構',
+            'group.arrays':                 '陣列',
             'group.trees':                  '樹',
             'group.graphs':                 '圖',
             'group.hash':                   '雜湊與機率資料結構',
