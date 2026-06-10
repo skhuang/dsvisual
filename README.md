@@ -77,8 +77,12 @@ open index.html
 | Polynomial Addition | Two-pointer merge of term lists |
 
 ### Search Algorithms
-- Linear Search
-- Binary Search
+| Algorithm | Description |
+|-----------|-------------|
+| Linear Search | Scan every element until a match is found |
+| Binary Search | Halve the search space on each comparison |
+| Fibonacci Search | Split a sorted array at Fibonacci offsets |
+| Interpolation Search | Probe by linear interpolation of the target |
 
 ## Project Structure
 
