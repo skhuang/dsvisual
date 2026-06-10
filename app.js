@@ -4389,7 +4389,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="ext-out"><strong>Output:</strong> <span class="ext-out-cells"></span></div>' +
             '<div class="ext-phase"></div>';
 
-        function cells(arr, cls) { return arr.map((v) => '<span class="ext-cell ' + (cls || '') + '">' + v + '</span>').join(''); }
+        function cells(arr, cls) { return arr.map((v) => '<span class="ext-cell ' + (cls || '') + '">' + v + '</span>').join(' '); }
 
         function paint() {
             const fr = frames[idx];
