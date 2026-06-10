@@ -4451,7 +4451,62 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function renderMatrixSparse() { const host = acquireDynamicVizHost(); host.textContent = 'matrix-sparse (pending)'; }
+    let _sparseState = null;
+    function renderMatrixSparse() {
+        const host = acquireDynamicVizHost();
+        if (!_sparseState) _sparseState = { text: '0,0,3,0;5,0,0,0;0,2,0,4' };
+        const st = _sparseState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const matrix = st.text.split(';').map((row) => row.split(',').map((s) => parseInt(s.trim(), 10) || 0));
+        const rows = matrix.length, cols = matrix[0] ? matrix[0].length : 0;
+        const res = SparseViz.buildFastTransposeFrames(matrix);
+        const frames = res.frames;
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '"><button type="button" class="sm-apply">Apply</button>' +
+            '<span class="sm-hint">rows separated by ; , entries by ,</span></div>' +
+            '<div class="sm-cols"><div class="sm-dense"></div><div class="sm-triples"></div></div>' +
+            '<div class="sm-arrays"></div>' +
+            '<div class="sm-phase"></div>';
+
+        function gridHtml(mat, title) {
+            let h = '<div class="sm-grid-title">' + title + '</div><table class="sm-grid">';
+            for (let r = 0; r < mat.length; r++) { h += '<tr>'; for (let c = 0; c < mat[r].length; c++) { const v = mat[r][c]; h += '<td class="' + (v !== 0 ? 'nz' : 'z') + '">' + v + '</td>'; } h += '</tr>'; }
+            return h + '</table>';
+        }
+        function transposedSoFar(placed) {
+            const T = [];
+            for (let r = 0; r < cols; r++) T.push(new Array(rows).fill(0));
+            placed.forEach((t) => { if (t) T[t.r][t.c] = t.v; });
+            return T;
+        }
+
+        function paint() {
+            const fr = frames[idx];
+            if (!host.querySelector('.sm-dense')) return;
+            host.querySelector('.sm-dense').innerHTML = gridHtml(matrix, langOf({ zh: '原矩陣', en: 'Original' }));
+            let tr = '<div class="sm-grid-title">' + langOf({ zh: '三元組 (列,欄,值)', en: 'Triples (r,c,v)' }) + '</div><table class="sm-triple-tbl"><tr><th>r</th><th>c</th><th>v</th></tr>';
+            res.triples.forEach((t, s) => { tr += '<tr class="' + (fr.phase === 'place' && fr.scan === s ? 'sm-cur' : '') + '"><td>' + t.r + '</td><td>' + t.c + '</td><td>' + t.v + '</td></tr>'; });
+            tr += '</table>';
+            host.querySelector('.sm-triples').innerHTML = tr;
+            let a = '';
+            if (fr.rowSize && fr.rowSize.length) a += '<div class="sm-arr"><span class="sm-arr-label">rowSize</span> ' + fr.rowSize.map((v) => '<span class="sm-acell">' + v + '</span>').join('') + '</div>';
+            if (fr.startPos && fr.startPos.length) a += '<div class="sm-arr"><span class="sm-arr-label">startPos</span> ' + fr.startPos.map((v) => '<span class="sm-acell">' + v + '</span>').join('') + '</div>';
+            a += gridHtml(transposedSoFar(fr.placed || []), langOf({ zh: '轉置結果', en: 'Transposed' }));
+            host.querySelector('.sm-arrays').innerHTML = a;
+            host.querySelector('.sm-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+        host.querySelector('.sm-apply').onclick = () => {
+            const v = host.querySelector('.sm-input').value.trim();
+            if (v) { st.text = v; renderMatrixSparse(); }
+        };
+    }
     function renderPolyPadd() { const host = acquireDynamicVizHost(); host.textContent = 'poly-padd (pending)'; }
 
     function renderSegmentTree() {
