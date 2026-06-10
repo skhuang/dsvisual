@@ -810,4 +810,30 @@ const descDB = {
             <span class="badge space">Space: O(N)</span>
         </div>
     `,
+    'search-fibonacci': `
+        <h3>Fibonacci Search</h3>
+        <p>Search a sorted array by splitting at Fibonacci-number offsets (no division).</p>
+        <hr>
+        <ul>
+            <li><strong>Probe:</strong> offset + fib2, clamped to the array</li>
+            <li><strong>Shrink:</strong> step the Fibonacci numbers down toward the target</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(log N)</span>
+            <span class="badge space">Space: O(1)</span>
+        </div>
+    `,
+    'search-interpolation': `
+        <h3>Interpolation Search</h3>
+        <p>Estimate the target's position by linear interpolation within [lo, hi].</p>
+        <hr>
+        <ul>
+            <li><strong>Probe:</strong> pos = lo + (target−a[lo])·(hi−lo) / (a[hi]−a[lo])</li>
+            <li><strong>Best on:</strong> roughly uniformly distributed data</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Avg: O(log log N), Worst: O(N)</span>
+            <span class="badge space">Space: O(1)</span>
+        </div>
+    `,
 };

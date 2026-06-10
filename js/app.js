@@ -211,6 +211,8 @@ const METHOD_GROUPS = [
             { id: 'search-strcompare', title: 'String Matching Compared', file: 'search_strcompare.cpp', visualizer: 'string-compare', controls: 'string-compare' },
             { id: 'search-zalgo', title: 'Z-Algorithm', file: 'search_zalgo.cpp', visualizer: 'string-search', controls: 'string-search' },
             { id: 'search-aho', title: 'Aho-Corasick', file: 'search_aho.cpp', visualizer: 'aho-corasick', controls: 'aho-corasick' },
+            { id: 'search-fibonacci', title: 'Fibonacci Search', file: 'search_fibonacci.cpp', visualizer: 'fibsearch', controls: 'fibsearch' },
+            { id: 'search-interpolation', title: 'Interpolation Search', file: 'search_interpolation.cpp', visualizer: 'interpsearch', controls: 'interpsearch' },
         ],
     },
     {
@@ -333,6 +335,8 @@ function getCodeForMethod(methodId) {
         'search-strcompare': codeSearchStrCompare,
         'search-zalgo': codeSearchZAlgo,
         'search-aho': codeSearchAho,
+        'search-fibonacci': codeSearchFibonacci,
+        'search-interpolation': codeSearchInterpolation,
         'sort-bubble': codeSortBubble,
         'sort-select': codeSortSelect,
         'sort-insert': codeSortInsert,
@@ -2290,6 +2294,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'search_aho.cpp';
             codeDisplay.textContent = codeSearchAho;
         }
+        else if (currentMode === 'search-fibonacci') {
+            codeTitle.textContent = 'search_fibonacci.cpp';
+            codeDisplay.textContent = codeSearchFibonacci;
+        }
+        else if (currentMode === 'search-interpolation') {
+            codeTitle.textContent = 'search_interpolation.cpp';
+            codeDisplay.textContent = codeSearchInterpolation;
+        }
         else if (currentMode === 'list-array') { codeTitle.textContent = 'list_array.cpp'; codeDisplay.textContent = codeListArray; listArrContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'list-linked') { codeTitle.textContent = 'list_linked.cpp'; codeDisplay.textContent = codeListLinked; listLLContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'deque') {
@@ -2495,6 +2507,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'search-strcompare') renderStringCompare();
         else if (currentMode === 'search-zalgo') renderZAlgo();
         else if (currentMode === 'search-aho') renderAhoCorasick();
+        else if (currentMode === 'search-fibonacci') renderSearchFibonacci();
+        else if (currentMode === 'search-interpolation') renderSearchInterpolation();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
@@ -4667,6 +4681,96 @@ document.addEventListener('DOMContentLoaded', () => {
             const vals = host.querySelector('.dl-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             const circular = host.querySelector('.dl-circular').checked;
             if (vals.length) { st.vals = vals; st.circular = circular; renderListDoubly(); }
+        };
+    }
+
+    let _fibState = null;
+    function renderSearchFibonacci() {
+        const host = acquireDynamicVizHost();
+        if (!_fibState) _fibState = { arr: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19], target: 11 };
+        const st = _fibState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const res = FibSearchViz.buildFibSearchFrames(st.arr, st.target);
+        const frames = res.frames;
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="ss-controls">' +
+              '<input type="text" class="ss-arr" value="' + st.arr.join(',') + '">' +
+              'target <input type="number" class="ss-target" value="' + st.target + '" style="width:64px">' +
+              '<button type="button" class="ss-apply">Apply</button>' +
+              '<span class="sm-hint">array must be sorted</span>' +
+            '</div>' +
+            '<div class="ss-cells"></div>' +
+            '<div class="ss-info"></div>' +
+            '<div class="ss-result"></div>' +
+            '<div class="ss-phase"></div>';
+
+        function paint() {
+            const fr = frames[idx];
+            if (!host.querySelector('.ss-cells')) return;
+            const inRange = (i) => fr.range && i >= fr.range[0] && i <= fr.range[1];
+            host.querySelector('.ss-cells').innerHTML = st.arr.map((v, i) =>
+                '<span class="ss-cell' + (i === fr.probe ? ' probe' : (inRange(i) ? ' inrange' : '')) + '"><span class="ss-idx">' + i + '</span>' + v + '</span>').join('');
+            host.querySelector('.ss-info').innerHTML = 'fibM=' + fr.fibM + ', fib1=' + fr.fib1 + ', fib2=' + fr.fib2 + ', offset=' + fr.lo;
+            host.querySelector('.ss-result').textContent = fr.found >= 0 ? ('✓ found at index ' + fr.found) : '';
+            host.querySelector('.ss-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 600));
+        paint();
+        host.querySelector('.ss-apply').onclick = () => {
+            const arr = host.querySelector('.ss-arr').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite).sort((a, b) => a - b);
+            const target = parseInt(host.querySelector('.ss-target').value, 10);
+            if (arr.length && Number.isFinite(target)) { st.arr = arr; st.target = target; renderSearchFibonacci(); }
+        };
+    }
+    let _interpState = null;
+    function renderSearchInterpolation() {
+        const host = acquireDynamicVizHost();
+        if (!_interpState) _interpState = { arr: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100], target: 70 };
+        const st = _interpState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const res = InterpSearchViz.buildInterpFrames(st.arr, st.target);
+        const frames = res.frames;
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="ss-controls">' +
+              '<input type="text" class="ss-arr" value="' + st.arr.join(',') + '">' +
+              'target <input type="number" class="ss-target" value="' + st.target + '" style="width:64px">' +
+              '<button type="button" class="ss-apply">Apply</button>' +
+              '<span class="sm-hint">sorted; works best when ~uniform</span>' +
+            '</div>' +
+            '<div class="ss-cells"></div>' +
+            '<div class="ss-info"></div>' +
+            '<div class="ss-result"></div>' +
+            '<div class="ss-phase"></div>';
+
+        function paint() {
+            const fr = frames[idx];
+            if (!host.querySelector('.ss-cells')) return;
+            const inRange = (i) => i >= fr.lo && i <= fr.hi;
+            host.querySelector('.ss-cells').innerHTML = st.arr.map((v, i) =>
+                '<span class="ss-cell' + (i === fr.pos ? ' probe' : (inRange(i) ? ' inrange' : '')) + '"><span class="ss-idx">' + i + '</span>' + v + '</span>').join('');
+            const a = st.arr;
+            host.querySelector('.ss-info').innerHTML = (fr.pos >= 0 && fr.lo <= fr.hi)
+                ? 'pos = lo + (target − a[lo])·(hi − lo) / (a[hi] − a[lo]) = ' + fr.lo + ' + (' + st.target + '−' + a[fr.lo] + ')·(' + fr.hi + '−' + fr.lo + ')/(' + a[fr.hi] + '−' + a[fr.lo] + ') = ' + fr.pos
+                : 'lo=' + fr.lo + ', hi=' + fr.hi;
+            host.querySelector('.ss-result').textContent = fr.found >= 0 ? ('✓ found at index ' + fr.found) : '';
+            host.querySelector('.ss-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+        host.querySelector('.ss-apply').onclick = () => {
+            const arr = host.querySelector('.ss-arr').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite).sort((a, b) => a - b);
+            const target = parseInt(host.querySelector('.ss-target').value, 10);
+            if (arr.length && Number.isFinite(target)) { st.arr = arr; st.target = target; renderSearchInterpolation(); }
         };
     }
 
