@@ -2366,3 +2366,6 @@ pre.code-panel-body[class*="language-"] {
 .aoe-tbl th, .aoe-tbl td { border: 1px solid #cbd5e1; padding: 3px 12px; text-align: center; }
 .aoe-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
 
+.stepctl-speed-wrap { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; font-size: 13px; color: #475569; }
+.stepctl-speed { width: 110px; vertical-align: middle; }
+.stepctl [data-action="run"] { min-width: 64px; }

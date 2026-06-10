@@ -11,7 +11,10 @@ async function loadMethod(page, methodId) {
 
 test.describe('Unified step controls — Run/Pause/Resume + Speed', () => {
     test.beforeEach(async ({ page }) => {
-        await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); localStorage.removeItem('dsvisual.stepSpeed.graph-aoe'); } catch (e) {} });
+        // Each Playwright test gets a fresh context (no localStorage bleed), so we only
+        // set the language here. Do NOT removeItem the speed key — addInitScript re-runs on
+        // page.reload(), which would wipe the value the persistence test is verifying.
+        await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
         await page.goto(FILE_URL);
         await loadMethod(page, 'graph-aoe');
     });
