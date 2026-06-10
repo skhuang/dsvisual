@@ -82,7 +82,9 @@ const mappings = {
     'graph_aoe.cpp': 'codeGraphAoe',
     'graph_prim.cpp': 'codeGraphPrim',
     'graph_bellman_ford.cpp': 'codeGraphBellmanFord',
-    'graph_floyd_warshall.cpp': 'codeGraphFloydWarshall'
+    'graph_floyd_warshall.cpp': 'codeGraphFloydWarshall',
+    'tree_obst.cpp': 'codeTreeObst',
+    'sort_external.cpp': 'codeSortExternal',
 };
 
 let out = '// Auto-generated code DB for visualization\n';
