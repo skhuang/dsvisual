@@ -107,6 +107,8 @@
             'method.search-strcompare':     'String Matching Compared',
             'method.search-zalgo':          'Z-Algorithm',
             'method.search-aho':            'Aho-Corasick',
+            'method.search-fibonacci': 'Fibonacci Search',
+            'method.search-interpolation': 'Interpolation Search',
 
             // Methods — OOP
             'method.oop-inheritance':       'Class Inheritance',
@@ -313,6 +315,8 @@
             'method.search-strcompare':     '字串比對對照',
             'method.search-zalgo':          'Z 演算法',
             'method.search-aho':            'Aho-Corasick',
+            'method.search-fibonacci': '費氏搜尋',
+            'method.search-interpolation': '內插搜尋',
 
             // Methods — OOP
             'method.oop-inheritance':       '類別繼承',

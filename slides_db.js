@@ -20780,4 +20780,44 @@ SLIDES_DB["list-doubly"] = {
       ] }
   ]
 };
+SLIDES_DB["search-fibonacci"] = {
+  "category": "Searching & String Matching",
+  "title": { "zh": "費氏搜尋", "en": "Fibonacci Search" },
+  "slides": [
+    { "heading": { "zh": "概念", "en": "Idea" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "在已排序陣列上,用費氏數來切分搜尋範圍,只需加減、不需除法。", "en": "Search a sorted array by splitting the range at Fibonacci offsets — only additions/subtractions, no division." } },
+        { "type": "bullets", "items": [
+          { "zh": "取 ≥ n 的最小費氏數作為起點。", "en": "Start from the smallest Fibonacci number ≥ n." },
+          { "zh": "探測點 = offset + fib2(夾在陣列範圍內)。", "en": "Probe = offset + fib2 (clamped to the array)." },
+          { "zh": "依比較結果讓費氏數往下一階移動。", "en": "Step the Fibonacci numbers down based on the comparison." }
+        ] }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "時間 O(log N);空間 O(1)", "en": "Time O(log N); Space O(1)" },
+          { "zh": "避免除法,對某些硬體較友善。", "en": "Avoids division — friendlier on some hardware." }
+        ] }
+      ] }
+  ]
+};
+SLIDES_DB["search-interpolation"] = {
+  "category": "Searching & String Matching",
+  "title": { "zh": "內插搜尋", "en": "Interpolation Search" },
+  "slides": [
+    { "heading": { "zh": "概念", "en": "Idea" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "假設資料均勻分佈,用線性內插「猜」目標的位置,而非每次取中點。", "en": "Assuming uniform data, guess the target's position by linear interpolation instead of always taking the midpoint." } },
+        { "type": "math", "tex": "pos = lo + \\frac{(target - a[lo])\\,(hi - lo)}{a[hi] - a[lo]}", "caption": { "zh": "內插位置公式", "en": "Interpolation position formula" } }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "平均 O(log log N)(均勻分佈時);最壞 O(N)", "en": "Average O(log log N) (uniform data); worst O(N)" },
+          { "zh": "需注意 a[hi]=a[lo] 的除以零情形。", "en": "Watch out for division by zero when a[hi] = a[lo]." }
+        ] }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;
