@@ -211,6 +211,8 @@ const METHOD_GROUPS = [
             { id: 'search-strcompare', title: 'String Matching Compared', file: 'search_strcompare.cpp', visualizer: 'string-compare', controls: 'string-compare' },
             { id: 'search-zalgo', title: 'Z-Algorithm', file: 'search_zalgo.cpp', visualizer: 'string-search', controls: 'string-search' },
             { id: 'search-aho', title: 'Aho-Corasick', file: 'search_aho.cpp', visualizer: 'aho-corasick', controls: 'aho-corasick' },
+            { id: 'search-fibonacci', title: 'Fibonacci Search', file: 'search_fibonacci.cpp', visualizer: 'fibsearch', controls: 'fibsearch' },
+            { id: 'search-interpolation', title: 'Interpolation Search', file: 'search_interpolation.cpp', visualizer: 'interpsearch', controls: 'interpsearch' },
         ],
     },
     {
@@ -333,6 +335,8 @@ function getCodeForMethod(methodId) {
         'search-strcompare': codeSearchStrCompare,
         'search-zalgo': codeSearchZAlgo,
         'search-aho': codeSearchAho,
+        'search-fibonacci': codeSearchFibonacci,
+        'search-interpolation': codeSearchInterpolation,
         'sort-bubble': codeSortBubble,
         'sort-select': codeSortSelect,
         'sort-insert': codeSortInsert,
@@ -2290,6 +2294,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'search_aho.cpp';
             codeDisplay.textContent = codeSearchAho;
         }
+        else if (currentMode === 'search-fibonacci') {
+            codeTitle.textContent = 'search_fibonacci.cpp';
+            codeDisplay.textContent = codeSearchFibonacci;
+        }
+        else if (currentMode === 'search-interpolation') {
+            codeTitle.textContent = 'search_interpolation.cpp';
+            codeDisplay.textContent = codeSearchInterpolation;
+        }
         else if (currentMode === 'list-array') { codeTitle.textContent = 'list_array.cpp'; codeDisplay.textContent = codeListArray; listArrContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'list-linked') { codeTitle.textContent = 'list_linked.cpp'; codeDisplay.textContent = codeListLinked; listLLContainer.classList.remove('hidden'); listActions.classList.remove('hidden'); }
         else if (currentMode === 'deque') {
@@ -2495,6 +2507,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'search-strcompare') renderStringCompare();
         else if (currentMode === 'search-zalgo') renderZAlgo();
         else if (currentMode === 'search-aho') renderAhoCorasick();
+        else if (currentMode === 'search-fibonacci') renderSearchFibonacci();
+        else if (currentMode === 'search-interpolation') renderSearchInterpolation();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
@@ -4669,6 +4683,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (vals.length) { st.vals = vals; st.circular = circular; renderListDoubly(); }
         };
     }
+
+    function renderSearchFibonacci() { const host = acquireDynamicVizHost(); host.textContent = 'search-fibonacci (pending)'; }
+    function renderSearchInterpolation() { const host = acquireDynamicVizHost(); host.textContent = 'search-interpolation (pending)'; }
 
     function renderSegmentTree() {
         const host = acquireDynamicVizHost();
