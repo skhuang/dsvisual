@@ -105,6 +105,8 @@ const METHOD_GROUPS = [
             { id: 'list-linked', title: 'Singly Linked List', file: 'list_linked.cpp', visualizer: 'linked-list', controls: 'list' },
             { id: 'deque', title: 'Deque (Double-Ended Queue)', file: 'deque.cpp', visualizer: 'deque', controls: 'deque' },
             { id: 'expr-infix-postfix', title: 'Infix → Postfix (Stack)', file: 'expr_infix_postfix.cpp', visualizer: 'expr', controls: 'expr' },
+            { id: 'maze-stack', title: 'Maze (Stack Backtracking)', file: 'maze_stack.cpp', visualizer: 'maze', controls: 'maze' },
+            { id: 'list-doubly', title: 'Doubly / Circular Linked List', file: 'list_doubly.cpp', visualizer: 'doubly', controls: 'doubly' },
         ],
     },
     {
@@ -285,6 +287,8 @@ function getCodeForMethod(methodId) {
         'list-linked': codeListLinked,
         'deque': codeDeque,
         'expr-infix-postfix': codeExprInfixPostfix,
+        'maze-stack': codeMazeStack,
+        'list-doubly': codeListDoubly,
         'tree-bst': codeTreeBST,
         'tree-avl': codeTreeAVL,
         'tree-rb': codeTreeRB,
@@ -2252,6 +2256,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'expr_infix_postfix.cpp';
             codeDisplay.textContent = codeExprInfixPostfix;
         }
+        else if (currentMode === 'maze-stack') {
+            codeTitle.textContent = 'maze_stack.cpp';
+            codeDisplay.textContent = codeMazeStack;
+        }
+        else if (currentMode === 'list-doubly') {
+            codeTitle.textContent = 'list_doubly.cpp';
+            codeDisplay.textContent = codeListDoubly;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-kmp') {
@@ -2473,6 +2485,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
+        else if (currentMode === 'maze-stack') renderMazeStack();
+        else if (currentMode === 'list-doubly') renderListDoubly();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -4558,6 +4572,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (a && b) { st.a = a; st.b = b; renderPolyPadd(); }
         };
     }
+
+    function renderMazeStack() { const host = acquireDynamicVizHost(); host.textContent = 'maze-stack (pending)'; }
+    function renderListDoubly() { const host = acquireDynamicVizHost(); host.textContent = 'list-doubly (pending)'; }
 
     function renderSegmentTree() {
         const host = acquireDynamicVizHost();
