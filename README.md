@@ -41,6 +41,7 @@ open index.html
 | B+ Tree | B-Tree variant with leaf-linked data |
 | Tree Traversal | Pre/In/Post/Level-order, recursive & iterative |
 | Huffman Coding | Greedy optimal prefix-code tree construction |
+| Optimal BST | DP table → reconstructed minimum-cost tree |
 
 ### Sorting Algorithms
 | Algorithm | Category |
@@ -55,6 +56,7 @@ open index.html
 | Counting Sort | Non-comparison |
 | Radix Sort | Non-comparison |
 | Heap Sort | Non-comparison |
+| External Merge Sort | Run generation + winner-tree k-way merge |
 
 ### Graphs
 | Algorithm | Description |

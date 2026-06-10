@@ -5053,3 +5053,59 @@ int main() {
 }
 `;
 
+const codeTreeObst = `#include <vector>
+#include <limits>
+
+// Optimal Binary Search Tree via dynamic programming.
+// keys sorted ascending; freq[i] = access frequency of keys[i].
+// cost[i][j] = min weighted path length for the subrange keys[i..j].
+int optimalBST(const std::vector<int>& freq) {
+    int n = (int)freq.size();
+    std::vector<std::vector<int>> cost(n, std::vector<int>(n, 0));
+    std::vector<std::vector<int>> w(n, std::vector<int>(n, 0));
+    for (int i = 0; i < n; i++) { cost[i][i] = freq[i]; w[i][i] = freq[i]; }
+    for (int len = 2; len <= n; len++) {
+        for (int i = 0; i + len - 1 < n; i++) {
+            int j = i + len - 1;
+            w[i][j] = w[i][j - 1] + freq[j];
+            cost[i][j] = std::numeric_limits<int>::max();
+            for (int r = i; r <= j; r++) {
+                int left = (r > i) ? cost[i][r - 1] : 0;
+                int right = (r < j) ? cost[r + 1][j] : 0;
+                int c = left + right + w[i][j];
+                if (c < cost[i][j]) cost[i][j] = c;
+            }
+        }
+    }
+    return n ? cost[0][n - 1] : 0;
+}
+`;
+
+const codeSortExternal = `#include <vector>
+#include <queue>
+#include <algorithm>
+
+// External merge sort (in-memory model): generate sorted runs of size M,
+// then k-way merge them with a min-heap (a practical stand-in for a
+// selection/loser tree).
+std::vector<int> externalSort(std::vector<int> data, int M) {
+    std::vector<std::vector<int>> runs;
+    for (size_t i = 0; i < data.size(); i += M) {
+        std::vector<int> run(data.begin() + i, data.begin() + std::min(data.size(), i + (size_t)M));
+        std::sort(run.begin(), run.end());
+        runs.push_back(run);
+    }
+    using Item = std::tuple<int, int, int>;
+    std::priority_queue<Item, std::vector<Item>, std::greater<Item>> pq;
+    for (int r = 0; r < (int)runs.size(); r++) if (!runs[r].empty()) pq.push({runs[r][0], r, 0});
+
+    std::vector<int> out;
+    while (!pq.empty()) {
+        auto [val, r, pos] = pq.top(); pq.pop();
+        out.push_back(val);
+        if (pos + 1 < (int)runs[r].size()) pq.push({runs[r][pos + 1], r, pos + 1});
+    }
+    return out;
+}
+`;
+

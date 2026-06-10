@@ -730,4 +730,30 @@ const descDB = {
             <span class="badge space">Space: O(N)</span>
         </div>
     `,
+    'tree-obst': `
+        <h3>Optimal Binary Search Tree</h3>
+        <p>Given keys with access frequencies, build the BST with minimum weighted path length.</p>
+        <hr>
+        <ul>
+            <li><strong>DP:</strong> cost[i][j] = min over root r of cost[i][r-1]+cost[r+1][j] + W(i,j)</li>
+            <li><strong>Fill order:</strong> by increasing subrange length</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(N³) (O(N²) with Knuth)</span>
+            <span class="badge space">Space: O(N²)</span>
+        </div>
+    `,
+    'sort-external': `
+        <h3>External Merge Sort</h3>
+        <p>Sort data too large for memory: make sorted runs, then k-way merge.</p>
+        <hr>
+        <ul>
+            <li><strong>Phase 1:</strong> read M records, sort in memory, write a run</li>
+            <li><strong>Phase 2:</strong> k-way merge runs using a selection/winner tree</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Passes: 1 + ⌈log_k(runs)⌉</span>
+            <span class="badge space">Memory: O(M)</span>
+        </div>
+    `,
 };

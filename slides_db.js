@@ -20633,4 +20633,56 @@ SLIDES_DB["expr-infix-postfix"] = {
       ] }
   ]
 };
+SLIDES_DB["tree-obst"] = {
+  "category": "Trees",
+  "title": { "zh": "最佳二元搜尋樹", "en": "Optimal Binary Search Tree" },
+  "slides": [
+    { "heading": { "zh": "問題", "en": "The Problem" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "已知各 key 的存取頻率,求加權路徑長最小的 BST。", "en": "Given each key's access frequency, find the BST with minimum weighted path length." } },
+        { "type": "note", "text": { "zh": "常存取的 key 應靠近根,以降低平均比較次數。", "en": "Frequently accessed keys should sit near the root to reduce average comparisons." } }
+      ] },
+    { "heading": { "zh": "動態規劃", "en": "Dynamic Programming" },
+      "blocks": [
+        { "type": "math", "tex": "cost[i][j] = \\min_{i\\le r\\le j}\\big(cost[i][r-1]+cost[r+1][j]\\big) + W(i,j)", "caption": { "zh": "對每個子區間試所有可能的根 r", "en": "Try every possible root r for each subrange" } },
+        { "type": "bullets", "items": [
+          { "zh": "依子區間長度由小到大填表", "en": "Fill the table by increasing subrange length" },
+          { "zh": "W(i,j) = 區間頻率總和", "en": "W(i,j) = sum of frequencies in the range" },
+          { "zh": "記錄最佳根以便重建樹", "en": "Record the best root to reconstruct the tree" }
+        ] }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "時間 O(N³);Knuth 優化可達 O(N²)", "en": "Time O(N³); O(N²) with Knuth's optimization" },
+          { "zh": "空間 O(N²)", "en": "Space O(N²)" }
+        ] }
+      ] }
+  ]
+};
+SLIDES_DB["sort-external"] = {
+  "category": "Sorting",
+  "title": { "zh": "外部合併排序", "en": "External Merge Sort" },
+  "slides": [
+    { "heading": { "zh": "為何需要外部排序", "en": "Why External Sorting" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "資料量大於記憶體時,無法一次內排序,需分段處理並控制 I/O。", "en": "When data exceeds memory, we cannot sort it all at once — we process it in pieces and manage I/O." } }
+      ] },
+    { "heading": { "zh": "兩階段", "en": "Two Phases" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "Run generation:讀入 M 筆、內排序、寫出一個 run。", "en": "Run generation: read M records, sort in memory, write a run." },
+          { "zh": "k-way merge:用選擇樹(winner tree)每步取 k 個 run head 的最小值。", "en": "k-way merge: a selection (winner) tree picks the minimum of the k run heads each step." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "sort_external.cpp", "code": "while (!pq.empty()) {\n    auto [val, r, pos] = pq.top(); pq.pop();\n    out.push_back(val);\n    if (pos + 1 < (int)runs[r].size())\n        pq.push({runs[r][pos + 1], r, pos + 1});\n}" }
+      ] },
+    { "heading": { "zh": "成本", "en": "Cost" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "Pass 數 = 1 + ⌈log_k(run 數)⌉", "en": "Number of passes = 1 + ⌈log_k(#runs)⌉" },
+          { "zh": "選擇樹讓每次取最小僅需 O(log k)", "en": "The selection tree makes each minimum extraction O(log k)" }
+        ] }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;

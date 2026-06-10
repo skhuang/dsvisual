@@ -125,6 +125,7 @@ const METHOD_GROUPS = [
             { id: 'tree-fenwick', title: 'Fenwick Tree (BIT)', file: 'tree_fenwick.cpp', visualizer: 'fenwick', controls: 'fenwick' },
             { id: 'tree-traversal', title: 'Tree Traversal', file: 'tree_traversal.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'huffman', title: 'Huffman Coding', file: 'huffman.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'tree-obst', title: 'Optimal BST', file: 'tree_obst.cpp', visualizer: 'obst', controls: 'obst' },
         ],
     },
     {
@@ -185,6 +186,7 @@ const METHOD_GROUPS = [
             { id: 'sort-radix', title: 'Radix Sort', file: 'sort_radix.cpp', visualizer: 'sort', controls: 'sort' },
             { id: 'sort-heap', title: 'Heap Sort', file: 'sort_heap.cpp', visualizer: 'sort', controls: 'sort' },
             { id: 'sort-shaker', title: 'Shaker Sort', file: 'sort_shaker.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-external', title: 'External Merge Sort', file: 'sort_external.cpp', visualizer: 'extsort', controls: 'extsort' },
         ],
     },
     {
@@ -289,6 +291,8 @@ function getCodeForMethod(methodId) {
         'tree-fenwick': codeTreeFenwick,
         'tree-traversal': codeTreeTraversal,
         'huffman': codeHuffman,
+        'tree-obst': codeTreeObst,
+        'sort-external': codeSortExternal,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -2210,6 +2214,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'huffman.cpp';
             codeDisplay.textContent = codeHuffman;
         }
+        else if (currentMode === 'tree-obst') {
+            codeTitle.textContent = 'tree_obst.cpp';
+            codeDisplay.textContent = codeTreeObst;
+        }
+        else if (currentMode === 'sort-external') {
+            codeTitle.textContent = 'sort_external.cpp';
+            codeDisplay.textContent = codeSortExternal;
+        }
         else if (currentMode === 'graph-aoe') {
             codeTitle.textContent = 'graph_aoe.cpp';
             codeDisplay.textContent = codeGraphAoe;
@@ -2433,6 +2445,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-fenwick') renderFenwick();
         else if (currentMode === 'tree-traversal') renderTreeTraversal();
         else if (currentMode === 'huffman') renderHuffman();
+        else if (currentMode === 'tree-obst') renderTreeObst();
+        else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
@@ -4289,6 +4303,132 @@ document.addEventListener('DOMContentLoaded', () => {
         host.appendChild(buildStepControls(step, reset, 700));
         paint();
         host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
+    }
+
+    let _obstState = null;
+    function renderTreeObst() {
+        const host = acquireDynamicVizHost();
+        if (!_obstState) _obstState = { keys: [10, 20, 30, 40], freqs: [4, 2, 6, 3] };
+        const st = _obstState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const n = st.keys.length;
+        const res = ObstViz.buildObstFrames(st.keys, st.freqs);
+        const frames = res.frames;
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="obst-controls">' +
+              '<input type="text" class="obst-keys" value="' + st.keys.join(',') + '" placeholder="keys e.g. 10,20,30">' +
+              '<input type="text" class="obst-freqs" value="' + st.freqs.join(',') + '" placeholder="freqs e.g. 4,2,6">' +
+              '<button type="button" class="obst-apply">Apply</button>' +
+            '</div>' +
+            '<div class="obst-grid"></div>' +
+            '<div class="obst-tree-stage"><svg class="obst-edges"></svg><div class="obst-nodes"></div></div>' +
+            '<div class="obst-phase"></div>';
+
+        function paint() {
+            const fr = frames[idx];
+            if (!host.querySelector('.obst-grid')) return;
+            let html = '<table class="obst-tbl"><tr><th>i\\j</th>';
+            for (let j = 0; j < n; j++) html += '<th>' + st.keys[j] + '</th>';
+            html += '</tr>';
+            for (let i = 0; i < n; i++) {
+                html += '<tr><th>' + st.keys[i] + '</th>';
+                for (let j = 0; j < n; j++) {
+                    if (j < i) { html += '<td class="obst-empty"></td>'; continue; }
+                    const v = fr.cost[i + ',' + j];
+                    const cur = (fr.phase === 'fill' && fr.i === i && fr.j === j) ? ' obst-cur' : '';
+                    html += '<td class="obst-cell' + cur + '">' + (v != null ? v : '') + '</td>';
+                }
+                html += '</tr>';
+            }
+            html += '</table>';
+            host.querySelector('.obst-grid').innerHTML = html;
+            const nodesEl = host.querySelector('.obst-nodes');
+            const edgesEl = host.querySelector('.obst-edges');
+            if (fr.phase === 'tree') {
+                const meta = [];
+                computeTreeLayout(res.tree, 200, 30, 90, meta);
+                const byId = {}; meta.forEach((m) => { byId[m.id] = m; });
+                edgesEl.innerHTML = '';
+                (function walk(nd) { if (!nd) return; [nd.left, nd.right].forEach((c) => { if (!c) return; const a = byId[nd.id], b = byId[c.id]; edgesEl.innerHTML += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>'; walk(c); }); })(res.tree);
+                nodesEl.innerHTML = '';
+                meta.forEach((m) => { const d = document.createElement('div'); d.className = 'tree-node'; d.textContent = m.val; d.style.left = m.x + 'px'; d.style.top = m.y + 'px'; nodesEl.appendChild(d); });
+            } else { nodesEl.innerHTML = ''; edgesEl.innerHTML = ''; }
+            host.querySelector('.obst-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 600));
+        paint();
+        host.querySelector('.obst-apply').onclick = () => {
+            const ks = host.querySelector('.obst-keys').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
+            const fs = host.querySelector('.obst-freqs').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
+            if (ks.length && ks.length === fs.length) { ks.sort((a, b) => a - b); st.keys = ks; st.freqs = fs; renderTreeObst(); }
+        };
+    }
+    let _extState = null;
+    function renderSortExternal() {
+        const host = acquireDynamicVizHost();
+        if (!_extState) _extState = { data: [5, 3, 8, 1, 9, 2, 7, 4, 6, 0], M: 4 };
+        const st = _extState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const res = ExtSortViz.buildExternalSortFrames(st.data, st.M);
+        const frames = res.frames;
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="ext-controls">' +
+              '<input type="text" class="ext-data" value="' + st.data.join(',') + '">' +
+              '<label>M <input type="number" class="ext-m" min="1" max="20" value="' + st.M + '" style="width:54px"></label>' +
+              '<button type="button" class="ext-apply">Apply</button>' +
+            '</div>' +
+            '<div class="ext-runs"></div>' +
+            '<div class="ext-tree-stage"><div class="ext-tree-nodes"></div></div>' +
+            '<div class="ext-out"><strong>Output:</strong> <span class="ext-out-cells"></span></div>' +
+            '<div class="ext-phase"></div>';
+
+        function cells(arr, cls) { return arr.map((v) => '<span class="ext-cell ' + (cls || '') + '">' + v + '</span>').join(' '); }
+
+        function paint() {
+            const fr = frames[idx];
+            if (!host.querySelector('.ext-runs')) return;
+            host.querySelector('.ext-runs').innerHTML = fr.runs.map((r, i) =>
+                '<div class="ext-run"><span class="ext-run-label">run ' + (i + 1) + (i === fr.current ? ' ★' : '') + '</span> ' + cells(r) + '</div>').join('');
+            const nodesEl = host.querySelector('.ext-tree-nodes');
+            nodesEl.innerHTML = '';
+            const tree = fr.tree || [];
+            if (tree.length > 1) {
+                const W = host.querySelector('.ext-tree-stage').clientWidth || 700;
+                for (let i = 1; i < tree.length; i++) {
+                    if (!tree[i]) continue;
+                    const level = Math.floor(Math.log2(i));
+                    const posInLevel = i - Math.pow(2, level);
+                    const count = Math.pow(2, level);
+                    const x = (posInLevel + 0.5) / count * W;
+                    const y = level * 52 + 20;
+                    const d = document.createElement('div');
+                    const isWinner = (i === 1 && fr.winnerRun >= 0);
+                    d.className = 'ext-tnode' + (isWinner ? ' winner' : '') + (tree[i].run < 0 ? ' pad' : '');
+                    d.textContent = tree[i].val == null ? '∞' : tree[i].val;
+                    d.style.left = x + 'px'; d.style.top = y + 'px';
+                    nodesEl.appendChild(d);
+                }
+            }
+            host.querySelector('.ext-out-cells').innerHTML = cells(fr.output, 'out');
+            host.querySelector('.ext-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 600));
+        paint();
+        host.querySelector('.ext-apply').onclick = () => {
+            const d = host.querySelector('.ext-data').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
+            const m = parseInt(host.querySelector('.ext-m').value, 10);
+            if (d.length && m >= 1) { st.data = d; st.M = m; renderSortExternal(); }
+        };
     }
 
     function renderSegmentTree() {

@@ -16,11 +16,14 @@ test.describe('Zoom is controlled only by the zoom buttons (not trackpad gesture
             try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {}
         });
         await page.goto('file://' + path.resolve(__dirname, '../index.html'));
-        await loadMethod(page, 'tree-bst');
+        await loadMethod(page, 'stack-array');
+        // Selecting a method leaves the category dropdown open; with enough items it
+        // overlaps the visualizer and intercepts the hover below. Close it deterministically.
+        await page.evaluate(() => document.querySelectorAll('#category-nav .category-nav-item.open').forEach((it) => it.classList.remove('open')));
     });
 
     test('trackpad wheel/scroll over the visualizer does NOT change zoom', async ({ page }) => {
-        const section = page.locator('[data-method-section="tree-bst"]');
+        const section = page.locator('[data-method-section="stack-array"]');
         const reset = section.locator('[data-zoom="reset"]');
         await expect(reset).toHaveText('100%');
 
@@ -33,7 +36,7 @@ test.describe('Zoom is controlled only by the zoom buttons (not trackpad gesture
     });
 
     test('the zoom buttons still change zoom', async ({ page }) => {
-        const section = page.locator('[data-method-section="tree-bst"]');
+        const section = page.locator('[data-method-section="stack-array"]');
         const reset = section.locator('[data-zoom="reset"]');
         await expect(reset).toHaveText('100%');
 

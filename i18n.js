@@ -77,6 +77,9 @@
             'method.heap-dary':             '4-ary Heap',
             'method.heap-pairing':          'Pairing Heap',
 
+            'method.tree-obst': 'Optimal BST',
+            'method.sort-external': 'External Merge Sort',
+
             // Methods — Sorting
             'method.sort-bubble':           'Bubble Sort',
             'method.sort-select':           'Selection Sort',
@@ -274,6 +277,9 @@
             'method.heap-skew':             '斜堆積',
             'method.heap-dary':             '4 元堆積',
             'method.heap-pairing':          '配對堆積',
+
+            'method.tree-obst': '最佳二元搜尋樹',
+            'method.sort-external': '外部合併排序',
 
             // Methods — Sorting
             'method.sort-bubble':           '氣泡排序',
