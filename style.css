@@ -2369,3 +2369,14 @@ pre.code-panel-body[class*="language-"] {
 .stepctl-speed-wrap { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; font-size: 13px; color: #475569; }
 .stepctl-speed { width: 110px; vertical-align: middle; }
 .stepctl [data-action="run"] { min-width: 64px; }
+
+.obst-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+.obst-tbl { border-collapse: collapse; margin: 6px 0; }
+.obst-tbl th, .obst-tbl td { border: 1px solid #cbd5e1; padding: 4px 12px; text-align: center; min-width: 36px; }
+.obst-tbl th { background: #eef2f7; }
+.obst-empty { background: #f8fafc; }
+.obst-cur { background: #fde68a; font-weight: 700; }
+.obst-tree-stage { position: relative; height: 240px; overflow: hidden; }
+.obst-tree-stage .obst-edges { position: absolute; inset: 0; width: 100%; height: 100%; }
+.obst-tree-stage .obst-nodes { position: absolute; inset: 0; }
+.obst-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
