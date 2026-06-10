@@ -125,6 +125,7 @@ const METHOD_GROUPS = [
             { id: 'tree-fenwick', title: 'Fenwick Tree (BIT)', file: 'tree_fenwick.cpp', visualizer: 'fenwick', controls: 'fenwick' },
             { id: 'tree-traversal', title: 'Tree Traversal', file: 'tree_traversal.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'huffman', title: 'Huffman Coding', file: 'huffman.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'tree-obst', title: 'Optimal BST', file: 'tree_obst.cpp', visualizer: 'obst', controls: 'obst' },
         ],
     },
     {
@@ -185,6 +186,7 @@ const METHOD_GROUPS = [
             { id: 'sort-radix', title: 'Radix Sort', file: 'sort_radix.cpp', visualizer: 'sort', controls: 'sort' },
             { id: 'sort-heap', title: 'Heap Sort', file: 'sort_heap.cpp', visualizer: 'sort', controls: 'sort' },
             { id: 'sort-shaker', title: 'Shaker Sort', file: 'sort_shaker.cpp', visualizer: 'sort', controls: 'sort' },
+            { id: 'sort-external', title: 'External Merge Sort', file: 'sort_external.cpp', visualizer: 'extsort', controls: 'extsort' },
         ],
     },
     {
@@ -289,6 +291,8 @@ function getCodeForMethod(methodId) {
         'tree-fenwick': codeTreeFenwick,
         'tree-traversal': codeTreeTraversal,
         'huffman': codeHuffman,
+        'tree-obst': codeTreeObst,
+        'sort-external': codeSortExternal,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -2210,6 +2214,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'huffman.cpp';
             codeDisplay.textContent = codeHuffman;
         }
+        else if (currentMode === 'tree-obst') {
+            codeTitle.textContent = 'tree_obst.cpp';
+            codeDisplay.textContent = codeTreeObst;
+        }
+        else if (currentMode === 'sort-external') {
+            codeTitle.textContent = 'sort_external.cpp';
+            codeDisplay.textContent = codeSortExternal;
+        }
         else if (currentMode === 'graph-aoe') {
             codeTitle.textContent = 'graph_aoe.cpp';
             codeDisplay.textContent = codeGraphAoe;
@@ -2433,6 +2445,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-fenwick') renderFenwick();
         else if (currentMode === 'tree-traversal') renderTreeTraversal();
         else if (currentMode === 'huffman') renderHuffman();
+        else if (currentMode === 'tree-obst') renderTreeObst();
+        else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
@@ -4290,6 +4304,9 @@ document.addEventListener('DOMContentLoaded', () => {
         paint();
         host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
     }
+
+    function renderTreeObst() { const host = acquireDynamicVizHost(); host.textContent = 'tree-obst (pending)'; }
+    function renderSortExternal() { const host = acquireDynamicVizHost(); host.textContent = 'sort-external (pending)'; }
 
     function renderSegmentTree() {
         const host = acquireDynamicVizHost();
