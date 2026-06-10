@@ -91,8 +91,9 @@ const mappings = {
 
 let out = '// Auto-generated code DB for visualization\n';
 for (const [file, varName] of Object.entries(mappings)) {
-    if (fs.existsSync(file)) {
-        const content = fs.readFileSync(file, 'utf8');
+    const cpath = 'cpp/' + file;
+    if (fs.existsSync(cpath)) {
+        const content = fs.readFileSync(cpath, 'utf8');
         out += `const ${varName} = \`${content.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;\n\n`;
     }
 }
