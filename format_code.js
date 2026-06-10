@@ -8,9 +8,10 @@ const REPO_ROOT = __dirname;
 const CLANG_FORMAT = path.join(REPO_ROOT, 'node_modules', '.bin', 'clang-format');
 
 function cppFiles() {
-  return fs.readdirSync(REPO_ROOT)
+  const cppDir = path.join(REPO_ROOT, 'cpp');
+  return fs.readdirSync(cppDir)
     .filter((name) => name.endsWith('.cpp'))
-    .map((name) => path.join(REPO_ROOT, name))
+    .map((name) => path.join(cppDir, name))
     .sort();
 }
 
