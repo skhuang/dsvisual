@@ -20685,4 +20685,57 @@ SLIDES_DB["sort-external"] = {
       ] }
   ]
 };
+SLIDES_DB["matrix-sparse"] = {
+  "category": "Arrays",
+  "title": { "zh": "稀疏矩陣與快速轉置", "en": "Sparse Matrix & Fast Transpose" },
+  "slides": [
+    { "heading": { "zh": "三元組表示法", "en": "Triple Representation" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "只儲存非零元素為 (列, 欄, 值) 三元組,節省大量空間。", "en": "Store only nonzero entries as (row, col, value) triples to save space." } },
+        { "type": "note", "text": { "zh": "三元組以列為主序排列。", "en": "Triples are kept in row-major order." } }
+      ] },
+    { "heading": { "zh": "FAST_TRANSPOSE", "en": "FAST_TRANSPOSE" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "rowSize[c]:每欄非零數(轉置後的每列數)。", "en": "rowSize[c]: nonzeros per column (row counts of the transpose)." },
+          { "zh": "startPos[c]:前綴和求每欄在結果中的起始位置。", "en": "startPos[c]: prefix sums give each column's start in the result." },
+          { "zh": "掃描原三元組,將每個放到轉置位置。", "en": "Scan the triples and scatter each to its transposed slot." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "matrix_sparse.cpp", "code": "for (const auto& t : a) {\n    int dst = startPos[t.c]++;\n    b[dst] = { t.c, t.r, t.v };\n}" }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "轉置 O(cols + terms),優於密集 O(rows×cols)", "en": "Transpose O(cols + terms), better than dense O(rows×cols)" },
+          { "zh": "空間 O(terms)", "en": "Space O(terms)" }
+        ] }
+      ] }
+  ]
+};
+SLIDES_DB["poly-padd"] = {
+  "category": "Arrays",
+  "title": { "zh": "多項式相加", "en": "Polynomial Addition" },
+  "slides": [
+    { "heading": { "zh": "表示法", "en": "Representation" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "多項式以「係數,指數」項列表示,依指數遞減排列。", "en": "A polynomial is a list of (coefficient, exponent) terms in descending exponent order." } }
+      ] },
+    { "heading": { "zh": "雙指標合併", "en": "Two-Pointer Merge" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "比較兩列開頭項的指數。", "en": "Compare the leading exponents of both lists." },
+          { "zh": "指數較大者直接取用。", "en": "Take the term with the larger exponent." },
+          { "zh": "指數相同則係數相加;和為 0 則捨去該項。", "en": "Equal exponents: add coefficients; drop the term if the sum is zero." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "poly_padd.cpp", "code": "else {\n    int sum = A[i].coef + B[j].coef;\n    if (sum != 0) C.push_back({ sum, A[i].exp });\n    i++; j++;\n}" }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "時間 O(m + n)(各項僅處理一次)", "en": "Time O(m + n) — each term processed once" },
+          { "zh": "空間 O(m + n)", "en": "Space O(m + n)" }
+        ] }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;
