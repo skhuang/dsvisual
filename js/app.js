@@ -2463,7 +2463,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.Prism && codeDisplay.isConnected) Prism.highlightElement(codeDisplay);
     }
     function renderAll() {
-        if(currentMode.includes('stack')) renderStack();
+        if(currentMode === 'maze-stack') renderMazeStack();
+        else if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
         else if (currentMode === 'deque') renderDeque();
         else if (currentMode === 'bloom-filter') renderBloomFilter();
