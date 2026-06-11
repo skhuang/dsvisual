@@ -139,6 +139,8 @@ const METHOD_GROUPS = [
             { id: 'tree-threaded', title: 'Threaded Binary Tree', file: 'tree_threaded.cpp', visualizer: 'threaded', controls: 'threaded' },
             { id: 'tree-mway', title: 'm-way Search Tree', file: 'tree_mway.cpp', visualizer: 'mway', controls: 'mway' },
             { id: 'tree-expression', title: 'Expression Tree', file: 'tree_expression.cpp', visualizer: 'exprtree', controls: 'exprtree' },
+            { id: 'tree-general-binary', title: 'General ↔ Binary Tree', file: 'tree_general_binary.cpp', visualizer: 'tgb', controls: 'tgb' },
+            { id: 'game-tree', title: 'Game Tree (Minimax / α-β)', file: 'game_tree.cpp', visualizer: 'gametree', controls: 'gametree' },
         ],
     },
     {
@@ -200,6 +202,7 @@ const METHOD_GROUPS = [
             { id: 'sort-heap', title: 'Heap Sort', file: 'sort_heap.cpp', visualizer: 'sort', controls: 'sort' },
             { id: 'sort-shaker', title: 'Shaker Sort', file: 'sort_shaker.cpp', visualizer: 'sort', controls: 'sort' },
             { id: 'sort-external', title: 'External Merge Sort', file: 'sort_external.cpp', visualizer: 'extsort', controls: 'extsort' },
+            { id: 'sort-polyphase', title: 'Polyphase Merge (Tapes)', file: 'sort_polyphase.cpp', visualizer: 'polyphase', controls: 'polyphase' },
         ],
     },
     {
@@ -314,7 +317,10 @@ function getCodeForMethod(methodId) {
         'tree-threaded': codeTreeThreaded,
         'tree-mway': codeTreeMway,
         'tree-expression': codeTreeExpression,
+        'tree-general-binary': codeTreeGeneralBinary,
+        'game-tree': codeGameTree,
         'sort-external': codeSortExternal,
+        'sort-polyphase': codeSortPolyphase,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -2294,6 +2300,14 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'tree_traversal.cpp';
             codeDisplay.textContent = codeTreeTraversal;
         }
+        else if (currentMode === 'tree-general-binary') {
+            codeTitle.textContent = 'tree_general_binary.cpp';
+            codeDisplay.textContent = codeTreeGeneralBinary;
+        }
+        else if (currentMode === 'game-tree') {
+            codeTitle.textContent = 'game_tree.cpp';
+            codeDisplay.textContent = codeGameTree;
+        }
         else if (currentMode === 'huffman') {
             codeTitle.textContent = 'huffman.cpp';
             codeDisplay.textContent = codeHuffman;
@@ -2325,6 +2339,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'sort-external') {
             codeTitle.textContent = 'sort_external.cpp';
             codeDisplay.textContent = codeSortExternal;
+        }
+        else if (currentMode === 'sort-polyphase') {
+            codeTitle.textContent = 'sort_polyphase.cpp';
+            codeDisplay.textContent = codeSortPolyphase;
         }
         else if (currentMode === 'graph-aoe') {
             codeTitle.textContent = 'graph_aoe.cpp';
@@ -2566,6 +2584,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-segment') renderSegmentTree();
         else if (currentMode === 'tree-fenwick') renderFenwick();
         else if (currentMode === 'tree-traversal') renderTreeTraversal();
+        else if (currentMode === 'tree-general-binary') renderTreeGeneralBinary();
+        else if (currentMode === 'game-tree') renderGameTree();
         else if (currentMode === 'huffman') renderHuffman();
         else if (currentMode === 'matrix-sparse') renderMatrixSparse();
         else if (currentMode === 'poly-padd') renderPolyPadd();
@@ -2574,6 +2594,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-mway') renderTreeMway();
         else if (currentMode === 'tree-expression') renderTreeExpression();
         else if (currentMode === 'sort-external') renderSortExternal();
+        else if (currentMode === 'sort-polyphase') renderSortPolyphase();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
         else if (currentMode === 'list-doubly') renderListDoubly();
@@ -4142,6 +4163,280 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let _ttState = null;
+    let _tgbState = null;
+    function renderTreeGeneralBinary() {
+        if (!_tgbState) _tgbState = { text: TreeGeneralBinaryViz.SAMPLE };
+        const host = acquireDynamicVizHost();
+        const gen = TreeGeneralBinaryViz.parseGeneralTree(_tgbState.text);
+        const bin = TreeGeneralBinaryViz.toBinary(gen);
+        const { frames } = TreeGeneralBinaryViz.convertFrames(gen);
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="tt-controls">' +
+              '<input type="text" class="tgb-input" placeholder="A:B,C,D;B:E,F" value="' + String(_tgbState.text).replace(/"/g, '&quot;') + '">' +
+              '<button type="button" class="tgb-build">Build</button>' +
+            '</div>' +
+            '<div class="tgb-stage" style="display:flex;gap:16px;flex-wrap:wrap">' +
+              '<div style="flex:1 1 280px;min-width:260px">' +
+                '<div class="tgb-col-head" style="font-weight:700;margin-bottom:4px">General tree</div>' +
+                '<div class="tgb-general" style="position:relative;overflow:hidden;height:300px;border:1px solid #e2e8f0;border-radius:8px">' +
+                  '<svg class="tgb-general-edges" style="position:absolute;inset:0;width:100%;height:100%"></svg>' +
+                  '<div class="tgb-general-nodes"></div>' +
+                '</div>' +
+              '</div>' +
+              '<div style="flex:1 1 280px;min-width:260px">' +
+                '<div class="tgb-col-head" style="font-weight:700;margin-bottom:4px">Binary tree (left-child / right-sibling)</div>' +
+                '<div class="tgb-binary" style="position:relative;overflow:hidden;height:300px;border:1px solid #e2e8f0;border-radius:8px">' +
+                  '<svg class="tgb-binary-edges" style="position:absolute;inset:0;width:100%;height:100%"></svg>' +
+                  '<div class="tgb-binary-nodes"></div>' +
+                '</div>' +
+              '</div>' +
+            '</div>';
+
+        // ---- General tree layout: x by leaf order, y by depth ----
+        const genMeta = {}; // id -> {x,y}
+        (function () {
+            let leafCursor = 0;
+            const colW = 64, rowH = 64, padX = 40, padY = 34;
+            function layout(node, depth) {
+                const kids = gen.children[node] || [];
+                let x;
+                if (!kids.length) { x = padX + (leafCursor++) * colW; }
+                else {
+                    const xs = kids.map((k) => layout(k, depth + 1));
+                    x = (xs[0] + xs[xs.length - 1]) / 2;
+                }
+                genMeta[node] = { x: x, y: padY + depth * rowH };
+                return x;
+            }
+            if (gen.root) layout(gen.root, 0);
+        })();
+
+        // ---- Binary tree layout from {id,left,right} ----
+        const binMeta = {}; // id -> {x,y}
+        (function () {
+            let col = 0;
+            const colW = 56, rowH = 64, padX = 40, padY = 34;
+            function layout(bn, depth) {
+                if (!bn) return;
+                layout(bn.left, depth + 1);
+                binMeta[bn.id] = { x: padX + (col++) * colW, y: padY + depth * rowH };
+                layout(bn.right, depth + 1);
+            }
+            layout(bin, 0);
+        })();
+
+        const genNodesEl = host.querySelector('.tgb-general-nodes');
+        const genEdgesEl = host.querySelector('.tgb-general-edges');
+        const binNodesEl = host.querySelector('.tgb-binary-nodes');
+        const binEdgesEl = host.querySelector('.tgb-binary-edges');
+
+        // Static general nodes
+        Object.keys(genMeta).forEach((id) => {
+            const m = genMeta[id];
+            const d = document.createElement('div');
+            d.className = 'tree-node'; d.id = 'tgb-g-' + id; d.textContent = id;
+            d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
+            genNodesEl.appendChild(d);
+        });
+        // Static binary nodes
+        Object.keys(binMeta).forEach((id) => {
+            const m = binMeta[id];
+            const d = document.createElement('div');
+            d.className = 'tree-node'; d.id = 'tgb-b-' + id; d.textContent = id;
+            d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
+            binNodesEl.appendChild(d);
+        });
+
+        function lineSvg(a, b, color, width) {
+            return '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y +
+                   '" stroke="' + color + '" stroke-width="' + width + '"/>';
+        }
+
+        function paint() {
+            const fr = frames[idx] || frames[frames.length - 1] || { links: [], active: null };
+            const active = fr.active;
+            const isActive = (l) => active && l.from === active.from && l.to === active.to && l.kind === active.kind;
+
+            // General tree: draw all parent->child edges; highlight the edge whose child matches a cumulative link
+            let g = '';
+            const litChildren = {};
+            fr.links.forEach((l) => { litChildren[l.to] = l; });
+            (function walk(node) {
+                const kids = gen.children[node] || [];
+                kids.forEach((k) => {
+                    const a = genMeta[node], b = genMeta[k];
+                    if (a && b) {
+                        const lk = litChildren[k];
+                        const isAct = lk && isActive(lk);
+                        const color = isAct ? '#ef4444' : (lk ? (lk.kind === 'left' ? '#2563eb' : '#16a34a') : '#94a3b8');
+                        g += lineSvg(a, b, color, isAct ? 3 : 2);
+                    }
+                    walk(k);
+                });
+            })(gen.root);
+            genEdgesEl.innerHTML = g;
+
+            // Binary tree: draw cumulative links only (left=blue, right=green); active=red
+            let b = '';
+            fr.links.forEach((l) => {
+                const a = binMeta[l.from], c = binMeta[l.to];
+                if (!a || !c) return;
+                const isAct = isActive(l);
+                const color = isAct ? '#ef4444' : (l.kind === 'left' ? '#2563eb' : '#16a34a');
+                b += lineSvg(a, c, color, isAct ? 3 : 2);
+            });
+            binEdgesEl.innerHTML = b;
+
+            // Node highlighting
+            host.querySelectorAll('.tgb-general .tree-node, .tgb-binary .tree-node').forEach((el) => el.classList.remove('active'));
+            if (active) {
+                const ga = document.getElementById('tgb-g-' + active.to);
+                const ba = document.getElementById('tgb-b-' + active.to);
+                if (ga) ga.classList.add('active');
+                if (ba) ba.classList.add('active');
+            }
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+
+        host.querySelector('.tgb-build').onclick = () => {
+            try {
+                _tgbState.text = host.querySelector('.tgb-input').value;
+                renderTreeGeneralBinary();
+            } catch (e) { /* ignore malformed input */ }
+        };
+    }
+    let _gameState = null;
+    function renderGameTree() {
+        if (!_gameState) _gameState = { leaves: GameTreeViz.SAMPLE_LEAVES.slice(), useAB: true };
+        const host = acquireDynamicVizHost();
+        const { root } = GameTreeViz.buildGameTree(_gameState.leaves, 2);
+        const { frames } = GameTreeViz.minimaxFrames(root, _gameState.useAB);
+        let idx = 0;
+
+        // ---- Layout: leaves left-to-right, parents centered over children ----
+        const meta = {}; // id -> {x,y,node}
+        (function () {
+            let leafCursor = 0;
+            const colW = 60, rowH = 70, padX = 36, padY = 30;
+            function layout(node, depth) {
+                let x;
+                if (node.leaf || !node.children.length) { x = padX + (leafCursor++) * colW; }
+                else {
+                    const xs = node.children.map((c) => layout(c, depth + 1));
+                    x = (xs[0] + xs[xs.length - 1]) / 2;
+                }
+                meta[node.id] = { x: x, y: padY + depth * rowH, node: node };
+                return x;
+            }
+            layout(root, 0);
+        })();
+
+        host.innerHTML =
+            '<div class="tt-controls">' +
+              '<input type="text" class="gt-input" value="' + _gameState.leaves.join(',') + '">' +
+              '<button type="button" class="gt-build">Build</button>' +
+              '<label style="margin-left:8px"><input type="checkbox" class="gt-ab" ' + (_gameState.useAB ? 'checked' : '') + '> &alpha;-&beta;</label>' +
+            '</div>' +
+            '<div class="gt-stage" style="position:relative;overflow:hidden;height:320px">' +
+              '<svg class="gt-edges" style="position:absolute;inset:0;width:100%;height:100%"></svg>' +
+              '<div class="gt-nodes"></div>' +
+            '</div>' +
+            '<div class="gt-info" style="margin-top:6px;font-weight:700"></div>';
+
+        const nodesEl = host.querySelector('.gt-nodes');
+        const edgesEl = host.querySelector('.gt-edges');
+
+        // Static edges
+        let edgeSvg = '';
+        Object.keys(meta).forEach((id) => {
+            const m = meta[id];
+            (m.node.children || []).forEach((c) => {
+                const b = meta[c.id];
+                if (b) edgeSvg += '<line x1="' + m.x + '" y1="' + m.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>';
+            });
+        });
+        edgesEl.innerHTML = edgeSvg;
+
+        // Static nodes
+        Object.keys(meta).forEach((id) => {
+            const m = meta[id], node = m.node;
+            const d = document.createElement('div');
+            d.className = 'tree-node'; d.id = 'gt-node-' + id;
+            d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
+            if (node.leaf) d.dataset.symbol = String(node.value);
+            else d.dataset.symbol = node.isMax ? '▲' : '▽';
+            d.textContent = d.dataset.symbol;
+            nodesEl.appendChild(d);
+        });
+
+        function paint() {
+            // Cumulative state up to idx
+            const pruned = new Set();
+            const returned = {}; // id -> value
+            const abText = {};   // id -> {alpha,beta,value}
+            let current = null;
+            for (let i = 0; i <= idx && i < frames.length; i++) {
+                const f = frames[i];
+                if (f.type === 'prune') (f.pruned || []).forEach((p) => pruned.add(p));
+                if (f.type === 'return' || f.type === 'leaf') returned[f.id] = f.value;
+                if (f.type === 'enter' || f.type === 'update') {
+                    abText[f.id] = { alpha: f.alpha, beta: f.beta, value: f.type === 'update' ? f.value : undefined };
+                }
+                if (f.type === 'enter' || f.type === 'update' || f.type === 'leaf' || f.type === 'return') current = f.id;
+            }
+            const fmt = (v) => (v === Infinity ? '∞' : v === -Infinity ? '-∞' : String(v));
+
+            Object.keys(meta).forEach((id) => {
+                const el = document.getElementById('gt-node-' + id);
+                if (!el) return;
+                el.classList.remove('active', 'visited');
+                const nid = meta[id].node.id;
+                if (pruned.has(nid)) el.classList.add('gt-pruned'); else el.classList.remove('gt-pruned');
+                let label = el.dataset.symbol;
+                if (Object.prototype.hasOwnProperty.call(returned, nid) && !meta[id].node.leaf) {
+                    label = el.dataset.symbol + '=' + fmt(returned[nid]);
+                    el.classList.add('visited');
+                }
+                el.textContent = label;
+                if (nid === current) el.classList.add('active');
+            });
+
+            const fr = frames[idx];
+            let info = '';
+            if (fr) {
+                const ab = abText[fr.id];
+                if (fr.type === 'prune') info = 'Prune at node ' + fr.id + ': α=' + fmt(fr.alpha) + ' ≥ β=' + fmt(fr.beta);
+                else if (fr.type === 'leaf') info = 'Leaf node ' + fr.id + ' = ' + fmt(fr.value);
+                else if (ab) info = 'Node ' + fr.id + ': α=' + fmt(ab.alpha) + ', β=' + fmt(ab.beta) + (ab.value !== undefined ? ', best=' + fmt(ab.value) : '');
+            }
+            if (Object.prototype.hasOwnProperty.call(returned, root.id)) {
+                info += (info ? '  |  ' : '') + 'Root value = ' + fmt(returned[root.id]);
+            }
+            host.querySelector('.gt-info').textContent = info;
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+
+        host.querySelector('.gt-build').onclick = () => {
+            try {
+                const vals = host.querySelector('.gt-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter((n) => Number.isFinite(n));
+                if (vals.length) { _gameState.leaves = vals; renderGameTree(); }
+            } catch (e) { /* ignore malformed input */ }
+        };
+        host.querySelector('.gt-ab').onchange = (e) => {
+            _gameState.useAB = e.target.checked;
+            renderGameTree();
+        };
+    }
     function renderTreeTraversal() {
         const host = acquireDynamicVizHost();
         if (!_ttState) {
@@ -4586,6 +4881,58 @@ document.addEventListener('DOMContentLoaded', () => {
             _extState.data = inp.data;
             _extState.M = inp.M;
             renderSortExternal();
+        };
+    }
+
+    let _polyphaseState = null;
+    function renderSortPolyphase() {
+        const host = acquireDynamicVizHost();
+        if (!_polyphaseState) _polyphaseState = { data: SortPolyphaseViz.SAMPLE.slice() };
+        const st = _polyphaseState;
+        const res = SortPolyphaseViz.polyphaseFrames(st.data);
+        const frames = res.frames;
+        let idx = 0;
+
+        const labels = ['Tape 1', 'Tape 2', 'Output'];
+
+        host.innerHTML =
+            '<div class="pf-controls">' +
+              '<input type="text" class="pf-data" value="' + st.data.join(',') + '">' +
+              '<button type="button" class="pf-apply">Apply</button>' +
+            '</div>' +
+            '<div class="pf-stage"></div>' +
+            '<div class="pf-phase"></div>';
+
+        function runChip(run) {
+            if (run === null || run === undefined) return '<span class="pf-chip pf-dummy">∅</span>';
+            return '<span class="pf-chip">[' + run.join(',') + ']</span>';
+        }
+
+        function paint() {
+            const fr = frames[idx];
+            const stage = host.querySelector('.pf-stage');
+            if (!stage) return;
+            // The output row is the tape just written to during a merge frame.
+            stage.innerHTML = fr.tapes.map((tape, i) =>
+                '<div class="pf-row">' +
+                  '<span class="pf-row-label">' + labels[i] + '</span>' +
+                  '<span class="pf-chips">' + (tape.length ? tape.map(runChip).join('') : '<span class="pf-empty">—</span>') + '</span>' +
+                '</div>').join('');
+            const badge = { distribute: 'Distribute', merge: 'Merge', done: 'Done' }[fr.phase] || fr.phase;
+            host.querySelector('.pf-phase').innerHTML = '<span class="pf-badge pf-' + fr.phase + '">' + badge + '</span>';
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+
+        host.querySelector('.pf-apply').onclick = () => {
+            try {
+                const d = host.querySelector('.pf-data').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
+                _polyphaseState.data = d;
+                renderSortPolyphase();
+            } catch (e) { /* ignore malformed input */ }
         };
     }
 

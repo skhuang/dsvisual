@@ -50,6 +50,8 @@
             'method.tree-threaded': 'Threaded Binary Tree',
             'method.tree-mway': 'm-way Search Tree',
             'method.tree-expression': 'Expression Tree',
+            'method.tree-general-binary': 'General ↔ Binary Tree',
+            'method.game-tree': 'Game Tree (Minimax / α-β)',
 
             // Methods — Graphs
             'method.graph':                 'Undirected Graph',
@@ -85,6 +87,7 @@
 
             'method.tree-obst': 'Optimal BST',
             'method.sort-external': 'External Merge Sort',
+            'method.sort-polyphase': 'Polyphase Merge (Tapes)',
             'method.matrix-sparse': 'Sparse Matrix (Transpose)',
             'method.poly-padd': 'Polynomial Addition',
 
@@ -266,6 +269,8 @@
             'method.tree-threaded': '引線二元樹',
             'method.tree-mway': 'm 路搜尋樹',
             'method.tree-expression': '運算式樹',
+            'method.tree-general-binary': '一般樹 ↔ 二元樹',
+            'method.game-tree': '賽局樹(Minimax / α-β 剪枝)',
 
             // Methods — Graphs
             'method.graph':                 '無向圖',
@@ -301,6 +306,7 @@
 
             'method.tree-obst': '最佳二元搜尋樹',
             'method.sort-external': '外部合併排序',
+            'method.sort-polyphase': 'Polyphase 磁帶合併',
             'method.matrix-sparse': '稀疏矩陣(轉置)',
             'method.poly-padd': '多項式相加',
 

@@ -85,6 +85,7 @@ const mappings = {
     'graph_floyd_warshall.cpp': 'codeGraphFloydWarshall',
     'tree_obst.cpp': 'codeTreeObst',
     'sort_external.cpp': 'codeSortExternal',
+    'sort_polyphase.cpp': 'codeSortPolyphase',
     'matrix_sparse.cpp': 'codeMatrixSparse',
     'poly_padd.cpp': 'codePolyPadd',
     'maze_stack.cpp': 'codeMazeStack',
@@ -94,6 +95,8 @@ const mappings = {
     'tree_threaded.cpp': 'codeTreeThreaded',
     'tree_mway.cpp': 'codeTreeMway',
     'tree_expression.cpp': 'codeTreeExpression',
+    'tree_general_binary.cpp': 'codeTreeGeneralBinary',
+    'game_tree.cpp': 'codeGameTree',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

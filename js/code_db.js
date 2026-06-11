@@ -5109,6 +5109,43 @@ std::vector<int> externalSort(std::vector<int> data, int M) {
 }
 `;
 
+const codeSortPolyphase = `// Polyphase merge sort (3 tapes: 2 input + 1 output, Fibonacci distribution)
+#include <iostream>
+#include <vector>
+using namespace std;
+using Run = vector<int>;
+
+vector<Run> naturalRuns(const vector<int>& data) {
+    vector<Run> runs;
+    if (data.empty()) return runs;
+    Run cur{data[0]};
+    for (size_t i = 1; i < data.size(); ++i) {
+        if (data[i] >= data[i-1]) cur.push_back(data[i]);
+        else { runs.push_back(cur); cur = {data[i]}; }
+    }
+    runs.push_back(cur);
+    return runs;
+}
+
+Run mergeTwo(const Run& a, const Run& b) {
+    Run out; size_t i = 0, j = 0;
+    while (i < a.size() && j < b.size()) out.push_back(a[i] <= b[j] ? a[i++] : b[j++]);
+    while (i < a.size()) out.push_back(a[i++]);
+    while (j < b.size()) out.push_back(b[j++]);
+    return out;
+}
+
+int main() {
+    vector<int> data = {5, 3, 8, 1, 9, 2, 7, 4, 6, 0};
+    vector<Run> runs = naturalRuns(data);
+    // Distribute onto two input tapes by consecutive Fibonacci counts, then
+    // repeatedly merge fronts onto the output tape, rotating the emptied tape
+    // to become the next output, until a single sorted run remains.
+    cout << "Initial runs: " << runs.size() << "\\n";
+    return 0;
+}
+`;
+
 const codeMatrixSparse = `#include <vector>
 
 // Sparse matrix as (row, col, value) triples, then FAST_TRANSPOSE in O(cols + terms).
@@ -5365,6 +5402,77 @@ double evalExprTree(ENode* n) {
     if (n->val == "-") return a - b;
     if (n->val == "*") return a * b;
     return a / b;
+}
+`;
+
+const codeTreeGeneralBinary = `// General tree to Binary tree (Left-Child / Right-Sibling representation)
+#include <iostream>
+#include <map>
+#include <vector>
+#include <string>
+using namespace std;
+
+struct BinNode { string id; BinNode* left = nullptr; BinNode* right = nullptr; };
+
+map<string, vector<string>> children;
+
+BinNode* toBinary(const string& node) {
+    BinNode* bn = new BinNode{node};
+    BinNode* prev = nullptr;
+    const auto& kids = children[node];
+    for (size_t i = 0; i < kids.size(); ++i) {
+        BinNode* c = toBinary(kids[i]);
+        if (i == 0) bn->left = c;
+        else prev->right = c;
+        prev = c;
+    }
+    return bn;
+}
+
+int main() {
+    children["A"] = {"B", "C", "D"};
+    children["B"] = {"E", "F"};
+    children["C"] = {"G"};
+    BinNode* root = toBinary("A");
+    cout << "Root: " << root->id
+         << " left=" << (root->left ? root->left->id : "-")
+         << " right=" << (root->right ? root->right->id : "-") << "\\n";
+    return 0;
+}
+`;
+
+const codeGameTree = `// Minimax with Alpha-Beta pruning over a game tree
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
+using namespace std;
+
+struct Node { int value; bool leaf; bool isMax; vector<Node*> children; };
+
+int minimax(Node* n, int alpha, int beta, bool useAB) {
+    if (n->leaf) return n->value;
+    int best = n->isMax ? INT_MIN : INT_MAX;
+    for (Node* c : n->children) {
+        int v = minimax(c, alpha, beta, useAB);
+        if (n->isMax) { best = max(best, v); alpha = max(alpha, best); }
+        else          { best = min(best, v); beta  = min(beta, best); }
+        if (useAB && alpha >= beta) break;
+    }
+    return best;
+}
+
+int main() {
+    int leaves[] = {3, 5, 6, 9, 1, 2, 0, -1};
+    vector<Node*> L;
+    for (int v : leaves) L.push_back(new Node{v, true, false, {}});
+    vector<Node*> mid;
+    for (int i = 0; i < 8; i += 2) mid.push_back(new Node{0, false, false, {L[i], L[i+1]}});
+    vector<Node*> upper;
+    for (int i = 0; i < 4; i += 2) upper.push_back(new Node{0, false, true, {mid[i], mid[i+1]}});
+    Node* root = new Node{0, false, true, {upper[0], upper[1]}};
+    cout << "Minimax value: " << minimax(root, INT_MIN, INT_MAX, true) << "\\n";
+    return 0;
 }
 `;
 

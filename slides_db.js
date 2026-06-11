@@ -20685,6 +20685,41 @@ SLIDES_DB["sort-external"] = {
       ] }
   ]
 };
+SLIDES_DB["sort-polyphase"] = {
+  "category": "Sorting",
+  "title": { "zh": "Polyphase 磁帶合併排序", "en": "Polyphase Merge Sort (Tapes)" },
+  "slides": [
+    { "heading": { "zh": "外部排序回顧", "en": "External Sorting Recap" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "外部排序先產生有序的 run,再反覆合併。傳統做法用偶數條磁帶平衡合併;Polyphase 只用 3 條磁帶(2 讀 1 寫)就能做到。", "en": "External sorting first builds sorted runs, then merges them repeatedly. The classic approach uses an even number of tapes for balanced merging; polyphase achieves it with just 3 tapes (2 input + 1 output)." } }
+      ] },
+    { "heading": { "zh": "為何用不均勻(Fibonacci)分配", "en": "Why Uneven (Fibonacci) Distribution" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "平衡合併每個 pass 後一半的磁帶閒置,需要倒帶重分配。Polyphase 把 run 數依連續 Fibonacci 數分到兩條輸入帶,使得每次只有一條帶被讀空,立即翻轉成下一個輸出帶,沒有重分配的浪費。", "en": "Balanced merge leaves half the tapes idle after each pass and needs rewind/redistribution. Polyphase distributes runs by consecutive Fibonacci counts, so exactly one input tape empties each phase and immediately becomes the next output tape — no wasted redistribution pass." } },
+        { "type": "bullets", "items": [
+          { "zh": "若 run 數正好是 Fibonacci 數,分配最完美。", "en": "Distribution is perfect when the run count is a Fibonacci number." },
+          { "zh": "如 13 個 run → 一帶 8 個、一帶 5 個。", "en": "E.g. 13 runs → 8 on one tape, 5 on the other." }
+        ] }
+      ] },
+    { "heading": { "zh": "3 條磁帶的合併階段", "en": "The 3-Tape Merge Phases" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "分配:依 Fibonacci 數把 run 放到 Tape 1、Tape 2,Output 留空。", "en": "Distribute: place runs onto Tape 1 and Tape 2 by Fibonacci counts; Output starts empty." },
+          { "zh": "合併:每步從兩條輸入帶各取一個 run 合併,寫到輸出帶。", "en": "Merge: each step takes one run from each input tape, merges them, and appends to the output tape." },
+          { "zh": "翻轉:當一條輸入帶讀空,它成為新的輸出帶,繼續下一階段。", "en": "Rotate: when an input tape empties, it becomes the new output tape for the next phase." }
+        ] }
+      ] },
+    { "heading": { "zh": "Dummy(虛擬)run", "en": "Dummy Runs" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "當 run 數不是恰好的 Fibonacci 數時,差額用 dummy(空)run 補足分配。Dummy run 在合併時被當成已耗盡,直接讓對方 run 通過,維持 Fibonacci 不變式。", "en": "When the run count is not exactly a Fibonacci number, the shortfall is padded with dummy (empty) runs. During merging a dummy is treated as exhausted — the other run passes through — preserving the Fibonacci invariant." } }
+      ] },
+    { "heading": { "zh": "計算範例", "en": "Worked Example" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "輸入 [5,3,8,1,9,2,7,4,6,0] 的自然 run 為 [5][3,8][1,9][2,7][4,6][0],共 6 個。最接近且 ≥6 的 Fibonacci 合是 5+3=8,故補 2 個 dummy,8 個位置分成 5+3。", "en": "Input [5,3,8,1,9,2,7,4,6,0] has natural runs [5][3,8][1,9][2,7][4,6][0] — 6 of them. The nearest Fibonacci sum ≥ 6 is 5+3=8, so we pad 2 dummies and split the 8 slots as 5+3." } },
+        { "type": "code", "lang": "cpp", "file": "sort_polyphase.cpp", "code": "Run mergeTwo(const Run& a, const Run& b) {\n    Run out; size_t i = 0, j = 0;\n    while (i < a.size() && j < b.size())\n        out.push_back(a[i] <= b[j] ? a[i++] : b[j++]);\n    while (i < a.size()) out.push_back(a[i++]);\n    while (j < b.size()) out.push_back(b[j++]);\n    return out;\n}" }
+      ] }
+  ]
+};
 SLIDES_DB["matrix-sparse"] = {
   "category": "Arrays",
   "title": { "zh": "稀疏矩陣與快速轉置", "en": "Sparse Matrix & Fast Transpose" },
@@ -20881,6 +20916,78 @@ SLIDES_DB["tree-expression"] = {
         { "type": "code", "lang": "cpp", "file": "tree_expression.cpp", "code": "while (in >> tok) {\n    ENode* n = new ENode{ tok, nullptr, nullptr };\n    if (isOp(tok)) {\n        n->right = st.top(); st.pop();\n        n->left = st.top(); st.pop();\n    }\n    st.push(n);\n}" },
         { "type": "bullets", "items": [
           { "zh": "建樹與求值皆為 O(N);空間 O(N)。", "en": "Build and evaluation are both O(N); space O(N)." }
+        ] }
+      ] }
+  ]
+};
+SLIDES_DB["tree-general-binary"] = {
+  "category": "Trees",
+  "title": { "zh": "一般樹 ↔ 二元樹", "en": "General ↔ Binary Tree" },
+  "slides": [
+    { "heading": { "zh": "為何要轉換", "en": "Why Convert" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "一般樹的節點可有任意多個子節點,難以用固定欄位的節點表示。透過「左子右兄」表示法,可以把任意分支度的樹編碼成每個節點只有兩個指標的二元樹。", "en": "A general tree's node may have any number of children, which is awkward for fixed-size node records. The left-child / right-sibling encoding stores any-degree tree as a binary tree whose nodes have exactly two pointers." } },
+        { "type": "bullets", "items": [
+          { "zh": "left 指向「第一個子節點」。", "en": "left points to the first child." },
+          { "zh": "right 指向「下一個兄弟節點」。", "en": "right points to the next sibling." }
+        ] }
+      ] },
+    { "heading": { "zh": "轉換規則", "en": "Conversion Rule" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "把每個節點的第一個子節點接到該節點的 left。", "en": "Attach each node's first child as its left pointer." },
+          { "zh": "把同層的兄弟節點以 right 串成一條鏈。", "en": "Chain siblings together via right pointers." },
+          { "zh": "遞迴地對每個子節點重複以上步驟。", "en": "Recurse on every child applying the same rule." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "tree_general_binary.cpp", "code": "BinNode* toBinary(const string& node) {\n    BinNode* bn = new BinNode{node};\n    BinNode* prev = nullptr;\n    for (size_t i = 0; i < children[node].size(); ++i) {\n        BinNode* c = toBinary(children[node][i]);\n        if (i == 0) bn->left = c;\n        else prev->right = c;\n        prev = c;\n    }\n    return bn;\n}" }
+      ] },
+    { "heading": { "zh": "範例:A:B,C,D;B:E,F", "en": "Worked Example: A:B,C,D;B:E,F" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "A 的第一個子節點 B 成為 A.left;C、D 透過 B 的 right 串接(B.right=C、C.right=D)。同理 B 的第一個子節點 E 成為 B.left,F 為 E.right。", "en": "A's first child B becomes A.left; C and D are chained via right (B.right=C, C.right=D). Likewise B's first child E becomes B.left, with F as E.right." } },
+        { "type": "bullets", "items": [
+          { "zh": "二元樹中所有 left 邊對應「父→第一子」關係。", "en": "Every left edge in the binary tree is a parent→first-child link." },
+          { "zh": "所有 right 邊對應「兄→弟」關係。", "en": "Every right edge is a sibling→sibling link." }
+        ] }
+      ] },
+    { "heading": { "zh": "走訪對應", "en": "Traversal Correspondence" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "對轉換後二元樹做前序走訪,順序與原一般樹的前序走訪完全一致;二元樹的中序走訪則對應原樹的後序走訪。轉換為可逆,故兩種表示等價。", "en": "A preorder traversal of the converted binary tree matches the original general tree's preorder; the binary tree's inorder matches the general tree's postorder. The conversion is reversible, so the two representations are equivalent." } }
+      ] }
+  ]
+};
+SLIDES_DB["game-tree"] = {
+  "category": "Trees",
+  "title": { "zh": "賽局樹(Minimax / α-β 剪枝)", "en": "Game Tree (Minimax / α-β)" },
+  "slides": [
+    { "heading": { "zh": "對抗式搜尋", "en": "Adversarial Search" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "在雙人零和賽局(如井字遊戲、西洋棋)中,兩名玩家輪流行動且利益完全對立。我們以賽局樹表示所有可能的局面:每一層交替由 MAX 與 MIN 玩家做決策。", "en": "In two-player zero-sum games (tic-tac-toe, chess), players alternate moves with opposing goals. A game tree enumerates all reachable positions, with levels alternating between the MAX and MIN players." } },
+        { "type": "bullets", "items": [
+          { "zh": "MAX 層(根為 MAX)選擇能讓分數最大的子節點(以 ▲ 表示)。", "en": "MAX levels (root is MAX) pick the child with the largest score (shown as the up triangle)." },
+          { "zh": "MIN 層選擇能讓分數最小的子節點(以 ▽ 表示)。", "en": "MIN levels pick the child with the smallest score (shown as the down triangle)." },
+          { "zh": "葉節點是終局評估值(效用值)。", "en": "Leaves carry terminal evaluation (utility) values." }
+        ] }
+      ] },
+    { "heading": { "zh": "Minimax 遞迴式", "en": "Minimax Recurrence" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "每個節點的值由其子節點遞迴決定:MAX 取子節點最大值,MIN 取子節點最小值。葉節點直接回傳其評估值。", "en": "Each node's value is defined recursively from its children: MAX takes the maximum of its children, MIN the minimum; a leaf returns its evaluation directly." } },
+        { "type": "paragraph", "text": { "zh": "若 n 為 MAX,$V(n) = \\max_{c} V(c)$;否則 $V(n) = \\min_{c} V(c)$。", "en": "If n is MAX, $V(n) = \\max_{c} V(c)$; otherwise $V(n) = \\min_{c} V(c)$." } },
+        { "type": "code", "lang": "cpp", "file": "game_tree.cpp", "code": "int minimax(Node* n, int alpha, int beta, bool useAB) {\n    if (n->leaf) return n->value;\n    int best = n->isMax ? INT_MIN : INT_MAX;\n    for (Node* c : n->children) {\n        int v = minimax(c, alpha, beta, useAB);\n        if (n->isMax) { best = max(best, v); alpha = max(alpha, best); }\n        else          { best = min(best, v); beta  = min(beta, best); }\n        if (useAB && alpha >= beta) break;\n    }\n    return best;\n}" }
+      ] },
+    { "heading": { "zh": "α-β 剪枝", "en": "Alpha-Beta Pruning" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "α 是 MAX 在路徑上已能保證的最佳下界;β 是 MIN 已能保證的最佳上界。當 α ≥ β 時,目前節點剩餘的子節點不可能影響最終結果,可直接剪除。", "en": "Alpha is the best lower bound MAX can already guarantee along the path; beta is the best upper bound MIN can guarantee. When alpha >= beta, the remaining children of the current node can no longer affect the outcome and are pruned." } },
+        { "type": "bullets", "items": [
+          { "zh": "剪枝不改變 Minimax 的最終值,只省略不必要的探索。", "en": "Pruning never changes the minimax value; it only skips unnecessary exploration." },
+          { "zh": "在最佳排序下,複雜度從 $O(b^d)$ 降到 $O(b^{d/2})$。", "en": "With ideal ordering, complexity drops from $O(b^d)$ to $O(b^{d/2})$." }
+        ] }
+      ] },
+    { "heading": { "zh": "範例:[3,5,6,9,1,2,0,-1]", "en": "Worked Example: [3,5,6,9,1,2,0,-1]" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "這 8 個葉節點構成一棵深度為 3 的二元賽局樹(根 MAX、下層 MIN、再下層 MAX)。逐步評估左子樹後,α 被抬高;在右子樹中一旦某個節點的暫定值使 α ≥ β,其後續兄弟分支即被剪枝。", "en": "These 8 leaves form a depth-3 binary game tree (MAX root, then MIN, then MAX). After evaluating the left subtree, alpha rises; in the right subtree, as soon as a node's provisional value makes alpha >= beta, its remaining sibling branches are pruned." } },
+        { "type": "bullets", "items": [
+          { "zh": "灰色節點代表被 α-β 剪枝跳過、從未求值的子樹。", "en": "Greyed nodes are subtrees skipped by alpha-beta pruning and never evaluated." },
+          { "zh": "用視覺化中的 α-β 開關可比較剪枝與否的探索範圍。", "en": "Toggle alpha-beta in the visualizer to compare the explored frontier with and without pruning." }
         ] }
       ] }
   ]
