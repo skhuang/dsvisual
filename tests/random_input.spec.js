@@ -57,3 +57,25 @@ test('random button on matrix-sparse changes the input field', async ({ page }) 
   await section.locator('.rand-btn').click();
   await expect(input).not.toHaveValue(before);
 });
+
+test('random button on list-doubly changes the input field', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'list-doubly');
+
+  const section = page.locator('[data-method-section="list-doubly"]');
+  const input = section.locator('.dl-input');
+  const before = await input.inputValue();
+  await section.locator('.rand-btn').click();
+  await expect(input).not.toHaveValue(before);
+});
+
+test('random button on search-fibonacci changes the input field', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'search-fibonacci');
+
+  const section = page.locator('[data-method-section="search-fibonacci"]');
+  const input = section.locator('.ss-arr');
+  const before = await input.inputValue();
+  await section.locator('.rand-btn').click();
+  await expect(input).not.toHaveValue(before);
+});

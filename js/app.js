@@ -4393,7 +4393,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let idx = 0;
 
         host.innerHTML =
-            '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="expr-apply">Apply</button></div>' +
+            '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="expr-apply">Apply</button></div>' +
             '<div class="expr-phasebadge"></div>' +
             '<div class="expr-stack"><strong>Stack:</strong> <span class="expr-stack-cells"></span></div>' +
             '<div class="expr-out"><strong>Output:</strong> <span class="expr-out-cells"></span></div>' +
@@ -4418,6 +4418,12 @@ document.addEventListener('DOMContentLoaded', () => {
         host.appendChild(buildStepControls(step, reset, 700));
         paint();
         host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('expr-infix-postfix', getInputDifficulty());
+            if (!inp) return;
+            _exprState.text = inp.text;
+            renderExprInfixPostfix();
+        };
     }
 
     let _obstState = null;
@@ -4505,6 +4511,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="ext-controls">' +
               '<input type="text" class="ext-data" value="' + st.data.join(',') + '">' +
               '<label>M <input type="number" class="ext-m" min="1" max="20" value="' + st.M + '" style="width:54px"></label>' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="ext-apply">Apply</button>' +
             '</div>' +
             '<div class="ext-runs"></div>' +
@@ -4551,6 +4558,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const d = host.querySelector('.ext-data').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             const m = parseInt(host.querySelector('.ext-m').value, 10);
             if (d.length && m >= 1) { st.data = d; st.M = m; renderSortExternal(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('sort-external', getInputDifficulty());
+            if (!inp) return;
+            _extState.data = inp.data;
+            _extState.M = inp.M;
+            renderSortExternal();
         };
     }
 
@@ -4685,6 +4699,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         host.innerHTML =
             '<div class="mz-controls"><input type="text" class="mz-input" value="' + st.text + '">' +
+            '<button type="button" class="rand-btn" title="Random">🎲</button>' +
             '<button type="button" class="mz-apply">Apply</button>' +
             '<span class="sm-hint"># wall, . open, S start, E end; rows split by ;</span></div>' +
             '<div class="mz-cols"><div class="mz-grid"></div><div class="mz-stack"><strong>Path stack:</strong><div class="mz-stack-cells"></div></div></div>' +
@@ -4725,6 +4740,12 @@ document.addEventListener('DOMContentLoaded', () => {
         host.appendChild(buildStepControls(step, reset, 500));
         paint();
         host.querySelector('.mz-apply').onclick = () => { const v = host.querySelector('.mz-input').value.trim(); if (v) { st.text = v; renderMazeStack(); } };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('maze-stack', getInputDifficulty());
+            if (!inp) return;
+            _mazeState.text = inp.text;
+            renderMazeStack();
+        };
     }
     let _doublyState = null;
     function renderListDoubly() {
@@ -4740,6 +4761,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="dl-controls">' +
               '<input type="text" class="dl-input" value="' + st.vals.join(',') + '">' +
               '<label><input type="checkbox" class="dl-circular"' + (st.circular ? ' checked' : '') + '> circular</label>' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="dl-apply">Apply</button>' +
             '</div>' +
             '<div class="dl-row' + (st.circular ? ' dl-circular-on' : '') + '"></div>' +
@@ -4767,6 +4789,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const circular = host.querySelector('.dl-circular').checked;
             if (vals.length) { st.vals = vals; st.circular = circular; renderListDoubly(); }
         };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('list-doubly', getInputDifficulty());
+            if (!inp) return;
+            _doublyState.vals = inp.vals;
+            _doublyState.circular = inp.circular;
+            renderListDoubly();
+        };
     }
 
     let _fibState = null;
@@ -4783,6 +4812,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="ss-controls">' +
               '<input type="text" class="ss-arr" value="' + st.arr.join(',') + '">' +
               'target <input type="number" class="ss-target" value="' + st.target + '" style="width:64px">' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="ss-apply">Apply</button>' +
               '<span class="sm-hint">array must be sorted</span>' +
             '</div>' +
@@ -4811,6 +4841,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const target = parseInt(host.querySelector('.ss-target').value, 10);
             if (arr.length && Number.isFinite(target)) { st.arr = arr; st.target = target; renderSearchFibonacci(); }
         };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('search-fibonacci', getInputDifficulty());
+            if (!inp) return;
+            _fibState.arr = inp.arr;
+            _fibState.target = inp.target;
+            renderSearchFibonacci();
+        };
     }
     let _interpState = null;
     function renderSearchInterpolation() {
@@ -4826,6 +4863,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="ss-controls">' +
               '<input type="text" class="ss-arr" value="' + st.arr.join(',') + '">' +
               'target <input type="number" class="ss-target" value="' + st.target + '" style="width:64px">' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="ss-apply">Apply</button>' +
               '<span class="sm-hint">sorted; works best when ~uniform</span>' +
             '</div>' +
@@ -4856,6 +4894,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const arr = host.querySelector('.ss-arr').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite).sort((a, b) => a - b);
             const target = parseInt(host.querySelector('.ss-target').value, 10);
             if (arr.length && Number.isFinite(target)) { st.arr = arr; st.target = target; renderSearchInterpolation(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('search-interpolation', getInputDifficulty());
+            if (!inp) return;
+            _interpState.arr = inp.arr;
+            _interpState.target = inp.target;
+            renderSearchInterpolation();
         };
     }
 
