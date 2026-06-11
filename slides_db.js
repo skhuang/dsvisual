@@ -20885,4 +20885,39 @@ SLIDES_DB["tree-expression"] = {
       ] }
   ]
 };
+SLIDES_DB["tree-general-binary"] = {
+  "category": "Trees",
+  "title": { "zh": "一般樹 ↔ 二元樹", "en": "General ↔ Binary Tree" },
+  "slides": [
+    { "heading": { "zh": "為何要轉換", "en": "Why Convert" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "一般樹的節點可有任意多個子節點,難以用固定欄位的節點表示。透過「左子右兄」表示法,可以把任意分支度的樹編碼成每個節點只有兩個指標的二元樹。", "en": "A general tree's node may have any number of children, which is awkward for fixed-size node records. The left-child / right-sibling encoding stores any-degree tree as a binary tree whose nodes have exactly two pointers." } },
+        { "type": "bullets", "items": [
+          { "zh": "left 指向「第一個子節點」。", "en": "left points to the first child." },
+          { "zh": "right 指向「下一個兄弟節點」。", "en": "right points to the next sibling." }
+        ] }
+      ] },
+    { "heading": { "zh": "轉換規則", "en": "Conversion Rule" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "把每個節點的第一個子節點接到該節點的 left。", "en": "Attach each node's first child as its left pointer." },
+          { "zh": "把同層的兄弟節點以 right 串成一條鏈。", "en": "Chain siblings together via right pointers." },
+          { "zh": "遞迴地對每個子節點重複以上步驟。", "en": "Recurse on every child applying the same rule." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "tree_general_binary.cpp", "code": "BinNode* toBinary(const string& node) {\n    BinNode* bn = new BinNode{node};\n    BinNode* prev = nullptr;\n    for (size_t i = 0; i < children[node].size(); ++i) {\n        BinNode* c = toBinary(children[node][i]);\n        if (i == 0) bn->left = c;\n        else prev->right = c;\n        prev = c;\n    }\n    return bn;\n}" }
+      ] },
+    { "heading": { "zh": "範例:A:B,C,D;B:E,F", "en": "Worked Example: A:B,C,D;B:E,F" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "A 的第一個子節點 B 成為 A.left;C、D 透過 B 的 right 串接(B.right=C、C.right=D)。同理 B 的第一個子節點 E 成為 B.left,F 為 E.right。", "en": "A's first child B becomes A.left; C and D are chained via right (B.right=C, C.right=D). Likewise B's first child E becomes B.left, with F as E.right." } },
+        { "type": "bullets", "items": [
+          { "zh": "二元樹中所有 left 邊對應「父→第一子」關係。", "en": "Every left edge in the binary tree is a parent→first-child link." },
+          { "zh": "所有 right 邊對應「兄→弟」關係。", "en": "Every right edge is a sibling→sibling link." }
+        ] }
+      ] },
+    { "heading": { "zh": "走訪對應", "en": "Traversal Correspondence" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "對轉換後二元樹做前序走訪,順序與原一般樹的前序走訪完全一致;二元樹的中序走訪則對應原樹的後序走訪。轉換為可逆,故兩種表示等價。", "en": "A preorder traversal of the converted binary tree matches the original general tree's preorder; the binary tree's inorder matches the general tree's postorder. The conversion is reversible, so the two representations are equivalent." } }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;

@@ -94,6 +94,7 @@ const mappings = {
     'tree_threaded.cpp': 'codeTreeThreaded',
     'tree_mway.cpp': 'codeTreeMway',
     'tree_expression.cpp': 'codeTreeExpression',
+    'tree_general_binary.cpp': 'codeTreeGeneralBinary',
 };
 
 let out = '// Auto-generated code DB for visualization\n';
