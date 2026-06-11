@@ -69,6 +69,20 @@ test('random button on list-doubly changes the input field', async ({ page }) =>
   await expect(input).not.toHaveValue(before);
 });
 
+test('Randomize on sort visualizer honors large difficulty (>15 bars)', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'sort-bubble');
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+
+  await page.click('#btn-sort-random');
+
+  const bars = page.locator('#sort-container .sort-bar');
+  await expect.poll(async () => await bars.count()).toBeGreaterThan(15);
+});
+
 test('random button on search-fibonacci changes the input field', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'search-fibonacci');

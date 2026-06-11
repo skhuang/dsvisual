@@ -1702,7 +1702,17 @@ document.addEventListener('DOMContentLoaded', () => {
         clearHeapEventMarks();
     }
 
-    function generateSortArray() { sortArrData = []; for(let i=0; i<15; i++) sortArrData.push(Math.floor(Math.random() * 95) + 5); renderSortBars(); showStatus("Generated Random Array.", "#94a3b8"); }
+    function generateSortArray() {
+        const inp = window.RandomInput && RandomInput.randomInputFor('sort', getInputDifficulty());
+        if (inp && Array.isArray(inp.data) && inp.data.length) {
+            sortArrData = inp.data.slice();
+        } else {
+            sortArrData = [];
+            for (let i = 0; i < 15; i++) sortArrData.push(Math.floor(Math.random() * 95) + 5);
+        }
+        renderSortBars();
+        showStatus("Generated Random Array.", "#94a3b8");
+    }
 
     updateLayout();
 
