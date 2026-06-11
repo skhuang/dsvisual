@@ -97,6 +97,7 @@ const mappings = {
     'tree_expression.cpp': 'codeTreeExpression',
     'tree_general_binary.cpp': 'codeTreeGeneralBinary',
     'game_tree.cpp': 'codeGameTree',
+    'gc_memory.cpp': 'codeGcMemory',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

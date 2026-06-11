@@ -15,6 +15,7 @@
             'group.heaps':                  'Heaps / Priority Queues',
             'group.sorting':                'Sorting',
             'group.searching':              'Searching & String Matching',
+            'group.memory':                 'Memory / GC',
             'group.oop':                    'OOP Concepts',
             'group.patterns':               'Design Patterns',
             'group.patterns-creational':    'Creational',
@@ -87,6 +88,7 @@
 
             'method.tree-obst': 'Optimal BST',
             'method.sort-external': 'External Merge Sort',
+            'method.gc-memory': 'Dynamic Storage / GC',
             'method.sort-polyphase': 'Polyphase Merge (Tapes)',
             'method.matrix-sparse': 'Sparse Matrix (Transpose)',
             'method.poly-padd': 'Polynomial Addition',
@@ -234,6 +236,7 @@
             'group.heaps':                  '堆積 / 優先佇列',
             'group.sorting':                '排序',
             'group.searching':              '搜尋與字串比對',
+            'group.memory':                 '記憶體 / GC',
             'group.oop':                    'OOP 概念',
             'group.patterns':               '設計模式',
             'group.patterns-creational':    '建立型',
@@ -306,6 +309,7 @@
 
             'method.tree-obst': '最佳二元搜尋樹',
             'method.sort-external': '外部合併排序',
+            'method.gc-memory': '動態儲存管理 / GC',
             'method.sort-polyphase': 'Polyphase 磁帶合併',
             'method.matrix-sparse': '稀疏矩陣(轉置)',
             'method.poly-padd': '多項式相加',

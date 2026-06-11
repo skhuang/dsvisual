@@ -20992,4 +20992,45 @@ SLIDES_DB["game-tree"] = {
       ] }
   ]
 };
+SLIDES_DB["gc-memory"] = {
+  "category": "Memory / GC",
+  "title": { "zh": "動態儲存管理 / 垃圾回收", "en": "Dynamic Storage / Garbage Collection" },
+  "slides": [
+    { "heading": { "zh": "為何需要自動記憶體管理", "en": "Why Automatic Memory Management" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "手動 malloc/free 容易造成記憶體洩漏(忘了釋放)與懸空指標(用了已釋放的記憶體)。自動記憶體管理由執行環境追蹤哪些物件還在使用,並回收不再需要的空間。", "en": "Manual malloc/free easily causes leaks (forgetting to free) and dangling pointers (using freed memory). Automatic memory management lets the runtime track which objects are still in use and reclaim space that is no longer needed." } },
+        { "type": "bullets", "items": [
+          { "zh": "可達性(reachability):從 root(全域/堆疊變數)能追蹤到的物件才算存活。", "en": "Reachability: only objects traceable from roots (globals / stack variables) are considered alive." },
+          { "zh": "本節比較三種經典策略:標記-清除、參考計數、夥伴系統。", "en": "This section compares three classic strategies: mark-sweep, reference counting, and the buddy system." }
+        ] }
+      ] },
+    { "heading": { "zh": "標記-清除 (Mark-Sweep)", "en": "Mark-Sweep" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "標記階段:從所有 root 出發做圖走訪,把可達的物件標記為存活。", "en": "Mark phase: traverse the object graph from every root and mark reachable objects as live." },
+          { "zh": "清除階段:掃過整個堆積,沒被標記的物件即為垃圾,予以釋放。", "en": "Sweep phase: scan the whole heap; any object left unmarked is garbage and is freed." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "gc_memory.cpp", "code": "void markSweep(vector<Obj>& heap, const vector<int>& roots) {\n    vector<int> stack = roots;\n    while (!stack.empty()) {\n        int id = stack.back(); stack.pop_back();\n        if (heap[id].mark) continue;\n        heap[id].mark = true;\n        for (int r : heap[id].refs) stack.push_back(r);\n    }\n    for (auto& o : heap) if (!o.mark) o.freed = true;\n}" },
+        { "type": "note", "text": { "zh": "優點:能正確回收環(cycle);缺點:需暫停程式(stop-the-world)並掃過整個堆積。", "en": "Pro: correctly reclaims cycles. Con: needs a stop-the-world pause and a full heap scan." } }
+      ] },
+    { "heading": { "zh": "參考計數與環的洩漏", "en": "Reference Counting & the Cycle Leak" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "每個物件記錄被多少參考指向。新增參考時 +1,移除時 -1;計數歸零立即釋放,並遞迴地對它指向的物件遞減。", "en": "Each object tracks how many references point to it. Adding a reference increments the count, removing one decrements it; when the count hits zero the object is freed immediately and its outgoing references are decremented in turn." } },
+        { "type": "bullets", "items": [
+          { "zh": "優點:回收即時、不需 stop-the-world,且易於實作。", "en": "Pro: prompt reclamation, no stop-the-world pause, easy to implement." },
+          { "zh": "致命缺點:互相參考的環(A→B→A)即使無人可達,計數也永遠 ≥1,造成洩漏。", "en": "Fatal flaw: a cycle (A→B→A) keeps its counts ≥ 1 even when unreachable, so it leaks." },
+          { "zh": "本視覺化:無環的 A、B 會被釋放,而互指的 D↔E 即使脫離 root 仍殘留。", "en": "In this visualization: acyclic A and B get freed, while the mutually referencing D↔E pair survives even after losing its roots." }
+        ] }
+      ] },
+    { "heading": { "zh": "夥伴系統 (Buddy System)", "en": "Buddy System" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "夥伴系統把記憶體切成 2 的冪次大小的區塊來管理配置與釋放,平衡了速度與外部碎裂。", "en": "The buddy system manages allocation in power-of-two sized blocks, balancing speed against external fragmentation." } },
+        { "type": "steps", "items": [
+          { "zh": "配置:找到 ≥ 需求的最小 2 的冪區塊;若太大就對半切(split),直到剛好。", "en": "Allocate: find the smallest power-of-two block ≥ the request; if too big, split it in half repeatedly until it fits." },
+          { "zh": "釋放:歸還區塊後,若其『夥伴』(位址相鄰、同大小且空閒)也空閒,就合併(coalesce)成更大區塊,反覆向上。", "en": "Free: after returning a block, if its buddy (the adjacent, equal-sized free block) is also free, coalesce them into a larger block, repeating upward." }
+        ] },
+        { "type": "note", "text": { "zh": "夥伴位址用 start XOR size 計算。內部碎裂來自向上取整到 2 的冪;合併則對抗外部碎裂。", "en": "A buddy's address is computed as start XOR size. Rounding up to a power of two causes internal fragmentation; coalescing fights external fragmentation." } }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;

@@ -37,3 +37,12 @@ test('sort-polyphase loads, applies, steps', async ({ page }) => {
   await expect(page.locator('.pf-stage').first()).toBeVisible();
   await page.click('[data-action="step"]');
 });
+
+test('gc-memory loads, switches mode, steps', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'gc-memory');
+  await expect(page.locator('[data-method-section][data-runtime-state="active"]')).toBeVisible();
+  await expect(page.locator('.gc-stage').first()).toBeVisible();
+  await page.selectOption('.gc-mode', 'buddy');
+  await page.click('[data-action="step"]');
+});
