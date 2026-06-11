@@ -138,6 +138,7 @@ const METHOD_GROUPS = [
             { id: 'tree-obst', title: 'Optimal BST', file: 'tree_obst.cpp', visualizer: 'obst', controls: 'obst' },
             { id: 'tree-threaded', title: 'Threaded Binary Tree', file: 'tree_threaded.cpp', visualizer: 'threaded', controls: 'threaded' },
             { id: 'tree-mway', title: 'm-way Search Tree', file: 'tree_mway.cpp', visualizer: 'mway', controls: 'mway' },
+            { id: 'tree-expression', title: 'Expression Tree', file: 'tree_expression.cpp', visualizer: 'exprtree', controls: 'exprtree' },
         ],
     },
     {
@@ -312,6 +313,7 @@ function getCodeForMethod(methodId) {
         'tree-obst': codeTreeObst,
         'tree-threaded': codeTreeThreaded,
         'tree-mway': codeTreeMway,
+        'tree-expression': codeTreeExpression,
         'sort-external': codeSortExternal,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
@@ -2260,6 +2262,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'tree_mway.cpp';
             codeDisplay.textContent = codeTreeMway;
         }
+        else if (currentMode === 'tree-expression') {
+            codeTitle.textContent = 'tree_expression.cpp';
+            codeDisplay.textContent = codeTreeExpression;
+        }
         else if (currentMode === 'sort-external') {
             codeTitle.textContent = 'sort_external.cpp';
             codeDisplay.textContent = codeSortExternal;
@@ -2509,6 +2515,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-obst') renderTreeObst();
         else if (currentMode === 'tree-threaded') renderTreeThreaded();
         else if (currentMode === 'tree-mway') renderTreeMway();
+        else if (currentMode === 'tree-expression') renderTreeExpression();
         else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
@@ -4907,6 +4914,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (keys.length && m >= 3) { st.keys = keys; st.m = m; renderTreeMway(); }
         };
     }
+
+    function renderTreeExpression() { const host = acquireDynamicVizHost(); host.textContent = 'tree-expression (pending)'; }
 
     function renderSegmentTree() {
         const host = acquireDynamicVizHost();
