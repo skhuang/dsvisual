@@ -69,6 +69,21 @@ test('random button on list-doubly changes the input field', async ({ page }) =>
   await expect(input).not.toHaveValue(before);
 });
 
+test('random button on old binary search updates target + array', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'search-binary');
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('edge');
+  await page.click('#settings-drawer .settings-drawer-close');
+
+  const target = page.locator('#search-val');
+  const before = await target.inputValue();
+  await page.click('#btn-search-random');
+  await expect(target).not.toHaveValue(before);
+  await expect(page.locator('#search-array .s-slot').first()).toBeVisible();
+});
+
 test('Randomize on sort visualizer honors large difficulty (>15 bars)', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'sort-bubble');

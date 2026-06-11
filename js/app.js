@@ -1289,6 +1289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnTreeAdd = document.getElementById('btn-tree-add'); const treeVal = document.getElementById('tree-val'); const btnTreeSearch = document.getElementById('btn-tree-search');
     
     const btnSearchGo = document.getElementById('btn-search-go'); const btnSearchPause = document.getElementById('btn-search-pause'); const btnSearchStop = document.getElementById('btn-search-stop'); const searchVal = document.getElementById('search-val');
+    const btnSearchRandom = document.getElementById('btn-search-random');
     const btnListAdd = document.getElementById('btn-list-add'); const btnListRemove = document.getElementById('btn-list-remove'); const listIdx = document.getElementById('list-idx'); const listValInput = document.getElementById('list-val');
     
     const btnSortRandom = document.getElementById('btn-sort-random'); const btnSortStart = document.getElementById('btn-sort-start');
@@ -2129,6 +2130,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     btnSearchGo.addEventListener('click', () => { const target = parseInt(searchVal.value); if(isNaN(target)) return showStatus('Enter valid target.', '#f87171'); if (currentMode === 'search-linear') executeAnimWrapper(async () => await runLinearSearch(target)); else if (currentMode === 'search-binary') executeAnimWrapper(async () => await runBinarySearch(target)); });
+    btnSearchRandom.addEventListener('click', () => {
+        if (animState === 'playing' || animState === 'paused') return;
+        const inp = window.RandomInput && RandomInput.randomInputFor(currentMode, getInputDifficulty());
+        if (!inp) return;
+        const arr = currentMode === 'search-binary' ? arrBinary : arrLinear;
+        arr.length = 0;
+        inp.arr.forEach((v) => arr.push(v));
+        searchVal.value = inp.target;
+        renderSearchArray(arr);
+    });
     
     // Hash Insert Logic
     btnHashAdd.addEventListener('click', () => {
