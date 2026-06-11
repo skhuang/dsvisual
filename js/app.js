@@ -202,6 +202,7 @@ const METHOD_GROUPS = [
             { id: 'sort-heap', title: 'Heap Sort', file: 'sort_heap.cpp', visualizer: 'sort', controls: 'sort' },
             { id: 'sort-shaker', title: 'Shaker Sort', file: 'sort_shaker.cpp', visualizer: 'sort', controls: 'sort' },
             { id: 'sort-external', title: 'External Merge Sort', file: 'sort_external.cpp', visualizer: 'extsort', controls: 'extsort' },
+            { id: 'sort-polyphase', title: 'Polyphase Merge (Tapes)', file: 'sort_polyphase.cpp', visualizer: 'polyphase', controls: 'polyphase' },
         ],
     },
     {
@@ -319,6 +320,7 @@ function getCodeForMethod(methodId) {
         'tree-general-binary': codeTreeGeneralBinary,
         'game-tree': codeGameTree,
         'sort-external': codeSortExternal,
+        'sort-polyphase': codeSortPolyphase,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
         'graph-traversal': codeGraphTraversal,
@@ -2338,6 +2340,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'sort_external.cpp';
             codeDisplay.textContent = codeSortExternal;
         }
+        else if (currentMode === 'sort-polyphase') {
+            codeTitle.textContent = 'sort_polyphase.cpp';
+            codeDisplay.textContent = codeSortPolyphase;
+        }
         else if (currentMode === 'graph-aoe') {
             codeTitle.textContent = 'graph_aoe.cpp';
             codeDisplay.textContent = codeGraphAoe;
@@ -2588,6 +2594,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-mway') renderTreeMway();
         else if (currentMode === 'tree-expression') renderTreeExpression();
         else if (currentMode === 'sort-external') renderSortExternal();
+        else if (currentMode === 'sort-polyphase') renderSortPolyphase();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
         else if (currentMode === 'list-doubly') renderListDoubly();
@@ -4874,6 +4881,58 @@ document.addEventListener('DOMContentLoaded', () => {
             _extState.data = inp.data;
             _extState.M = inp.M;
             renderSortExternal();
+        };
+    }
+
+    let _polyphaseState = null;
+    function renderSortPolyphase() {
+        const host = acquireDynamicVizHost();
+        if (!_polyphaseState) _polyphaseState = { data: SortPolyphaseViz.SAMPLE.slice() };
+        const st = _polyphaseState;
+        const res = SortPolyphaseViz.polyphaseFrames(st.data);
+        const frames = res.frames;
+        let idx = 0;
+
+        const labels = ['Tape 1', 'Tape 2', 'Output'];
+
+        host.innerHTML =
+            '<div class="pf-controls">' +
+              '<input type="text" class="pf-data" value="' + st.data.join(',') + '">' +
+              '<button type="button" class="pf-apply">Apply</button>' +
+            '</div>' +
+            '<div class="pf-stage"></div>' +
+            '<div class="pf-phase"></div>';
+
+        function runChip(run) {
+            if (run === null || run === undefined) return '<span class="pf-chip pf-dummy">∅</span>';
+            return '<span class="pf-chip">[' + run.join(',') + ']</span>';
+        }
+
+        function paint() {
+            const fr = frames[idx];
+            const stage = host.querySelector('.pf-stage');
+            if (!stage) return;
+            // The output row is the tape just written to during a merge frame.
+            stage.innerHTML = fr.tapes.map((tape, i) =>
+                '<div class="pf-row">' +
+                  '<span class="pf-row-label">' + labels[i] + '</span>' +
+                  '<span class="pf-chips">' + (tape.length ? tape.map(runChip).join('') : '<span class="pf-empty">—</span>') + '</span>' +
+                '</div>').join('');
+            const badge = { distribute: 'Distribute', merge: 'Merge', done: 'Done' }[fr.phase] || fr.phase;
+            host.querySelector('.pf-phase').innerHTML = '<span class="pf-badge pf-' + fr.phase + '">' + badge + '</span>';
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+
+        host.querySelector('.pf-apply').onclick = () => {
+            try {
+                const d = host.querySelector('.pf-data').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
+                _polyphaseState.data = d;
+                renderSortPolyphase();
+            } catch (e) { /* ignore malformed input */ }
         };
     }
 

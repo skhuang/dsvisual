@@ -85,6 +85,7 @@ const mappings = {
     'graph_floyd_warshall.cpp': 'codeGraphFloydWarshall',
     'tree_obst.cpp': 'codeTreeObst',
     'sort_external.cpp': 'codeSortExternal',
+    'sort_polyphase.cpp': 'codeSortPolyphase',
     'matrix_sparse.cpp': 'codeMatrixSparse',
     'poly_padd.cpp': 'codePolyPadd',
     'maze_stack.cpp': 'codeMazeStack',

@@ -29,3 +29,11 @@ test('game-tree loads, toggles alpha-beta, steps', async ({ page }) => {
   await page.click('.gt-ab');
   await page.click('[data-action="step"]');
 });
+
+test('sort-polyphase loads, applies, steps', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'sort-polyphase');
+  await expect(page.locator('[data-method-section][data-runtime-state="active"]')).toBeVisible();
+  await expect(page.locator('.pf-stage').first()).toBeVisible();
+  await page.click('[data-action="step"]');
+});
