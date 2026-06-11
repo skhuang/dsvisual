@@ -57,3 +57,54 @@ test('random button on matrix-sparse changes the input field', async ({ page }) 
   await section.locator('.rand-btn').click();
   await expect(input).not.toHaveValue(before);
 });
+
+test('random button on list-doubly changes the input field', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'list-doubly');
+
+  const section = page.locator('[data-method-section="list-doubly"]');
+  const input = section.locator('.dl-input');
+  const before = await input.inputValue();
+  await section.locator('.rand-btn').click();
+  await expect(input).not.toHaveValue(before);
+});
+
+test('random button on old binary search updates target + array', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'search-binary');
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('edge');
+  await page.click('#settings-drawer .settings-drawer-close');
+
+  const target = page.locator('#search-val');
+  const before = await target.inputValue();
+  await page.click('#btn-search-random');
+  await expect(target).not.toHaveValue(before);
+  await expect(page.locator('#search-array .s-slot').first()).toBeVisible();
+});
+
+test('Randomize on sort visualizer honors large difficulty (>15 bars)', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'sort-bubble');
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+
+  await page.click('#btn-sort-random');
+
+  const bars = page.locator('#sort-container .sort-bar');
+  await expect.poll(async () => await bars.count()).toBeGreaterThan(15);
+});
+
+test('random button on search-fibonacci changes the input field', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'search-fibonacci');
+
+  const section = page.locator('[data-method-section="search-fibonacci"]');
+  const input = section.locator('.ss-arr');
+  const before = await input.inputValue();
+  await section.locator('.rand-btn').click();
+  await expect(input).not.toHaveValue(before);
+});
