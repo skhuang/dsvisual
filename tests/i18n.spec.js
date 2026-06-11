@@ -86,9 +86,9 @@ test.describe('i18n', () => {
         await firstPill.click();
         await expect(page.locator('[data-testid="overview-section"]')).toBeVisible();
         await expect(page.locator('[data-testid="method-sections"]')).toBeHidden();
-        // Grid has 10 categories and 96 tiles (one per method).
-        await expect(page.locator('[data-testid="overview-grid"] .overview-category')).toHaveCount(10);
-        await expect(page.locator('[data-testid="overview-grid"] .overview-tile')).toHaveCount(96);
+        // Grid has 12 categories and 99 tiles (one per method).
+        await expect(page.locator('[data-testid="overview-grid"] .overview-category')).toHaveCount(12);
+        await expect(page.locator('[data-testid="overview-grid"] .overview-tile')).toHaveCount(99);
         // Click a tile → overview hides, method activates.
         await page.locator('.overview-tile[data-method-id="tree-bst"]').click();
         await expect(page.locator('[data-testid="overview-section"]')).toBeHidden();

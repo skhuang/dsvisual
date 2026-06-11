@@ -20992,4 +20992,120 @@ SLIDES_DB["game-tree"] = {
       ] }
   ]
 };
+SLIDES_DB["gc-memory"] = {
+  "category": "Memory / GC",
+  "title": { "zh": "動態儲存管理 / 垃圾回收", "en": "Dynamic Storage / Garbage Collection" },
+  "slides": [
+    { "heading": { "zh": "為何需要自動記憶體管理", "en": "Why Automatic Memory Management" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "手動 malloc/free 容易造成記憶體洩漏(忘了釋放)與懸空指標(用了已釋放的記憶體)。自動記憶體管理由執行環境追蹤哪些物件還在使用,並回收不再需要的空間。", "en": "Manual malloc/free easily causes leaks (forgetting to free) and dangling pointers (using freed memory). Automatic memory management lets the runtime track which objects are still in use and reclaim space that is no longer needed." } },
+        { "type": "bullets", "items": [
+          { "zh": "可達性(reachability):從 root(全域/堆疊變數)能追蹤到的物件才算存活。", "en": "Reachability: only objects traceable from roots (globals / stack variables) are considered alive." },
+          { "zh": "本節比較三種經典策略:標記-清除、參考計數、夥伴系統。", "en": "This section compares three classic strategies: mark-sweep, reference counting, and the buddy system." }
+        ] }
+      ] },
+    { "heading": { "zh": "標記-清除 (Mark-Sweep)", "en": "Mark-Sweep" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "標記階段:從所有 root 出發做圖走訪,把可達的物件標記為存活。", "en": "Mark phase: traverse the object graph from every root and mark reachable objects as live." },
+          { "zh": "清除階段:掃過整個堆積,沒被標記的物件即為垃圾,予以釋放。", "en": "Sweep phase: scan the whole heap; any object left unmarked is garbage and is freed." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "gc_memory.cpp", "code": "void markSweep(vector<Obj>& heap, const vector<int>& roots) {\n    vector<int> stack = roots;\n    while (!stack.empty()) {\n        int id = stack.back(); stack.pop_back();\n        if (heap[id].mark) continue;\n        heap[id].mark = true;\n        for (int r : heap[id].refs) stack.push_back(r);\n    }\n    for (auto& o : heap) if (!o.mark) o.freed = true;\n}" },
+        { "type": "note", "text": { "zh": "優點:能正確回收環(cycle);缺點:需暫停程式(stop-the-world)並掃過整個堆積。", "en": "Pro: correctly reclaims cycles. Con: needs a stop-the-world pause and a full heap scan." } }
+      ] },
+    { "heading": { "zh": "參考計數與環的洩漏", "en": "Reference Counting & the Cycle Leak" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "每個物件記錄被多少參考指向。新增參考時 +1,移除時 -1;計數歸零立即釋放,並遞迴地對它指向的物件遞減。", "en": "Each object tracks how many references point to it. Adding a reference increments the count, removing one decrements it; when the count hits zero the object is freed immediately and its outgoing references are decremented in turn." } },
+        { "type": "bullets", "items": [
+          { "zh": "優點:回收即時、不需 stop-the-world,且易於實作。", "en": "Pro: prompt reclamation, no stop-the-world pause, easy to implement." },
+          { "zh": "致命缺點:互相參考的環(A→B→A)即使無人可達,計數也永遠 ≥1,造成洩漏。", "en": "Fatal flaw: a cycle (A→B→A) keeps its counts ≥ 1 even when unreachable, so it leaks." },
+          { "zh": "本視覺化:無環的 A、B 會被釋放,而互指的 D↔E 即使脫離 root 仍殘留。", "en": "In this visualization: acyclic A and B get freed, while the mutually referencing D↔E pair survives even after losing its roots." }
+        ] }
+      ] },
+    { "heading": { "zh": "夥伴系統 (Buddy System)", "en": "Buddy System" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "夥伴系統把記憶體切成 2 的冪次大小的區塊來管理配置與釋放,平衡了速度與外部碎裂。", "en": "The buddy system manages allocation in power-of-two sized blocks, balancing speed against external fragmentation." } },
+        { "type": "steps", "items": [
+          { "zh": "配置:找到 ≥ 需求的最小 2 的冪區塊;若太大就對半切(split),直到剛好。", "en": "Allocate: find the smallest power-of-two block ≥ the request; if too big, split it in half repeatedly until it fits." },
+          { "zh": "釋放:歸還區塊後,若其『夥伴』(位址相鄰、同大小且空閒)也空閒,就合併(coalesce)成更大區塊,反覆向上。", "en": "Free: after returning a block, if its buddy (the adjacent, equal-sized free block) is also free, coalesce them into a larger block, repeating upward." }
+        ] },
+        { "type": "note", "text": { "zh": "夥伴位址用 start XOR size 計算。內部碎裂來自向上取整到 2 的冪;合併則對抗外部碎裂。", "en": "A buddy's address is computed as start XOR size. Rounding up to a power of two causes internal fragmentation; coalescing fights external fragmentation." } }
+      ] }
+  ]
+};
+SLIDES_DB["file-isam"] = {
+  "category": "File Structures",
+  "title": { "zh": "ISAM 索引循序存取", "en": "ISAM (Indexed Sequential Access)" },
+  "slides": [
+    { "heading": { "zh": "索引循序存取的概念", "en": "Indexed Sequential Access" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "ISAM(Indexed Sequential Access Method)把排序好的資料分裝進固定大小的資料區塊,再額外維護一層索引,記下每個區塊的最小鍵值。如此既能像循序檔逐筆讀取,又能透過索引快速定位。", "en": "ISAM (Indexed Sequential Access Method) packs sorted records into fixed-size data blocks and maintains a separate index recording the minimum key of each block. This supports both sequential reads and fast index-driven lookups." } },
+        { "type": "bullets", "items": [
+          { "zh": "資料層:鍵值排序後依 blockSize 切成多個區塊,區塊內也是排序的。", "en": "Data level: sorted keys are split into blocks of blockSize, and keys stay sorted within each block." },
+          { "zh": "索引層:每個區塊一筆 (minKey, blockIndex),索引本身也按 minKey 排序。", "en": "Index level: one entry (minKey, blockIndex) per block, and the index itself is sorted by minKey." }
+        ] }
+      ] },
+    { "heading": { "zh": "兩層結構:索引 → 資料區塊", "en": "Two Levels: Index → Data Blocks" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "索引層遠小於資料層(每區塊只佔一筆),通常可常駐記憶體;資料區塊則放在磁碟。一次查詢只需讀取索引加上一個資料區塊,大幅減少磁碟存取。", "en": "The index level is far smaller than the data level (one entry per block) and often fits in memory, while data blocks live on disk. A lookup reads the index plus a single data block, drastically cutting disk accesses." } },
+        { "type": "code", "lang": "cpp", "file": "file_isam.cpp", "code": "vector<vector<int>> blocks;\nfor (size_t i = 0; i < keys.size(); i += blockSize)\n    blocks.push_back(vector<int>(keys.begin() + i,\n        keys.begin() + min(keys.size(), i + blockSize)));" }
+      ] },
+    { "heading": { "zh": "查詢路徑:索引 → 區塊 → 掃描", "en": "Search Path: Index → Block → Scan" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "掃描索引:找出最後一個 minKey ≤ 目標鍵的索引項,鎖定對應的資料區塊。", "en": "Scan the index: find the last entry whose minKey ≤ the target key, selecting its data block." },
+          { "zh": "進入區塊:在該區塊內循序(或二分)掃描比對每個鍵。", "en": "Enter the block: scan its keys sequentially (or binary search) comparing each one." },
+          { "zh": "判定結果:找到即回報區塊與槽位;掃完仍無則回報 not-found。", "en": "Decide: on a match report the block and slot; if the scan ends with no match, report not-found." }
+        ] },
+        { "type": "note", "text": { "zh": "本視覺化逐格呈現:先高亮索引項,再高亮選中的資料區塊,最後逐槽掃描,命中轉綠、落空整塊轉紅。", "en": "The visualization steps through it: highlight the index entry, then the chosen block, then scan slot by slot — a hit turns green, a miss turns the whole block red." } }
+      ] },
+    { "heading": { "zh": "插入與溢位處理 (Overflow)", "en": "Insertion & Overflow Handling" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "資料區塊容量固定,當某區塊已滿仍要插入新鍵時,多出的鍵會掛到該區塊的溢位鏈(overflow chain)上,而非重整整個檔案。", "en": "Data blocks have fixed capacity. When a full block must accept a new key, the surplus key is appended to that block's overflow chain rather than reorganizing the whole file." } },
+        { "type": "bullets", "items": [
+          { "zh": "查詢時若主區塊找不到,會接著掃描溢位鏈。", "en": "On lookup, if the main block misses, the search continues along the overflow chain." },
+          { "zh": "缺點:溢位鏈變長會讓查詢退化;需定期重建(reorganize)索引以回復效能。", "en": "Drawback: long overflow chains degrade lookups, so the index must be periodically reorganized to restore performance." }
+        ] },
+        { "type": "note", "text": { "zh": "ISAM 是靜態索引結構;若資料頻繁增刪,B-tree / B+-tree 的動態平衡通常更合適。", "en": "ISAM is a static index structure; for frequently changing data, the dynamic balancing of B-trees / B+-trees is usually a better fit." } }
+      ] }
+  ]
+};
+
+SLIDES_DB["file-inverted"] = {
+  "category": "File Structures",
+  "title": { "zh": "倒排索引", "en": "Inverted Index" },
+  "slides": [
+    { "heading": { "zh": "倒排索引與全文檢索", "en": "Inverted Index & Full-Text Search" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "倒排索引(inverted index)是全文檢索的核心資料結構:它不是記「每份文件有哪些字」,而是反過來記「每個字出現在哪些文件」。輸入一批文件後,索引把每個詞(term)對應到一串文件編號(posting list)。", "en": "An inverted index is the core data structure behind full-text search. Instead of recording which terms each document contains, it inverts the relationship: each term maps to the list of documents that contain it (its posting list)." } },
+        { "type": "bullets", "items": [
+          { "zh": "term(詞):文件經分詞、轉小寫後得到的關鍵字。", "en": "Term: a keyword obtained after tokenizing a document and lower-casing it." },
+          { "zh": "posting list(倒排串列):某個 term 出現過的文件編號清單,通常排序且去重。", "en": "Posting list: the sorted, de-duplicated list of document ids in which a term appears." }
+        ] }
+      ] },
+    { "heading": { "zh": "建立索引:掃描文件、追加 docId", "en": "Building the Index: Scan Docs, Append docIds" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "建立流程:依序處理每份文件,對文件內的每個詞,若該文件編號尚未出現在該詞的倒排串列,就把它追加進去。同一份文件中重複的詞只記一次。", "en": "Build process: process each document in turn; for every term in it, append the document id to that term's posting list if not already present. A term repeated within the same document is recorded only once." } },
+        { "type": "code", "lang": "cpp", "file": "file_inverted.cpp", "code": "map<string, set<int>> index;\nfor (size_t d = 0; d < docs.size(); ++d) {\n    istringstream iss(docs[d]); string w;\n    while (iss >> w) index[w].insert((int)d);\n}" },
+        { "type": "note", "text": { "zh": "本視覺化逐格呈現每一次「詞 → docId」的插入:左側是文件清單,右側是逐步長出的倒排索引表。", "en": "The visualization steps through each term-to-docId insertion: documents on the left, the inverted index table growing step by step on the right." } }
+      ] },
+    { "heading": { "zh": "查詢:取出 term 的倒排串列", "en": "Query: Retrieve a Term's Posting List" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "把查詢字轉小寫(大小寫不敏感),在索引中查找對應的 term。", "en": "Lower-case the query (case-insensitive) and look the term up in the index." },
+          { "zh": "若找到,回傳其倒排串列;那些文件即為命中結果。", "en": "If found, return its posting list; those documents are the hits." },
+          { "zh": "若該 term 不存在,回傳空串列(無命中)。", "en": "If the term is absent, return an empty posting list (no hits)." }
+        ] },
+        { "type": "note", "text": { "zh": "視覺化會把查詢字所在的索引列高亮,並在左側文件清單標出命中的文件。", "en": "The visualization highlights the index row for the query term and marks the matching documents in the left-hand document list." } }
+      ] },
+    { "heading": { "zh": "多詞查詢:倒排串列的交集 (AND)", "en": "Multi-Term Query: Intersecting Posting Lists (AND)" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "查詢多個詞時,布林 AND 查詢相當於對各 term 的倒排串列取交集:只有同時出現在所有串列中的文件編號才算命中。因串列已排序,可用合併掃描(merge)在線性時間內完成。", "en": "For multi-term queries, a boolean AND query corresponds to intersecting the posting lists of the terms: only document ids present in every list are hits. Because posting lists are sorted, the intersection can be computed with a linear merge scan." } },
+        { "type": "bullets", "items": [
+          { "zh": "AND:取交集;OR:取聯集;NOT:取補集(差集)。", "en": "AND: intersection; OR: union; NOT: complement (difference)." },
+          { "zh": "排序的倒排串列讓交集、聯集都能以線性合併高效完成,是搜尋引擎可規模化的關鍵。", "en": "Sorted posting lists let intersection and union run as efficient linear merges — a key reason search engines scale." }
+        ] }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;

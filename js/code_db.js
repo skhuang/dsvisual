@@ -5476,3 +5476,79 @@ int main() {
 }
 `;
 
+const codeGcMemory = `// Dynamic storage management: mark-sweep, reference counting, buddy system
+#include <iostream>
+#include <vector>
+using namespace std;
+
+struct Obj { vector<int> refs; bool mark = false; bool freed = false; };
+
+void markSweep(vector<Obj>& heap, const vector<int>& roots) {
+    vector<int> stack = roots;
+    while (!stack.empty()) {
+        int id = stack.back(); stack.pop_back();
+        if (heap[id].mark) continue;
+        heap[id].mark = true;
+        for (int r : heap[id].refs) stack.push_back(r);
+    }
+    for (auto& o : heap) if (!o.mark) o.freed = true;
+}
+
+int main() {
+    vector<Obj> heap = { {{2}}, {{3,4}}, {{5}}, {{}}, {{2}}, {{}}, {{}} };
+    markSweep(heap, {0, 1});
+    for (size_t i = 0; i < heap.size(); ++i)
+        cout << "obj " << i << (heap[i].freed ? " freed\\n" : " kept\\n");
+    return 0;
+}
+`;
+
+const codeFileIsam = `// ISAM: indexed sequential access — index of block min-keys + sorted data blocks
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    vector<int> keys = {10, 20, 30, 40, 50, 60, 70, 80, 90};
+    int blockSize = 3;
+    sort(keys.begin(), keys.end());
+    vector<vector<int>> blocks;
+    for (size_t i = 0; i < keys.size(); i += blockSize)
+        blocks.push_back(vector<int>(keys.begin() + i, keys.begin() + min(keys.size(), i + blockSize)));
+
+    int target = 50, bi = 0;
+    for (size_t i = 0; i < blocks.size(); ++i)
+        if (!blocks[i].empty() && blocks[i][0] <= target) bi = i; else break;
+    bool found = false;
+    for (int k : blocks[bi]) if (k == target) found = true;
+    cout << "key " << target << (found ? " found" : " not found") << " in block " << bi << "\\n";
+    return 0;
+}
+`;
+
+const codeFileInverted = `// Inverted index: term -> list of document ids
+#include <iostream>
+#include <map>
+#include <set>
+#include <vector>
+#include <sstream>
+#include <string>
+using namespace std;
+
+int main() {
+    vector<string> docs = {"the cat sat", "the dog ran", "cat and dog"};
+    map<string, set<int>> index;
+    for (size_t d = 0; d < docs.size(); ++d) {
+        istringstream iss(docs[d]); string w;
+        while (iss >> w) index[w].insert((int)d);
+    }
+    for (auto& [term, postings] : index) {
+        cout << term << " ->";
+        for (int id : postings) cout << " " << id;
+        cout << "\\n";
+    }
+    return 0;
+}
+`;
+
