@@ -38,3 +38,12 @@ test('single-node tree', () => {
   assert.strictEqual(bin.left, null);
   assert.strictEqual(bin.right, null);
 });
+
+test('cyclic input does not overflow the stack', () => {
+  const g = V.parseGeneralTree('A:B;B:A');
+  // must not throw
+  const bin = V.toBinary(g);
+  assert.ok(bin && bin.id === 'A');
+  const { frames } = V.convertFrames(g);
+  assert.ok(Array.isArray(frames) && frames.length >= 1);
+});

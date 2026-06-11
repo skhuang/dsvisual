@@ -4291,8 +4291,10 @@ document.addEventListener('DOMContentLoaded', () => {
         paint();
 
         host.querySelector('.tgb-build').onclick = () => {
-            _tgbState.text = host.querySelector('.tgb-input').value;
-            renderTreeGeneralBinary();
+            try {
+                _tgbState.text = host.querySelector('.tgb-input').value;
+                renderTreeGeneralBinary();
+            } catch (e) { /* ignore malformed input */ }
         };
     }
     function renderTreeTraversal() {

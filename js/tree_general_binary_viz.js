@@ -23,7 +23,10 @@
   function toBinary(general) {
     const { root, children } = general;
     if (!root) return null;
+    const seen = new Set();
     function build(node) {
+      if (seen.has(node)) return { id: node, left: null, right: null };
+      seen.add(node);
       const kids = children[node] || [];
       const bn = { id: node, left: null, right: null };
       let prev = null;
@@ -43,7 +46,10 @@
     const links = [];
     function pushFrame(active) { frames.push({ links: links.slice(), active: active }); }
     if (!root) { return { frames: [{ links: [], active: null }] }; }
+    const visited = new Set();
     function visit(node) {
+      if (visited.has(node)) return;
+      visited.add(node);
       const kids = children[node] || [];
       kids.forEach((k, i) => {
         if (i === 0) links.push({ from: node, to: k, kind: 'left' });
