@@ -4567,7 +4567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let idx = 0;
 
         host.innerHTML =
-            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '"><button type="button" class="sm-apply">Apply</button>' +
+            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="sm-apply">Apply</button>' +
             '<span class="sm-hint">rows separated by ; , entries by ,</span></div>' +
             '<div class="sm-cols"><div class="sm-dense"></div><div class="sm-triples"></div></div>' +
             '<div class="sm-arrays"></div>' +
@@ -4609,6 +4609,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const v = host.querySelector('.sm-input').value.trim();
             if (v) { st.text = v; renderMatrixSparse(); }
         };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('matrix-sparse', getInputDifficulty());
+            if (!inp) return;
+            _sparseState.text = inp.text;
+            renderMatrixSparse();
+        };
     }
     let _polyState = null;
     function renderPolyPadd() {
@@ -4626,6 +4632,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="pp-controls">' +
               'A <input type="text" class="pp-a" value="' + st.a + '"> ' +
               'B <input type="text" class="pp-b" value="' + st.b + '"> ' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="pp-apply">Apply</button>' +
               '<span class="sm-hint">terms as coef:exp, comma-separated</span>' +
             '</div>' +
@@ -4655,6 +4662,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const a = host.querySelector('.pp-a').value.trim();
             const b = host.querySelector('.pp-b').value.trim();
             if (a && b) { st.a = a; st.b = b; renderPolyPadd(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('poly-padd', getInputDifficulty());
+            if (!inp) return;
+            _polyState.a = inp.a;
+            _polyState.b = inp.b;
+            renderPolyPadd();
         };
     }
 

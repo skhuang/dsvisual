@@ -46,3 +46,14 @@ test('random button on tree-traversal changes the input field', async ({ page })
   await section.locator('.rand-btn').click();
   await expect(input).not.toHaveValue(before);
 });
+
+test('random button on matrix-sparse changes the input field', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'matrix-sparse');
+
+  const section = page.locator('[data-method-section="matrix-sparse"]');
+  const input = section.locator('.sm-input');
+  const before = await input.inputValue();
+  await section.locator('.rand-btn').click();
+  await expect(input).not.toHaveValue(before);
+});
