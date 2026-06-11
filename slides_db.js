@@ -21033,4 +21033,41 @@ SLIDES_DB["gc-memory"] = {
       ] }
   ]
 };
+SLIDES_DB["file-isam"] = {
+  "category": "File Structures",
+  "title": { "zh": "ISAM 索引循序存取", "en": "ISAM (Indexed Sequential Access)" },
+  "slides": [
+    { "heading": { "zh": "索引循序存取的概念", "en": "Indexed Sequential Access" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "ISAM(Indexed Sequential Access Method)把排序好的資料分裝進固定大小的資料區塊,再額外維護一層索引,記下每個區塊的最小鍵值。如此既能像循序檔逐筆讀取,又能透過索引快速定位。", "en": "ISAM (Indexed Sequential Access Method) packs sorted records into fixed-size data blocks and maintains a separate index recording the minimum key of each block. This supports both sequential reads and fast index-driven lookups." } },
+        { "type": "bullets", "items": [
+          { "zh": "資料層:鍵值排序後依 blockSize 切成多個區塊,區塊內也是排序的。", "en": "Data level: sorted keys are split into blocks of blockSize, and keys stay sorted within each block." },
+          { "zh": "索引層:每個區塊一筆 (minKey, blockIndex),索引本身也按 minKey 排序。", "en": "Index level: one entry (minKey, blockIndex) per block, and the index itself is sorted by minKey." }
+        ] }
+      ] },
+    { "heading": { "zh": "兩層結構:索引 → 資料區塊", "en": "Two Levels: Index → Data Blocks" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "索引層遠小於資料層(每區塊只佔一筆),通常可常駐記憶體;資料區塊則放在磁碟。一次查詢只需讀取索引加上一個資料區塊,大幅減少磁碟存取。", "en": "The index level is far smaller than the data level (one entry per block) and often fits in memory, while data blocks live on disk. A lookup reads the index plus a single data block, drastically cutting disk accesses." } },
+        { "type": "code", "lang": "cpp", "file": "file_isam.cpp", "code": "vector<vector<int>> blocks;\nfor (size_t i = 0; i < keys.size(); i += blockSize)\n    blocks.push_back(vector<int>(keys.begin() + i,\n        keys.begin() + min(keys.size(), i + blockSize)));" }
+      ] },
+    { "heading": { "zh": "查詢路徑:索引 → 區塊 → 掃描", "en": "Search Path: Index → Block → Scan" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "掃描索引:找出最後一個 minKey ≤ 目標鍵的索引項,鎖定對應的資料區塊。", "en": "Scan the index: find the last entry whose minKey ≤ the target key, selecting its data block." },
+          { "zh": "進入區塊:在該區塊內循序(或二分)掃描比對每個鍵。", "en": "Enter the block: scan its keys sequentially (or binary search) comparing each one." },
+          { "zh": "判定結果:找到即回報區塊與槽位;掃完仍無則回報 not-found。", "en": "Decide: on a match report the block and slot; if the scan ends with no match, report not-found." }
+        ] },
+        { "type": "note", "text": { "zh": "本視覺化逐格呈現:先高亮索引項,再高亮選中的資料區塊,最後逐槽掃描,命中轉綠、落空整塊轉紅。", "en": "The visualization steps through it: highlight the index entry, then the chosen block, then scan slot by slot — a hit turns green, a miss turns the whole block red." } }
+      ] },
+    { "heading": { "zh": "插入與溢位處理 (Overflow)", "en": "Insertion & Overflow Handling" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "資料區塊容量固定,當某區塊已滿仍要插入新鍵時,多出的鍵會掛到該區塊的溢位鏈(overflow chain)上,而非重整整個檔案。", "en": "Data blocks have fixed capacity. When a full block must accept a new key, the surplus key is appended to that block's overflow chain rather than reorganizing the whole file." } },
+        { "type": "bullets", "items": [
+          { "zh": "查詢時若主區塊找不到,會接著掃描溢位鏈。", "en": "On lookup, if the main block misses, the search continues along the overflow chain." },
+          { "zh": "缺點:溢位鏈變長會讓查詢退化;需定期重建(reorganize)索引以回復效能。", "en": "Drawback: long overflow chains degrade lookups, so the index must be periodically reorganized to restore performance." }
+        ] },
+        { "type": "note", "text": { "zh": "ISAM 是靜態索引結構;若資料頻繁增刪,B-tree / B+-tree 的動態平衡通常更合適。", "en": "ISAM is a static index structure; for frequently changing data, the dynamic balancing of B-trees / B+-trees is usually a better fit." } }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;

@@ -98,6 +98,7 @@ const mappings = {
     'tree_general_binary.cpp': 'codeTreeGeneralBinary',
     'game_tree.cpp': 'codeGameTree',
     'gc_memory.cpp': 'codeGcMemory',
+    'file_isam.cpp': 'codeFileIsam',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

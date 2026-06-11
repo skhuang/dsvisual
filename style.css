@@ -2415,6 +2415,26 @@ pre.code-panel-body[class*="language-"] {
 .gc-seg-free { background: #f1f5f9; color: #94a3b8; }
 .gc-seg-alloc { background: #bfdbfe; color: #1e3a8a; }
 .gc-seg.gc-active { outline: 2px solid #f59e0b; outline-offset: -2px; }
+
+/* file-isam visualization */
+.isam-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.isam-controls .isam-key { width: 80px; padding: 4px 6px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+.isam-controls .isam-search { padding: 4px 12px; border: 1px solid #2563eb; background: #2563eb; color: #fff; border-radius: 6px; cursor: pointer; }
+.isam-badge { color: #1e40af; font-style: italic; font-family: monospace; }
+.isam-stage { display: flex; flex-direction: column; gap: 12px; margin: 8px 0; }
+.isam-index-row, .isam-block-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.isam-row-label { width: 56px; font-size: 12px; font-weight: 700; color: #475569; }
+.isam-idx-cell { min-width: 44px; padding: 6px 8px; background: #fef9c3; border: 2px solid #fde047; border-radius: 8px; text-align: center; font-weight: 600; color: #713f12; }
+.isam-idx-cell.isam-active { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.55); }
+.isam-block { display: flex; align-items: center; gap: 2px; padding: 4px; background: #f1f5f9; border: 2px solid #cbd5e1; border-radius: 8px; }
+.isam-block.isam-block-active { border-color: #2563eb; background: #eff6ff; }
+.isam-block.isam-block-miss { border-color: #ef4444; background: #fee2e2; }
+.isam-slot { min-width: 36px; padding: 6px 8px; background: #fff; border: 1px solid #cbd5e1; border-radius: 6px; text-align: center; font-weight: 600; color: #1e293b; }
+.isam-slot.isam-active { background: #fde68a; border-color: #f59e0b; }
+.isam-slot.isam-found { background: #bbf7d0; border-color: #22c55e; color: #166534; }
+.isam-slot.isam-empty { color: #94a3b8; }
+.isam-overflow-arrow { color: #64748b; font-weight: 700; padding: 0 2px; }
+.isam-overflow-slot { background: #f5f3ff; border-color: #c4b5fd; }
 .pf-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
 .pf-controls .pf-data { flex: 1; min-width: 200px; }
 .pf-stage { display: flex; flex-direction: column; gap: 8px; }

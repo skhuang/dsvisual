@@ -46,3 +46,12 @@ test('gc-memory loads, switches mode, steps', async ({ page }) => {
   await page.selectOption('.gc-mode', 'buddy');
   await page.click('[data-action="step"]');
 });
+
+test('file-isam loads, searches, steps', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'file-isam');
+  await expect(page.locator('[data-method-section][data-runtime-state="active"]')).toBeVisible();
+  await page.fill('.isam-key', '40');
+  await page.click('.isam-search');
+  await page.click('[data-action="step"]');
+});
