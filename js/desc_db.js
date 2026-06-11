@@ -862,4 +862,18 @@ const descDB = {
             <span class="badge space">Space: O(N)</span>
         </div>
     `,
+    'tree-expression': `
+        <h3>Expression Tree</h3>
+        <p>Build a binary expression tree from a postfix expression using a stack of subtrees, then evaluate it bottom-up.</p>
+        <hr>
+        <ul>
+            <li><strong>Operand:</strong> push a leaf node onto the subtree stack</li>
+            <li><strong>Operator:</strong> pop two subtrees, make them the children of a new node, push it</li>
+            <li><strong>Evaluate:</strong> recurse — leaves are values, internal nodes apply their operator</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Build/Eval: O(N)</span>
+            <span class="badge space">Space: O(N)</span>
+        </div>
+    `,
 };

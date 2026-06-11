@@ -20862,4 +20862,27 @@ SLIDES_DB["tree-mway"] = {
       ] }
   ]
 };
+SLIDES_DB["tree-expression"] = {
+  "category": "Trees",
+  "title": { "zh": "運算式樹", "en": "Expression Tree" },
+  "slides": [
+    { "heading": { "zh": "從後序式建樹", "en": "Build from Postfix" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "用一個「子樹堆疊」掃描後序式:運算元成為葉節點,運算子把兩棵子樹接成新樹。", "en": "Scan the postfix with a stack of subtrees: operands become leaves; an operator joins the top two subtrees under a new node." } },
+        { "type": "steps", "items": [
+          { "zh": "遇運算元:建立葉節點並推入堆疊。", "en": "Operand: create a leaf and push it." },
+          { "zh": "遇運算子:彈出兩棵子樹當左右子,合併成新樹後推回。", "en": "Operator: pop two subtrees as children, push the combined tree." },
+          { "zh": "掃描完成,堆疊上剩下的唯一一棵即為運算式樹。", "en": "At the end, the single remaining subtree is the expression tree." }
+        ] }
+      ] },
+    { "heading": { "zh": "求值與複雜度", "en": "Evaluation & Complexity" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "自底向上遞迴求值:葉為數值,內部節點對左右結果套用其運算子。", "en": "Evaluate bottom-up: leaves are values; internal nodes apply their operator to the children's results." } },
+        { "type": "code", "lang": "cpp", "file": "tree_expression.cpp", "code": "while (in >> tok) {\n    ENode* n = new ENode{ tok, nullptr, nullptr };\n    if (isOp(tok)) {\n        n->right = st.top(); st.pop();\n        n->left = st.top(); st.pop();\n    }\n    st.push(n);\n}" },
+        { "type": "bullets", "items": [
+          { "zh": "建樹與求值皆為 O(N);空間 O(N)。", "en": "Build and evaluation are both O(N); space O(N)." }
+        ] }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;

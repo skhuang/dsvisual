@@ -138,6 +138,7 @@ const METHOD_GROUPS = [
             { id: 'tree-obst', title: 'Optimal BST', file: 'tree_obst.cpp', visualizer: 'obst', controls: 'obst' },
             { id: 'tree-threaded', title: 'Threaded Binary Tree', file: 'tree_threaded.cpp', visualizer: 'threaded', controls: 'threaded' },
             { id: 'tree-mway', title: 'm-way Search Tree', file: 'tree_mway.cpp', visualizer: 'mway', controls: 'mway' },
+            { id: 'tree-expression', title: 'Expression Tree', file: 'tree_expression.cpp', visualizer: 'exprtree', controls: 'exprtree' },
         ],
     },
     {
@@ -312,6 +313,7 @@ function getCodeForMethod(methodId) {
         'tree-obst': codeTreeObst,
         'tree-threaded': codeTreeThreaded,
         'tree-mway': codeTreeMway,
+        'tree-expression': codeTreeExpression,
         'sort-external': codeSortExternal,
         graph: codeGraph,
         'graph-adjlist': codeGraphAdjlist,
@@ -2260,6 +2262,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'tree_mway.cpp';
             codeDisplay.textContent = codeTreeMway;
         }
+        else if (currentMode === 'tree-expression') {
+            codeTitle.textContent = 'tree_expression.cpp';
+            codeDisplay.textContent = codeTreeExpression;
+        }
         else if (currentMode === 'sort-external') {
             codeTitle.textContent = 'sort_external.cpp';
             codeDisplay.textContent = codeSortExternal;
@@ -2509,6 +2515,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-obst') renderTreeObst();
         else if (currentMode === 'tree-threaded') renderTreeThreaded();
         else if (currentMode === 'tree-mway') renderTreeMway();
+        else if (currentMode === 'tree-expression') renderTreeExpression();
         else if (currentMode === 'sort-external') renderSortExternal();
         else if (currentMode === 'graph-aoe') renderGraphAoe();
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
@@ -4906,6 +4913,61 @@ document.addEventListener('DOMContentLoaded', () => {
             const m = parseInt(host.querySelector('.mw-m').value, 10);
             if (keys.length && m >= 3) { st.keys = keys; st.m = m; renderTreeMway(); }
         };
+    }
+
+    let _exprTreeState = null;
+    function renderTreeExpression() {
+        const host = acquireDynamicVizHost();
+        if (!_exprTreeState) _exprTreeState = { text: '3 4 + 5 *' };
+        const st = _exprTreeState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const tokens = ExprTreeViz.tokenizePostfix(st.text);
+        const res = ExprTreeViz.buildExprTreeFrames(tokens);
+        const frames = res.frames;
+        let idx = 0;
+
+        host.innerHTML =
+            '<div class="et-controls"><input type="text" class="et-input" value="' + st.text + '"><button type="button" class="et-apply">Apply</button>' +
+            '<span class="sm-hint">postfix; operands + operators (+ - * /), space-separated</span></div>' +
+            '<div class="et-stack"><strong>Subtree stack:</strong> <span class="et-stack-cells"></span></div>' +
+            '<div class="et-stage"><svg class="et-edges"></svg><div class="et-nodes"></div></div>' +
+            '<div class="et-result"></div>' +
+            '<div class="et-phase"></div>';
+
+        function subtreeLabel(n) { return (!n.left && !n.right) ? n.val : '(' + subtreeLabel(n.left) + n.val + subtreeLabel(n.right) + ')'; }
+
+        function paint() {
+            const fr = frames[idx];
+            if (!host.querySelector('.et-stage')) return;
+            const W = host.querySelector('.et-stage').clientWidth || 720;
+            const roots = fr.forest || [];
+            const slot = W / (roots.length + 1);
+            const allNodes = []; let svg = '';
+            roots.forEach((rt, ri) => {
+                const meta = [];
+                computeTreeLayout(rt, (ri + 1) * slot, 30, Math.max(40, slot / 2.6), meta);
+                const byId = {}; meta.forEach((m) => { byId[m.id] = m; });
+                (function walk(n) { if (!n) return; [n.left, n.right].forEach((c) => { if (!c) return; const a = byId[n.id], b = byId[c.id]; svg += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>'; walk(c); }); })(rt);
+                meta.forEach((m) => allNodes.push(m));
+            });
+            host.querySelector('.et-edges').innerHTML = svg;
+            host.querySelector('.et-nodes').innerHTML = allNodes.map((m) =>
+                '<div class="tree-node' + (['+', '-', '*', '/'].includes(String(m.val)) ? ' et-op' : '') + '" style="left:' + m.x + 'px;top:' + m.y + 'px">' + m.val + '</div>').join('');
+            host.querySelector('.et-stack-cells').innerHTML = roots.map((rt) => '<span class="et-scell">' + subtreeLabel(rt) + '</span>').join('');
+            if (fr.action === 'done' && roots.length === 1) {
+                const v = ExprTreeViz.evalExprTree(roots[0]);
+                host.querySelector('.et-result').textContent = Number.isNaN(v) ? 'Result: (symbolic expression)' : ('Result = ' + v);
+            } else {
+                host.querySelector('.et-result').textContent = '';
+            }
+            host.querySelector('.et-phase').textContent = (fr.token ? '[' + fr.token + '] ' : '') + langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+        host.querySelector('.et-apply').onclick = () => { const v = host.querySelector('.et-input').value.trim(); if (v) { st.text = v; renderTreeExpression(); } };
     }
 
     function renderSegmentTree() {
