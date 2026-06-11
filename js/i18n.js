@@ -49,6 +49,7 @@
             'method.huffman':               'Huffman Coding',
             'method.tree-threaded': 'Threaded Binary Tree',
             'method.tree-mway': 'm-way Search Tree',
+            'method.tree-expression': 'Expression Tree',
 
             // Methods — Graphs
             'method.graph':                 'Undirected Graph',
@@ -259,6 +260,7 @@
             'method.huffman':               'Huffman 編碼',
             'method.tree-threaded': '引線二元樹',
             'method.tree-mway': 'm 路搜尋樹',
+            'method.tree-expression': '運算式樹',
 
             // Methods — Graphs
             'method.graph':                 '無向圖',
