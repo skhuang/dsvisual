@@ -1001,6 +1001,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const DENSITY_STORAGE_KEY = 'dsvisual.codeDensity';
+    const DIFFICULTY_KEY_PREFIX = 'dsvisual.inputDifficulty.';
+    const DIFFICULTY_VALUES = ['normal', 'special', 'edge', 'large'];
+
+    function getInputDifficulty() {
+        const gid = getMethodGroupForMode(currentMode).id;
+        let v = null;
+        try { v = localStorage.getItem(DIFFICULTY_KEY_PREFIX + gid); } catch (e) { v = null; }
+        return DIFFICULTY_VALUES.indexOf(v) === -1 ? 'normal' : v;
+    }
+
+    function setInputDifficulty(groupId, value) {
+        if (DIFFICULTY_VALUES.indexOf(value) === -1) return;
+        try { localStorage.setItem(DIFFICULTY_KEY_PREFIX + groupId, value); } catch (e) { /* ignore */ }
+    }
+
+    function syncDifficultySelect() {
+        const sel = document.getElementById('input-difficulty');
+        if (!sel) return;
+        sel.value = getInputDifficulty();
+        const cap = document.getElementById('input-difficulty-cat');
+        if (cap) {
+            const g = getMethodGroupForMode(currentMode);
+            cap.textContent = (typeof t === 'function' ? t('group.' + g.id) : g.id) || g.id;
+        }
+    }
+
+    function bindDifficultySelect() {
+        const sel = document.getElementById('input-difficulty');
+        if (!sel) return;
+        sel.addEventListener('change', () => {
+            setInputDifficulty(getMethodGroupForMode(currentMode).id, sel.value);
+        });
+        syncDifficultySelect();
+    }
 
     function applySavedDensity() {
         const v = localStorage.getItem(DENSITY_STORAGE_KEY);
@@ -1328,6 +1362,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     };
     renderMethodSections(getMethodGroupForMode(currentMode).id);
+    bindDifficultySelect();
     const MAX_SIZE = 5;
 
     // Search Vectors
@@ -2493,6 +2528,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.Prism && codeDisplay.isConnected) Prism.highlightElement(codeDisplay);
     }
     function renderAll() {
+        syncDifficultySelect();
         if(currentMode === 'maze-stack') renderMazeStack();
         else if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
@@ -4100,7 +4136,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="tt-controls">' +
               '<input type="text" class="tt-input" placeholder="50,30,70,..." value="' + st.values.join(',') + '">' +
               '<button type="button" class="tt-build">Build</button>' +
-              '<button type="button" class="tt-rand">Random</button>' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<select class="tt-order">' +
                 '<option value="preorder">Preorder</option>' +
                 '<option value="inorder">Inorder</option>' +
@@ -4179,11 +4215,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const vals = host.querySelector('.tt-input').value.split(',').map(s => parseInt(s.trim(), 10)).filter(n => Number.isFinite(n));
             if (vals.length) { st.values = vals; renderTreeTraversal(); }
         };
-        host.querySelector('.tt-rand').onclick = () => {
-            const n = 6 + Math.floor(Math.random() * 3);
-            const set = new Set();
-            while (set.size < n) set.add(10 + Math.floor(Math.random() * 90));
-            st.values = Array.from(set);
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('tree-traversal', getInputDifficulty());
+            if (!inp) return;
+            st.values = inp.vals;
             renderTreeTraversal();
         };
     }
@@ -4201,6 +4236,7 @@ document.addEventListener('DOMContentLoaded', () => {
         host.innerHTML =
             '<div class="hf-controls">' +
               '<input type="text" class="hf-input">' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="hf-apply">Apply</button>' +
             '</div>' +
             '<div class="hf-pq"><strong>Priority queue:</strong> <span class="hf-pq-list"></span></div>' +
@@ -4273,6 +4309,12 @@ document.addEventListener('DOMContentLoaded', () => {
         host.querySelector('.hf-apply').onclick = () => {
             const v = host.querySelector('.hf-input').value;
             if (v && v.length) { st.text = v; renderHuffman(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('huffman', getInputDifficulty());
+            if (!inp) return;
+            _hfState.text = inp.text;
+            renderHuffman();
         };
     }
 
@@ -4393,6 +4435,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="obst-controls">' +
               '<input type="text" class="obst-keys" value="' + st.keys.join(',') + '" placeholder="keys e.g. 10,20,30">' +
               '<input type="text" class="obst-freqs" value="' + st.freqs.join(',') + '" placeholder="freqs e.g. 4,2,6">' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="obst-apply">Apply</button>' +
             '</div>' +
             '<div class="obst-grid"></div>' +
@@ -4439,6 +4482,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const ks = host.querySelector('.obst-keys').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             const fs = host.querySelector('.obst-freqs').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             if (ks.length && ks.length === fs.length) { ks.sort((a, b) => a - b); st.keys = ks; st.freqs = fs; renderTreeObst(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('tree-obst', getInputDifficulty());
+            if (!inp) return;
+            _obstState.keys = inp.keys;
+            _obstState.freqs = inp.freqs;
+            renderTreeObst();
         };
     }
     let _extState = null;
@@ -4517,7 +4567,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let idx = 0;
 
         host.innerHTML =
-            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '"><button type="button" class="sm-apply">Apply</button>' +
+            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="sm-apply">Apply</button>' +
             '<span class="sm-hint">rows separated by ; , entries by ,</span></div>' +
             '<div class="sm-cols"><div class="sm-dense"></div><div class="sm-triples"></div></div>' +
             '<div class="sm-arrays"></div>' +
@@ -4559,6 +4609,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const v = host.querySelector('.sm-input').value.trim();
             if (v) { st.text = v; renderMatrixSparse(); }
         };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('matrix-sparse', getInputDifficulty());
+            if (!inp) return;
+            _sparseState.text = inp.text;
+            renderMatrixSparse();
+        };
     }
     let _polyState = null;
     function renderPolyPadd() {
@@ -4576,6 +4632,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="pp-controls">' +
               'A <input type="text" class="pp-a" value="' + st.a + '"> ' +
               'B <input type="text" class="pp-b" value="' + st.b + '"> ' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="pp-apply">Apply</button>' +
               '<span class="sm-hint">terms as coef:exp, comma-separated</span>' +
             '</div>' +
@@ -4605,6 +4662,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const a = host.querySelector('.pp-a').value.trim();
             const b = host.querySelector('.pp-b').value.trim();
             if (a && b) { st.a = a; st.b = b; renderPolyPadd(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('poly-padd', getInputDifficulty());
+            if (!inp) return;
+            _polyState.a = inp.a;
+            _polyState.b = inp.b;
+            renderPolyPadd();
         };
     }
 
@@ -4807,7 +4871,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let idx = 0;
 
         host.innerHTML =
-            '<div class="th-controls"><input type="text" class="th-input" value="' + st.vals.join(',') + '"><button type="button" class="th-build">Build</button>' +
+            '<div class="th-controls"><input type="text" class="th-input" value="' + st.vals.join(',') + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="th-build">Build</button>' +
             '<span class="sm-hint">values build a BST; dashed = inorder thread</span></div>' +
             '<div class="th-stage"><svg class="th-edges"></svg><div class="th-nodes"></div></div>' +
             '<div class="th-output"><strong>Inorder:</strong> <span class="th-seq"></span></div>' +
@@ -4844,6 +4908,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const vals = host.querySelector('.th-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             if (vals.length) { st.vals = vals; renderTreeThreaded(); }
         };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('tree-threaded', getInputDifficulty());
+            if (!inp) return;
+            _threadedState.vals = inp.vals;
+            renderTreeThreaded();
+        };
     }
     let _mwayState = null;
     function renderTreeMway() {
@@ -4859,6 +4929,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="mw-controls">' +
               '<input type="text" class="mw-keys" value="' + st.keys.join(',') + '">' +
               'm <input type="number" class="mw-m" min="3" max="6" value="' + st.m + '" style="width:54px">' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="mw-apply">Apply</button>' +
             '</div>' +
             '<div class="mw-stage"><svg class="mw-edges"></svg><div class="mw-nodes"></div></div>' +
@@ -4913,6 +4984,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const m = parseInt(host.querySelector('.mw-m').value, 10);
             if (keys.length && m >= 3) { st.keys = keys; st.m = m; renderTreeMway(); }
         };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('tree-mway', getInputDifficulty());
+            if (!inp) return;
+            _mwayState.keys = inp.keys;
+            _mwayState.m = inp.m;
+            renderTreeMway();
+        };
     }
 
     let _exprTreeState = null;
@@ -4927,7 +5005,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let idx = 0;
 
         host.innerHTML =
-            '<div class="et-controls"><input type="text" class="et-input" value="' + st.text + '"><button type="button" class="et-apply">Apply</button>' +
+            '<div class="et-controls"><input type="text" class="et-input" value="' + st.text + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="et-apply">Apply</button>' +
             '<span class="sm-hint">postfix; operands + operators (+ - * /), space-separated</span></div>' +
             '<div class="et-stack"><strong>Subtree stack:</strong> <span class="et-stack-cells"></span></div>' +
             '<div class="et-stage"><svg class="et-edges"></svg><div class="et-nodes"></div></div>' +
@@ -4968,6 +5046,12 @@ document.addEventListener('DOMContentLoaded', () => {
         host.appendChild(buildStepControls(step, reset, 700));
         paint();
         host.querySelector('.et-apply').onclick = () => { const v = host.querySelector('.et-input').value.trim(); if (v) { st.text = v; renderTreeExpression(); } };
+        host.querySelector('.rand-btn').onclick = () => {
+            const inp = window.RandomInput && RandomInput.randomInputFor('tree-expression', getInputDifficulty());
+            if (!inp) return;
+            _exprTreeState.text = inp.text;
+            renderTreeExpression();
+        };
     }
 
     function renderSegmentTree() {
