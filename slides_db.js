@@ -20920,4 +20920,41 @@ SLIDES_DB["tree-general-binary"] = {
       ] }
   ]
 };
+SLIDES_DB["game-tree"] = {
+  "category": "Trees",
+  "title": { "zh": "賽局樹(Minimax / α-β 剪枝)", "en": "Game Tree (Minimax / α-β)" },
+  "slides": [
+    { "heading": { "zh": "對抗式搜尋", "en": "Adversarial Search" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "在雙人零和賽局(如井字遊戲、西洋棋)中,兩名玩家輪流行動且利益完全對立。我們以賽局樹表示所有可能的局面:每一層交替由 MAX 與 MIN 玩家做決策。", "en": "In two-player zero-sum games (tic-tac-toe, chess), players alternate moves with opposing goals. A game tree enumerates all reachable positions, with levels alternating between the MAX and MIN players." } },
+        { "type": "bullets", "items": [
+          { "zh": "MAX 層(根為 MAX)選擇能讓分數最大的子節點(以 ▲ 表示)。", "en": "MAX levels (root is MAX) pick the child with the largest score (shown as the up triangle)." },
+          { "zh": "MIN 層選擇能讓分數最小的子節點(以 ▽ 表示)。", "en": "MIN levels pick the child with the smallest score (shown as the down triangle)." },
+          { "zh": "葉節點是終局評估值(效用值)。", "en": "Leaves carry terminal evaluation (utility) values." }
+        ] }
+      ] },
+    { "heading": { "zh": "Minimax 遞迴式", "en": "Minimax Recurrence" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "每個節點的值由其子節點遞迴決定:MAX 取子節點最大值,MIN 取子節點最小值。葉節點直接回傳其評估值。", "en": "Each node's value is defined recursively from its children: MAX takes the maximum of its children, MIN the minimum; a leaf returns its evaluation directly." } },
+        { "type": "paragraph", "text": { "zh": "若 n 為 MAX,$V(n) = \\max_{c} V(c)$;否則 $V(n) = \\min_{c} V(c)$。", "en": "If n is MAX, $V(n) = \\max_{c} V(c)$; otherwise $V(n) = \\min_{c} V(c)$." } },
+        { "type": "code", "lang": "cpp", "file": "game_tree.cpp", "code": "int minimax(Node* n, int alpha, int beta, bool useAB) {\n    if (n->leaf) return n->value;\n    int best = n->isMax ? INT_MIN : INT_MAX;\n    for (Node* c : n->children) {\n        int v = minimax(c, alpha, beta, useAB);\n        if (n->isMax) { best = max(best, v); alpha = max(alpha, best); }\n        else          { best = min(best, v); beta  = min(beta, best); }\n        if (useAB && alpha >= beta) break;\n    }\n    return best;\n}" }
+      ] },
+    { "heading": { "zh": "α-β 剪枝", "en": "Alpha-Beta Pruning" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "α 是 MAX 在路徑上已能保證的最佳下界;β 是 MIN 已能保證的最佳上界。當 α ≥ β 時,目前節點剩餘的子節點不可能影響最終結果,可直接剪除。", "en": "Alpha is the best lower bound MAX can already guarantee along the path; beta is the best upper bound MIN can guarantee. When alpha >= beta, the remaining children of the current node can no longer affect the outcome and are pruned." } },
+        { "type": "bullets", "items": [
+          { "zh": "剪枝不改變 Minimax 的最終值,只省略不必要的探索。", "en": "Pruning never changes the minimax value; it only skips unnecessary exploration." },
+          { "zh": "在最佳排序下,複雜度從 $O(b^d)$ 降到 $O(b^{d/2})$。", "en": "With ideal ordering, complexity drops from $O(b^d)$ to $O(b^{d/2})$." }
+        ] }
+      ] },
+    { "heading": { "zh": "範例:[3,5,6,9,1,2,0,-1]", "en": "Worked Example: [3,5,6,9,1,2,0,-1]" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "這 8 個葉節點構成一棵深度為 3 的二元賽局樹(根 MAX、下層 MIN、再下層 MAX)。逐步評估左子樹後,α 被抬高;在右子樹中一旦某個節點的暫定值使 α ≥ β,其後續兄弟分支即被剪枝。", "en": "These 8 leaves form a depth-3 binary game tree (MAX root, then MIN, then MAX). After evaluating the left subtree, alpha rises; in the right subtree, as soon as a node's provisional value makes alpha >= beta, its remaining sibling branches are pruned." } },
+        { "type": "bullets", "items": [
+          { "zh": "灰色節點代表被 α-β 剪枝跳過、從未求值的子樹。", "en": "Greyed nodes are subtrees skipped by alpha-beta pruning and never evaluated." },
+          { "zh": "用視覺化中的 α-β 開關可比較剪枝與否的探索範圍。", "en": "Toggle alpha-beta in the visualizer to compare the explored frontier with and without pruning." }
+        ] }
+      ] }
+  ]
+};
 module.exports = SLIDES_DB;

@@ -20,3 +20,12 @@ test('tree-general-binary loads, builds, and steps', async ({ page }) => {
   await expect(page.locator('.tgb-binary .tree-node').first()).toBeVisible();
   await page.click('[data-action="step"]');
 });
+
+test('game-tree loads, toggles alpha-beta, steps', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'game-tree');
+  await expect(page.locator('[data-method-section][data-runtime-state="active"]')).toBeVisible();
+  await expect(page.locator('.gt-stage .tree-node').first()).toBeVisible();
+  await page.click('.gt-ab');
+  await page.click('[data-action="step"]');
+});

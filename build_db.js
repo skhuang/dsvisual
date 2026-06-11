@@ -95,6 +95,7 @@ const mappings = {
     'tree_mway.cpp': 'codeTreeMway',
     'tree_expression.cpp': 'codeTreeExpression',
     'tree_general_binary.cpp': 'codeTreeGeneralBinary',
+    'game_tree.cpp': 'codeGameTree',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

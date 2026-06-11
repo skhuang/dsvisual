@@ -51,6 +51,7 @@
             'method.tree-mway': 'm-way Search Tree',
             'method.tree-expression': 'Expression Tree',
             'method.tree-general-binary': 'General ↔ Binary Tree',
+            'method.game-tree': 'Game Tree (Minimax / α-β)',
 
             // Methods — Graphs
             'method.graph':                 'Undirected Graph',
@@ -268,6 +269,7 @@
             'method.tree-mway': 'm 路搜尋樹',
             'method.tree-expression': '運算式樹',
             'method.tree-general-binary': '一般樹 ↔ 二元樹',
+            'method.game-tree': '賽局樹(Minimax / α-β 剪枝)',
 
             // Methods — Graphs
             'method.graph':                 '無向圖',
