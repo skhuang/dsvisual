@@ -14,13 +14,16 @@ private:
 public:
     StackLinkedList() { topNode = nullptr; }
 
+    // >>> push
     void push(int val) {
         Node* newNode = new Node(val);
         newNode->next = topNode;
         topNode = newNode;
         cout << "Pushed " << val << endl;
     }
+    // <<< push
 
+    // >>> pop
     int pop() {
         if (!topNode) {
             cout << "Stack Underflow!" << endl;
@@ -33,6 +36,7 @@ public:
         cout << "Popped " << val << endl;
         return val;
     }
+    // <<< pop
 
     bool isEmpty() { return topNode == nullptr; }
 };

@@ -15,6 +15,7 @@ public:
         count = 0;
     }
 
+    // >>> enqueue
     bool enqueue(int val) {
         if (count >= MAX_SIZE) {
             cout << "Queue Overflow!" << endl;
@@ -26,7 +27,9 @@ public:
         cout << "Enqueued " << val << endl;
         return true;
     }
+    // <<< enqueue
 
+    // >>> dequeue
     int dequeue() {
         if (count == 0) {
             cout << "Queue Underflow!" << endl;
@@ -38,6 +41,7 @@ public:
         cout << "Dequeued " << val << endl;
         return val;
     }
+    // <<< dequeue
 
     bool isEmpty() { return count == 0; }
 };
