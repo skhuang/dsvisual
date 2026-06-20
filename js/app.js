@@ -682,6 +682,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function selectMethod(methodId) {
         switchMode(methodId);
+        const want = '#m=' + methodId;
+        if (window.location.hash !== want) {
+            history.replaceState(null, '', want);
+        }
     }
 
     // Deck list = [{ id, kind: 'public'|'private', titleEn, titleZh, slides: [{title,body}], access }]
@@ -1110,6 +1114,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    let applyHashRoute = function () {};   // reassigned inside renderCategoryNav
+
     function renderCategoryNav() {
         if (!categoryNav) return;
         categoryNav.innerHTML = '';
@@ -1148,6 +1154,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             scrollToCategory(group.id);
         }
+
+        applyHashRoute = function () {
+            const m = /^#m=([A-Za-z0-9-]+)$/.exec(window.location.hash || '');
+            if (!m) return;                                   // no/!matching hash -> leave default
+            const id = m[1];
+            if (!getMethodById(id)) return;                   // unknown id -> leave default (no error)
+            if (visualizerRuntime && visualizerRuntime.activeMode === id) return;  // already active
+            const group = METHOD_GROUPS.find((g) => g.methods.some((x) => x.id === id));
+            if (group) activateGroup(group.id, id);
+        };
 
         function closeAllDropdowns() {
             categoryNav.querySelectorAll('.category-nav-item.open')
@@ -1269,6 +1285,10 @@ document.addEventListener('DOMContentLoaded', () => {
     bindSettingsDrawer();
     bindDensitySlider();
     renderCategoryNav();
+    // Register after the first renderCategoryNav(): that call reassigns applyHashRoute
+    // from its no-op placeholder to the real impl (it closes over activateGroup, defined
+    // inside renderCategoryNav). Keep this line below — moving it above would no-op routing.
+    window.addEventListener('hashchange', applyHashRoute);
     document.addEventListener('languagechange', () => {
         const overviewWasVisible = isOverviewVisible();
         renderCategoryNav();
@@ -8005,4 +8025,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatus('Consumer depends only on the Service abstraction — easy to test', '#ec4899');
         }
     }
+
+    applyHashRoute();
 });

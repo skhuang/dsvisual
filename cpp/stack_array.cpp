@@ -11,6 +11,7 @@ private:
 public:
     StackArray() { topIndex = -1; }
 
+    // >>> push
     bool push(int val) {
         if (topIndex >= MAX_SIZE - 1) {
             cout << "Stack Overflow!" << endl;
@@ -20,7 +21,9 @@ public:
         cout << "Pushed " << val << endl;
         return true;
     }
+    // <<< push
 
+    // >>> pop
     int pop() {
         if (topIndex < 0) {
             cout << "Stack Underflow!" << endl;
@@ -30,6 +33,7 @@ public:
         cout << "Popped " << val << endl;
         return val;
     }
+    // <<< pop
 
     bool isEmpty() { return topIndex < 0; }
 };

@@ -17,6 +17,7 @@ private:
 public:
     Deque() : head(nullptr), tail(nullptr), count(0) {}
 
+    // >>> pushFront
     void pushFront(int v) {
         Node* node = new Node(v);
         if (!head) {
@@ -28,7 +29,9 @@ public:
         }
         count++;
     }
+    // <<< pushFront
 
+    // >>> pushBack
     void pushBack(int v) {
         Node* node = new Node(v);
         if (!tail) {
@@ -40,7 +43,9 @@ public:
         }
         count++;
     }
+    // <<< pushBack
 
+    // >>> popFront
     int popFront() {
         if (!head) {
             cout << "Deque is empty" << endl;
@@ -57,7 +62,9 @@ public:
         count--;
         return v;
     }
+    // <<< popFront
 
+    // >>> popBack
     int popBack() {
         if (!tail) {
             cout << "Deque is empty" << endl;
@@ -74,6 +81,7 @@ public:
         count--;
         return v;
     }
+    // <<< popBack
 
     void print() {
         cout << "null <-> ";
