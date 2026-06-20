@@ -4,6 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { parseLecture } = require('./parse-lecture.js');
 const { buildNotebook } = require('./build-notebook.js');
+const { expandVizLinks } = require('./viz-link.js');
 
 function toReadonly(nb) {
   const cells = nb.cells.map((c) => {
@@ -27,7 +28,8 @@ function main() {
   let outPath = outIdx !== -1 ? args[outIdx + 1] : path.join(ds2026Dir, 'notebooks', base + '.ipynb');
   if (readonly && outIdx === -1) outPath = outPath.replace(/\.ipynb$/, '.readonly.ipynb');
 
-  const { cells } = parseLecture(fs.readFileSync(mdPath, 'utf8'));
+  const rawMd = fs.readFileSync(mdPath, 'utf8');
+  const { cells } = parseLecture(expandVizLinks(rawMd));
   let nb = buildNotebook(cells, { libDir });
   if (readonly) nb = toReadonly(nb);
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
