@@ -1285,6 +1285,9 @@ document.addEventListener('DOMContentLoaded', () => {
     bindSettingsDrawer();
     bindDensitySlider();
     renderCategoryNav();
+    // Register after the first renderCategoryNav(): that call reassigns applyHashRoute
+    // from its no-op placeholder to the real impl (it closes over activateGroup, defined
+    // inside renderCategoryNav). Keep this line below — moving it above would no-op routing.
     window.addEventListener('hashchange', applyHashRoute);
     document.addEventListener('languagechange', () => {
         const overviewWasVisible = isOverviewVisible();
