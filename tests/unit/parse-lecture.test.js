@@ -58,3 +58,17 @@ test('sparks fence keeps its language tag', () => {
   assert.equal(cells[0].kind, 'code');
   assert.equal(cells[0].lang, 'sparks');
 });
+
+test('directive separated from fence by prose does not attach', () => {
+  const md = [
+    '<!-- code: x.cpp -->',
+    'This prose breaks adjacency.',
+    '```cpp',
+    'int y = 2;',
+    '```',
+  ].join('\n');
+  const { cells, bindings } = parseLecture(md);
+  const code = cells.find((c) => c.kind === 'code');
+  assert.equal(code.codeRef, null, 'directive should not attach after intervening prose');
+  assert.ok(bindings.some((b) => b.type === 'code' && b.value === 'x.cpp'), 'binding still recorded');
+});

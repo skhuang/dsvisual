@@ -1,6 +1,5 @@
 'use strict';
 
-const DIRECTIVE_RE = /^<!--\s*(code|runnable|viz|oj):?\s*(.*?)\s*-->\s*$/;
 const FENCE_RE = /^```(.*)$/;
 
 // Parse one directive comment line into a Binding, or null if not a directive.
@@ -66,6 +65,7 @@ function parseLecture(md) {
       continue;
     }
     mdBuf.push(line);
+    pending = { codeRef: null, runnable: false };
     i += 1;
   }
   pushMarkdown(cells, mdBuf);
