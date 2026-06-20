@@ -32,8 +32,26 @@ function parseLecture(md) {
   let pending = { codeRef: null, runnable: false }; // directives waiting for the next fence
   let i = 0;
 
+  // Skip a leading YAML front-matter block (first line '---' .. next '---').
+  // Advance the index rather than slicing, so binding line numbers stay original.
+  if (lines.length && lines[0].trim() === '---') {
+    let close = -1;
+    for (let j = 1; j < lines.length; j += 1) {
+      if (lines[j].trim() === '---') { close = j; break; }
+    }
+    if (close !== -1) i = close + 1;
+  }
+
   while (i < lines.length) {
     const line = lines[i];
+    // Marp slide separator: flush the current markdown cell. Not a cell itself.
+    if (line.trim() === '---') {
+      pushMarkdown(cells, mdBuf);
+      mdBuf = [];
+      pending = { codeRef: null, runnable: false };
+      i += 1;
+      continue;
+    }
     const dir = parseDirectiveLine(line, i + 1);
     if (dir) {
       bindings.push(dir);
