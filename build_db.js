@@ -100,6 +100,7 @@ const mappings = {
     'gc_memory.cpp': 'codeGcMemory',
     'file_isam.cpp': 'codeFileIsam',
     'file_inverted.cpp': 'codeFileInverted',
+    'recursion.cpp': 'codeRecursion',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

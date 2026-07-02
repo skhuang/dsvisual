@@ -2343,6 +2343,18 @@ pre.code-panel-body[class*="language-"] {
 .tt-aux-cell { display: inline-block; min-width: 26px; padding: 2px 6px; margin: 0 2px; background: #e2e8f0; border-radius: 4px; text-align: center; }
 .tt-output { margin: 6px 0; }
 .tt-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
+/* Recursion visualizer */
+.rec-stage { display: flex; gap: 12px; align-items: stretch; }
+.rec-tree { flex: 1 1 auto; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; }
+.rec-tree .rec-nodes { position: relative; }
+.tree-node.rec-node { width: auto; min-width: 40px; height: 28px; border-radius: 14px; padding: 0 10px; font-size: 0.78rem; white-space: nowrap; font-weight: 600; }
+.rec-stack { flex: 0 0 160px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px; background: #f8fafc; display: flex; flex-direction: column-reverse; gap: 4px; overflow: auto; max-height: 320px; }
+.rec-stack-title { order: 999; font-weight: 700; color: #2c5282; margin-bottom: 4px; text-align: center; }
+.rec-chip { background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 6px; font-size: 0.78rem; text-align: center; }
+.rec-chip-top { background: #f59e0b; border-color: #b45309; color: #1e293b; font-weight: 700; }
+.rec-chip-empty { color: #94a3b8; font-style: italic; text-align: center; }
+.tree-node.rec-node.rec-returning { background: #34d399; border-color: #059669; }
+.rec-info { margin-top: 8px; font-weight: 700; color: #1e40af; min-height: 20px; }
 .hf-controls { display: flex; gap: 8px; margin-bottom: 10px; }
 .hf-controls .hf-input { flex: 1; }
 .hf-pq { margin: 6px 0; }
