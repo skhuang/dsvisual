@@ -2344,8 +2344,8 @@ pre.code-panel-body[class*="language-"] {
 .tt-output { margin: 6px 0; }
 .tt-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
 /* Recursion visualizer */
-.rec-stage { display: flex; gap: 12px; align-items: stretch; }
-.rec-tree { flex: 1 1 auto; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; }
+.rec-stage { display: flex; gap: 12px; align-items: stretch; min-width: 0; }
+.rec-tree { flex: 1 1 0; min-width: 0; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; }
 .rec-tree .rec-nodes { position: relative; }
 .tree-node.rec-node { width: auto; min-width: 40px; height: 28px; border-radius: 14px; padding: 0 10px; font-size: 0.78rem; white-space: nowrap; font-weight: 600; }
 .rec-stack { flex: 0 0 160px; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px; background: #f8fafc; display: flex; flex-direction: column-reverse; gap: 4px; overflow: auto; max-height: 320px; }

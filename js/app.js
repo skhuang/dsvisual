@@ -3401,6 +3401,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         host.classList.remove('hidden');
         host.innerHTML = '';
+        host.style.width = '';
         return host;
     }
 
@@ -4498,6 +4499,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderRecursion() {
         if (!_recState) _recState = { example: 'fibonacci', inputs: JSON.parse(JSON.stringify(RecursionViz.DEFAULTS)) };
         const host = acquireDynamicVizHost();
+        host.style.width = '100%';
         const ex = _recState.example;
         const inputs = _recState.inputs;
         const { frames, nodes, result } = RecursionViz.recursionTrace(ex, inputs[ex]);
