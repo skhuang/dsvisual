@@ -939,6 +939,7 @@ private:
 public:
     StackArray() { topIndex = -1; }
 
+    // >>> push
     bool push(int val) {
         if (topIndex >= MAX_SIZE - 1) {
             cout << "Stack Overflow!" << endl;
@@ -948,7 +949,9 @@ public:
         cout << "Pushed " << val << endl;
         return true;
     }
+    // <<< push
 
+    // >>> pop
     int pop() {
         if (topIndex < 0) {
             cout << "Stack Underflow!" << endl;
@@ -958,6 +961,7 @@ public:
         cout << "Popped " << val << endl;
         return val;
     }
+    // <<< pop
 
     bool isEmpty() { return topIndex < 0; }
 };
@@ -987,13 +991,16 @@ private:
 public:
     StackLinkedList() { topNode = nullptr; }
 
+    // >>> push
     void push(int val) {
         Node* newNode = new Node(val);
         newNode->next = topNode;
         topNode = newNode;
         cout << "Pushed " << val << endl;
     }
+    // <<< push
 
+    // >>> pop
     int pop() {
         if (!topNode) {
             cout << "Stack Underflow!" << endl;
@@ -1006,6 +1013,7 @@ public:
         cout << "Popped " << val << endl;
         return val;
     }
+    // <<< pop
 
     bool isEmpty() { return topNode == nullptr; }
 };
@@ -1036,6 +1044,7 @@ public:
         count = 0;
     }
 
+    // >>> enqueue
     bool enqueue(int val) {
         if (count >= MAX_SIZE) {
             cout << "Queue Overflow!" << endl;
@@ -1047,7 +1056,9 @@ public:
         cout << "Enqueued " << val << endl;
         return true;
     }
+    // <<< enqueue
 
+    // >>> dequeue
     int dequeue() {
         if (count == 0) {
             cout << "Queue Underflow!" << endl;
@@ -1059,6 +1070,7 @@ public:
         cout << "Dequeued " << val << endl;
         return val;
     }
+    // <<< dequeue
 
     bool isEmpty() { return count == 0; }
 };
@@ -3987,6 +3999,7 @@ private:
 public:
     Deque() : head(nullptr), tail(nullptr), count(0) {}
 
+    // >>> pushFront
     void pushFront(int v) {
         Node* node = new Node(v);
         if (!head) {
@@ -3998,7 +4011,9 @@ public:
         }
         count++;
     }
+    // <<< pushFront
 
+    // >>> pushBack
     void pushBack(int v) {
         Node* node = new Node(v);
         if (!tail) {
@@ -4010,7 +4025,9 @@ public:
         }
         count++;
     }
+    // <<< pushBack
 
+    // >>> popFront
     int popFront() {
         if (!head) {
             cout << "Deque is empty" << endl;
@@ -4027,7 +4044,9 @@ public:
         count--;
         return v;
     }
+    // <<< popFront
 
+    // >>> popBack
     int popBack() {
         if (!tail) {
             cout << "Deque is empty" << endl;
@@ -4044,6 +4063,7 @@ public:
         count--;
         return v;
     }
+    // <<< popBack
 
     void print() {
         cout << "null <-> ";
@@ -5548,6 +5568,54 @@ int main() {
         for (int id : postings) cout << " " << id;
         cout << "\\n";
     }
+    return 0;
+}
+`;
+
+const codeRecursion = `// Recursion examples: Fibonacci, reverse, permutations, binary search, quicksort
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int fib(int k) { return k < 2 ? k : fib(k - 1) + fib(k - 2); }
+
+string reverseStr(const string& s) { return s.size() <= 1 ? s : reverseStr(s.substr(1)) + s[0]; }
+
+void permute(string prefix, string rest) {
+    if (rest.empty()) { cout << prefix << "\\n"; return; }
+    for (size_t i = 0; i < rest.size(); ++i)
+        permute(prefix + rest[i], rest.substr(0, i) + rest.substr(i + 1));
+}
+
+int bsearch(const vector<int>& a, int target, int lo, int hi) {
+    if (lo > hi) return -1;
+    int mid = (lo + hi) / 2;
+    if (a[mid] == target) return mid;
+    return a[mid] < target ? bsearch(a, target, mid + 1, hi)
+                           : bsearch(a, target, lo, mid - 1);
+}
+
+void quicksort(vector<int>& a, int lo, int hi) {
+    if (lo >= hi) return;
+    int pivot = a[hi], i = lo;
+    for (int j = lo; j < hi; ++j) if (a[j] < pivot) swap(a[i++], a[j]);
+    swap(a[i], a[hi]);
+    quicksort(a, lo, i - 1);
+    quicksort(a, i + 1, hi);
+}
+
+int main() {
+    cout << "fib(6) = " << fib(6) << "\\n";
+    cout << "reverse(ABCDE) = " << reverseStr("ABCDE") << "\\n";
+    permute("", "ABC");
+    vector<int> a = {2, 5, 8, 12, 16, 23, 38, 56, 72, 91};
+    cout << "bsearch(23) = " << bsearch(a, 23, 0, a.size() - 1) << "\\n";
+    vector<int> q = {5, 3, 8, 1, 9, 2, 7, 4};
+    quicksort(q, 0, q.size() - 1);
+    for (int x : q) cout << x << " ";
+    cout << "\\n";
     return 0;
 }
 `;

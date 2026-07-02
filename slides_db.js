@@ -21108,4 +21108,45 @@ SLIDES_DB["file-inverted"] = {
       ] }
   ]
 };
+
+SLIDES_DB["recursion"] = {
+  "category": "Recursion",
+  "title": {
+    "zh": "遞迴(呼叫樹與呼叫堆疊)",
+    "en": "Recursion (Call Tree & Call Stack)"
+  },
+  "slides": [
+      { "heading": { "zh": "遞迴(呼叫樹與呼叫堆疊)", "en": "Recursion (Call Tree & Call Stack)" },
+        "blocks": [
+          { "type": "paragraph", "text": { "zh": "遞迴是一個函式直接或間接呼叫自己來解決問題:把大問題拆解為結構相同的較小子問題,直到抵達可直接回答的最小情況。", "en": "Recursion is a function calling itself, directly or indirectly, to solve a problem: a large problem is broken into structurally identical smaller subproblems until reaching a smallest case that can be answered directly." } }
+        ] },
+      { "heading": { "zh": "兩個要件:基底情況與遞迴情況", "en": "Two Essentials: Base Case & Recursive Case" },
+        "blocks": [
+          { "type": "bullets", "items": [
+            { "zh": "基底情況(base case):最小、可直接回答的情形,遞迴在此停止,避免無窮呼叫。", "en": "Base case: the smallest, directly answerable situation where recursion stops — it prevents infinite calls." },
+            { "zh": "遞迴情況(recursive case):以一個或多個規模更小的子呼叫來組合出答案,且每次都必須朝基底情況收斂。", "en": "Recursive case: builds the answer from one or more smaller subcalls, and every step must make progress toward the base case." },
+            { "zh": "缺少正確的基底情況,或子問題未縮小,都會導致無限遞迴與堆疊溢位。", "en": "A missing base case, or subproblems that fail to shrink, causes infinite recursion and stack overflow." }
+          ] }
+        ] },
+      { "heading": { "zh": "呼叫堆疊(LIFO)與呼叫樹", "en": "Call Stack (LIFO) & Call Tree" },
+        "blocks": [
+          { "type": "paragraph", "text": { "zh": "每次函式呼叫都會在呼叫堆疊上壓入一個堆疊框(stack frame),保存區域變數與返回位址;函式回傳時彈出。堆疊是後進先出(LIFO):最後被呼叫的函式最先返回。", "en": "Each call pushes a stack frame onto the call stack, holding local variables and the return address; the frame is popped when the function returns. The stack is Last-In-First-Out (LIFO): the most recent call returns first." } },
+          { "type": "bullets", "items": [
+            { "zh": "呼叫樹(call tree)描述所有子呼叫的父子關係;堆疊在任一時刻只是這棵樹上從根到目前節點的一條路徑。", "en": "The call tree describes the parent-child relationship of all subcalls; at any instant the stack is just the root-to-current path through that tree." },
+            { "zh": "遞迴深度 = 呼叫樹的高度 = 堆疊在執行中的最大高度,決定了記憶體用量。", "en": "Recursion depth = height of the call tree = the maximum stack height during execution, which bounds memory usage." }
+          ] }
+        ] },
+      { "heading": { "zh": "五個範例,五種不同的呼叫形狀", "en": "Five Examples, Five Different Call Shapes" },
+        "blocks": [
+          { "type": "bullets", "items": [
+            { "zh": "Fibonacci:$fib(k)=fib(k-1)+fib(k-2)$,樹狀二元分支且子問題重複(重疊子問題),呼叫數呈指數成長 — 記憶化可大幅改善。", "en": "Fibonacci: $fib(k)=fib(k-1)+fib(k-2)$ branches into two, and subproblems repeat (overlapping subproblems), so the number of calls grows exponentially — memoization fixes this." },
+            { "zh": "字串反轉:每層只有一個子呼叫,呼叫樹退化成一條鏈,深度與長度成線性($O(n)$)。", "en": "Reverse string: exactly one subcall per level, so the call tree degenerates into a chain — depth is linear in length ($O(n)$)." },
+            { "zh": "排列(permutations):每個節點依剩餘字元數展開多個分支,形成寬而淺的指數大小樹,葉節點即為所有排列。", "en": "Permutations: each node branches by the number of remaining characters, forming a wide, shallow tree of exponential size whose leaves are all permutations." },
+            { "zh": "二元搜尋:每次只往左半或右半遞迴,樹是一條長度為 $O(\\log n)$ 的路徑 — 對數深度。", "en": "Binary search: each call recurses into only the left or right half, so the tree is a single path of length $O(\\log n)$ — logarithmic depth." },
+            { "zh": "快速排序:每次以樞紐(pivot)分割區間,對左右兩段各遞迴一次,形成分割樹(partition tree);平均高度 $O(\\log n)$,最差 $O(n)$。", "en": "Quicksort: each call partitions the range around a pivot and recurses on the left and right segments, forming a partition tree; average height $O(\\log n)$, worst case $O(n)$." }
+          ] },
+          { "type": "note", "text": { "zh": "在視覺化中,左側逐步長出呼叫樹並標示每個節點的回傳值,右側同步顯示呼叫堆疊的壓入與彈出 — 對照即可看出「堆疊是樹上的一條路徑」。", "en": "In the visualization, the call tree grows step by step on the left with each node's return value, while the call stack pushes and pops in sync on the right — together they show that the stack is one path through the tree." } }
+        ] }
+    ]
+};
 module.exports = SLIDES_DB;
