@@ -23,3 +23,14 @@ test('recursion loads, shows tree + stack, switches example, steps', async ({ pa
   await card.locator('.rec-build').click();
   await card.locator('[data-action="step"]').click();
 });
+
+test('recursion guards empty input (no calls) without a blank pane', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'recursion');
+  const card = page.locator('[data-method-section="recursion"]');
+  await card.locator('.rec-example').selectOption('quicksort');
+  await card.locator('.rec-arr').fill('');
+  await card.locator('.rec-build').click();
+  await expect(card.locator('.rec-tree')).toContainText('No recursive calls for this input.');
+  await expect(card.locator('.rec-tree .tree-node')).toHaveCount(0);
+});

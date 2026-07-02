@@ -4514,7 +4514,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const meta = {}; // id -> {node, x, y}
         const colW = 74, rowH = 70, padX = 40, padY = 30;
         let leafCursor = 0;
-        (function layout(id) {
+        function layout(id) {
             const kids = childrenOf[id] || [];
             let x;
             if (!kids.length) { x = padX + (leafCursor++) * colW; }
@@ -4524,7 +4524,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             meta[id] = { node: nodes[id], x: x, y: padY + nodes[id].depth * rowH };
             return x;
-        })(root.id);
+        }
 
         const readableLabels = {
             fibonacci: 'Fibonacci', reverse: 'Reverse String', permutations: 'Permutations',
@@ -4567,6 +4567,39 @@ document.addEventListener('DOMContentLoaded', () => {
         const edgesEl = host.querySelector('.rec-edges');
         const stackEl = host.querySelector('.rec-stack');
         const infoEl = host.querySelector('.rec-info');
+
+        host.querySelector('.rec-example').onchange = (e) => {
+            _recState.example = e.target.value;
+            renderRecursion();
+        };
+        host.querySelector('.rec-build').onclick = () => {
+            try {
+                if (ex === 'fibonacci') {
+                    const v = host.querySelector('.rec-n').value;
+                    inputs.fibonacci.n = Math.max(0, Math.min(7, parseInt(v, 10) || 0));
+                } else if (ex === 'reverse') {
+                    inputs.reverse.text = host.querySelector('.rec-text').value.slice(0, 6);
+                } else if (ex === 'permutations') {
+                    inputs.permutations.text = host.querySelector('.rec-text').value.slice(0, 4);
+                } else if (ex === 'binary-search') {
+                    const arr = host.querySelector('.rec-arr').value.split(',').map((x) => parseInt(x.trim(), 10)).filter(Number.isFinite).slice(0, 15);
+                    inputs['binary-search'].arr = arr;
+                    inputs['binary-search'].target = parseInt(host.querySelector('.rec-target').value, 10);
+                } else if (ex === 'quicksort') {
+                    inputs.quicksort.arr = host.querySelector('.rec-arr').value.split(',').map((x) => parseInt(x.trim(), 10)).filter(Number.isFinite).slice(0, 10);
+                }
+                renderRecursion();
+            } catch (e) { /* ignore malformed input */ }
+        };
+
+        // Guard: no calls recorded (empty or degenerate input) — show a friendly note, keep controls usable.
+        if (!root || !frames.length) {
+            if (treeEl) treeEl.innerHTML = '<div class="rec-info">No recursive calls for this input.</div>';
+            if (stackEl) stackEl.innerHTML = '';
+            return;
+        }
+
+        layout(root.id);
 
         // Size the tree area so scrolling works
         const maxX = Math.max.apply(null, Object.keys(meta).map((id) => meta[id].x));
@@ -4657,30 +4690,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         paint();
         host.appendChild(buildStepControls(step, reset, 700));
-
-        host.querySelector('.rec-example').onchange = (e) => {
-            _recState.example = e.target.value;
-            renderRecursion();
-        };
-        host.querySelector('.rec-build').onclick = () => {
-            try {
-                if (ex === 'fibonacci') {
-                    const v = host.querySelector('.rec-n').value;
-                    inputs.fibonacci.n = Math.max(0, Math.min(7, parseInt(v, 10) || 0));
-                } else if (ex === 'reverse') {
-                    inputs.reverse.text = host.querySelector('.rec-text').value.slice(0, 6);
-                } else if (ex === 'permutations') {
-                    inputs.permutations.text = host.querySelector('.rec-text').value.slice(0, 4);
-                } else if (ex === 'binary-search') {
-                    const arr = host.querySelector('.rec-arr').value.split(',').map((x) => parseInt(x.trim(), 10)).filter(Number.isFinite).slice(0, 15);
-                    inputs['binary-search'].arr = arr;
-                    inputs['binary-search'].target = parseInt(host.querySelector('.rec-target').value, 10);
-                } else if (ex === 'quicksort') {
-                    inputs.quicksort.arr = host.querySelector('.rec-arr').value.split(',').map((x) => parseInt(x.trim(), 10)).filter(Number.isFinite).slice(0, 10);
-                }
-                renderRecursion();
-            } catch (e) { /* ignore malformed input */ }
-        };
     }
     function renderTreeTraversal() {
         const host = acquireDynamicVizHost();
