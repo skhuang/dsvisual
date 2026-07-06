@@ -1525,6 +1525,14 @@ document.addEventListener('DOMContentLoaded', () => {
         let oopInheritanceAnimationState = null;
         let oopPolymorphismAnimationState = null;
         let oopEncapsulationAnimationState = null;
+        const oopStepState = {
+            inheritance: 0,
+            polymorphism: 0,
+            encapsulation: 0,
+            abstraction: 0,
+            adhoc: 0,
+            templates: 0,
+        };
 
         // Design Patterns state variables
         let patternAnimationState = null;
@@ -7166,44 +7174,150 @@ document.addEventListener('DOMContentLoaded', () => {
     // End original routines mappings
 
     // OOP Visualization Functions
+    const OOP_STEPS = {
+        inheritance: [
+            'Base class Animal defines the shared interface.',
+            'Derived classes Dog and Cat inherit the common contract.',
+            'Overrides specialize behavior while preserving the same API.',
+            'Use a base pointer/reference to treat derived objects uniformly.',
+        ],
+        polymorphism: [
+            'An object stores a vptr that points at its virtual table.',
+            'The vtable holds function addresses for the concrete type.',
+            'A base pointer calls speak(); dispatch follows vptr to Dog::speak.',
+            'The same call expression dispatches to Cat::speak for a Cat object.',
+        ],
+        encapsulation: [
+            'The class boundary owns its data and invariants.',
+            'public members form the controlled external interface.',
+            'protected members are available to derived classes only.',
+            'private data is hidden; methods guard all direct access.',
+        ],
+        abstraction: [
+            'Abstract Shape names the operation without implementation.',
+            'Concrete classes implement area() with their own formulas.',
+            'Instantiating Shape directly is rejected by the compiler.',
+            'Code can still depend on Shape* and call the abstract interface.',
+        ],
+        adhoc: [
+            'Several overloads share one function name.',
+            'Argument types choose the exact overload at compile time.',
+            'Operator overloading gives user types natural expressions.',
+            'No runtime dispatch is needed; binding is static.',
+        ],
+        templates: [
+            'A template is a compile-time blueprint parameterized by T.',
+            'The compiler instantiates Box<int> where int is used.',
+            'Other concrete types get their own generated class.',
+            'Parametric polymorphism keeps one source definition type-safe.',
+        ],
+    };
+
+    const OOP_COLORS = {
+        blue: '#1d4ed8',
+        pink: '#be185d',
+        green: '#047857',
+        amber: '#b45309',
+        violet: '#6d28d9',
+        red: '#b91c1c',
+        slate: '#334155',
+        cyan: '#0e7490',
+    };
+
     function oopSvgEl(tag, attrs) {
         const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
         for (const k in attrs) el.setAttribute(k, String(attrs[k]));
         return el;
     }
-    // Draws a class box: a rect + a bold title + member-line texts. opts:
-    // { x, y, w, h, title, titleColor, lines:[{text,color}], dashed }
+
+    function oopStep(mode) {
+        const steps = OOP_STEPS[mode] || [];
+        return Math.max(0, Math.min(oopStepState[mode] || 0, Math.max(steps.length - 1, 0)));
+    }
+
+    function setOopStep(mode, idx) {
+        const steps = OOP_STEPS[mode] || [];
+        oopStepState[mode] = Math.max(0, Math.min(idx, Math.max(steps.length - 1, 0)));
+    }
+
+    function oopActiveClass(step, refs) {
+        return refs.includes(step) ? ' oop-step-active' : ' oop-step-dim';
+    }
+
     function drawOopBox(svg, opts) {
-        const rect = oopSvgEl('rect', { x: opts.x, y: opts.y, width: opts.w, height: opts.h, class: 'oop-class-rect' });
+        const rect = oopSvgEl('rect', {
+            x: opts.x, y: opts.y, width: opts.w, height: opts.h, rx: opts.rx || 8,
+            class: (opts.className || 'oop-class-rect') + (opts.activeClass || ''),
+        });
         if (opts.dashed) rect.setAttribute('stroke-dasharray', '6 4');
         svg.appendChild(rect);
         const cx = opts.x + opts.w / 2;
         const title = oopSvgEl('text', {
-            x: cx, y: opts.y + 22, 'text-anchor': 'middle', class: 'oop-member-text',
-            style: 'font-weight:bold;fill:' + (opts.titleColor || '#60a5fa') + ';' + (opts.dashed ? 'font-style:italic;' : ''),
+            x: cx, y: opts.y + 24, 'text-anchor': 'middle',
+            class: 'oop-member-text oop-title-text' + (opts.activeClass || ''),
+            style: 'fill:' + (opts.titleColor || OOP_COLORS.blue) + ';' + (opts.dashed ? 'font-style:italic;' : ''),
         });
         title.textContent = opts.title;
         svg.appendChild(title);
         (opts.lines || []).forEach((ln, i) => {
             const t = oopSvgEl('text', {
-                x: cx, y: opts.y + 44 + i * 17, 'text-anchor': 'middle', class: 'oop-member-text',
-                style: 'font-size:11px;fill:' + (ln.color || '#cbd5e1') + ';',
+                x: cx, y: opts.y + 48 + i * 18, 'text-anchor': 'middle',
+                class: 'oop-member-text' + (opts.activeClass || ''),
+                style: 'fill:' + (ln.color || OOP_COLORS.slate) + ';',
             });
             t.textContent = ln.text;
             svg.appendChild(t);
         });
     }
-    function drawOopLabel(svg, x, y, text, color) {
+
+    function drawOopLabel(svg, x, y, text, color, activeClass) {
         const t = oopSvgEl('text', {
-            x: x, y: y, 'text-anchor': 'middle', class: 'oop-member-text',
-            style: 'font-size:11px;fill:' + (color || '#cbd5e1') + ';',
+            x: x, y: y, 'text-anchor': 'middle',
+            class: 'oop-member-text oop-label-text' + (activeClass || ''),
+            style: 'fill:' + (color || OOP_COLORS.slate) + ';',
         });
         t.textContent = text;
         svg.appendChild(t);
     }
-    function drawOopLine(svg, x1, y1, x2, y2) {
-        svg.appendChild(oopSvgEl('line', { x1: x1, y1: y1, x2: x2, y2: y2, class: 'oop-inheritance-line' }));
+
+    function drawOopLine(svg, x1, y1, x2, y2, activeClass) {
+        svg.appendChild(oopSvgEl('line', {
+            x1: x1, y1: y1, x2: x2, y2: y2,
+            class: 'oop-inheritance-line' + (activeClass || ''),
+        }));
     }
+
+    function drawOopStepBadge(svg, mode) {
+        const step = oopStep(mode);
+        const total = OOP_STEPS[mode].length;
+        drawOopLabel(svg, 57, 37, 'Step ' + (step + 1) + '/' + total, OOP_COLORS.slate, ' oop-step-badge-text');
+        drawOopLabel(svg, 250, 336, OOP_STEPS[mode][step], OOP_COLORS.slate, ' oop-step-caption');
+    }
+
+    function syncOopStepControls() {
+        if (!oopActions) return;
+        let slot = oopActions.querySelector('[data-oop-step-controls]');
+        const mode = oopModeSelect.value;
+        if (slot && slot.getAttribute('data-oop-step-mode') === mode) return;
+        if (slot) slot.remove();
+        slot = document.createElement('div');
+        slot.setAttribute('data-oop-step-controls', '');
+        slot.setAttribute('data-oop-step-mode', mode);
+        slot.appendChild(buildStepControls(() => {
+            const next = oopStep(mode) + 1;
+            if (next >= OOP_STEPS[mode].length) return false;
+            setOopStep(mode, next);
+            renderOOP();
+            showStatus(OOP_STEPS[mode][oopStep(mode)], '#2563eb');
+            return true;
+        }, () => {
+            setOopStep(mode, 0);
+            renderOOP();
+            showStatus('OOP visualization reset.', '#6366f1');
+        }, 900));
+        oopActions.appendChild(slot);
+    }
+
     function renderOOP() {
         const mode = oopModeSelect.value;
         if (mode === 'inheritance') renderOOPInheritance();
@@ -7212,343 +7326,122 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (mode === 'abstraction') renderOOPAbstraction();
         else if (mode === 'adhoc') renderOOPAdhoc();
         else if (mode === 'templates') renderOOPTemplates();
+        syncOopStepControls();
     }
 
     function renderOOPInheritance() {
         const svg = document.getElementById('oop-inheritance-svg');
         if (!svg) return;
+        const step = oopStep('inheritance');
         svg.innerHTML = '';
-        
-        // Base class
-        const baseY = 50;
-        const rect1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect1.setAttribute('x', '180');
-        rect1.setAttribute('y', String(baseY));
-        rect1.setAttribute('width', '140');
-        rect1.setAttribute('height', '80');
-        rect1.setAttribute('class', 'oop-class-rect');
-        svg.appendChild(rect1);
-
-        const text1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text1.setAttribute('x', '250');
-        text1.setAttribute('y', String(baseY + 25));
-        text1.setAttribute('text-anchor', 'middle');
-        text1.setAttribute('class', 'oop-member-text');
-        text1.setAttribute('style', 'font-weight: bold; fill: #60a5fa;');
-        text1.textContent = 'Animal (Base)';
-        svg.appendChild(text1);
-
-        const method1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        method1.setAttribute('x', '250');
-        method1.setAttribute('y', String(baseY + 50));
-        method1.setAttribute('text-anchor', 'middle');
-        method1.setAttribute('class', 'oop-member-text');
-        method1.setAttribute('style', 'fill: #fbbf24; font-style: italic;');
-        method1.textContent = '+ virtual speak()';
-        svg.appendChild(method1);
-
-        // Derived classes
-        const derivedY = 180;
-        const leftX = 80;
-        const rightX = 320;
-
-        // Dog class
-        const rect2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect2.setAttribute('x', String(leftX));
-        rect2.setAttribute('y', String(derivedY));
-        rect2.setAttribute('width', '120');
-        rect2.setAttribute('height', '80');
-        rect2.setAttribute('class', 'oop-derived-rect');
-        svg.appendChild(rect2);
-
-        const text2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text2.setAttribute('x', String(leftX + 60));
-        text2.setAttribute('y', String(derivedY + 25));
-        text2.setAttribute('text-anchor', 'middle');
-        text2.setAttribute('class', 'oop-member-text');
-        text2.setAttribute('style', 'font-weight: bold; fill: #f472b6;');
-        text2.textContent = 'Dog';
-        svg.appendChild(text2);
-
-        const method2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        method2.setAttribute('x', String(leftX + 60));
-        method2.setAttribute('y', String(derivedY + 50));
-        method2.setAttribute('text-anchor', 'middle');
-        method2.setAttribute('class', 'oop-member-text');
-        method2.setAttribute('style', 'fill: #34d399; font-size: 10px;');
-        method2.textContent = 'speak() override';
-        svg.appendChild(method2);
-
-        // Cat class
-        const rect3 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        rect3.setAttribute('x', String(rightX));
-        rect3.setAttribute('y', String(derivedY));
-        rect3.setAttribute('width', '120');
-        rect3.setAttribute('height', '80');
-        rect3.setAttribute('class', 'oop-derived-rect');
-        svg.appendChild(rect3);
-
-        const text3 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text3.setAttribute('x', String(rightX + 60));
-        text3.setAttribute('y', String(derivedY + 25));
-        text3.setAttribute('text-anchor', 'middle');
-        text3.setAttribute('class', 'oop-member-text');
-        text3.setAttribute('style', 'font-weight: bold; fill: #f472b6;');
-        text3.textContent = 'Cat';
-        svg.appendChild(text3);
-
-        const method3 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        method3.setAttribute('x', String(rightX + 60));
-        method3.setAttribute('y', String(derivedY + 50));
-        method3.setAttribute('text-anchor', 'middle');
-        method3.setAttribute('class', 'oop-member-text');
-        method3.setAttribute('style', 'fill: #34d399; font-size: 10px;');
-        method3.textContent = 'speak() override';
-        svg.appendChild(method3);
-
-        // Inheritance arrows
-        const line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line1.setAttribute('x1', String(leftX + 60));
-        line1.setAttribute('y1', String(derivedY));
-        line1.setAttribute('x2', '220');
-        line1.setAttribute('y2', String(baseY + 80));
-        line1.setAttribute('class', 'oop-inheritance-line');
-        svg.appendChild(line1);
-
-        const line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line2.setAttribute('x1', String(rightX + 60));
-        line2.setAttribute('y1', String(derivedY));
-        line2.setAttribute('x2', '280');
-        line2.setAttribute('y2', String(baseY + 80));
-        line2.setAttribute('class', 'oop-inheritance-line');
-        svg.appendChild(line2);
+        drawOopStepBadge(svg, 'inheritance');
+        drawOopBox(svg, { x: 180, y: 56, w: 140, h: 84, title: 'Animal (Base)', titleColor: OOP_COLORS.blue,
+            activeClass: oopActiveClass(step, [0, 3]), lines: [{ text: '+ virtual speak()', color: OOP_COLORS.amber }] });
+        drawOopBox(svg, { x: 70, y: 188, w: 130, h: 86, title: 'Dog', titleColor: OOP_COLORS.pink,
+            className: 'oop-derived-rect', activeClass: oopActiveClass(step, [1, 2, 3]), lines: [{ text: 'speak() override', color: OOP_COLORS.green }] });
+        drawOopBox(svg, { x: 320, y: 188, w: 130, h: 86, title: 'Cat', titleColor: OOP_COLORS.pink,
+            className: 'oop-derived-rect', activeClass: oopActiveClass(step, [1, 2, 3]), lines: [{ text: 'speak() override', color: OOP_COLORS.green }] });
+        drawOopLine(svg, 135, 188, 220, 140, oopActiveClass(step, [1, 3]));
+        drawOopLine(svg, 385, 188, 280, 140, oopActiveClass(step, [1, 3]));
+        drawOopLabel(svg, 250, 166, 'is-a relationship', OOP_COLORS.cyan, oopActiveClass(step, [1]));
+        drawOopLabel(svg, 250, 306, 'Animal* p can point to Dog or Cat', OOP_COLORS.green, oopActiveClass(step, [3]));
     }
 
     function renderOOPPolymorphism() {
         const svg = document.getElementById('oop-poly-svg');
         if (!svg) return;
+        const step = oopStep('polymorphism');
         svg.innerHTML = '';
-
-        // vptr box for Animal
-        const vptr = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        vptr.setAttribute('x', '50');
-        vptr.setAttribute('y', '30');
-        vptr.setAttribute('width', '200');
-        vptr.setAttribute('height', '60');
-        vptr.setAttribute('class', 'oop-vptr-box');
-        svg.appendChild(vptr);
-
-        const vptrLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        vptrLabel.setAttribute('x', '150');
-        vptrLabel.setAttribute('y', '50');
-        vptrLabel.setAttribute('text-anchor', 'middle');
-        vptrLabel.setAttribute('class', 'oop-member-text');
-        vptrLabel.setAttribute('style', 'fill: #fbbf24; font-weight: bold;');
-        vptrLabel.textContent = 'Animal::vptr';
-        svg.appendChild(vptrLabel);
-
-        const vtableLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        vtableLabel.setAttribute('x', '150');
-        vtableLabel.setAttribute('y', '75');
-        vtableLabel.setAttribute('text-anchor', 'middle');
-        vtableLabel.setAttribute('class', 'oop-member-text');
-        vtableLabel.setAttribute('style', 'fill: #fbbf24; font-size: 10px;');
-        vtableLabel.textContent = '→ VTable';
-        svg.appendChild(vtableLabel);
-
-        // Virtual table
-        const vtable = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        vtable.setAttribute('class', 'oop-vtable');
-
-        const vtableBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        vtableBox.setAttribute('x', '300');
-        vtableBox.setAttribute('y', '20');
-        vtableBox.setAttribute('width', '180');
-        vtableBox.setAttribute('height', '100');
-        vtableBox.setAttribute('fill', 'rgba(74, 222, 128, 0.1)');
-        vtableBox.setAttribute('stroke', '#4ade80');
-        vtableBox.setAttribute('stroke-width', '2');
-        svg.appendChild(vtableBox);
-
-        const vtableTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        vtableTitle.setAttribute('x', '390');
-        vtableTitle.setAttribute('y', '40');
-        vtableTitle.setAttribute('text-anchor', 'middle');
-        vtableTitle.setAttribute('class', 'oop-member-text');
-        vtableTitle.setAttribute('style', 'fill: #34d399; font-weight: bold;');
-        vtableTitle.textContent = 'VTable';
-        svg.appendChild(vtableTitle);
-
-        const methods = ['speak() @Dog', 'speak() @Cat', '~Animal() @Base'];
-        methods.forEach((m, i) => {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', '320');
-            text.setAttribute('y', String(65 + i * 20));
-            text.setAttribute('class', 'oop-member-text');
-            text.setAttribute('style', 'fill: #cbd5e1; font-size: 10px;');
-            text.textContent = m;
-            svg.appendChild(text);
-        });
-
-        // Arrow from vptr to vtable
-        const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        arrow.setAttribute('x1', '250');
-        arrow.setAttribute('y1', '60');
-        arrow.setAttribute('x2', '300');
-        arrow.setAttribute('y2', '60');
-        arrow.setAttribute('stroke', '#fbbf24');
-        arrow.setAttribute('stroke-width', '2');
-        arrow.setAttribute('marker-end', 'url(#arrowhead)');
-        svg.appendChild(arrow);
+        drawOopStepBadge(svg, 'polymorphism');
+        drawOopBox(svg, { x: 34, y: 72, w: 180, h: 78, title: 'Animal* p', titleColor: OOP_COLORS.blue,
+            activeClass: oopActiveClass(step, [2, 3]), lines: [{ text: 'p->speak()', color: OOP_COLORS.slate }] });
+        drawOopBox(svg, { x: 34, y: 196, w: 180, h: 78, title: 'Object memory', titleColor: OOP_COLORS.amber,
+            className: 'oop-vptr-box', activeClass: oopActiveClass(step, [0]), lines: [{ text: 'vptr -> vtable', color: OOP_COLORS.amber }] });
+        drawOopBox(svg, { x: 306, y: 54, w: 170, h: 114, title: 'Dog VTable', titleColor: OOP_COLORS.green,
+            activeClass: oopActiveClass(step, [1, 2]), lines: [{ text: 'speak: Dog::speak', color: OOP_COLORS.green }, { text: 'dtor: Dog::~Dog', color: OOP_COLORS.slate }] });
+        drawOopBox(svg, { x: 306, y: 190, w: 170, h: 114, title: 'Cat VTable', titleColor: OOP_COLORS.pink,
+            activeClass: oopActiveClass(step, [1, 3]), lines: [{ text: 'speak: Cat::speak', color: OOP_COLORS.pink }, { text: 'dtor: Cat::~Cat', color: OOP_COLORS.slate }] });
+        drawOopLine(svg, 214, 235, 306, 112, oopActiveClass(step, [0, 1, 2]));
+        drawOopLine(svg, 214, 235, 306, 248, oopActiveClass(step, [0, 1, 3]));
+        drawOopLabel(svg, 254, 96, 'dispatch', OOP_COLORS.green, oopActiveClass(step, [2]));
+        drawOopLabel(svg, 254, 268, 'same call, different target', OOP_COLORS.pink, oopActiveClass(step, [3]));
     }
 
     function renderOOPEncapsulation() {
         const svg = document.getElementById('oop-encap-svg');
         if (!svg) return;
+        const step = oopStep('encapsulation');
         svg.innerHTML = '';
-
-        // Bank Account class with three member sections
-        const classBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        classBox.setAttribute('x', '50');
-        classBox.setAttribute('y', '30');
-        classBox.setAttribute('width', '400');
-        classBox.setAttribute('height', '280');
-        classBox.setAttribute('fill', 'rgba(96, 165, 250, 0.05)');
-        classBox.setAttribute('stroke', '#60a5fa');
-        classBox.setAttribute('stroke-width', '2');
-        classBox.setAttribute('rx', '8');
-        svg.appendChild(classBox);
-
-        const className = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        className.setAttribute('x', '250');
-        className.setAttribute('y', '55');
-        className.setAttribute('text-anchor', 'middle');
-        className.setAttribute('class', 'oop-member-text');
-        className.setAttribute('style', 'fill: #60a5fa; font-weight: bold; font-size: 14px;');
-        className.textContent = 'class BankAccount';
-        svg.appendChild(className);
-
-        // Public section
-        const publicY = 85;
-        const publicLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        publicLabel.setAttribute('x', '70');
-        publicLabel.setAttribute('y', String(publicY));
-        publicLabel.setAttribute('class', 'oop-member-text');
-        publicLabel.setAttribute('style', 'fill: #ef4444; font-weight: bold; font-size: 11px;');
-        publicLabel.textContent = 'public:';
-        svg.appendChild(publicLabel);
-
-        ['deposit(amount)', 'withdraw(amount)', 'getBalance()'].forEach((m, i) => {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', '90');
-            text.setAttribute('y', String(publicY + 20 + i * 18));
-            text.setAttribute('class', 'oop-member-text');
-            text.setAttribute('style', 'fill: #34d399; font-size: 10px;');
-            text.textContent = '+ ' + m;
-            svg.appendChild(text);
-        });
-
-        // Protected section
-        const protectedY = 175;
-        const protectedLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        protectedLabel.setAttribute('x', '70');
-        protectedLabel.setAttribute('y', String(protectedY));
-        protectedLabel.setAttribute('class', 'oop-member-text');
-        protectedLabel.setAttribute('style', 'fill: #f59e0b; font-weight: bold; font-size: 11px;');
-        protectedLabel.textContent = 'protected:';
-        svg.appendChild(protectedLabel);
-
-        ['validate(amount)', 'log_transaction()'].forEach((m, i) => {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', '90');
-            text.setAttribute('y', String(protectedY + 20 + i * 18));
-            text.setAttribute('class', 'oop-member-text');
-            text.setAttribute('style', 'fill: #fbbf24; font-size: 10px;');
-            text.textContent = '# ' + m;
-            svg.appendChild(text);
-        });
-
-        // Private section
-        const privateY = 245;
-        const privateLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        privateLabel.setAttribute('x', '70');
-        privateLabel.setAttribute('y', String(privateY));
-        privateLabel.setAttribute('class', 'oop-member-text');
-        privateLabel.setAttribute('style', 'fill: #7c3aed; font-weight: bold; font-size: 11px;');
-        privateLabel.textContent = 'private:';
-        svg.appendChild(privateLabel);
-
-        ['m_balance: double', 'mutex m_lock'].forEach((m, i) => {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', '90');
-            text.setAttribute('y', String(privateY + 20 + i * 18));
-            text.setAttribute('class', 'oop-member-text');
-            text.setAttribute('style', 'fill: #a78bfa; font-size: 10px;');
-            text.textContent = '- ' + m;
-            svg.appendChild(text);
-        });
+        drawOopStepBadge(svg, 'encapsulation');
+        drawOopBox(svg, { x: 52, y: 56, w: 396, h: 250, title: 'class BankAccount', titleColor: OOP_COLORS.blue,
+            activeClass: oopActiveClass(step, [0]), lines: [] });
+        drawOopBox(svg, { x: 84, y: 94, w: 330, h: 64, title: 'public:', titleColor: OOP_COLORS.green,
+            activeClass: oopActiveClass(step, [1]), lines: [{ text: '+ deposit()   + withdraw()   + getBalance()', color: OOP_COLORS.green }] });
+        drawOopBox(svg, { x: 84, y: 170, w: 330, h: 58, title: 'protected:', titleColor: OOP_COLORS.amber,
+            activeClass: oopActiveClass(step, [2]), lines: [{ text: '# validate()   # logTransaction()', color: OOP_COLORS.amber }] });
+        drawOopBox(svg, { x: 84, y: 240, w: 330, h: 58, title: 'private:', titleColor: OOP_COLORS.violet,
+            activeClass: oopActiveClass(step, [3]), lines: [{ text: '- m_balance   - m_lock', color: OOP_COLORS.violet }] });
+        drawOopLabel(svg, 250, 326, step === 3 ? 'Only member functions touch private state directly.' : 'Access modifiers define who may use each member.', OOP_COLORS.slate, '');
     }
 
     function renderOOPAbstraction() {
         const svg = document.getElementById('oop-abstraction-svg');
         if (!svg) return;
+        const step = oopStep('abstraction');
         svg.innerHTML = '';
-        // Abstract base class — dashed box.
-        drawOopBox(svg, { x: 175, y: 30, w: 150, h: 70, title: 'Shape «abstract»', titleColor: '#a78bfa', dashed: true,
-            lines: [ { text: '+ area() = 0', color: '#fbbf24' } ] });
-        // Concrete derived classes.
-        drawOopBox(svg, { x: 60, y: 190, w: 150, h: 70, title: 'Circle', titleColor: '#f472b6',
-            lines: [ { text: '+ area() override', color: '#34d399' } ] });
-        drawOopBox(svg, { x: 290, y: 190, w: 150, h: 70, title: 'Rectangle', titleColor: '#f472b6',
-            lines: [ { text: '+ area() override', color: '#34d399' } ] });
-        // Inheritance arrows (derived -> base).
-        drawOopLine(svg, 135, 190, 230, 100);
-        drawOopLine(svg, 365, 190, 270, 100);
-        // Annotations.
-        drawOopLabel(svg, 250, 295, 'Shape s;  ->  compile error (abstract)', '#ef4444');
-        drawOopLabel(svg, 250, 318, 'Shape* p = new Circle();  ->  OK', '#34d399');
+        drawOopStepBadge(svg, 'abstraction');
+        drawOopBox(svg, { x: 170, y: 58, w: 160, h: 78, title: 'Shape abstract', titleColor: OOP_COLORS.violet,
+            dashed: true, activeClass: oopActiveClass(step, [0, 2, 3]), lines: [{ text: '+ area() = 0', color: OOP_COLORS.amber }] });
+        drawOopBox(svg, { x: 54, y: 200, w: 156, h: 72, title: 'Circle', titleColor: OOP_COLORS.pink,
+            className: 'oop-derived-rect', activeClass: oopActiveClass(step, [1, 3]), lines: [{ text: '+ area() override', color: OOP_COLORS.green }] });
+        drawOopBox(svg, { x: 290, y: 200, w: 156, h: 72, title: 'Rectangle', titleColor: OOP_COLORS.pink,
+            className: 'oop-derived-rect', activeClass: oopActiveClass(step, [1, 3]), lines: [{ text: '+ area() override', color: OOP_COLORS.green }] });
+        drawOopLine(svg, 132, 200, 224, 136, oopActiveClass(step, [1, 3]));
+        drawOopLine(svg, 368, 200, 276, 136, oopActiveClass(step, [1, 3]));
+        drawOopLabel(svg, 250, 168, 'Shape s; compile error', OOP_COLORS.red, oopActiveClass(step, [2]));
+        drawOopLabel(svg, 250, 306, 'Shape* p = new Circle(); p->area();', OOP_COLORS.green, oopActiveClass(step, [3]));
     }
 
     function renderOOPAdhoc() {
         const svg = document.getElementById('oop-adhoc-svg');
         if (!svg) return;
+        const step = oopStep('adhoc');
         svg.innerHTML = '';
-        drawOopLabel(svg, 110, 22, 'Call sites', '#94a3b8');
-        drawOopLabel(svg, 390, 22, 'Resolved at compile time', '#94a3b8');
-        const calls = [ 'print(42)', 'print(3.14)', 'print("hi")' ];
-        const funcs = [ 'print(int)', 'print(double)', 'print(string)' ];
+        drawOopStepBadge(svg, 'adhoc');
+        drawOopLabel(svg, 110, 64, 'Call sites', OOP_COLORS.slate, oopActiveClass(step, [0, 1]));
+        drawOopLabel(svg, 390, 64, 'Selected overload', OOP_COLORS.slate, oopActiveClass(step, [0, 1]));
+        const calls = ['print(42)', 'print(3.14)', 'print("hi")'];
+        const funcs = ['print(int)', 'print(double)', 'print(string)'];
         for (let i = 0; i < 3; i++) {
-            const y = 40 + i * 56;
-            drawOopBox(svg, { x: 30, y: y, w: 160, h: 40, title: calls[i], titleColor: '#60a5fa' });
-            drawOopBox(svg, { x: 310, y: y, w: 160, h: 40, title: funcs[i], titleColor: '#34d399' });
-            drawOopLine(svg, 190, y + 20, 310, y + 20);
+            const y = 84 + i * 48;
+            drawOopBox(svg, { x: 34, y: y, w: 154, h: 36, title: calls[i], titleColor: OOP_COLORS.blue, activeClass: oopActiveClass(step, [0, 1]) });
+            drawOopBox(svg, { x: 314, y: y, w: 154, h: 36, title: funcs[i], titleColor: OOP_COLORS.green, activeClass: oopActiveClass(step, [0, 1]) });
+            drawOopLine(svg, 188, y + 18, 314, y + 18, oopActiveClass(step, [1]));
         }
-        // Operator overloading panel.
-        drawOopBox(svg, { x: 30, y: 230, w: 160, h: 52, title: 'v1 + v2', titleColor: '#60a5fa',
-            lines: [ { text: 'two Vector2D values', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 310, y: 230, w: 160, h: 52, title: 'operator+', titleColor: '#34d399',
-            lines: [ { text: 'Vector2D::operator+', color: '#cbd5e1' } ] });
-        drawOopLine(svg, 190, 256, 310, 256);
-        drawOopLabel(svg, 250, 322, 'Same name, chosen by argument types — no runtime dispatch', '#fbbf24');
+        drawOopBox(svg, { x: 34, y: 254, w: 154, h: 52, title: 'v1 + v2', titleColor: OOP_COLORS.blue,
+            activeClass: oopActiveClass(step, [2]), lines: [{ text: 'Vector2D values', color: OOP_COLORS.slate }] });
+        drawOopBox(svg, { x: 314, y: 254, w: 154, h: 52, title: 'operator+', titleColor: OOP_COLORS.green,
+            activeClass: oopActiveClass(step, [2]), lines: [{ text: 'Vector2D::operator+', color: OOP_COLORS.slate }] });
+        drawOopLine(svg, 188, 280, 314, 280, oopActiveClass(step, [2]));
+        drawOopLabel(svg, 250, 230, 'Static binding: the compiler chooses before runtime.', OOP_COLORS.amber, oopActiveClass(step, [3]));
     }
 
     function renderOOPTemplates() {
         const svg = document.getElementById('oop-templates-svg');
         if (!svg) return;
+        const step = oopStep('templates');
         svg.innerHTML = '';
-        // Template blueprint — dashed box.
-        drawOopBox(svg, { x: 160, y: 30, w: 180, h: 70, title: 'template<typename T>', titleColor: '#a78bfa', dashed: true,
-            lines: [ { text: 'class Box { T value; }', color: '#fbbf24' } ] });
-        drawOopLabel(svg, 250, 125, 'compiler instantiates one concrete class per type', '#94a3b8');
-        // Concrete instantiations.
-        const insts = [ 'Box<int>', 'Box<double>', 'Box<string>' ];
+        drawOopStepBadge(svg, 'templates');
+        drawOopBox(svg, { x: 152, y: 64, w: 196, h: 78, title: 'template<typename T>', titleColor: OOP_COLORS.violet,
+            dashed: true, activeClass: oopActiveClass(step, [0, 3]), lines: [{ text: 'class Box { T value; }', color: OOP_COLORS.amber }] });
+        const insts = ['Box<int>', 'Box<double>', 'Box<string>'];
         for (let i = 0; i < 3; i++) {
-            const x = 40 + i * 150;
-            drawOopBox(svg, { x: x, y: 160, w: 130, h: 60, title: insts[i], titleColor: '#34d399',
-                lines: [ { text: 'concrete class', color: '#cbd5e1' } ] });
-            drawOopLine(svg, 250, 100, x + 65, 160);
+            const x = 38 + i * 154;
+            drawOopBox(svg, { x: x, y: 212, w: 130, h: 62, title: insts[i], titleColor: i === 0 ? OOP_COLORS.green : OOP_COLORS.cyan,
+                activeClass: oopActiveClass(step, i === 0 ? [1, 3] : [2, 3]), lines: [{ text: 'concrete class', color: OOP_COLORS.slate }] });
+            drawOopLine(svg, 250, 142, x + 65, 212, oopActiveClass(step, i === 0 ? [1, 3] : [2, 3]));
         }
-        drawOopLabel(svg, 250, 290, 'One blueprint  ->  many concrete types (compile-time)', '#fbbf24');
+        drawOopLabel(svg, 250, 180, 'The source stays generic; generated code is concrete.', OOP_COLORS.slate, oopActiveClass(step, [3]));
     }
 
     // OOP Button Listeners
@@ -7562,14 +7455,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentMode = 'oop-' + oopModeSelect.value;
         updateLayout();
         renderAll();
-
-        if (oopModeSelect.value === 'inheritance') {
-            executeAnimWrapper(async () => await visualizeOOPInheritance());
-        } else if (oopModeSelect.value === 'polymorphism') {
-            executeAnimWrapper(async () => await visualizeOOPPolymorphism());
-        } else if (oopModeSelect.value === 'encapsulation') {
-            executeAnimWrapper(async () => await visualizeOOPEncapsulation());
-        }
+        executeAnimWrapper(async () => await visualizeOOPSteps(oopModeSelect.value));
     });
 
     btnOopReset.addEventListener('click', () => {
@@ -7580,40 +7466,28 @@ document.addEventListener('DOMContentLoaded', () => {
         showStatus('OOP visualization reset.', '#6366f1');
     });
 
+    async function visualizeOOPSteps(mode) {
+        setOopStep(mode, 0);
+        renderOOP();
+        for (let i = 0; i < OOP_STEPS[mode].length; i++) {
+            setOopStep(mode, i);
+            renderOOP();
+            showStatus(OOP_STEPS[mode][i], '#2563eb');
+            await sleep(850);
+        }
+        return '__KEEP_STATUS__';
+    }
+
     async function visualizeOOPInheritance() {
-        showStatus('Demonstrating class inheritance (IS-A relationship)...', '#06b6d4');
-        await sleep(800);
-        showStatus('Base class Animal defines virtual method speak()', '#06b6d4');
-        await sleep(800);
-        showStatus('Dog and Cat inherit from Animal', '#f472b6');
-        await sleep(800);
-        showStatus('Each derived class overrides speak() with unique behavior', '#34d399');
-        await sleep(800);
-        showStatus('Inheritance complete: Constructors and destructors called in correct order', '#06b6d4');
+        return visualizeOOPSteps('inheritance');
     }
 
     async function visualizeOOPPolymorphism() {
-        showStatus('Demonstrating virtual functions & polymorphism...', '#f59e0b');
-        await sleep(800);
-        showStatus('Each object has vptr (virtual table pointer)', '#fbbf24');
-        await sleep(800);
-        showStatus('VTable contains function pointers to correct implementations', '#34d399');
-        await sleep(800);
-        showStatus('Runtime dynamic dispatch selects correct method based on object type', '#f59e0b');
-        await sleep(800);
-        showStatus('Animal* dog calls Dog::speak(); Animal* cat calls Cat::speak()', '#34d399');
+        return visualizeOOPSteps('polymorphism');
     }
 
     async function visualizeOOPEncapsulation() {
-        showStatus('Demonstrating encapsulation & access levels...', '#8b5cf6');
-        await sleep(800);
-        showStatus('public: withdraw() is accessible to all external code', '#34d399');
-        await sleep(800);
-        showStatus('protected: validate() accessible to derived classes only', '#fbbf24');
-        await sleep(800);
-        showStatus('private: m_balance and m_lock hidden, only class methods access', '#a78bfa');
-        await sleep(800);
-        showStatus('Encapsulation complete: Data is protected, interface is controlled', '#8b5cf6');
+        return visualizeOOPSteps('encapsulation');
     }
 
     // ========== DESIGN PATTERNS VISUALIZATION ==========
