@@ -88,6 +88,7 @@ const mappings = {
     'sort_polyphase.cpp': 'codeSortPolyphase',
     'matrix_sparse.cpp': 'codeMatrixSparse',
     'poly_padd.cpp': 'codePolyPadd',
+    'magic_square.cpp': 'codeMagicSquare',
     'maze_stack.cpp': 'codeMazeStack',
     'list_doubly.cpp': 'codeListDoubly',
     'search_fibonacci.cpp': 'codeSearchFibonacci',

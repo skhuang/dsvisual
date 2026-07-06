@@ -97,6 +97,7 @@
             'method.sort-polyphase': 'Polyphase Merge (Tapes)',
             'method.matrix-sparse': 'Sparse Matrix (Transpose)',
             'method.poly-padd': 'Polynomial Addition',
+            'method.magic-square': "Magic Square (Coxeter's Rule)",
 
             // Methods — Sorting
             'method.sort-bubble':           'Bubble Sort',
@@ -323,6 +324,7 @@
             'method.sort-polyphase': 'Polyphase 磁帶合併',
             'method.matrix-sparse': '稀疏矩陣(轉置)',
             'method.poly-padd': '多項式相加',
+            'method.magic-square': '魔方陣(Coxeter 規則)',
 
             // Methods — Sorting
             'method.sort-bubble':           '氣泡排序',
