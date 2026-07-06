@@ -22,11 +22,11 @@ Every row, column, and diagonal should equal this magic sum.
 ## Coxeter's Rule
 
 1. Place 1 in the center of the top row.
-2. Try to move one cell up-right each time; wrap around at the edges.
-3. If the up-right target is already occupied, move one cell down from the current cell instead.
+2. Try to move one cell up-left each time; wrap around at the edges.
+3. If the up-left target is already occupied, move one cell down from the current cell instead.
 4. Repeat until $n^2$ has been placed.
 
-> In the visualizer, yellow marks the up-right trial cell, red marks an occupied cell, and indigo marks the fallback cell after a collision.
+> In the visualizer, yellow marks the up-left trial cell, red marks an occupied cell, and indigo marks the fallback cell after a collision.
 
 ---
 
@@ -38,18 +38,18 @@ for (int value = 1; value <= n * n; ++value) {
     square[row][col] = value;
 
     int up = (row - 1 + n) % n;
-    int right = (col + 1) % n;
+    int left = (col - 1 + n) % n;
 
-    if (square[up][right] != 0) {
+    if (square[up][left] != 0) {
         row = (row + 1) % n;
     } else {
         row = up;
-        col = right;
+        col = left;
     }
 }
 ```
 
-Modulo arithmetic wraps positions around the square, so no separate top-edge or right-edge case is needed.
+Modulo arithmetic wraps positions around the square, so no separate top-edge or left-edge case is needed.
 
 ---
 

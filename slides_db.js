@@ -20787,16 +20787,16 @@ SLIDES_DB["magic-square"] = {
       "blocks": [
         { "type": "steps", "items": [
           { "zh": "從第一列中央放入 1。", "en": "Place 1 in the center of the top row." },
-          { "zh": "每次嘗試往右上方移動;超出邊界時以環狀方式包回。", "en": "Try to move one cell up-right each time; wrap around at the edges." },
-          { "zh": "若右上方目標格已被占用,則從目前格往下一格。", "en": "If the up-right target is already occupied, move one cell down from the current cell instead." },
+          { "zh": "每次嘗試往左上方移動;超出邊界時以環狀方式包回。", "en": "Try to move one cell up-left each time; wrap around at the edges." },
+          { "zh": "若左上方目標格已被占用,則從目前格往下一格。", "en": "If the up-left target is already occupied, move one cell down from the current cell instead." },
           { "zh": "重複直到填入 $n^2$。", "en": "Repeat until $n^2$ has been placed." }
         ] },
-        { "type": "note", "text": { "zh": "視覺化中黃色表示右上方試探格,紅色表示被占用,藍紫色表示碰撞後改走的下一格。", "en": "In the visualizer, yellow marks the up-right trial cell, red marks an occupied cell, and indigo marks the fallback cell after a collision." } }
+        { "type": "note", "text": { "zh": "視覺化中黃色表示左上方試探格,紅色表示被占用,藍紫色表示碰撞後改走的下一格。", "en": "In the visualizer, yellow marks the up-left trial cell, red marks an occupied cell, and indigo marks the fallback cell after a collision." } }
       ] },
     { "heading": { "zh": "核心程式", "en": "Core Code" },
       "blocks": [
-        { "type": "code", "lang": "cpp", "file": "magic_square.cpp", "code": "int row = 0, col = n / 2;\nfor (int value = 1; value <= n * n; ++value) {\n    square[row][col] = value;\n\n    int up = (row - 1 + n) % n;\n    int right = (col + 1) % n;\n\n    if (square[up][right] != 0) {\n        row = (row + 1) % n;\n    } else {\n        row = up;\n        col = right;\n    }\n}" },
-        { "type": "paragraph", "text": { "zh": "模數運算讓位置在方陣邊界自動包回,因此不需要額外判斷上邊界或右邊界。", "en": "Modulo arithmetic wraps positions around the square, so no separate top-edge or right-edge case is needed." } }
+        { "type": "code", "lang": "cpp", "file": "magic_square.cpp", "code": "int row = 0, col = n / 2;\nfor (int value = 1; value <= n * n; ++value) {\n    square[row][col] = value;\n\n    int up = (row - 1 + n) % n;\n    int left = (col - 1 + n) % n;\n\n    if (square[up][left] != 0) {\n        row = (row + 1) % n;\n    } else {\n        row = up;\n        col = left;\n    }\n}" },
+        { "type": "paragraph", "text": { "zh": "模數運算讓位置在方陣邊界自動包回,因此不需要額外判斷上邊界或左邊界。", "en": "Modulo arithmetic wraps positions around the square, so no separate top-edge or left-edge case is needed." } }
       ] },
     { "heading": { "zh": "限制與複雜度", "en": "Limits and Complexity" },
       "blocks": [
