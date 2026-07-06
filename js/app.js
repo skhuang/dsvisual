@@ -5591,14 +5591,14 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let num = 1; num <= n * n; num++) {
             grid[r][c] = num;
             const up = (r - 1 + n) % n;
-            const right = (c + 1) % n;
-            const collision = grid[up][right] !== 0;
-            const next = collision ? { r: (r + 1) % n, c } : { r: up, c: right };
+            const left = (c - 1 + n) % n;
+            const collision = grid[up][left] !== 0;
+            const next = collision ? { r: (r + 1) % n, c } : { r: up, c: left };
             frames.push({
                 grid: grid.map((row) => row.slice()),
                 num,
                 pos: { r, c },
-                trial: { r: up, c: right },
+                trial: { r: up, c: left },
                 next,
                 collision,
                 done: num === n * n,
@@ -5609,12 +5609,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     : collision
                         ? {
-                            zh: '右上格已被占用，所以改從目前位置往下一格。',
-                            en: 'The up-right cell is occupied, so move one cell down instead.',
+                            zh: '左上格已被占用，所以改從目前位置往下一格。',
+                            en: 'The up-left cell is occupied, so move one cell down instead.',
                         }
                         : {
-                            zh: '右上格可用，下一步移到右上方；超出邊界時以環狀方式包回。',
-                            en: 'The up-right cell is free, so move up-right; wrap around edges when needed.',
+                            zh: '左上格可用，下一步移到左上方；超出邊界時以環狀方式包回。',
+                            en: 'The up-left cell is free, so move up-left; wrap around edges when needed.',
                         },
             });
             r = next.r;
@@ -5689,7 +5689,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ? 'n = ' + n + ', magic sum = ' + magicSum
                 : fr.num === 0
                     ? 'next: row 0, col ' + Math.floor(n / 2)
-                    : 'placed ' + fr.num + ' at (' + fr.pos.r + ', ' + fr.pos.c + '), trial up-right (' + fr.trial.r + ', ' + fr.trial.c + ')' + (fr.collision ? ' was occupied' : ' is free');
+                    : 'placed ' + fr.num + ' at (' + fr.pos.r + ', ' + fr.pos.c + '), trial up-left (' + fr.trial.r + ', ' + fr.trial.c + ')' + (fr.collision ? ' was occupied' : ' is free');
             host.querySelector('.magic-readout').innerHTML = '<div>' + detail + '</div>' + sumsHtml(fr);
         }
 

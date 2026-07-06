@@ -5209,7 +5209,7 @@ std::vector<Term> padd(const std::vector<Term>& A, const std::vector<Term>& B) {
 `;
 
 const codeMagicSquare = `// Odd-order magic square using Coxeter's rule (Siamese method).
-// Start in the middle of the top row. Move up-right with wraparound;
+// Start in the middle of the top row. Move up-left with wraparound;
 // if the target cell is occupied, move one cell down from the current cell.
 
 #include <iomanip>
@@ -5226,13 +5226,13 @@ vector<vector<int>> magicSquare(int n) {
         square[row][col] = value;
 
         int up = (row - 1 + n) % n;
-        int right = (col + 1) % n;
+        int left = (col - 1 + n) % n;
 
-        if (square[up][right] != 0) {
+        if (square[up][left] != 0) {
             row = (row + 1) % n;
         } else {
             row = up;
-            col = right;
+            col = left;
         }
     }
 

@@ -24,6 +24,7 @@ test.describe("Magic Square (Coxeter's Rule)", () => {
         await sec.locator('.stepctl [data-action="step"]').click();
         await expect(sec.locator('.magic-cell.current')).toHaveText('1');
         await expect(sec.locator('.magic-readout')).toContainText('placed 1');
+        await expect(sec.locator('.magic-readout')).toContainText('trial up-left');
 
         await sec.locator('.magic-order').selectOption('3');
         await expect(sec.locator('.magic-board .magic-cell')).toHaveCount(9);
@@ -34,5 +35,6 @@ test.describe("Magic Square (Coxeter's Rule)", () => {
         await expect(sec.locator('.magic-readout')).toContainText('magic sum = 15');
         const values = await sec.locator('.magic-board .magic-cell').allTextContents();
         expect(values.map(Number).sort((a, b) => a - b)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        expect(values.map(Number)).toEqual([6, 1, 8, 7, 5, 3, 2, 9, 4]);
     });
 });
