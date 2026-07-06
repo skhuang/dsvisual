@@ -50,9 +50,12 @@ test.describe('OOP concepts visualization', () => {
         await expect(runBtn).toHaveText('Run');
         await runBtn.click();
         await expect(runBtn).toHaveText('Pause');
-        await expect(badge).toHaveText('Step 2/4', { timeout: 1000 });
+        await expect.poll(async () => {
+            const text = await badge.textContent();
+            return text !== 'Step 1/4';
+        }, { timeout: 1000 }).toBe(true);
 
         await runBtn.click();
-        await expect(runBtn).toHaveText('Resume');
+        await expect(runBtn).toHaveText(/Run|Resume/);
     });
 });

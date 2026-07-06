@@ -7290,7 +7290,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function drawOopStepBadge(svg, mode) {
         const step = oopStep(mode);
         const total = OOP_STEPS[mode].length;
-        svg.appendChild(oopSvgEl('rect', { x: 18, y: 18, width: 78, height: 28, rx: 6, class: 'oop-step-badge-bg' }));
         drawOopLabel(svg, 57, 37, 'Step ' + (step + 1) + '/' + total, OOP_COLORS.slate, ' oop-step-badge-text');
         drawOopLabel(svg, 250, 336, OOP_STEPS[mode][step], OOP_COLORS.slate, ' oop-step-caption');
     }
