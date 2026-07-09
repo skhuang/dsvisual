@@ -102,6 +102,7 @@ const mappings = {
     'file_isam.cpp': 'codeFileIsam',
     'file_inverted.cpp': 'codeFileInverted',
     'recursion.cpp': 'codeRecursion',
+    'lru_cache.cpp': 'codeLruCache',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

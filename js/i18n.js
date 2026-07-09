@@ -78,6 +78,7 @@
             'method.bloom-filter':          'Bloom Filter',
             'method.skip-list':             'Skip List',
             'method.count-min-sketch':      'Count-Min Sketch',
+            'method.cache-lru':             'LRU Cache',
 
             // Methods — Heaps
             'method.heap-binary':           'Binary Heap',
@@ -305,6 +306,7 @@
             'method.bloom-filter':          '布隆過濾器',
             'method.skip-list':             '跳躍串列',
             'method.count-min-sketch':      'Count-Min Sketch',
+            'method.cache-lru':             'LRU 快取',
 
             // Methods — Heaps
             'method.heap-binary':           '二元堆積',
