@@ -7,6 +7,21 @@
     return out;
   }
 
+  // FAST_TRANSPOSE on a triple list, O(cols + terms). Mirrors cpp/matrix_sparse.cpp.
+  function fastTranspose(triples, rows, cols) {
+    const b = new Array(triples.length);
+    const rowSize = new Array(cols).fill(0);
+    const startPos = new Array(cols).fill(0);
+    for (const t of triples) rowSize[t.c]++;
+    for (let c = 1; c < cols; c++) startPos[c] = startPos[c - 1] + rowSize[c - 1];
+    for (const t of triples) {
+      const dst = startPos[t.c]++;
+      b[dst] = { r: t.c, c: t.r, v: t.v };
+    }
+    void rows;
+    return b;
+  }
+
   function buildFastTransposeFrames(matrix) {
     const rows = matrix.length;
     const cols = rows ? matrix[0].length : 0;
@@ -30,15 +45,16 @@
       frames.push({ phase: 'place', rowSize: rowSize.slice(), startPos: startPos.slice(), placed: placed.slice(), scan: s, msg: { zh: '放入 (' + t.r + ',' + t.c + ',' + t.v + ') → 轉置位置 ' + dst, en: 'Place (' + t.r + ',' + t.c + ',' + t.v + ') → transposed slot ' + dst } });
     }
 
+    const finalTriples = fastTranspose(triples, rows, cols);
     const transposed = [];
     for (let r = 0; r < cols; r++) transposed.push(new Array(rows).fill(0));
-    for (const t of placed) if (t) transposed[t.r][t.c] = t.v;
+    for (const t of finalTriples) if (t) transposed[t.r][t.c] = t.v;
     frames.push({ phase: 'done', rowSize: rowSize.slice(), startPos: startPos.slice(), placed: placed.slice(), scan: -1, msg: { zh: '完成轉置', en: 'Transpose complete' } });
 
     return { frames, triples, transposed };
   }
 
-  const api = { toTriples, buildFastTransposeFrames };
+  const api = { toTriples, fastTranspose, buildFastTransposeFrames };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.SparseViz = api;
 })(typeof window !== 'undefined' ? window : globalThis);
