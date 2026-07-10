@@ -2574,6 +2574,7 @@ pre.code-panel-body[class*="language-"] {
 .sm-arr-label { display: inline-block; min-width: 64px; font-weight: 600; color: #475569; }
 .sm-acell { display: inline-block; min-width: 24px; padding: 2px 6px; margin: 1px; background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 4px; text-align: center; }
 .sm-error { color: #dc2626; font-size: 0.85rem; margin: 4px 0; }
+.sm-examples { margin: 0 4px; padding: 2px 4px; border: 1px solid #cbd5e1; border-radius: 4px; }
 .sm-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
 .pp-controls { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
 .pp-controls .pp-a, .pp-controls .pp-b { width: 130px; }

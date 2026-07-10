@@ -5454,9 +5454,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let _sparseState = null;
+    const SPARSE_EXAMPLES_KEY = 'dsvisual:sparse:examples';
+    const SPARSE_DEFAULT_TEXT = '0,0,3,0;5,0,0,0;0,2,0,4';
+    function loadSparseExamples() {
+        try {
+            const raw = localStorage.getItem(SPARSE_EXAMPLES_KEY);
+            const arr = raw ? JSON.parse(raw) : [];
+            return Array.isArray(arr) ? arr.filter((e) => e && typeof e.text === 'string') : [];
+        } catch (e) { return []; }
+    }
+    function saveSparseExample(text) {
+        try {
+            if (text === SPARSE_DEFAULT_TEXT) return;
+            let arr = loadSparseExamples().filter((e) => e.text !== text);
+            arr.unshift({ text: text });
+            arr = arr.slice(0, 8);
+            localStorage.setItem(SPARSE_EXAMPLES_KEY, JSON.stringify(arr));
+        } catch (e) { /* ignore */ }
+    }
     function renderMatrixSparse() {
         const host = acquireDynamicVizHost();
-        if (!_sparseState) _sparseState = { text: '0,0,3,0;5,0,0,0;0,2,0,4' };
+        if (!_sparseState) _sparseState = { text: SPARSE_DEFAULT_TEXT };
         const st = _sparseState;
         const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
         const parsed = SparseViz.parseMatrix(st.text);
@@ -5467,7 +5485,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let idx = 0;
 
         host.innerHTML =
-            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="sm-apply">Apply</button>' +
+            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '">' +
+            (function () {
+                const trunc = (s) => s.length > 24 ? s.slice(0, 24) + '…' : s;
+                const esc = (s) => s.replace(/"/g, '&quot;');
+                let h = '<select class="sm-examples"><option value="">' + langOf({ zh: '範例…', en: 'Examples…' }) + '</option>';
+                h += '<option value="' + SPARSE_DEFAULT_TEXT + '">' + langOf({ zh: '預設', en: 'Default' }) + '</option>';
+                loadSparseExamples().forEach((e) => { h += '<option value="' + esc(e.text) + '">' + trunc(e.text) + '</option>'; });
+                return h + '</select>';
+            })() +
+            '<button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="sm-apply">Apply</button>' +
             '<span class="sm-hint">rows separated by ; , entries by ,</span></div>' +
             '<div class="sm-error" style="display:none"></div>' +
             '<div class="sm-cols"><div class="sm-dense"></div><div class="sm-triples"></div></div>' +
@@ -5512,13 +5539,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const errEl = host.querySelector('.sm-error');
             if (!p.ok) { errEl.textContent = langOf(p.error); errEl.style.display = ''; return; }
             errEl.textContent = ''; errEl.style.display = 'none';
-            st.text = v; renderMatrixSparse();
+            st.text = v; saveSparseExample(v); renderMatrixSparse();
         };
         host.querySelector('.rand-btn').onclick = () => {
             const inp = window.RandomInput && RandomInput.randomInputFor('matrix-sparse', getInputDifficulty());
             if (!inp) return;
             _sparseState.text = inp.text;
             renderMatrixSparse();
+        };
+        host.querySelector('.sm-examples').onchange = (ev) => {
+            const v = ev.target.value;
+            if (!v) return;
+            host.querySelector('.sm-input').value = v;
+            const errEl = host.querySelector('.sm-error');
+            errEl.textContent = ''; errEl.style.display = 'none';
+            st.text = v; renderMatrixSparse();
         };
     }
     let _polyState = null;
