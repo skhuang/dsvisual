@@ -5460,7 +5460,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const raw = localStorage.getItem(SPARSE_EXAMPLES_KEY);
             const arr = raw ? JSON.parse(raw) : [];
-            return Array.isArray(arr) ? arr.filter((e) => e && typeof e.text === 'string') : [];
+            return Array.isArray(arr) ? arr.filter((e) => e && typeof e.text === 'string' && SparseViz.parseMatrix(e.text).ok) : [];
         } catch (e) { return []; }
     }
     function saveSparseExample(text) {
