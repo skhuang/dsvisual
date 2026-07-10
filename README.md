@@ -153,7 +153,7 @@ npx playwright test
 ### View test report
 
 ```bash
-mpx playwright show-report
+npx playwright show-report
 ```
 
 Tests cover initial load state, mode switching, and UI interaction for all major data structures.

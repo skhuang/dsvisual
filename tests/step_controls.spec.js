@@ -66,6 +66,10 @@ test.describe('Unified step controls — Run/Pause/Resume + Speed', () => {
     test('Speed slider value persists per visualization across reload', async ({ page }) => {
         const sec = page.locator('[data-method-section="graph-aoe"]');
         await sec.locator('.stepctl .stepctl-speed').evaluate((el) => { el.value = '123'; el.dispatchEvent(new Event('input', { bubbles: true })); });
+        // Confirm the value was actually persisted before reloading — otherwise a
+        // reload that races the input handler leaves nothing to restore and the
+        // slider comes back at its default (the CI flake this guards against).
+        await expect.poll(() => page.evaluate(() => localStorage.getItem('dsvisual.stepSpeed.graph-aoe'))).toBe('123');
         await page.reload();
         await loadMethod(page, 'graph-aoe');
         await expect(page.locator('[data-method-section="graph-aoe"] .stepctl .stepctl-speed')).toHaveValue('123');

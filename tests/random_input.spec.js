@@ -8,6 +8,18 @@ async function openSettings(page) {
   await expect(page.locator('#settings-drawer')).toBeVisible();
 }
 
+// A randomizer can legitimately regenerate the same value by chance, so a single
+// click + strict-inequality assertion is inherently flaky (this is what tripped
+// random_input.spec.js:83 on CI, including on main). Re-click until the value
+// changes: a working randomizer does so within a few clicks, a broken one never
+// will, so this still fails on a genuinely dead button.
+async function expectRandomizes(clickTarget, valueLocator, before) {
+  await expect(async () => {
+    await clickTarget.click();
+    expect(await valueLocator.inputValue()).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+}
+
 test('difficulty is remembered per category and persists across reload', async ({ page }) => {
   await page.goto(fileUri);
   await page.evaluate(() => localStorage.clear());
@@ -43,8 +55,7 @@ test('random button on tree-traversal changes the input field', async ({ page })
   const section = page.locator('[data-method-section="tree-traversal"]');
   const input = section.locator('.tt-input');
   const before = await input.inputValue();
-  await section.locator('.rand-btn').click();
-  await expect(input).not.toHaveValue(before);
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
 });
 
 test('random button on matrix-sparse changes the input field', async ({ page }) => {
@@ -54,8 +65,7 @@ test('random button on matrix-sparse changes the input field', async ({ page }) 
   const section = page.locator('[data-method-section="matrix-sparse"]');
   const input = section.locator('.sm-input');
   const before = await input.inputValue();
-  await section.locator('.rand-btn').click();
-  await expect(input).not.toHaveValue(before);
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
 });
 
 test('random button on list-doubly changes the input field', async ({ page }) => {
@@ -65,8 +75,7 @@ test('random button on list-doubly changes the input field', async ({ page }) =>
   const section = page.locator('[data-method-section="list-doubly"]');
   const input = section.locator('.dl-input');
   const before = await input.inputValue();
-  await section.locator('.rand-btn').click();
-  await expect(input).not.toHaveValue(before);
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
 });
 
 test('random button on old binary search updates target + array', async ({ page }) => {
@@ -79,8 +88,7 @@ test('random button on old binary search updates target + array', async ({ page 
 
   const target = page.locator('#search-val');
   const before = await target.inputValue();
-  await page.click('#btn-search-random');
-  await expect(target).not.toHaveValue(before);
+  await expectRandomizes(page.locator('#btn-search-random'), target, before);
   await expect(page.locator('#search-array .s-slot').first()).toBeVisible();
 });
 
@@ -105,6 +113,5 @@ test('random button on search-fibonacci changes the input field', async ({ page 
   const section = page.locator('[data-method-section="search-fibonacci"]');
   const input = section.locator('.ss-arr');
   const before = await input.inputValue();
-  await section.locator('.rand-btn').click();
-  await expect(input).not.toHaveValue(before);
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
 });
