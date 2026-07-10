@@ -5459,8 +5459,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!_sparseState) _sparseState = { text: '0,0,3,0;5,0,0,0;0,2,0,4' };
         const st = _sparseState;
         const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const matrix = st.text.split(';').map((row) => row.split(',').map((s) => parseInt(s.trim(), 10) || 0));
-        const rows = matrix.length, cols = matrix[0] ? matrix[0].length : 0;
+        const parsed = SparseViz.parseMatrix(st.text);
+        const matrix = parsed.matrix;
+        const rows = parsed.rows, cols = parsed.cols;
         const res = SparseViz.buildFastTransposeFrames(matrix);
         const frames = res.frames;
         let idx = 0;
@@ -5468,6 +5469,7 @@ document.addEventListener('DOMContentLoaded', () => {
         host.innerHTML =
             '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="sm-apply">Apply</button>' +
             '<span class="sm-hint">rows separated by ; , entries by ,</span></div>' +
+            '<div class="sm-error" style="display:none"></div>' +
             '<div class="sm-cols"><div class="sm-dense"></div><div class="sm-triples"></div></div>' +
             '<div class="sm-arrays"></div>' +
             '<div class="sm-phase"></div>';
@@ -5506,7 +5508,11 @@ document.addEventListener('DOMContentLoaded', () => {
         paint();
         host.querySelector('.sm-apply').onclick = () => {
             const v = host.querySelector('.sm-input').value.trim();
-            if (v) { st.text = v; renderMatrixSparse(); }
+            const p = SparseViz.parseMatrix(v);
+            const errEl = host.querySelector('.sm-error');
+            if (!p.ok) { errEl.textContent = langOf(p.error); errEl.style.display = ''; return; }
+            errEl.textContent = ''; errEl.style.display = 'none';
+            st.text = v; renderMatrixSparse();
         };
         host.querySelector('.rand-btn').onclick = () => {
             const inp = window.RandomInput && RandomInput.randomInputFor('matrix-sparse', getInputDifficulty());
