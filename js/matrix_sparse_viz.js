@@ -22,6 +22,31 @@
     return b;
   }
 
+  // Parse ";"-separated rows of ","-separated integers into a validated dense matrix.
+  function parseMatrix(text) {
+    const err = (zh, en) => ({ ok: false, matrix: null, rows: 0, cols: 0, error: { zh: zh, en: en } });
+    const raw = String(text == null ? '' : text).trim();
+    if (!raw) return err('請輸入矩陣', 'Enter a matrix');
+    const rowStrs = raw.split(';').map((s) => s.trim()).filter((s) => s.length);
+    if (!rowStrs.length) return err('請輸入矩陣', 'Enter a matrix');
+    const matrix = [];
+    let cols = -1;
+    for (let r = 0; r < rowStrs.length; r++) {
+      const cells = rowStrs[r].split(',').map((s) => s.trim());
+      if (cols === -1) cols = cells.length;
+      else if (cells.length !== cols)
+        return err('各列長度須一致(第 ' + (r + 1) + ' 列)', 'All rows must have the same length (row ' + (r + 1) + ')');
+      const nums = [];
+      for (const cell of cells) {
+        if (!/^-?\d+$/.test(cell))
+          return err('含非整數值:「' + cell + '」', 'Non-integer value: "' + cell + '"');
+        nums.push(parseInt(cell, 10));
+      }
+      matrix.push(nums);
+    }
+    return { ok: true, matrix: matrix, rows: matrix.length, cols: cols, error: null };
+  }
+
   function buildFastTransposeFrames(matrix) {
     const rows = matrix.length;
     const cols = rows ? matrix[0].length : 0;
@@ -54,7 +79,7 @@
     return { frames, triples, transposed };
   }
 
-  const api = { toTriples, fastTranspose, buildFastTransposeFrames };
+  const api = { toTriples, fastTranspose, parseMatrix, buildFastTransposeFrames };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.SparseViz = api;
 })(typeof window !== 'undefined' ? window : globalThis);

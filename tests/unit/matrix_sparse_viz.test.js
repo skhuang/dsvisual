@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { toTriples, fastTranspose, buildFastTransposeFrames } = require('../../js/matrix_sparse_viz');
+const { toTriples, fastTranspose, buildFastTransposeFrames, parseMatrix } = require('../../js/matrix_sparse_viz');
 
 const M = [
   [0, 0, 3, 0],
@@ -58,4 +58,38 @@ test('buildFastTransposeFrames final transpose matches fastTranspose', () => {
   const dense = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]];
   for (const t of tri) dense[t.r][t.c] = t.v;
   assert.deepEqual(transposed, dense);
+});
+
+test('parseMatrix accepts a valid uniform matrix', () => {
+  const p = parseMatrix('0,0,3,0;5,0,0,0;0,2,0,4');
+  assert.equal(p.ok, true);
+  assert.equal(p.rows, 3);
+  assert.equal(p.cols, 4);
+  assert.deepEqual(p.matrix[1], [5, 0, 0, 0]);
+  assert.equal(p.error, null);
+});
+
+test('parseMatrix rejects ragged rows with a bilingual error', () => {
+  const p = parseMatrix('1,2,3;4,5');
+  assert.equal(p.ok, false);
+  assert.equal(p.matrix, null);
+  assert.ok(p.error.zh && p.error.en);
+});
+
+test('parseMatrix rejects non-integer entries', () => {
+  const p = parseMatrix('1,x,3;4,5,6');
+  assert.equal(p.ok, false);
+  assert.ok(p.error.zh && p.error.en);
+});
+
+test('parseMatrix rejects empty input', () => {
+  const p = parseMatrix('   ');
+  assert.equal(p.ok, false);
+  assert.ok(p.error.zh && p.error.en);
+});
+
+test('parseMatrix accepts negative integers', () => {
+  const p = parseMatrix('-1,0;0,-2');
+  assert.equal(p.ok, true);
+  assert.deepEqual(p.matrix, [[-1, 0], [0, -2]]);
 });
