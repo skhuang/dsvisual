@@ -42,6 +42,19 @@ test('frames include rowsize/startpos/place phases and bilingual msg', () => {
   for (const f of frames) assert.ok(f.msg.zh && f.msg.en);
 });
 
+test('place frames carry dst indexing the slot filled that step; others use -1', () => {
+  const { frames } = buildFastTransposeFrames(M);
+  for (const f of frames) {
+    assert.equal(typeof f.dst, 'number', 'every frame has a numeric dst');
+    if (f.phase === 'place') {
+      assert.ok(f.dst >= 0, 'place dst is a valid index');
+      assert.ok(f.placed[f.dst], 'place dst points at the slot filled this step');
+    } else {
+      assert.equal(f.dst, -1, f.phase + ' frame has dst -1');
+    }
+  }
+});
+
 test('fastTranspose mirrors C++ FAST_TRANSPOSE triple output', () => {
   const triples = toTriples(M); // M is 3x4
   assert.deepEqual(fastTranspose(triples, 3, 4), [

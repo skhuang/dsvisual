@@ -5512,6 +5512,24 @@ document.addEventListener('DOMContentLoaded', () => {
             placed.forEach((t) => { if (t) T[t.r][t.c] = t.v; });
             return T;
         }
+        function transposedTriplesHtml(placed, dst) {
+            const n = res.triples.length;
+            let idxRow = '', rRow = '', cRow = '', vRow = '';
+            for (let i = 0; i < n; i++) {
+                const t = placed[i];
+                const cur = i === dst ? ' class="sm-cur"' : '';
+                idxRow += '<td class="sm-tvec-idx"' + (i === dst ? ' style="font-weight:700"' : '') + '>' + i + '</td>';
+                rRow += '<td' + cur + '>' + (t ? t.r : '·') + '</td>';
+                cRow += '<td' + cur + '>' + (t ? t.c : '·') + '</td>';
+                vRow += '<td' + cur + '>' + (t ? t.v : '·') + '</td>';
+            }
+            return '<div><div class="sm-grid-title">' + langOf({ zh: '轉置三元組 b[]', en: 'Transposed triples b[]' }) + '</div>' +
+                '<table class="sm-tvec">' +
+                '<tr><th>idx</th>' + idxRow + '</tr>' +
+                '<tr><th>r</th>' + rRow + '</tr>' +
+                '<tr><th>c</th>' + cRow + '</tr>' +
+                '<tr><th>v</th>' + vRow + '</tr></table></div>';
+        }
 
         function paint() {
             const fr = frames[idx];
@@ -5524,7 +5542,10 @@ document.addEventListener('DOMContentLoaded', () => {
             let a = '';
             if (fr.rowSize && fr.rowSize.length) a += '<div class="sm-arr"><span class="sm-arr-label">rowSize</span> ' + fr.rowSize.map((v) => '<span class="sm-acell">' + v + '</span>').join('') + '</div>';
             if (fr.startPos && fr.startPos.length) a += '<div class="sm-arr"><span class="sm-arr-label">startPos</span> ' + fr.startPos.map((v) => '<span class="sm-acell">' + v + '</span>').join('') + '</div>';
-            a += gridHtml(transposedSoFar(fr.placed || []), langOf({ zh: '轉置結果', en: 'Transposed' }));
+            a += '<div class="sm-tout">' +
+                '<div>' + gridHtml(transposedSoFar(fr.placed || []), langOf({ zh: '轉置結果', en: 'Transposed' })) + '</div>' +
+                transposedTriplesHtml(fr.placed || [], (fr.phase === 'place' ? fr.dst : -1)) +
+                '</div>';
             host.querySelector('.sm-arrays').innerHTML = a;
             host.querySelector('.sm-phase').textContent = langOf(fr.msg);
         }

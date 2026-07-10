@@ -2569,6 +2569,12 @@ pre.code-panel-body[class*="language-"] {
 .sm-triple-tbl { border-collapse: collapse; }
 .sm-triple-tbl th, .sm-triple-tbl td { border: 1px solid #cbd5e1; padding: 2px 10px; text-align: center; }
 .sm-triple-tbl tr.sm-cur td { background: #fde68a; font-weight: 700; }
+.sm-tout { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.sm-tvec { border-collapse: collapse; }
+.sm-tvec th, .sm-tvec td { border: 1px solid #cbd5e1; padding: 2px 8px; text-align: center; }
+.sm-tvec th { color: #475569; font-weight: 600; }
+.sm-tvec td.sm-cur { background: #fde68a; font-weight: 700; }
+.sm-tvec-idx { color: #94a3b8; }
 .sm-arrays { margin-top: 10px; }
 .sm-arr { margin: 4px 0; }
 .sm-arr-label { display: inline-block; min-width: 64px; font-weight: 600; color: #475569; }
