@@ -2629,6 +2629,23 @@ pre.code-panel-body[class*="language-"] {
 .dl-link { color: #64748b; font-size: 18px; padding: 0 2px; }
 .dl-wrap { margin-left: 10px; color: #7c3aed; font-weight: 600; }
 .dl-phase { margin-top: 8px; color: #1e40af; font-style: italic; }
+.lru-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.lru-controls .lru-input { flex: 1; min-width: 160px; }
+.lru-cap-label { font-size: 13px; color: #475569; }
+.lru-cap { width: 52px; }
+.lru-stage { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; min-height: 56px; }
+.lru-node { display: inline-flex; flex-direction: column; align-items: center; border: 2px solid #1e40af; border-radius: 6px; background: #fff; padding: 6px 12px; min-width: 34px; transition: border-color 0.2s, box-shadow 0.2s; }
+.lru-node.hit { border-color: #16a34a; box-shadow: 0 0 0 2px #bbf7d0; }
+.lru-node.fresh { border-color: #f59e0b; box-shadow: 0 0 0 2px #fde68a; }
+.lru-key { font-weight: 700; font-size: 16px; }
+.lru-tag { font-size: 10px; letter-spacing: 0.5px; color: #64748b; min-height: 12px; }
+.lru-node.mru .lru-tag { color: #16a34a; }
+.lru-node.lru .lru-tag { color: #dc2626; }
+.lru-link { color: #64748b; font-size: 18px; padding: 0 2px; }
+.lru-evicted { margin-left: 12px; color: #dc2626; font-weight: 600; }
+.lru-empty { color: #94a3b8; font-size: 22px; }
+.lru-stats { margin-top: 10px; color: #475569; font-size: 13px; }
+.lru-phase { margin-top: 4px; color: #1e40af; font-style: italic; }
 .ss-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
 .ss-controls .ss-arr { flex: 1; min-width: 200px; }
 .ss-cells { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0; }
