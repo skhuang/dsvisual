@@ -305,6 +305,7 @@ const METHOD_GROUPS = [
         title: 'nano-LLM',
         methods: [
             { id: 'nano-bpe-encode', title: 'BPE Encode (trie)', file: 'nano-bpe-encode.cpp', visualizer: 'bpeEncode', controls: 'bpeEncode' },
+            { id: 'nano-compute-graph', title: 'Compute Graph (DAG)', file: 'nano-compute-graph.cpp', visualizer: 'computeGraph', controls: 'computeGraph' },
         ],
     },
 ];
@@ -377,6 +378,7 @@ function getCodeForMethod(methodId) {
         'count-min-sketch': codeCountMinSketch,
         'cache-lru': codeLruCache,
         'nano-bpe-encode': codeNanoBpeEncode,
+        'nano-compute-graph': codeNanoComputeGraph,
         'search-linear': codeSearchLinear,
         'search-binary': codeSearchBinary,
         'search-kmp': codeSearchKMP,
@@ -2445,6 +2447,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'nano-bpe-encode.cpp';
             codeDisplay.textContent = codeNanoBpeEncode;
         }
+        else if (currentMode === 'nano-compute-graph') {
+            codeTitle.textContent = 'nano-compute-graph.cpp';
+            codeDisplay.textContent = codeNanoComputeGraph;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-kmp') {
@@ -2690,6 +2696,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'list-doubly') renderListDoubly();
         else if (currentMode === 'cache-lru') renderLruCache();
         else if (currentMode === 'nano-bpe-encode') renderNanoBpeEncode();
+        else if (currentMode === 'nano-compute-graph') renderNanoComputeGraph();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -6008,6 +6015,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const input = host.querySelector('.be-input').value.trim();
             if (vocab.length && input) { st.vocab = vocab; st.input = input; renderNanoBpeEncode(); }
         };
+    }
+
+    let _cgState = null;
+    function renderNanoComputeGraph() {
+        const host = acquireDynamicVizHost();
+        if (!_cgState) _cgState = { preset: 'mul-add' };
+        const presets = {
+            'mul-add': { nodes: [ {id:'a',op:'const',val:2}, {id:'b',op:'const',val:3}, {id:'m',op:'mul'}, {id:'c',op:'const',val:4}, {id:'s',op:'add'} ],
+                         edges: [ ['a','m'],['b','m'],['m','s'],['c','s'] ] },
+        };
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const frames = NanoComputeGraphViz.buildFrames(presets[_cgState.preset]).frames;
+        const nodes = presets[_cgState.preset].nodes;
+        let idx = 0;
+        host.innerHTML =
+            '<div class="cg-nodes" data-testid="cg-nodes"></div>' +
+            '<div class="cg-order" data-testid="cg-order"></div>' +
+            '<div class="ss-phase cg-phase"></div>';
+        function paint() {
+            const fr = frames[idx];
+            host.querySelector('.cg-nodes').innerHTML = nodes.map((n) => {
+                let cls = 'cg-node';
+                if (fr.evaluated.indexOf(n.id) >= 0) cls += ' done';
+                if (n.id === fr.active) cls += ' active';
+                const v = (fr.values[n.id] != null) ? ' = ' + fr.values[n.id] : '';
+                return '<span class="' + cls + '">' + n.id + ':' + n.op + v + '</span>';
+            }).join('');
+            host.querySelector('.cg-order').textContent = 'topo: ' + fr.order.join(' → ');
+            host.querySelector('.cg-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
     }
 
     let _fibState = null;
