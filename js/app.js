@@ -300,6 +300,13 @@ const METHOD_GROUPS = [
             { id: 'pattern-di', title: 'Dependency Injection', file: 'pattern_di.cpp', visualizer: 'pattern', controls: 'pattern' },
         ],
     },
+    {
+        id: 'nano-llm',
+        title: 'nano-LLM',
+        methods: [
+            { id: 'nano-bpe-encode', title: 'BPE Encode (trie)', file: 'nano-bpe-encode.cpp', visualizer: 'bpeEncode', controls: 'bpeEncode' },
+        ],
+    },
 ];
 
 function getMethodGroupById(groupId) {
@@ -369,6 +376,7 @@ function getCodeForMethod(methodId) {
         'skip-list': codeSkipList,
         'count-min-sketch': codeCountMinSketch,
         'cache-lru': codeLruCache,
+        'nano-bpe-encode': codeNanoBpeEncode,
         'search-linear': codeSearchLinear,
         'search-binary': codeSearchBinary,
         'search-kmp': codeSearchKMP,
@@ -2433,6 +2441,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'lru_cache.cpp';
             codeDisplay.textContent = codeLruCache;
         }
+        else if (currentMode === 'nano-bpe-encode') {
+            codeTitle.textContent = 'nano-bpe-encode.cpp';
+            codeDisplay.textContent = codeNanoBpeEncode;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-kmp') {
@@ -2677,6 +2689,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
         else if (currentMode === 'list-doubly') renderListDoubly();
         else if (currentMode === 'cache-lru') renderLruCache();
+        else if (currentMode === 'nano-bpe-encode') renderNanoBpeEncode();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -5954,6 +5967,46 @@ document.addEventListener('DOMContentLoaded', () => {
             st.capacity = cap;
             st.keys = Array.from({ length: len }, () => 1 + Math.floor(Math.random() * 6));
             renderLruCache();
+        };
+    }
+
+    let _bpeEncState = null;
+    function renderNanoBpeEncode() {
+        const host = acquireDynamicVizHost();
+        if (!_bpeEncState) _bpeEncState = { vocab: ['a','b','ab','abc','c'], input: 'aabcabx' };
+        const st = _bpeEncState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const frames = NanoBpeEncodeViz.buildFrames(st.vocab, st.input).frames;
+        let idx = 0;
+        host.innerHTML =
+            '<div class="ss-controls">' +
+              'vocab <input type="text" class="be-vocab" value="' + st.vocab.join(',') + '">' +
+              'input <input type="text" class="be-input" value="' + st.input + '">' +
+              '<button type="button" class="be-apply">Apply</button>' +
+            '</div>' +
+            '<div class="be-input-row" data-testid="be-input"></div>' +
+            '<div class="be-tokens" data-testid="be-tokens"></div>' +
+            '<div class="ss-phase be-phase"></div>';
+        function paint() {
+            const fr = frames[idx];
+            host.querySelector('.be-input-row').innerHTML = st.input.split('').map((ch, i) => {
+                let cls = 'be-ch';
+                if (i >= fr.matchStart && i < fr.matchEnd) cls += ' match';
+                if (i === fr.cursor) cls += ' cursor';
+                return '<span class="' + cls + '">' + ch + '</span>';
+            }).join('');
+            host.querySelector('.be-tokens').innerHTML = fr.tokens.map((t) =>
+                '<span class="be-token">' + t + '</span>').join('');
+            host.querySelector('.be-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+        host.appendChild(buildStepControls(step, reset, 600));
+        paint();
+        host.querySelector('.be-apply').onclick = () => {
+            const vocab = host.querySelector('.be-vocab').value.split(',').map((s) => s.trim()).filter(Boolean);
+            const input = host.querySelector('.be-input').value.trim();
+            if (vocab.length && input) { st.vocab = vocab; st.input = input; renderNanoBpeEncode(); }
         };
     }
 

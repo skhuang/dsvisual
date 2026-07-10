@@ -5718,3 +5718,69 @@ int main() {
 }
 `;
 
+// nano-llm: BpeEncoder — trained vocabulary applied to text via a trie.
+// Greedy LONGEST match at each position runs in time proportional to the
+// match length, not the vocab size (trimmed excerpt of bpe_encoder.hpp).
+const codeNanoBpeEncode = `#include <string>
+#include <vector>
+#include <unordered_map>
+
+class BpeEncoder {
+public:
+    explicit BpeEncoder(const Vocab& vocab) : vocab_(vocab) {
+        nodes_.push_back(TrieNode{});            // index 0 = root
+        for (int id = 0; id < vocab.size(); ++id) insert(vocab.piece(id), id);
+    }
+
+    // Text -> token ids via greedy longest-match walk over the trie.
+    std::vector<int> encode(const std::string& word) const {
+        std::vector<int> out;
+        size_t i = 0;
+        while (i < word.size()) {
+            int    node    = 0;     // walk from root
+            int    bestId  = -1;
+            size_t bestLen = 0;
+            for (size_t j = i; j < word.size(); ++j) {
+                auto it = nodes_[node].children.find(word[j]);
+                if (it == nodes_[node].children.end()) break;
+                node = it->second;
+                if (nodes_[node].id != -1) {      // a piece ends here
+                    bestId  = nodes_[node].id;
+                    bestLen = j - i + 1;
+                }
+            }
+            if (bestId == -1) {                    // fallback: single char
+                bestId  = vocab_.id(std::string(1, word[i]));
+                bestLen = 1;
+            }
+            out.push_back(bestId);
+            i += bestLen;
+        }
+        return out;
+    }
+
+private:
+    struct TrieNode {
+        std::unordered_map<char, int> children;  // char -> child node index
+        int id = -1;                             // vocab id if a piece ends here
+    };
+
+    void insert(const std::string& p, int id) {
+        int node = 0;
+        for (char c : p) {
+            auto it = nodes_[node].children.find(c);
+            if (it == nodes_[node].children.end()) {
+                int idx = static_cast<int>(nodes_.size());
+                nodes_.push_back(TrieNode{});
+                nodes_[node].children[c] = idx;
+                node = idx;
+            } else node = it->second;
+        }
+        nodes_[node].id = id;
+    }
+
+    const Vocab&          vocab_;
+    std::vector<TrieNode> nodes_;       // node pool: trie stored in an array
+};
+`;
+

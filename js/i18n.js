@@ -79,6 +79,7 @@
             'method.skip-list':             'Skip List',
             'method.count-min-sketch':      'Count-Min Sketch',
             'method.cache-lru':             'LRU Cache',
+            'method.nano-bpe-encode':       'BPE Encode (trie)',
 
             // Methods — Heaps
             'method.heap-binary':           'Binary Heap',
@@ -307,6 +308,7 @@
             'method.skip-list':             '跳躍串列',
             'method.count-min-sketch':      'Count-Min Sketch',
             'method.cache-lru':             'LRU 快取',
+            'method.nano-bpe-encode':       'BPE 編碼（trie）',
 
             // Methods — Heaps
             'method.heap-binary':           '二元堆積',

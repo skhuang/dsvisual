@@ -876,4 +876,19 @@ const descDB = {
             <span class="badge space">Space: O(N)</span>
         </div>
     `,
+    'nano-bpe-encode': `
+        <h3>BPE Encode — Trie Longest Match</h3>
+        <p>Tokenize text against a trained vocabulary by walking a character trie and greedily taking the longest matching piece at each position.</p>
+        <hr>
+        <ul>
+            <li><strong>Trie:</strong> every vocab piece is inserted character-by-character; a node marks where a piece terminates.</li>
+            <li><strong>Greedy walk:</strong> from the current position, follow trie edges as far as possible, remembering the last node that terminated a piece.</li>
+            <li><strong>Fallback:</strong> if no piece matches at all, emit the single character as its own token (byte fallback) so unseen input never blocks encoding.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Build: O(Σ|piece|)</span>
+            <span class="badge time">Encode: O(|input| · max piece len)</span>
+            <span class="badge space">Space: O(Σ|piece|)</span>
+        </div>
+    `,
 };
