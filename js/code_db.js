@@ -5725,62 +5725,54 @@ const codeNanoBpeEncode = `#include <string>
 #include <vector>
 #include <unordered_map>
 
+// Vocabulary is a list of pieces; a piece's id is its index.
 class BpeEncoder {
+    struct TrieNode {
+        std::unordered_map<char, int> children;  // char -> child node index
+        int id = -1;                             // vocab id if a piece ends here
+    };
+    std::vector<TrieNode> nodes_;                // trie stored in an array
+
+    void insert(const std::string& p, int id) {
+        int node = 0;
+        for (char c : p) {
+            auto it = nodes_[node].children.find(c);
+            if (it != nodes_[node].children.end()) { node = it->second; continue; }
+            int idx = static_cast<int>(nodes_.size());
+            nodes_.push_back(TrieNode{});
+            nodes_[node].children[c] = idx;
+            node = idx;
+        }
+        nodes_[node].id = id;
+    }
+
 public:
-    explicit BpeEncoder(const Vocab& vocab) : vocab_(vocab) {
+    explicit BpeEncoder(const std::vector<std::string>& vocab) {
         nodes_.push_back(TrieNode{});            // index 0 = root
-        for (int id = 0; id < vocab.size(); ++id) insert(vocab.piece(id), id);
+        for (int id = 0; id < (int)vocab.size(); ++id) insert(vocab[id], id);
     }
 
     // Text -> token ids via greedy longest-match walk over the trie.
     std::vector<int> encode(const std::string& word) const {
         std::vector<int> out;
-        size_t i = 0;
-        while (i < word.size()) {
-            int    node    = 0;     // walk from root
-            int    bestId  = -1;
+        for (size_t i = 0; i < word.size(); ) {
+            int node = 0, bestId = -1;
             size_t bestLen = 0;
             for (size_t j = i; j < word.size(); ++j) {
                 auto it = nodes_[node].children.find(word[j]);
                 if (it == nodes_[node].children.end()) break;
                 node = it->second;
                 if (nodes_[node].id != -1) {      // a piece ends here
-                    bestId  = nodes_[node].id;
+                    bestId = nodes_[node].id;
                     bestLen = j - i + 1;
                 }
             }
-            if (bestId == -1) {                    // fallback: single char
-                bestId  = vocab_.id(std::string(1, word[i]));
-                bestLen = 1;
-            }
-            out.push_back(bestId);
+            if (bestId == -1) bestLen = 1;         // no piece matched: emit UNK (-1)
+            out.push_back(bestId);                 // for one fallback char
             i += bestLen;
         }
         return out;
     }
-
-private:
-    struct TrieNode {
-        std::unordered_map<char, int> children;  // char -> child node index
-        int id = -1;                             // vocab id if a piece ends here
-    };
-
-    void insert(const std::string& p, int id) {
-        int node = 0;
-        for (char c : p) {
-            auto it = nodes_[node].children.find(c);
-            if (it == nodes_[node].children.end()) {
-                int idx = static_cast<int>(nodes_.size());
-                nodes_.push_back(TrieNode{});
-                nodes_[node].children[c] = idx;
-                node = idx;
-            } else node = it->second;
-        }
-        nodes_[node].id = id;
-    }
-
-    const Vocab&          vocab_;
-    std::vector<TrieNode> nodes_;       // node pool: trie stored in an array
 };
 `;
 
