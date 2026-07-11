@@ -83,6 +83,7 @@
             'method.nano-bpe-encode':       'BPE Encode (trie)',
             'method.nano-compute-graph':    'Compute Graph (DAG)',
             'method.nano-bpe-train':        'BPE Train (list+heap)',
+            'method.nano-ngram-next':       'n-gram Sampling (hash)',
 
             // Methods — Heaps
             'method.heap-binary':           'Binary Heap',
@@ -315,6 +316,7 @@
             'method.nano-bpe-encode':       'BPE 編碼（trie）',
             'method.nano-compute-graph':    '計算圖（DAG）',
             'method.nano-bpe-train':        'BPE 訓練（串列+heap）',
+            'method.nano-ngram-next':       'n-gram 取樣（hash）',
 
             // Methods — Heaps
             'method.heap-binary':           '二元堆積',

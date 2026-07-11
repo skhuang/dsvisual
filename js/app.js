@@ -307,6 +307,7 @@ const METHOD_GROUPS = [
             { id: 'nano-bpe-encode', title: 'BPE Encode (trie)', file: 'nano-bpe-encode.cpp', visualizer: 'bpeEncode', controls: 'bpeEncode' },
             { id: 'nano-compute-graph', title: 'Compute Graph (DAG)', file: 'nano-compute-graph.cpp', visualizer: 'computeGraph', controls: 'computeGraph' },
             { id: 'nano-bpe-train', title: 'BPE Train (list+heap)', file: 'nano-bpe-train.cpp', visualizer: 'bpeTrain', controls: 'bpeTrain' },
+            { id: 'nano-ngram-next', title: 'n-gram Sampling (hash)', file: 'nano-ngram-next.cpp', visualizer: 'ngramNext', controls: 'ngramNext' },
         ],
     },
 ];
@@ -381,6 +382,7 @@ function getCodeForMethod(methodId) {
         'nano-bpe-encode': codeNanoBpeEncode,
         'nano-compute-graph': codeNanoComputeGraph,
         'nano-bpe-train': codeNanoBpeTrain,
+        'nano-ngram-next': codeNanoNgramNext,
         'search-linear': codeSearchLinear,
         'search-binary': codeSearchBinary,
         'search-kmp': codeSearchKMP,
@@ -2457,6 +2459,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'nano-bpe-train.cpp';
             codeDisplay.textContent = codeNanoBpeTrain;
         }
+        else if (currentMode === 'nano-ngram-next') {
+            codeTitle.textContent = 'nano-ngram-next.cpp';
+            codeDisplay.textContent = codeNanoNgramNext;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-kmp') {
@@ -2704,6 +2710,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'nano-bpe-encode') renderNanoBpeEncode();
         else if (currentMode === 'nano-compute-graph') renderNanoComputeGraph();
         else if (currentMode === 'nano-bpe-train') renderNanoBpeTrain();
+        else if (currentMode === 'nano-ngram-next') renderNanoNgramNext();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -6091,6 +6098,48 @@ document.addEventListener('DOMContentLoaded', () => {
             const c = host.querySelector('.bt-corpus').value;
             const m = parseInt(host.querySelector('.bt-merges').value, 10);
             if (c && Number.isFinite(m) && m >= 1) { st.corpus = c; st.merges = m; renderNanoBpeTrain(); }
+        };
+    }
+
+    let _ngramState = null;
+    function renderNanoNgramNext() {
+        const host = acquireDynamicVizHost();
+        if (!_ngramState) _ngramState = { cand: 'the:5,a:3,cat:2', r: 0.5 };
+        const st = _ngramState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const cand = st.cand.split(',').map((p) => { const [t, c] = p.split(':'); return [t.trim(), parseInt(c, 10)]; })
+                        .filter(([t, c]) => t && Number.isFinite(c));
+        const frames = NanoNgramNextViz.buildFrames(cand, st.r).frames;
+        let idx = 0;
+        host.innerHTML =
+            '<div class="ss-controls">' +
+              'dist <input type="text" class="ng-cand" value="' + st.cand + '">' +
+              'r <input type="number" step="0.05" min="0" max="0.999" class="ng-r" value="' + st.r + '" style="width:70px">' +
+              '<button type="button" class="ng-apply">Apply</button>' +
+            '</div>' +
+            '<div class="ng-bars" data-testid="ng-bars"></div>' +
+            '<div class="ng-cum" data-testid="ng-cum"></div>' +
+            '<div class="ss-phase ng-phase"></div>';
+        function paint() {
+            const fr = frames[idx];
+            host.querySelector('.ng-bars').innerHTML = fr.candidates.map(([t, c], i) =>
+                '<span class="ng-bar' + (fr.picked === t ? ' picked' : '') + '" style="height:' + (10 + c * 12) + 'px">' + t + ':' + c + '</span>').join('');
+            host.querySelector('.ng-cum').innerHTML = (fr.cumulative || []).map((v, i) => {
+                let cls = 'ng-cell';
+                if (fr.status === 'bsearch' && i >= fr.lo && i <= fr.hi) cls += ' inrange';
+                if (i === fr.mid) cls += ' mid';
+                return '<span class="' + cls + '">' + v + '</span>';
+            }).join('') + (fr.draw ? '<span class="ng-draw">draw=' + fr.draw.toFixed(2) + '</span>' : '');
+            host.querySelector('.ng-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+        host.appendChild(buildStepControls(step, reset, 700));
+        paint();
+        host.querySelector('.ng-apply').onclick = () => {
+            const c = host.querySelector('.ng-cand').value;
+            const r = parseFloat(host.querySelector('.ng-r').value);
+            if (c && Number.isFinite(r) && r >= 0 && r < 1) { st.cand = c; st.r = r; renderNanoNgramNext(); }
         };
     }
 

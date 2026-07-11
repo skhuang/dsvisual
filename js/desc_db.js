@@ -922,4 +922,20 @@ const descDB = {
             <span class="badge space">Space: O(N)</span>
         </div>
     `,
+    'nano-ngram-next': `
+        <h3>n-gram Sampling — Cumulative Distribution + Binary Search</h3>
+        <p>Sample the next token from an n-gram model's successor counts for a fixed context by turning the counts into a cumulative array and binary-searching a random draw into a bucket.</p>
+        <hr>
+        <ul>
+            <li><strong>Context table (hash map):</strong> training tallies, for every (n-1)-token context, how often each token follows it — a hash map from context key to successor counts.</li>
+            <li><strong>Cumulative array:</strong> a prefix sum over the successor counts turns each token's count into a half-open range on <code>[0, total)</code>.</li>
+            <li><strong>Binary search:</strong> draw <code>r</code> in <code>[0,1)</code>, scale to <code>target = r · total</code>, then binary-search for the first bucket whose cumulative count exceeds the target.</li>
+            <li><strong>Determinism:</strong> the same draw always lands in the same bucket, so a fixed <code>r</code> reproduces a fixed sample — useful for testing and for replaying a generation.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Build: O(corpus)</span>
+            <span class="badge time">Sample: O(log k)</span>
+            <span class="badge space">Space: O(k)</span>
+        </div>
+    `,
 };

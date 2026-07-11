@@ -5911,3 +5911,46 @@ private:
 };
 `;
 
+const codeNanoNgramNext = `#include <string>
+#include <vector>
+#include <utility>
+
+// Successor counts for one fixed (n-1)-token context, e.g. one entry of the
+// hash map  unordered_map<string, unordered_map<string,int>>  that NgramModel
+// builds while training (context key -> next-token -> count).
+using Candidate = std::pair<std::string, int>;   // (token, count)
+
+// Prefix sum of counts: cumulative[i] = total count of tokens 0..i.
+std::vector<long> cumulativeCounts(const std::vector<Candidate>& candidates) {
+    std::vector<long> cumulative;
+    cumulative.reserve(candidates.size());
+    long running = 0;
+    for (const auto& kv : candidates) {
+        running += kv.second;
+        cumulative.push_back(running);
+    }
+    return cumulative;
+}
+
+// Sample the next token: draw r in [0,1), scale to target = r * total, then
+// binary search for the first bucket whose cumulative count exceeds target.
+// Rule: pick the smallest index i such that target < cumulative[i].
+std::string sampleNext(const std::vector<Candidate>& candidates, double r) {
+    std::vector<long> cumulative = cumulativeCounts(candidates);
+    long total = cumulative.empty() ? 0 : cumulative.back();
+    double target = r * static_cast<double>(total);
+
+    int lo = 0, hi = static_cast<int>(candidates.size()) - 1, ans = hi;
+    while (lo <= hi) {
+        int mid = (lo + hi) / 2;
+        if (target < static_cast<double>(cumulative[mid])) {
+            ans = mid;          // this bucket qualifies; look for an earlier one
+            hi = mid - 1;
+        } else {
+            lo = mid + 1;       // target lies beyond this bucket
+        }
+    }
+    return candidates[ans].first;
+}
+`;
+
