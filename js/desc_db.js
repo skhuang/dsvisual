@@ -913,7 +913,7 @@ const descDB = {
         <ul>
             <li><strong>Symbol pool (linked list):</strong> each word starts as a chain of single-character symbols; a merge is an O(1) relink, no array shifting.</li>
             <li><strong>Pair counts (hash map):</strong> scan adjacent symbol pairs and tally their frequency across the whole corpus.</li>
-            <li><strong>Heap select:</strong> push every (count, pair) candidate and take the max — the most frequent pair, ties broken lexicographically.</li>
+            <li><strong>Heap select:</strong> push every (count, pair) candidate and take the max — the most frequent pair, with the lexicographically smallest pair winning on ties.</li>
             <li><strong>Merge:</strong> replace every adjacent occurrence of the chosen pair with the combined symbol, then repeat until no pair repeats or the merge budget is spent.</li>
         </ul>
         <div class="complexities">

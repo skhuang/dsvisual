@@ -5844,8 +5844,19 @@ const codeNanoBpeTrain = `#include <string>
 #include <queue>
 #include <utility>
 
+using Cand = std::pair<int, std::string>;   // (count, packed pair key)
+
 struct Symbol { std::string piece; int prev; int next; bool dead; };
 struct Merge  { std::string left, right; };
+
+// Heap order: higher count wins; on a tie the lexicographically SMALLEST
+// key wins, so top() is (max count, min key) and merges are deterministic.
+struct Cmp {
+    bool operator()(const Cand& a, const Cand& b) const {
+        if (a.first != b.first) return a.first < b.first;   // more frequent = higher priority
+        return a.second > b.second;                         // tie: smaller key = higher priority
+    }
+};
 
 class BpeTrainer {
 public:
@@ -5862,10 +5873,8 @@ public:
             }
             if (counts.empty()) break;
 
-            // Max-heap over (count, key): heapify all candidates, take the
-            // top. pair<int,string> orders by count then lexicographically,
-            // so ties break deterministically.
-            std::priority_queue<std::pair<int, std::string>> heap;
+            // Heapify all candidates, take the top (most frequent pair).
+            std::priority_queue<Cand, std::vector<Cand>, Cmp> heap;
             for (const auto& kv : counts) heap.push({kv.second, kv.first});
             const std::string bestKey = heap.top().second;
 
