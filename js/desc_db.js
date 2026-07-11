@@ -984,4 +984,20 @@ const descDB = {
             <span class="badge space">Space: O(1)</span>
         </div>
     `,
+    'magic-symmetry': `
+        <h3>Magic Square — Symmetry (D₄ group operations)</h3>
+        <p>The 8 symmetries of a square — 4 rotations and 4 reflections — form the <strong>dihedral group D₄</strong>. Applying any of them to a magic square is just a <strong>coordinate remap on the 2-D array</strong>, and the magic property (every row/col/diagonal sums to <code>M</code>) is <strong>invariant under the group action</strong>.</p>
+        <hr>
+        <ul>
+            <li><strong>8 forward remaps:</strong> <code>id</code>, <code>r90</code>, <code>r180</code>, <code>r270</code>, <code>flipH</code>, <code>flipV</code>, <code>transpose</code>, <code>antiT</code> — each maps old index <code>(r,c)</code> to a new index, e.g. <code>r90: (r,c) → (c, n−1−r)</code>.</li>
+            <li><strong>Invariant, not coincidence:</strong> permuting which cell holds which value never changes what set of values lies on any row, column, or diagonal collectively taken as a symmetry orbit — so every line still sums to the same magic constant <code>M</code> after the remap.</li>
+            <li><strong>Orbit ≤ 8:</strong> the 8 ops applied to the Siamese square produce at most 8 distinct squares (the orbit under the group action); some squares have smaller orbits if they have extra self-symmetry, but the Siamese square's orbit size is exactly 8 for <code>n = 3, 5, 7</code>.</li>
+            <li><strong>Group sanity:</strong> <code>r90</code> applied 4 times is the identity, <code>transpose</code> applied twice is the identity, and <code>flipH ∘ flipV = r180</code> — the same relations that hold in the abstract dihedral group D₄.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Remap: O(n²)</span>
+            <span class="badge time">Verify magic: O(n²)</span>
+            <span class="badge space">Space: O(n²)</span>
+        </div>
+    `,
 };

@@ -107,6 +107,7 @@
             'method.magic-latin': 'Magic Square — Latin Decomposition',
             'method.magic-torus': 'Magic Square — Toroidal Tiling',
             'method.magic-formula': 'Magic Square — O(1) getValue Formula',
+            'method.magic-symmetry': 'Magic Square — Symmetry (D₄)',
 
             // Methods — Sorting
             'method.sort-bubble':           'Bubble Sort',
@@ -343,6 +344,7 @@
             'method.magic-latin': '魔方陣 — 拉丁方陣分解',
             'method.magic-torus': '魔方陣 — 環面拼貼',
             'method.magic-formula': '魔方陣 — O(1) getValue 公式',
+            'method.magic-symmetry': '魔方陣 — 對稱 (D₄ 群)',
 
             // Methods — Sorting
             'method.sort-bubble':           '氣泡排序',
