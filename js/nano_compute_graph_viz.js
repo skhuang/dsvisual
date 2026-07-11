@@ -1,14 +1,23 @@
 (function (global) {
+  // DFS post-order from the sink node(s), recursing into each node's
+  // predecessors in a fixed (edge-declaration) order and appending a node
+  // to `order` only after all of its predecessors — mirrors the C++ panel's
+  // `visit()` (build_forward): parents first, self last, so deps always
+  // precede dependents.
   function topo(nodes, edges) {
-    const indeg = {}, adj = {};
-    nodes.forEach((n) => { indeg[n.id] = 0; adj[n.id] = []; });
-    edges.forEach(([u, v]) => { adj[u].push(v); indeg[v]++; });
-    const q = nodes.filter((n) => indeg[n.id] === 0).map((n) => n.id).sort();
+    const preds = {}, hasOutgoing = {};
+    nodes.forEach((n) => { preds[n.id] = []; hasOutgoing[n.id] = false; });
+    edges.forEach(([u, v]) => { preds[v].push(u); hasOutgoing[u] = true; });
+    const sinks = nodes.filter((n) => !hasOutgoing[n.id]).map((n) => n.id);
+    const seen = {};
     const order = [];
-    while (q.length) {
-      const u = q.shift(); order.push(u);
-      for (const v of adj[u]) { if (--indeg[v] === 0) { q.push(v); q.sort(); } }
+    function visit(id) {
+      if (seen[id]) return;
+      seen[id] = true;
+      preds[id].forEach(visit);   // parents first
+      order.push(id);             // post-order => topological
     }
+    sinks.forEach(visit);
     return order;
   }
   function buildFrames(graph) {

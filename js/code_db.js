@@ -5732,6 +5732,7 @@ class BpeEncoder {
         int id = -1;                             // vocab id if a piece ends here
     };
     std::vector<TrieNode> nodes_;                // trie stored in an array
+    std::vector<std::string> vocab_;             // id -> piece text (for lookup)
 
     void insert(const std::string& p, int id) {
         int node = 0;
@@ -5747,14 +5748,14 @@ class BpeEncoder {
     }
 
 public:
-    explicit BpeEncoder(const std::vector<std::string>& vocab) {
+    explicit BpeEncoder(const std::vector<std::string>& vocab) : vocab_(vocab) {
         nodes_.push_back(TrieNode{});            // index 0 = root
         for (int id = 0; id < (int)vocab.size(); ++id) insert(vocab[id], id);
     }
 
-    // Text -> token ids via greedy longest-match walk over the trie.
-    std::vector<int> encode(const std::string& word) const {
-        std::vector<int> out;
+    // Text -> tokens via greedy longest-match walk over the trie.
+    std::vector<std::string> encode(const std::string& word) const {
+        std::vector<std::string> out;
         for (size_t i = 0; i < word.size(); ) {
             int node = 0, bestId = -1;
             size_t bestLen = 0;
@@ -5767,8 +5768,14 @@ public:
                     bestLen = j - i + 1;
                 }
             }
-            if (bestId == -1) bestLen = 1;         // no piece matched: emit UNK (-1)
-            out.push_back(bestId);                 // for one fallback char
+            std::string tok;
+            if (bestId != -1) {
+                tok = vocab_[bestId];
+            } else {
+                tok = word.substr(i, 1);           // no piece matched: byte fallback,
+                bestLen = 1;                        // emit the character itself
+            }
+            out.push_back(tok);
             i += bestLen;
         }
         return out;
@@ -5876,6 +5883,7 @@ public:
             // Heapify all candidates, take the top (most frequent pair).
             std::priority_queue<Cand, std::vector<Cand>, Cmp> heap;
             for (const auto& kv : counts) heap.push({kv.second, kv.first});
+            if (heap.top().first < 2) break;   // stop once no pair repeats
             const std::string bestKey = heap.top().second;
 
             std::string L, R;

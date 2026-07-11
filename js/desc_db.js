@@ -896,7 +896,7 @@ const descDB = {
         <p>Model a computation as a DAG of operation nodes, derive a topological order from its edges, then evaluate every node once its inputs are ready.</p>
         <hr>
         <ul>
-            <li><strong>Topological sort:</strong> repeatedly take a node with no un-evaluated dependency (in-degree 0), append it to the order, and decrement its successors' in-degree (Kahn's algorithm).</li>
+            <li><strong>Topological sort:</strong> DFS post-order from the output node — recurse into each node's predecessors first, then append the node itself once its inputs are placed, so parents always land before dependents.</li>
             <li><strong>Forward pass:</strong> walk the nodes in that order; each node's op (const/add/mul) reads already-computed predecessor values.</li>
             <li><strong>DAG guarantee:</strong> because dependencies always precede dependents in the order, every node's inputs are available by the time it is evaluated.</li>
         </ul>
