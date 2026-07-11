@@ -20809,6 +20809,51 @@ SLIDES_DB["magic-square"] = {
       ] }
   ]
 };
+SLIDES_DB["magic-latin"] = {
+  "category": "Arrays",
+  "title": { "zh": "魔方陣 — 拉丁方陣分解", "en": "Magic Square — Latin-Square Decomposition" },
+  "slides": [
+    { "heading": { "zh": "為什麼 Coxeter 規則會成立?", "en": "Why Does Coxeter's Rule Work?" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "沿用 Siamese/Coxeter 規則產生的魔方陣中,每個值都可以拆解成 $v = n \\cdot a + b + 1$,其中 $a, b \\in \\{0, ..., n-1\\}$。", "en": "In a magic square built by the Siamese/Coxeter rule, every value decomposes as $v = n \\cdot a + b + 1$, with $a, b \\in \\{0, ..., n-1\\}$." } },
+        { "type": "math", "tex": "v = n \\cdot a + b + 1,\\quad a = \\left\\lfloor \\frac{v-1}{n} \\right\\rfloor,\\quad b = (v-1) \\bmod n", "caption": { "zh": "$a$ 是「幾組 n」,$b$ 是「餘數」——兩個 base-n 數字位。", "en": "$a$ is \"how many groups of $n$\", $b$ is the remainder — two base-$n$ digit places." } },
+        { "type": "note", "text": { "zh": "$a$、$b$ 這兩個「數字平面」各自都是一個拉丁方陣(Latin square):每列、每欄都恰好是 $0..n-1$ 的一個排列。", "en": "The two \"digit planes\" $a$ and $b$ are each a Latin square: every row and every column is exactly a permutation of $0..n-1$." } }
+      ] },
+    { "heading": { "zh": "兩個拉丁方陣", "en": "Two Latin Squares" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "取得魔方陣 $v$(仍由 Siamese/Coxeter 規則產生,見上一節)。", "en": "Take the magic square of values $v$ (still produced by the Siamese/Coxeter rule from the previous topic)." },
+          { "zh": "對每格計算 $a = \\lfloor (v-1)/n \\rfloor$。", "en": "For every cell compute $a = \\lfloor (v-1)/n \\rfloor$." },
+          { "zh": "對每格計算 $b = (v-1) \\bmod n$。", "en": "For every cell compute $b = (v-1) \\bmod n$." },
+          { "zh": "驗證:$a$、$b$ 兩個平面各自的每一列、每一欄都是 $0..n-1$ 的排列。", "en": "Verify: each of the $a$ and $b$ planes has every row and column equal to a permutation of $0..n-1$." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "magic_latin.cpp", "code": "a[r][c] = (v - 1) / n; b[r][c] = (v - 1) % n;    // digit planes\nassert(v == n * a[r][c] + b[r][c] + 1);          // decomposition identity" }
+      ] },
+    { "heading": { "zh": "為什麼每條線的總和不變?", "en": "Why Every Line Sums to the Same Constant" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "任一列(或欄)的總和是 $\\sum v = n \\cdot (\\sum a) + (\\sum b) + n$。由於該列的 $a$、$b$ 都是 $0..n-1$ 的排列,兩者的總和固定是 $0+1+\\cdots+(n-1) = \\frac{n(n-1)}{2}$。", "en": "The sum of any row (or column) is $\\sum v = n \\cdot (\\sum a) + (\\sum b) + n$. Because that row's $a$ and $b$ are each a permutation of $0..n-1$, both sums are the fixed constant $0+1+\\cdots+(n-1) = \\frac{n(n-1)}{2}$." } },
+        { "type": "math", "tex": "\\sum v = n \\cdot \\frac{n(n-1)}{2} + \\frac{n(n-1)}{2} + n = \\frac{n(n^2+1)}{2} = M", "caption": { "zh": "與魔方陣常數 $M$ 完全吻合——這正是每列/欄/對角線總和相同的原因。", "en": "This matches the magic constant $M$ exactly — the reason every row/column/diagonal has the same sum." } },
+        { "type": "note", "text": { "zh": "兩條對角線同樣滿足這個性質,因此也得到相同的總和。", "en": "Both diagonals satisfy the same property, so they land on the same sum too." } }
+      ] },
+    { "heading": { "zh": "限制與複雜度", "en": "Limits and Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "此分解沿用 Siamese/Coxeter 規則,因此僅適用於奇數階 $n$。", "en": "This decomposition rides on the Siamese/Coxeter rule, so it only applies to odd order $n$." },
+          { "zh": "拆解每格為 $O(1)$,共 $n^2$ 格:時間 $O(n^2)$。", "en": "Splitting each cell is $O(1)$, over $n^2$ cells: time $O(n^2)$." },
+          { "zh": "驗證每列/欄為排列各需 $O(n \\log n)$(排序),$n$ 列 $n$ 欄共 $O(n^2 \\log n)$。", "en": "Verifying each row/column is a permutation costs $O(n \\log n)$ (sorting); over $n$ rows and $n$ columns that is $O(n^2 \\log n)$." },
+          { "zh": "儲存 $a$、$b$ 兩個平面需要 $O(n^2)$ 空間。", "en": "Storing the $a$ and $b$ planes takes $O(n^2)$ space." }
+        ] }
+      ] },
+    { "heading": { "zh": "小結", "en": "Summary" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "魔方陣的「魔法」其實是兩個獨立拉丁方陣疊加的結果:$v = n \\cdot a + b + 1$。", "en": "The magic square's \"magic\" is really two independent Latin squares layered together: $v = n \\cdot a + b + 1$." },
+          { "zh": "只要每個數字平面在每列/欄都恰好走遍 $0..n-1$,線總和就必然固定。", "en": "As long as each digit plane hits every value $0..n-1$ exactly once per row/column, the line sum is guaranteed constant." },
+          { "zh": "這個觀點解釋了 Coxeter/Siamese 規則背後「為什麼可行」,而不只是「如何操作」。", "en": "This view explains *why* the Coxeter/Siamese rule works, not just *how* to carry it out." }
+        ] }
+      ] }
+  ]
+};
 SLIDES_DB["maze-stack"] = {
   "category": "Linear Structures",
   "title": { "zh": "迷宮回溯(堆疊)", "en": "Maze Backtracking (Stack)" },

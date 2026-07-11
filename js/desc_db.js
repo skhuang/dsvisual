@@ -938,4 +938,19 @@ const descDB = {
             <span class="badge space">Space: O(k)</span>
         </div>
     `,
+    'magic-latin': `
+        <h3>Magic Square — Latin-Square Decomposition</h3>
+        <p>Explains <em>why</em> the Coxeter/Siamese odd-order magic square works: every value <code>v = n·a + b + 1</code>, and the two digit planes <code>a = ⌊(v−1)/n⌋</code> and <code>b = (v−1) mod n</code> are each a <strong>Latin square</strong> — every row and column is a permutation of <code>0..n−1</code>.</p>
+        <hr>
+        <ul>
+            <li><strong>Split:</strong> decompose each cell's value into its <code>a</code> (tens) and <code>b</code> (units) digit, base <code>n</code>.</li>
+            <li><strong>Latin property:</strong> because <code>a</code> and <code>b</code> are each a permutation of <code>0..n−1</code> along every row/column, their sums are always the constant <code>0+1+...+(n−1) = n(n−1)/2</code>.</li>
+            <li><strong>Verify:</strong> a row/col/diagonal sum is <code>n·(a-sum) + (b-sum) + n</code>, which collapses to the same magic constant for every line, since the a-sum and b-sum are fixed by the Latin property.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Build square: O(n²)</span>
+            <span class="badge time">Decompose + verify: O(n²)</span>
+            <span class="badge space">Space: O(n²)</span>
+        </div>
+    `,
 };
