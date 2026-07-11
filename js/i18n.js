@@ -106,6 +106,7 @@
             'method.magic-square': "Magic Square (Coxeter's Rule)",
             'method.magic-latin': 'Magic Square — Latin Decomposition',
             'method.magic-torus': 'Magic Square — Toroidal Tiling',
+            'method.magic-formula': 'Magic Square — O(1) getValue Formula',
 
             // Methods — Sorting
             'method.sort-bubble':           'Bubble Sort',
@@ -341,6 +342,7 @@
             'method.magic-square': '魔方陣(Coxeter 規則)',
             'method.magic-latin': '魔方陣 — 拉丁方陣分解',
             'method.magic-torus': '魔方陣 — 環面拼貼',
+            'method.magic-formula': '魔方陣 — O(1) getValue 公式',
 
             // Methods — Sorting
             'method.sort-bubble':           '氣泡排序',

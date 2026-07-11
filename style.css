@@ -2648,6 +2648,17 @@ pre.code-panel-body[class*="language-"] {
 .mt-current-ghost { stroke: #16a34a; opacity: 0.55; }
 .mt-phase { text-align: center; }
 .mt-readout { color: var(--text-muted); font-family: 'Fira Code', 'Courier New', monospace; font-size: 12px; line-height: 1.55; text-align: center; }
+.mf-wrap { width: 100%; display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+.mf-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; color: var(--text-muted); font-weight: 800; font-size: 13px; }
+.mf-controls select { margin-left: 6px; padding: 6px 10px; border: 1px solid var(--card-border); border-radius: var(--app-radius-sm); background: var(--card-bg); color: var(--text-main); font: inherit; font-weight: 800; }
+.mf-grid { display: grid; grid-template-columns: repeat(var(--mf-n), minmax(24px, 1fr)); width: min(420px, 100%); margin: 0 auto; aspect-ratio: 1; border: 2px solid #1d4ed8; border-radius: var(--app-radius-md); overflow: hidden; background: #dbeafe; box-shadow: var(--app-shadow-sm); }
+.mf-cell { display: flex; align-items: center; justify-content: center; border: 1px solid #bfdbfe; background: #ffffff; color: var(--text-main); font-family: 'Fira Code', 'Courier New', monospace; font-size: clamp(0.7rem, 2.2vw, 1rem); font-weight: 900; min-width: 0; cursor: pointer; }
+.mf-cell.blank { background: #f1f5f9; color: var(--text-muted); }
+.mf-cell.current { outline: 3px solid #16a34a; outline-offset: -3px; z-index: 1; }
+.mf-phase { text-align: center; }
+.mf-expr { text-align: center; font-family: 'Fira Code', 'Courier New', monospace; font-weight: 700; color: var(--text-main); }
+.mf-readout { color: var(--text-muted); font-family: 'Fira Code', 'Courier New', monospace; font-size: 12px; line-height: 1.55; text-align: center; }
+.mf-callout { padding: 8px 12px; border: 1px solid var(--card-border); border-radius: var(--app-radius-sm); background: var(--surface-muted); color: var(--text-main); font-size: 12px; line-height: 1.6; text-align: center; }
 .mz-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
 .mz-controls .mz-input { flex: 1; min-width: 220px; }
 .mz-cols { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }

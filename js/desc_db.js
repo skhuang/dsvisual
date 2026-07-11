@@ -969,4 +969,19 @@ const descDB = {
             <span class="badge space">Space: O(n²)</span>
         </div>
     `,
+    'magic-formula': `
+        <h3>Magic Square — O(1) getValue Formula</h3>
+        <p>Turns the array-based Siamese/Coxeter magic square into a <strong>closed-form, O(1) computed property</strong>: any cell <code>(i,j)</code>'s value can be produced directly, with no <code>n×n</code> array stored at all — the same "perfect hash / computed field vs. stored table" trade-off as a computed getter replacing a cached column.</p>
+        <hr>
+        <ul>
+            <li><strong>The two digit planes are linear:</strong> <code>a = (i − j + (n−1)/2) mod n</code> and <code>b = (i − 2j + (n−1)) mod n</code> — the very same <code>a</code>, <code>b</code> planes from <code>magic-latin</code>, but expressed directly in <code>(i,j)</code> instead of read out of a built square.</li>
+            <li><strong>Recompose:</strong> <code>value(i,j) = n·a + b + 1</code>, exactly the Latin decomposition identity.</li>
+            <li><strong>Any cell, any order:</strong> because each call only needs <code>n</code>, <code>i</code>, <code>j</code>, cells can be queried in any order, repeatedly, without ever building or storing the square.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Per-cell query: O(1)</span>
+            <span class="badge time">Fill all n² cells: O(n²)</span>
+            <span class="badge space">Space: O(1)</span>
+        </div>
+    `,
 };

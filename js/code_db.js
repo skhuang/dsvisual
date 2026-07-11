@@ -5353,6 +5353,39 @@ int main() {
 }
 `;
 
+const codeMagicFormula = `// Closed-form O(1) getValue: no n x n array is ever stored or needed.
+// The Siamese/Coxeter magic square decomposes as v = n*a + b + 1 (see
+// magic_latin.cpp); the two digit planes a, b turn out to be LINEAR in
+// (i, j) mod n, so any single cell can be computed directly:
+//   a = (i - j + (n-1)/2) mod n
+//   b = (i - 2*j + (n-1)) mod n
+#include <iostream>
+using namespace std;
+
+int mod(int x, int m) { return ((x % m) + m) % m; }  // guard negative remainders
+
+int getValue(int n, int i, int j) {
+    int a = mod(i - j + (n - 1) / 2, n);
+    int b = mod(i - 2 * j + (n - 1), n);
+    return n * a + b + 1;
+}
+
+int main() {
+    int n = 5;  // n must be odd.
+
+    // Fill the whole square by calling getValue independently per cell —
+    // no n x n array is stored; each call is O(1) time, O(1) extra space.
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) cout << getValue(n, i, j) << '\\t';
+        cout << '\\n';
+    }
+
+    // Query one arbitrary cell directly — O(1), independent of every other cell.
+    int qi = 2, qj = 3;
+    cout << "value(" << qi << "," << qj << ") = " << getValue(n, qi, qj) << '\\n';
+}
+`;
+
 const codeMazeStack = `#include <vector>
 #include <stack>
 #include <string>
