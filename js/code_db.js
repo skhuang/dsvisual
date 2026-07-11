@@ -5776,20 +5776,18 @@ public:
 };
 `;
 
-// nano-llm: ComputeGraph — a DAG of tensor ops executed in topological order.
+// nano-llm: ComputeGraph — a DAG of scalar ops executed in topological order.
 // build_forward() does a DFS post-order walk from the output node, deduping
 // shared nodes with a visited set, so the result is topologically sorted;
-// compute() then evaluates every node in that order (trimmed excerpt of
-// graph.hpp).
-const codeNanoComputeGraph = `enum class Op { Input, MatMul, Add, Mul, ReLU };
+// compute() then evaluates every node in that order. (Simplified from the
+// tensor version in graph.hpp to scalars so the mechanism stands alone.)
+const codeNanoComputeGraph = `#include <vector>
+
+enum class Op { Const, Add, Mul };
 
 class ComputeGraph {
 public:
-    int input(const Tensor& t) {
-        nodes_.push_back(GNode{Op::Input, -1, -1, t});
-        return static_cast<int>(nodes_.size()) - 1;
-    }
-    int matmul(int a, int b) { return addNode(Op::MatMul, a, b); }
+    int constant(double v)   { return addNode(Op::Const, -1, -1, v); }
     int add(int a, int b)    { return addNode(Op::Add, a, b); }
     int mul(int a, int b)    { return addNode(Op::Mul, a, b); }
 
@@ -5804,26 +5802,27 @@ public:
         for (int id : order_) {
             GNode& n = nodes_[id];
             switch (n.op) {
-                case Op::Input:  break;
-                case Op::MatMul: n.value = matmul_op(nodes_[n.src0].value, nodes_[n.src1].value); break;
-                case Op::Add:    n.value = elementwise(nodes_[n.src0].value, nodes_[n.src1].value, true);  break;
-                case Op::Mul:    n.value = elementwise(nodes_[n.src0].value, nodes_[n.src1].value, false); break;
+                case Op::Const: break;                                    // value preset
+                case Op::Add:   n.value = nodes_[n.src0].value + nodes_[n.src1].value; break;
+                case Op::Mul:   n.value = nodes_[n.src0].value * nodes_[n.src1].value; break;
             }
         }
     }
 
+    double value(int node) const { return nodes_[node].value; }
+
 private:
-    struct GNode { Op op; int src0; int src1; Tensor value; };
+    struct GNode { Op op; int src0; int src1; double value; };
     std::vector<GNode> nodes_;
     std::vector<int>   order_;
 
-    int addNode(Op op, int a, int b) {
-        nodes_.push_back(GNode{op, a, b, Tensor{}});
+    int addNode(Op op, int a, int b, double v = 0.0) {
+        nodes_.push_back(GNode{op, a, b, v});
         return static_cast<int>(nodes_.size()) - 1;
     }
 
     void visit(int node, std::vector<char>& seen) {
-        if (seen[node]) return;                    // dedup shared nodes
+        if (seen[node]) return;                     // dedup shared nodes
         seen[node] = 1;
         const GNode& n = nodes_[node];
         if (n.src0 >= 0) visit(n.src0, seen);       // parents first
