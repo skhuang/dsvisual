@@ -953,4 +953,20 @@ const descDB = {
             <span class="badge space">Space: O(n²)</span>
         </div>
     `,
+    'magic-torus': `
+        <h3>Magic Square — Toroidal Tiling</h3>
+        <p>Reveals the <strong>toroidal topology</strong> hiding inside the Siamese/Coxeter construction: the modular wrap (<code>(row&minus;1+n)%n</code>, <code>(col&minus;1+n)%n</code>) is exactly the adjacency of a <strong>torus</strong>, not a plane with special-cased edges.</p>
+        <hr>
+        <ul>
+            <li><strong>Tiling:</strong> lay 9 copies of the board on a 3n×3n plane; the center tile is the real board and the 8 surrounding tiles are its torus-neighbors.</li>
+            <li><strong>Hamiltonian path:</strong> the fill order visits every one of the n² cells exactly once — a Hamiltonian path on the torus.</li>
+            <li><strong>Step / break vectors:</strong> an up-left move is the step vector <code>(&minus;1,&minus;1)</code>; when the target is already filled, the walk instead takes the break vector <code>(+1,0)</code>.</li>
+            <li><strong>Broken diagonals → straight lines:</strong> on the plain board each run is a "broken diagonal" that wraps around the edges; on the tiled plane the same run is simply one straight diagonal crossing a tile border — the wrap-around is an illusion of drawing the torus flat.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Build square: O(n²)</span>
+            <span class="badge time">Path / tiling render: O(n²)</span>
+            <span class="badge space">Space: O(n²)</span>
+        </div>
+    `,
 };

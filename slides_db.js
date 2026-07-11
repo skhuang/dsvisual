@@ -20854,6 +20854,39 @@ SLIDES_DB["magic-latin"] = {
       ] }
   ]
 };
+SLIDES_DB["magic-torus"] = {
+  "category": "Arrays",
+  "title": { "zh": "魔方陣 — 環面拼貼", "en": "Magic Square — Toroidal Tiling" },
+  "slides": [
+    { "heading": { "zh": "方陣其實是一個環面", "en": "The Board Is Actually a Torus" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Siamese/Coxeter 規則裡的 <code>(row&minus;1+n)%n</code>、<code>(col&minus;1+n)%n</code> 不是「邊界特例判斷」,而是在宣告:方陣的左右邊互相相連、上下邊也互相相連——這正是一個環面(torus)的鄰接關係。", "en": "The <code>(row&minus;1+n)%n</code> / <code>(col&minus;1+n)%n</code> wraps in the Siamese/Coxeter rule aren't a special-cased edge check — they declare that the board's left/right edges are glued together, and so are its top/bottom edges. That adjacency is exactly a torus." } },
+        { "type": "note", "text": { "zh": "和一維的環狀佇列(circular queue)用 <code>(i+1)%capacity</code> 把陣列頭尾接起來是同一個想法,只是這裡把它做成二維:每一個維度各自「首尾相接」一次。", "en": "It's the same idea as a 1-D circular queue using <code>(i+1)%capacity</code> to glue the front and back of an array — just applied in two dimensions, one wrap per axis." } }
+      ] },
+    { "heading": { "zh": "Step 與 Break 向量", "en": "Step and Break Vectors" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "預設走「左上」一步:在環面座標上這是位移向量 $(-1,-1)$。", "en": "The default move is one step up-left: on torus coordinates that's the displacement vector $(-1,-1)$." },
+          { "zh": "若目標格已被填過,改成「往下」一步:位移向量 $(+1,0)$,稱為 break。", "en": "If the target cell is already filled, take one step down instead: displacement vector $(+1,0)$ — a \"break\"." },
+          { "zh": "兩個向量都先計算、再用 <code>%n</code> 包回環面,所以永遠落在方陣內。", "en": "Both vectors are computed first and then wrapped with <code>%n</code> back onto the torus, so the result always lands back inside the board." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "magic_torus.cpp", "code": "int up = (row - 1 + n) % n;    // step vector (-1, -1), wrapped mod n\nint left = (col - 1 + n) % n;\nif (sq[up][left] != 0) row = (row + 1) % n;   // break vector (+1, 0)\nelse { row = up; col = left; }                // run continues" }
+      ] },
+    { "heading": { "zh": "拼貼環面:斷裂對角線變直線", "en": "Tiling the Torus: Broken Diagonals Become Straight" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "把方陣的 9 份拷貝拼成 3n×3n 的平面(中央那份是真正的方陣,其餘 8 份是環面上的鄰接副本)。在原本的方陣上,一次連續的左上移動一旦碰到邊界就要「繞回」,形成一條斷裂對角線;但攤平在拼貼平面上,同一段移動只是單純地跨過拼貼邊界,變成一條真正筆直的斜線。", "en": "Tile 9 copies of the board into a 3n×3n plane (the center copy is the real board; the other 8 are its torus-adjacent neighbors). On the plain board, a run of up-left moves that hits an edge has to \"wrap around\", producing a broken diagonal. Flattened onto the tiled plane, the very same run just crosses a tile border — it becomes one genuinely straight diagonal line." } },
+        { "type": "note", "text": { "zh": "填數順序恰好走訪每個格子一次,是環面上的一條漢彌爾頓路徑(Hamiltonian path);每次 break 就是路徑上重新起頭、開始下一條斜線。", "en": "The fill order visits every cell exactly once — a Hamiltonian path on the torus. Every break simply re-anchors the walk and starts the next straight diagonal." } }
+      ] },
+    { "heading": { "zh": "限制與複雜度", "en": "Limits and Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "沿用 Siamese/Coxeter 規則,僅適用於奇數階 $n$。", "en": "This rides on the Siamese/Coxeter construction, so it only applies to odd order $n$." },
+          { "zh": "建立方陣為 $O(n^2)$;拼貼渲染同樣是 $O(n^2)$(9 份拷貝,每份 $O(n^2/9)$格)。", "en": "Building the square is $O(n^2)$; rendering the 3×3 tiling is likewise $O(n^2)$ (9 copies, each $O(n^2/9)$ cells)." },
+          { "zh": "恰有 $n$ 條直斜線(run)與 $n-1$ 次 break 跳躍。", "en": "There are exactly $n$ straight diagonals (runs) and $n-1$ break jumps." }
+        ] }
+      ] }
+  ]
+};
 SLIDES_DB["maze-stack"] = {
   "category": "Linear Structures",
   "title": { "zh": "迷宮回溯(堆疊)", "en": "Maze Backtracking (Stack)" },
