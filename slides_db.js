@@ -20887,6 +20887,50 @@ SLIDES_DB["magic-torus"] = {
       ] }
   ]
 };
+SLIDES_DB["magic-formula"] = {
+  "category": "Arrays",
+  "title": { "zh": "魔方陣 — O(1) getValue 公式", "en": "Magic Square — O(1) getValue Formula" },
+  "slides": [
+    { "heading": { "zh": "從陣列到公式:一個計算欄位", "en": "From Array to Formula: A Computed Field" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "前面兩節都先建出整個 $n \\times n$ 方陣,再從裡面讀值。這一節換個角度:能不能完全不建方陣,單靠 $(i,j)$ 直接算出那一格的值?", "en": "The previous two topics both build the whole $n \\times n$ square first, then read a value out of it. This topic asks a different question: can we skip building the square entirely, and compute a cell's value directly from $(i,j)$?" } },
+        { "type": "note", "text": { "zh": "這正是「計算欄位(computed property)取代已儲存表格」的經典取捨——就像用完美雜湊(perfect hash)取代查表,或用 getter 函式取代快取欄位。", "en": "This is the classic \"computed property replaces a stored table\" trade-off — the same idea as a perfect hash replacing a lookup table, or a getter function replacing a cached column." } }
+      ] },
+    { "heading": { "zh": "兩個數字平面其實是線性的", "en": "The Two Digit Planes Are Linear" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "上一節看到 $a = \\lfloor (v-1)/n \\rfloor$、$b = (v-1) \\bmod n$ 兩個平面各自是拉丁方陣。把 Siamese/Coxeter 的填數規則展開,可以證明 $a$、$b$ 其實是 $(i,j)$ 的線性函數(取 mod $n$)。", "en": "The previous topic showed that $a = \\lfloor (v-1)/n \\rfloor$ and $b = (v-1) \\bmod n$ are each a Latin square. Expanding the Siamese/Coxeter fill rule shows that $a$ and $b$ are in fact linear functions of $(i,j)$, taken mod $n$." } },
+        { "type": "math", "tex": "a = \\left(i - j + \\frac{n-1}{2}\\right) \\bmod n, \\qquad b = \\big(i - 2j + (n-1)\\big) \\bmod n", "caption": { "zh": "兩個係數 $(n-1)/2$、$n-1$ 只跟 $n$ 有關,對每一格都相同。", "en": "The two constants $(n-1)/2$ and $n-1$ depend only on $n$ — they are the same for every cell." } },
+        { "type": "note", "text": { "zh": "C++ 的 <code>%</code> 對負數可能傳回負值,所以要用 <code>((x % m) + m) % m</code> 保護一下,確保 mod 結果落在 $0..n-1$。", "en": "C++'s <code>%</code> can return a negative result for negative operands, so guard it with <code>((x % m) + m) % m</code> to keep the result in $0..n-1$." } }
+      ] },
+    { "heading": { "zh": "重組回值:O(1) 公式", "en": "Recomposing the Value: The O(1) Formula" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "算 $a = (i-j+(n-1)/2) \\bmod n$。", "en": "Compute $a = (i-j+(n-1)/2) \\bmod n$." },
+          { "zh": "算 $b = (i-2j+(n-1)) \\bmod n$。", "en": "Compute $b = (i-2j+(n-1)) \\bmod n$." },
+          { "zh": "套用分解恆等式 $value = n \\cdot a + b + 1$。", "en": "Apply the decomposition identity $value = n \\cdot a + b + 1$." },
+          { "zh": "全程沒有讀寫任何 $n \\times n$ 陣列。", "en": "At no point is an $n \\times n$ array read or written." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "magic_formula.cpp", "code": "int getValue(int n, int i, int j) {\n    int a = mod(i - j + (n - 1) / 2, n);\n    int b = mod(i - 2 * j + (n - 1), n);\n    return n * a + b + 1;\n}" }
+      ] },
+    { "heading": { "zh": "公式 vs. 已儲存的表格", "en": "Formula vs. Stored Table" },
+      "blocks": [
+        { "type": "table", "headers": [ { "zh": "作法", "en": "Approach" }, { "zh": "查一格", "en": "Query one cell" }, { "zh": "額外空間", "en": "Extra space" }, { "zh": "填滿全部", "en": "Fill all cells" } ],
+          "rows": [
+            [ { "zh": "循序建表(Siamese)", "en": "Sequential build (Siamese)" }, { "zh": "需先建完整表,$O(n^2)$", "en": "Needs the whole table built first, $O(n^2)$" }, { "zh": "$O(n^2)$(整個方陣 + 已訪記錄)", "en": "$O(n^2)$ (the whole square + visited bookkeeping)" }, { "zh": "$O(n^2)$", "en": "$O(n^2)$" } ],
+            [ { "zh": "本節公式", "en": "This formula" }, { "zh": "$O(1)$,任意順序、可重複查詢", "en": "$O(1)$, any order, repeatable" }, { "zh": "$O(1)$", "en": "$O(1)$" }, { "zh": "$O(n^2)$(逐格各自 $O(1)$)", "en": "$O(n^2)$ (each cell independently $O(1)$)" } ]
+          ] },
+        { "type": "note", "text": { "zh": "這對應「空間複雜度優化」的常見手法:當一個值可以由少數參數即時算出時,不需要把它整個快取/儲存下來。", "en": "This mirrors a common space-optimization technique: when a value can be computed on the fly from a handful of parameters, there's no need to cache or store it in full." } }
+      ] },
+    { "heading": { "zh": "小結:與拉丁分解的關係", "en": "Summary: Tying Back to the Latin Decomposition" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "這裡的 $a$、$b$ 正是 <code>magic-latin</code> 那兩個拉丁方陣平面,只是這次直接用 $(i,j)$ 算,不必先建出方陣再讀出來。", "en": "The $a$ and $b$ here are exactly the two Latin-square planes from <code>magic-latin</code> — just computed straight from $(i,j)$ instead of read out of a pre-built square." },
+          { "zh": "因為 $a$、$b$ 是線性且各自是拉丁方陣,每列/欄/對角線總和固定的性質依然成立。", "en": "Because $a$ and $b$ are linear and each forms a Latin square, the same fixed-line-sum property still holds." },
+          { "zh": "「已建表可查」與「隨算隨查、不建表」是同一個問題的兩種答案:選哪一種,取決於你要重複查很多次(建表划算)還是只查少數幾格(公式划算)。", "en": "\"Build the table, then look it up\" and \"compute on demand, never store it\" are two answers to the same question — which one wins depends on whether you'll query many cells repeatedly (favoring the table) or just a few (favoring the formula)." }
+        ] }
+      ] }
+  ]
+};
 SLIDES_DB["maze-stack"] = {
   "category": "Linear Structures",
   "title": { "zh": "迷宮回溯(堆疊)", "en": "Maze Backtracking (Stack)" },
