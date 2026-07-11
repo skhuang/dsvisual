@@ -2624,6 +2624,30 @@ pre.code-panel-body[class*="language-"] {
 .ml-cell.ml-hidden { background: #f1f5f9; color: var(--text-muted); }
 .ml-phase { text-align: center; }
 .ml-readout { color: var(--text-muted); font-family: 'Fira Code', 'Courier New', monospace; font-size: 12px; line-height: 1.55; text-align: center; }
+.mt-wrap { width: 100%; display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+.mt-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; color: var(--text-muted); font-weight: 800; font-size: 13px; }
+.mt-controls select { margin-left: 6px; padding: 6px 10px; border: 1px solid var(--card-border); border-radius: var(--app-radius-sm); background: var(--card-bg); color: var(--text-main); font: inherit; font-weight: 800; }
+.mt-ghost-toggle { display: flex; align-items: center; gap: 4px; font-weight: 700; }
+.mt-runs { padding: 6px 10px; border: 1px solid var(--card-border); border-radius: var(--app-radius-sm); background: var(--surface-muted); color: var(--text-main); }
+.mt-legend { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; font-size: 12px; color: var(--text-muted); font-weight: 700; }
+.mt-legend-run { color: #16a34a; }
+.mt-legend-break { color: #ea580c; }
+.mt-plane-wrap { width: 100%; display: flex; justify-content: center; }
+.mt-plane { width: min(560px, 100%); aspect-ratio: 1; background: var(--surface-muted); border-radius: var(--app-radius-md); box-shadow: var(--app-shadow-sm); }
+.mt-tile-border { fill: none; stroke: #1d4ed8; stroke-width: 3; }
+.mt-tile-ghost { opacity: 0.35; }
+.mt-tile-ghost .mt-tile-border { stroke: #94a3b8; }
+.mt-cell { fill: #ffffff; stroke: #bfdbfe; stroke-width: 1; }
+.mt-tile-ghost .mt-cell { fill: #f1f5f9; }
+.mt-num { text-anchor: middle; dominant-baseline: central; font-family: 'Fira Code', 'Courier New', monospace; font-weight: 900; fill: var(--text-main); font-size: 10px; }
+.mt-path-seg { stroke-width: 2.5; fill: none; }
+.mt-seg-run { stroke: #16a34a; }
+.mt-seg-break { stroke: #ea580c; stroke-dasharray: 5 4; }
+.mt-current { fill: none; stroke-width: 3; }
+.mt-current-center { stroke: #16a34a; }
+.mt-current-ghost { stroke: #16a34a; opacity: 0.55; }
+.mt-phase { text-align: center; }
+.mt-readout { color: var(--text-muted); font-family: 'Fira Code', 'Courier New', monospace; font-size: 12px; line-height: 1.55; text-align: center; }
 .mz-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
 .mz-controls .mz-input { flex: 1; min-width: 220px; }
 .mz-cols { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }

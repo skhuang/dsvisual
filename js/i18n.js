@@ -105,6 +105,7 @@
             'method.poly-padd': 'Polynomial Addition',
             'method.magic-square': "Magic Square (Coxeter's Rule)",
             'method.magic-latin': 'Magic Square — Latin Decomposition',
+            'method.magic-torus': 'Magic Square — Toroidal Tiling',
 
             // Methods — Sorting
             'method.sort-bubble':           'Bubble Sort',
@@ -339,6 +340,7 @@
             'method.poly-padd': '多項式相加',
             'method.magic-square': '魔方陣(Coxeter 規則)',
             'method.magic-latin': '魔方陣 — 拉丁方陣分解',
+            'method.magic-torus': '魔方陣 — 環面拼貼',
 
             // Methods — Sorting
             'method.sort-bubble':           '氣泡排序',
