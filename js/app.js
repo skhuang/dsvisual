@@ -306,6 +306,7 @@ const METHOD_GROUPS = [
         methods: [
             { id: 'nano-bpe-encode', title: 'BPE Encode (trie)', file: 'nano-bpe-encode.cpp', visualizer: 'bpeEncode', controls: 'bpeEncode' },
             { id: 'nano-compute-graph', title: 'Compute Graph (DAG)', file: 'nano-compute-graph.cpp', visualizer: 'computeGraph', controls: 'computeGraph' },
+            { id: 'nano-bpe-train', title: 'BPE Train (list+heap)', file: 'nano-bpe-train.cpp', visualizer: 'bpeTrain', controls: 'bpeTrain' },
         ],
     },
 ];
@@ -379,6 +380,7 @@ function getCodeForMethod(methodId) {
         'cache-lru': codeLruCache,
         'nano-bpe-encode': codeNanoBpeEncode,
         'nano-compute-graph': codeNanoComputeGraph,
+        'nano-bpe-train': codeNanoBpeTrain,
         'search-linear': codeSearchLinear,
         'search-binary': codeSearchBinary,
         'search-kmp': codeSearchKMP,
@@ -2451,6 +2453,10 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'nano-compute-graph.cpp';
             codeDisplay.textContent = codeNanoComputeGraph;
         }
+        else if (currentMode === 'nano-bpe-train') {
+            codeTitle.textContent = 'nano-bpe-train.cpp';
+            codeDisplay.textContent = codeNanoBpeTrain;
+        }
         else if (currentMode === 'search-linear') { codeTitle.textContent = 'search_linear.cpp'; codeDisplay.textContent = codeSearchLinear; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-binary') { codeTitle.textContent = 'search_binary.cpp'; codeDisplay.textContent = codeSearchBinary; searchContainer.classList.remove('hidden'); searchActions.classList.remove('hidden'); }
         else if (currentMode === 'search-kmp') {
@@ -2697,6 +2703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'cache-lru') renderLruCache();
         else if (currentMode === 'nano-bpe-encode') renderNanoBpeEncode();
         else if (currentMode === 'nano-compute-graph') renderNanoComputeGraph();
+        else if (currentMode === 'nano-bpe-train') renderNanoBpeTrain();
         else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
@@ -6049,6 +6056,42 @@ document.addEventListener('DOMContentLoaded', () => {
         function reset() { idx = 0; paint(); }
         host.appendChild(buildStepControls(step, reset, 700));
         paint();
+    }
+
+    let _bpeTrainState = null;
+    function renderNanoBpeTrain() {
+        const host = acquireDynamicVizHost();
+        if (!_bpeTrainState) _bpeTrainState = { corpus: 'a,b,a,b,a,b,c', merges: 3 };
+        const st = _bpeTrainState;
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
+        const corpus = st.corpus.split(',').map((s) => s.trim()).filter(Boolean);
+        const frames = NanoBpeTrainViz.buildFrames(corpus, st.merges).frames;
+        let idx = 0;
+        host.innerHTML =
+            '<div class="ss-controls">' +
+              'corpus <input type="text" class="bt-corpus" value="' + st.corpus + '">' +
+              'merges <input type="number" class="bt-merges" min="1" max="10" value="' + st.merges + '" style="width:56px">' +
+              '<button type="button" class="bt-apply">Apply</button>' +
+            '</div>' +
+            '<div class="bt-symbols" data-testid="bt-symbols"></div>' +
+            '<div class="bt-pairs" data-testid="bt-pairs"></div>' +
+            '<div class="ss-phase bt-phase"></div>';
+        function paint() {
+            const fr = frames[idx];
+            host.querySelector('.bt-symbols').innerHTML = fr.symbols.map((s) => '<span class="bt-sym">' + s + '</span>').join('');
+            host.querySelector('.bt-pairs').innerHTML = (fr.pairCounts || []).slice(0, 8).map(([p, c]) =>
+                '<span class="bt-pair' + (p === fr.top ? ' top' : '') + '">' + p + ' ×' + c + '</span>').join('');
+            host.querySelector('.bt-phase').textContent = langOf(fr.msg);
+        }
+        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
+        function reset() { idx = 0; paint(); }
+        host.appendChild(buildStepControls(step, reset, 800));
+        paint();
+        host.querySelector('.bt-apply').onclick = () => {
+            const c = host.querySelector('.bt-corpus').value;
+            const m = parseInt(host.querySelector('.bt-merges').value, 10);
+            if (c && Number.isFinite(m) && m >= 1) { st.corpus = c; st.merges = m; renderNanoBpeTrain(); }
+        };
     }
 
     let _fibState = null;

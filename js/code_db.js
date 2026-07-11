@@ -5832,3 +5832,73 @@ private:
 };
 `;
 
+// nano-llm: BpeTrainer — learns an ordered list of BPE merge rules from a
+// corpus. Three data structures cooperate: a doubly-linked list of symbols
+// (array pool, prev/next indices; a merge is an O(1) relink, no shifting),
+// a hash map of adjacent-pair counts, and a max-heap that picks the most
+// frequent pair each round. (Simplified from bpe_trainer.hpp: vocab bookkeeping
+// elided so the count -> select -> merge mechanism stands alone.)
+const codeNanoBpeTrain = `#include <string>
+#include <vector>
+#include <unordered_map>
+#include <queue>
+#include <utility>
+
+struct Symbol { std::string piece; int prev; int next; bool dead; };
+struct Merge  { std::string left, right; };
+
+class BpeTrainer {
+public:
+    std::vector<Merge> train(std::vector<Symbol> pool, int num_merges) {
+        std::vector<Merge> merges;
+        for (int m = 0; m < num_merges; ++m) {
+            // Count adjacent pairs (hash map).
+            std::unordered_map<std::string, int> counts;
+            for (size_t i = 0; i < pool.size(); ++i) {
+                if (pool[i].dead) continue;
+                int n = pool[i].next;
+                if (n == -1) continue;
+                counts[packKey(pool[i].piece, pool[n].piece)]++;
+            }
+            if (counts.empty()) break;
+
+            // Max-heap over (count, key): heapify all candidates, take the
+            // top. pair<int,string> orders by count then lexicographically,
+            // so ties break deterministically.
+            std::priority_queue<std::pair<int, std::string>> heap;
+            for (const auto& kv : counts) heap.push({kv.second, kv.first});
+            const std::string bestKey = heap.top().second;
+
+            std::string L, R;
+            unpackKey(bestKey, L, R);
+            merges.push_back({L, R});
+
+            // Merge every adjacent occurrence of (L,R): O(1) relink of the
+            // linked list, extend left's piece, splice right out.
+            for (size_t i = 0; i < pool.size(); ++i) {
+                if (pool[i].dead) continue;
+                int n = pool[i].next;
+                if (n == -1 || pool[n].dead) continue;
+                if (pool[i].piece == L && pool[n].piece == R) {
+                    pool[i].piece += pool[n].piece;
+                    pool[i].next = pool[n].next;
+                    if (pool[n].next != -1) pool[pool[n].next].prev = static_cast<int>(i);
+                    pool[n].dead = true;
+                }
+            }
+        }
+        return merges;
+    }
+
+private:
+    static std::string packKey(const std::string& a, const std::string& b) {
+        return a + '\\x01' + b;   // \\x01 never appears in ASCII word text
+    }
+    static void unpackKey(const std::string& key, std::string& a, std::string& b) {
+        size_t sep = key.find('\\x01');
+        a = key.substr(0, sep);
+        b = key.substr(sep + 1);
+    }
+};
+`;
+
