@@ -20931,6 +20931,51 @@ SLIDES_DB["magic-formula"] = {
       ] }
   ]
 };
+SLIDES_DB["magic-symmetry"] = {
+  "category": "Arrays",
+  "title": { "zh": "魔方陣 — 對稱 (D₄ 群)", "en": "Magic Square — Symmetry (D₄ Group Operations)" },
+  "slides": [
+    { "heading": { "zh": "方陣的 8 種對稱", "en": "The 8 Symmetries of a Square" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "一個正方形恰有 8 種保持形狀不變的對稱操作:4 個旋轉($0°,90°,180°,270°$)加上 4 個鏡射(水平、垂直、主對角線、反對角線)。這 8 個操作在合成運算下形成一個群 —— <strong>二面體群 $D_4$</strong>。", "en": "A square has exactly 8 shape-preserving symmetries: 4 rotations ($0°, 90°, 180°, 270°$) plus 4 reflections (horizontal, vertical, main diagonal, anti-diagonal). Under composition, these 8 operations form a group — the <strong>dihedral group $D_4$</strong>." } },
+        { "type": "note", "text": { "zh": "這是抽象代數裡「群作用在集合上」的具體例子:群是 $D_4$,被作用的集合是方陣的 $n^2$ 個格子座標。", "en": "This is a concrete instance of a group acting on a set from abstract algebra: the group is $D_4$, and the set it acts on is the $n^2$ cell coordinates of the board." } }
+      ] },
+    { "heading": { "zh": "把對稱操作寫成座標映射", "en": "Symmetries as Coordinate Remaps" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "在 $n \\times n$ 陣列上,每個對稱操作都只是一個把舊座標 $(r,c)$ 送到新座標的函數 —— 值本身完全不變,只有它存放的位置改變。", "en": "On an $n \\times n$ array, every symmetry is nothing more than a function sending an old coordinate $(r,c)$ to a new one — the value itself never changes, only where it is stored." } },
+        { "type": "steps", "items": [
+          { "zh": "旋轉 $90°$:$(r,c) \\to (c,\\ n-1-r)$", "en": "Rotate $90°$: $(r,c) \\to (c,\\ n-1-r)$" },
+          { "zh": "旋轉 $180°$:$(r,c) \\to (n-1-r,\\ n-1-c)$", "en": "Rotate $180°$: $(r,c) \\to (n-1-r,\\ n-1-c)$" },
+          { "zh": "水平鏡射:$(r,c) \\to (r,\\ n-1-c)$;轉置:$(r,c) \\to (c,\\ r)$", "en": "Horizontal flip: $(r,c) \\to (r,\\ n-1-c)$; transpose: $(r,c) \\to (c,\\ r)$" }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "magic_symmetry.cpp", "code": "case 1: tr = c;         tc = n - 1 - r; break;  // r90\ncase 2: tr = n - 1 - r; tc = n - 1 - c; break;  // r180\ncase 6: tr = c;         tc = r;         break;  // transpose" }
+      ] },
+    { "heading": { "zh": "魔方陣性質在群作用下不變", "en": "The Magic Property Is Invariant Under the Group Action" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "把魔方陣的每個格子依任一個 $D_4$ 操作重新映射位置後,結果仍然是魔方陣:每一列、每一欄、兩條對角線的總和仍然等於同一個魔術常數 $M$。", "en": "Remap every cell of a magic square by any $D_4$ operation, and the result is still magic: every row, every column, and both diagonals still sum to the same magic constant $M$." } },
+        { "type": "math", "tex": "M = \\frac{n(n^2+1)}{2}\\ \\text{is unchanged by any of the 8 remaps}", "caption": { "zh": "因為每個操作只是把整組列/欄/對角線的值重新分組排列,並不改變任何一組數值的總和。", "en": "Because each operation only regroups which values sit on which line — it never changes the sum of any such set of values." } },
+        { "type": "note", "text": { "zh": "這正是「不變量(invariant)」的概念:某個量在一群變換下保持不變。這裡的不變量就是魔術常數 $M$。", "en": "This is exactly the notion of an invariant: a quantity that stays fixed under a family of transformations. Here the invariant is the magic constant $M$." } }
+      ] },
+    { "heading": { "zh": "軌道(orbit)最多 8 個相異方陣", "en": "The Orbit Has at Most 8 Distinct Squares" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "把 8 個 $D_4$ 操作分別套用在同一個魔方陣上,會得到它在群作用下的<strong>軌道(orbit)</strong>——最多 8 個相異的方陣(某些方陣若本身帶有額外對稱性,軌道會更小)。對 $n=3,5,7$ 的 Siamese 方陣,軌道大小恰好是 8。", "en": "Applying each of the 8 $D_4$ operations to the same magic square produces its <strong>orbit</strong> under the group action — at most 8 distinct squares (fewer if the square happens to have extra self-symmetry). For the Siamese square at $n=3,5,7$, the orbit size is exactly 8." } },
+        { "type": "steps", "items": [
+          { "zh": "群的合成關係在方陣上同樣成立:$r90$ 連續套用 4 次等於不變(identity)。", "en": "The group's composition relations hold on the square too: applying $r90$ four times in a row equals doing nothing (the identity)." },
+          { "zh": "$transpose$ 套用 2 次等於不變。", "en": "Applying $transpose$ twice equals the identity." },
+          { "zh": "$flipH$ 接著 $flipV$ 等於 $r180$。", "en": "$flipH$ followed by $flipV$ equals $r180$." }
+        ] }
+      ] },
+    { "heading": { "zh": "限制與複雜度", "en": "Limits and Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "沿用 Siamese/Coxeter 規則產生底層方陣,僅適用於奇數階 $n$。", "en": "The underlying square still comes from the Siamese/Coxeter rule, so this applies to odd order $n$." },
+          { "zh": "套用一個座標映射需要 $O(n^2)$ 時間(逐格重新定位)。", "en": "Applying one coordinate remap takes $O(n^2)$ time (relocating every cell)." },
+          { "zh": "驗證結果仍是魔方陣同樣是 $O(n^2)$(檢查所有列、欄、對角線)。", "en": "Verifying the result is still magic is likewise $O(n^2)$ (checking every row, column, and diagonal)." },
+          { "zh": "8 個操作各自需要 $O(n^2)$ 空間存放重新映射後的方陣。", "en": "Each of the 8 operations needs $O(n^2)$ space to hold the remapped square." }
+        ] }
+      ] }
+  ]
+};
 SLIDES_DB["maze-stack"] = {
   "category": "Linear Structures",
   "title": { "zh": "迷宮回溯(堆疊)", "en": "Maze Backtracking (Stack)" },
