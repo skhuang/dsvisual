@@ -25,14 +25,14 @@ category: "nano-LLM"
 void build_forward(int output) {
     order_.clear();
     std::vector<char> seen(nodes_.size(), 0);
-    visit(output, seen);          // DFS 後序走訪 => 拓撲序
+    visit(output, seen);          // DFS post-order => topological order
 }
 void visit(int node, std::vector<char>& seen) {
     if (seen[node]) return;
     seen[node] = 1;
-    if (n.src0 >= 0) visit(n.src0, seen);   // 先走父節點
+    if (n.src0 >= 0) visit(n.src0, seen);   // parents first
     if (n.src1 >= 0) visit(n.src1, seen);
-    order_.push_back(node);                 // 後序 => 拓撲序
+    order_.push_back(node);                 // post-order => topo order
 }
 ```
 
