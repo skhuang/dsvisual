@@ -6007,7 +6007,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (let tc = 0; tc < 3; tc++) {
                     const isCenter = tr === 1 && tc === 1;
                     if (!isCenter && !showGhosts) continue;
-                    const g = svgEl('g', { class: 'mt-tile' + (isCenter ? ' mt-tile-center' : ' mt-tile-ghost') });
+                    const g = svgEl('g', { class: isCenter ? 'mt-tile-center' : 'mt-tile-ghost' });
                     for (let r = 0; r < n; r++) {
                         for (let c = 0; c < n; c++) {
                             const v = square[r][c];
@@ -6026,14 +6026,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Path polyline through path[0..revealed-1] via plane coords: run segments solid, break segments dashed.
+            // When ghosts are hidden, clip the path to the center tile's rect so no segment floats over blank
+            // background where the (now-invisible) ghost tiles used to be.
+            const pathGroup = svgEl('g', { class: 'mt-path-group' });
+            if (!showGhosts) {
+                const defs = svgEl('defs', {});
+                const clip = svgEl('clipPath', { id: 'mt-clip-center' });
+                clip.appendChild(svgEl('rect', { x: n * CS, y: n * CS, width: n * CS, height: n * CS }));
+                defs.appendChild(clip);
+                svg.appendChild(defs);
+                pathGroup.setAttribute('clip-path', 'url(#mt-clip-center)');
+            }
             for (let i = 1; i < revealed; i++) {
                 const a = path[i - 1], b = path[i];
-                svg.appendChild(svgEl('line', {
+                pathGroup.appendChild(svgEl('line', {
                     x1: a.planeX * CS + CS / 2, y1: a.planeY * CS + CS / 2,
                     x2: b.planeX * CS + CS / 2, y2: b.planeY * CS + CS / 2,
                     class: 'mt-path-seg ' + (b.stepType === 'break' ? 'mt-seg-break' : 'mt-seg-run'),
                 }));
             }
+            svg.appendChild(pathGroup);
 
             // Current cell lit in the center tile and (optionally) all 8 ghost copies.
             if (fr.phase === 'fill') {
