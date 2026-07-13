@@ -7,7 +7,9 @@ module.exports = defineConfig({
   // load) doesn't fail the run and block the Pages deploy. A real regression still
   // fails all attempts. Traces are captured on-first-retry (see `use` below).
   retries: process.env.CI ? 2 : 0,
-  reporter: 'html',
+  // open: 'never' — the default auto-served report blocks the terminal
+  // forever after a failed local run.
+  reporter: [['html', { open: 'never' }]],
   use: {
     trace: 'on-first-retry',
   },
