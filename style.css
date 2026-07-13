@@ -2835,3 +2835,146 @@ pre.code-panel-body[class*="language-"] {
 .ng-cell.mid { border-color: #f59e0b; box-shadow: 0 0 0 2px #fde68a; }
 .ng-draw { margin-left: 10px; font-family: monospace; font-size: 12px; color: #7c3aed; font-weight: 600; }
 .ng-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
+
+/* ===== Red-Black Tree observatory (tree-rb) ===== */
+.rbviz { width: 100%; display: flex; flex-direction: column; gap: 12px; align-items: stretch; text-align: left;
+    --rb-node-red: #dc2626; --rb-node-black: #1e293b; --rb-node-ink: #f8fafc; --rb-node-stroke: rgba(15, 23, 42, 0.25);
+    --rb-edge: #94a3b8; --rb-ring: #eab308; --rb-violet: #7c3aed; --rb-amber: #b45309; --rb-delred: #be123c; }
+.rbviz-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: var(--surface-muted); border: 1px solid var(--card-border); border-radius: var(--app-radius-md); padding: 10px 12px; }
+.rbviz-field { display: flex; gap: 8px; align-items: center; }
+.rbviz-input { width: 96px; padding: 0.55rem 0.6rem; border: 1px solid var(--card-border); border-radius: var(--app-radius-sm); background: var(--card-bg); color: var(--text-main); font: inherit; }
+.rbviz-presets { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.rbviz-presets .lbl { font-size: 0.72rem; color: var(--text-subtle); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; }
+.rbviz-preset { border: 1px dashed var(--card-border); background: transparent; color: var(--text-muted); font: inherit; font-size: 0.8rem; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.rbviz-preset:hover { color: var(--primary-hover); border-color: var(--primary-color); background: rgba(52, 152, 219, 0.08); }
+.rbviz-hint { font-size: 0.78rem; color: var(--text-subtle); }
+
+.rbviz-workbench { display: grid; grid-template-columns: 1fr 280px; gap: 12px; align-items: start; }
+.rbviz-stagecol { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.rbviz-logcol { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--app-radius-md); box-shadow: var(--app-shadow-sm); padding: 12px; max-height: 600px; display: flex; flex-direction: column; min-width: 0; }
+.rbviz-logcol h4 { margin: 0 0 8px; font-size: 0.72rem; letter-spacing: 0.1em; color: var(--text-subtle); text-transform: uppercase; }
+.rbviz-steplog { overflow-y: auto; display: flex; flex-direction: column; gap: 2px; scrollbar-width: thin; }
+.rbviz-steplog .op-h { position: sticky; top: 0; background: var(--card-bg); font-size: 0.76rem; font-weight: 700; color: var(--primary-hover); padding: 8px 6px 3px; border-bottom: 1px solid var(--card-border); z-index: 1; }
+.rbviz-steplog .row { display: flex; gap: 8px; align-items: baseline; text-align: left; border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: 0.8rem; padding: 6px; border-radius: var(--app-radius-sm); cursor: pointer; line-height: 1.35; }
+.rbviz-steplog .row:hover { background: var(--surface-hover); }
+.rbviz-steplog .row.on { background: rgba(52, 152, 219, 0.14); color: var(--text-main); }
+.rbviz-steplog .dot { flex: 0 0 8px; width: 8px; height: 8px; border-radius: 50%; position: relative; top: -1px; }
+
+.rbviz-stepdesc { display: flex; gap: 12px; padding: 12px 14px; align-items: flex-start; min-height: 74px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--app-radius-md); box-shadow: var(--app-shadow-sm); }
+.rbviz-badge { flex: 0 0 auto; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 999px; margin-top: 2px; }
+.rbviz .k-insert { color: #047857; background: rgba(16, 185, 129, 0.14); }
+.rbviz .k-recolor { color: var(--rb-amber); background: rgba(245, 158, 11, 0.16); }
+.rbviz .k-rotate { color: var(--rb-violet); background: rgba(124, 58, 237, 0.13); }
+.rbviz .k-delete { color: var(--rb-delred); background: rgba(225, 29, 72, 0.12); }
+.rbviz .k-note { color: var(--text-muted); background: var(--surface-hover); }
+.rbviz .dot.k-insert { background: #059669; }
+.rbviz .dot.k-recolor { background: #d97706; }
+.rbviz .dot.k-rotate { background: var(--rb-violet); }
+.rbviz .dot.k-delete { background: var(--rb-delred); }
+.rbviz .dot.k-note { background: var(--text-subtle); }
+.rbviz-stepdesc .txt { min-width: 0; }
+.rbviz-stepdesc .op { font-size: 0.72rem; color: var(--text-subtle); margin-bottom: 1px; }
+.rbviz-stepdesc b { font-size: 0.95rem; }
+.rbviz-stepdesc p { margin: 2px 0 0; color: var(--text-muted); font-size: 0.82rem; }
+
+.rbviz-stage { position: relative; height: 430px; overflow-x: auto; overflow-y: hidden; padding: 10px 8px; border: 1px solid var(--card-border); border-radius: var(--app-radius-md); box-shadow: var(--app-shadow-sm);
+    background: radial-gradient(circle at 1px 1px, var(--card-border) 1px, transparent 1.4px) 0 0/26px 26px, var(--card-bg); }
+.rbviz-empty { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-subtle); font-size: 0.85rem; pointer-events: none; }
+.rbviz-stage svg { display: block; margin: 0 auto; }
+.rbviz-stage .edge { stroke: var(--rb-edge); stroke-width: 2; fill: none; }
+.rbviz-stage .nd { cursor: pointer; }
+.rbviz-stage .nd circle.body { stroke-width: 1.5; }
+.rbviz-stage .nd.R circle.body { fill: var(--rb-node-red); stroke: var(--rb-node-red); }
+.rbviz-stage .nd.B circle.body { fill: var(--rb-node-black); stroke: var(--rb-node-stroke); }
+.rbviz-stage .nd text { fill: var(--rb-node-ink); font-family: 'Fira Code', ui-monospace, Menlo, monospace; font-weight: 700; text-anchor: middle; pointer-events: none; }
+.rbviz-stage .nd text.sub { fill: var(--text-subtle); font-size: 10px; font-weight: 600; }
+.rbviz-stage .nd circle.hlring { fill: none; stroke: var(--rb-ring); stroke-width: 3; opacity: 0; }
+.rbviz-stage .nd.hl circle.hlring { opacity: 1; }
+.rbviz-stage .nd.beta circle.hlring { opacity: 0.9; stroke-dasharray: 5 5; stroke-width: 2.5; }
+.rbviz-stage .next-marker text { fill: var(--primary-hover); font-size: 11px; font-weight: 700; text-anchor: middle; font-family: 'Noto Sans TC', system-ui, sans-serif; }
+
+.rbviz-transport { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px 12px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--app-radius-md); box-shadow: var(--app-shadow-sm); }
+.rbviz-transport .tbtn { border: 1px solid var(--card-border); background: var(--surface-muted); color: var(--text-main); cursor: pointer; width: 38px; height: 34px; border-radius: var(--app-radius-sm); font-size: 15px; display: inline-flex; align-items: center; justify-content: center; }
+.rbviz-transport .tbtn:hover { border-color: var(--primary-color); }
+.rbviz-transport .tbtn.play { background: var(--primary-color); border-color: var(--primary-color); color: #fff; width: 44px; }
+.rbviz-transport input[type=range] { flex: 1; min-width: 120px; accent-color: var(--primary-color); }
+.rbviz-transport select { padding: 6px 8px; border: 1px solid var(--card-border); border-radius: var(--app-radius-sm); background: var(--card-bg); color: var(--text-main); font: inherit; font-size: 0.8rem; }
+.rbviz-transport .cnt { font-size: 0.76rem; color: var(--text-subtle); min-width: 86px; text-align: right; font-family: 'Fira Code', monospace; font-variant-numeric: tabular-nums; }
+
+.rbviz-legend { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; font-size: 0.78rem; color: var(--text-muted); padding: 0 4px; }
+.rbviz-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+.rbviz-legend .lr { background: var(--rb-node-red); }
+.rbviz-legend .lb { background: var(--rb-node-black); box-shadow: inset 0 0 0 1.5px var(--rb-node-stroke); }
+.rbviz-legend .lh { background: transparent; box-shadow: inset 0 0 0 2.5px var(--rb-ring); }
+.rbviz-legend .lbe { background: transparent; border: 2px dashed var(--rb-ring); width: 10px; height: 10px; border-radius: 50%; }
+
+@media (max-width: 1020px) {
+    .rbviz-workbench { grid-template-columns: 1fr; }
+    .rbviz-logcol { max-height: 300px; }
+}
+@media (prefers-color-scheme: dark) {
+    .rbviz { --rb-node-red: #ef4444; --rb-node-black: #0b1220; --rb-node-stroke: #475569; --rb-edge: #64748b; --rb-amber: #f59e0b; --rb-violet: #a78bfa; --rb-delred: #fb7185; }
+    .rbviz .k-insert { color: #34d399; }
+}
+
+/* ===== Collapsible code drawer (methods with codeDrawer: true) ===== */
+.method-section-grid--full { grid-template-columns: 1fr; }
+.code-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    justify-content: flex-end;
+    pointer-events: none;
+}
+.code-drawer.open { pointer-events: auto; }
+.code-drawer[hidden] { display: none; }
+.code-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.1);
+    border: 0;
+    cursor: pointer;
+}
+.code-drawer-panel {
+    position: relative;
+    background: var(--card-bg);
+    width: 560px;
+    max-width: 92vw;
+    height: 100vh;
+    box-shadow: -8px 0 24px rgba(15, 23, 42, 0.18);
+    display: flex;
+    flex-direction: column;
+    animation: slideInRight 0.25s ease;
+}
+.code-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--card-border);
+}
+.code-drawer-header h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    font-family: 'Fira Code', monospace;
+}
+.code-drawer-close {
+    width: 32px;
+    height: 32px;
+    border: 0;
+    background: transparent;
+    font-size: 22px;
+    cursor: pointer;
+    color: var(--text-subtle);
+}
+.code-drawer-body {
+    flex: 1;
+    overflow: auto;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+}
+.code-drawer-body .code-panel { flex: 1; min-height: 0; }
+.code-drawer-body .code-panel { display: flex; flex-direction: column; }
+.code-drawer-body .code-panel-body { max-height: none; flex: 1; }

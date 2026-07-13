@@ -129,7 +129,7 @@ const METHOD_GROUPS = [
         methods: [
             { id: 'tree-bst', title: 'Binary Search Tree', file: 'tree_bst.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'tree-avl', title: 'AVL Tree', file: 'tree_avl.cpp', visualizer: 'tree', controls: 'tree' },
-            { id: 'tree-rb', title: 'Red-Black Tree', file: 'tree_rb.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'tree-rb', title: 'Red-Black Tree', file: 'tree_rb.cpp', visualizer: 'rbtree', controls: 'rbtree', codeDrawer: true },
             { id: 'tree-splay', title: 'Splay Tree', file: 'tree_splay.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'tree-trie', title: 'Trie', file: 'tree_trie.cpp', visualizer: 'text-tree', controls: 'text-tree' },
             { id: 'tree-radix', title: 'Radix Tree', file: 'tree_radix.cpp', visualizer: 'text-tree', controls: 'text-tree' },
@@ -673,6 +673,19 @@ document.addEventListener('DOMContentLoaded', () => {
         section.className = 'method-section-card active';
         section.dataset.methodSection = method.id;
         section.dataset.runtimeState = 'active';
+        // Methods flagged codeDrawer keep the C++ source in a collapsed side
+        // drawer (opened via a header button) so the visualization gets the
+        // full card width. Everyone else keeps the side-by-side grid.
+        const useCodeDrawer = !!method.codeDrawer;
+        const codePanelHtml = `
+                <div class="code-panel" data-language="cpp">
+                    <div class="code-panel-header">
+                        <span class="code-panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span class="code-panel-filename">${method.file}</span>
+                        <button type="button" class="code-panel-copy" data-code-copy aria-label="Copy code">⧉ Copy</button>
+                    </div>
+                    <pre class="code-panel-body"><code class="language-cpp">${getEscapedCode(method.id)}</code></pre>
+                </div>`;
         section.innerHTML = `
             <div class="method-section-header">
                 <div>
@@ -685,25 +698,51 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button type="button" data-zoom="reset" aria-label="Reset zoom">100%</button>
                         <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
                     </div>
+                    ${useCodeDrawer ? `<button type="button" class="btn secondary code-drawer-toggle" data-testid="code-drawer-toggle" aria-expanded="false" aria-haspopup="dialog">&lt;/&gt; ${method.file}</button>` : ''}
                     <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
                 </div>
             </div>
-            <div class="method-section-grid">
+            <div class="method-section-grid${useCodeDrawer ? ' method-section-grid--full' : ''}">
                 <div class="method-section-visual" aria-label="${methodLabel} visualization shell">
                     <span>${method.visualizer}</span>
                     <strong>${methodLabel}</strong>
                 </div>
-                <div class="code-panel" data-language="cpp">
-                    <div class="code-panel-header">
-                        <span class="code-panel-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-                        <span class="code-panel-filename">${method.file}</span>
-                        <button type="button" class="code-panel-copy" data-code-copy aria-label="Copy code">⧉ Copy</button>
-                    </div>
-                    <pre class="code-panel-body"><code class="language-cpp">${getEscapedCode(method.id)}</code></pre>
-                </div>
+                ${useCodeDrawer ? '' : codePanelHtml}
             </div>
+            ${useCodeDrawer ? `
+            <aside class="code-drawer" data-testid="code-drawer" hidden>
+                <button type="button" class="code-drawer-backdrop" data-code-drawer-close aria-label="Close code panel"></button>
+                <section class="code-drawer-panel" role="dialog" aria-modal="true" aria-label="${method.file}" tabindex="-1">
+                    <header class="code-drawer-header">
+                        <h3>${method.file}</h3>
+                        <button type="button" class="code-drawer-close" data-code-drawer-close aria-label="Close">×</button>
+                    </header>
+                    <div class="code-drawer-body">${codePanelHtml}</div>
+                </section>
+            </aside>` : ''}
         `;
         section.querySelector('.method-slides-btn').addEventListener('click', () => openSlides(method.id));
+        const codeDrawerToggle = section.querySelector('.code-drawer-toggle');
+        if (codeDrawerToggle) {
+            const drawer = section.querySelector('.code-drawer');
+            const drawerPanel = drawer.querySelector('.code-drawer-panel');
+            const onDrawerKeydown = (e) => { if (e.key === 'Escape') closeDrawer(); };
+            const openDrawer = () => {
+                drawer.hidden = false;
+                drawer.classList.add('open');
+                codeDrawerToggle.setAttribute('aria-expanded', 'true');
+                drawerPanel.focus();
+                document.addEventListener('keydown', onDrawerKeydown);
+            };
+            const closeDrawer = () => {
+                drawer.hidden = true;
+                drawer.classList.remove('open');
+                codeDrawerToggle.setAttribute('aria-expanded', 'false');
+                document.removeEventListener('keydown', onDrawerKeydown);
+            };
+            codeDrawerToggle.addEventListener('click', openDrawer);
+            drawer.querySelectorAll('[data-code-drawer-close]').forEach((btn) => btn.addEventListener('click', closeDrawer));
+        }
         methodSections.appendChild(section);
         mountActiveRuntime(section);
         if (window.Prism) Prism.highlightAllUnder(section);
@@ -1809,6 +1848,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function switchMode(nextMode) {
         if (heapTutorialState.active && nextMode !== heapTutorialState.mode) exitHeapTutorial(true);
+        if (_rbState) _rbState.hist.pause(); // stop RB playback when leaving/re-entering the mode
         visualizerRuntime.setMode(nextMode);
         stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0; edges = freshEdges(); weightedEdges = freshWeightedEdges(); mstEdgeKeys.clear(); graphCandidateEdgeKey = null; bstRoot = null;
         if(currentMode === 'list-array' || currentMode === 'list-linked') mainListData = [];
@@ -2351,12 +2391,15 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'graph_floyd_warshall.cpp';
             codeDisplay.textContent = codeGraphFloydWarshall;
         }
-        else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) { 
-            treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden'); 
+        else if (['tree-bst', 'tree-avl', 'tree-splay'].includes(currentMode)) {
+            treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden');
             if(currentMode === 'tree-bst') { codeTitle.textContent = 'tree_bst.cpp'; codeDisplay.textContent = codeTreeBST; }
             if(currentMode === 'tree-avl') { codeTitle.textContent = 'tree_avl.cpp'; codeDisplay.textContent = codeTreeAVL; }
-            if(currentMode === 'tree-rb') { codeTitle.textContent = 'tree_rb.cpp'; codeDisplay.textContent = codeTreeRB; }
             if(currentMode === 'tree-splay') { codeTitle.textContent = 'tree_splay.cpp'; codeDisplay.textContent = codeTreeSplay; }
+        }
+        else if (currentMode === 'tree-rb') {
+            // Rendered by renderTreeRB() into the dynamic viz host.
+            codeTitle.textContent = 'tree_rb.cpp'; codeDisplay.textContent = codeTreeRB;
         }
         else if (['tree-trie', 'tree-radix', 'tree-ternary'].includes(currentMode)) {
             advTreeContainer.classList.remove('hidden'); textTreeActions.classList.remove('hidden');
@@ -2746,7 +2789,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'nano-compute-graph') renderNanoComputeGraph();
         else if (currentMode === 'nano-bpe-train') renderNanoBpeTrain();
         else if (currentMode === 'nano-ngram-next') renderNanoNgramNext();
-        else if (['tree-bst', 'tree-avl', 'tree-rb', 'tree-splay'].includes(currentMode)) renderTree();
+        else if (currentMode === 'tree-rb') renderTreeRB();
+        else if (['tree-bst', 'tree-avl', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-kmp') renderKMP();
         else if (currentMode === 'search-bm') renderBM();
@@ -5853,6 +5897,120 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const ML_PALETTE = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#ec4899', '#78716c'];
+
+    // ===== Red-Black Tree（紅黑樹旋轉觀測站，ported from the author's visualizer） =====
+    // State survives re-renders (language / mode switches): the RBTree and its
+    // rewindable History live in _rbState; each render builds a fresh Stage and
+    // re-attaches the History to the new DOM.
+    let _rbState = null;
+    function renderTreeRB() {
+        const host = acquireDynamicVizHost();
+        host.innerHTML =
+            '<div class="rbviz" data-testid="rbviz">' +
+                '<div class="rbviz-toolbar">' +
+                    '<div class="rbviz-field">' +
+                        '<input type="number" class="rbviz-input" data-testid="rbviz-input" placeholder="鍵值" aria-label="鍵值">' +
+                        '<button type="button" class="btn primary rbviz-insert" data-testid="rbviz-insert">插入</button>' +
+                        '<button type="button" class="btn secondary rbviz-delete" data-testid="rbviz-delete">刪除</button>' +
+                        '<button type="button" class="btn exception rbviz-clear" data-testid="rbviz-clear">清空</button>' +
+                    '</div>' +
+                    '<div class="rbviz-presets" data-testid="rbviz-presets"><span class="lbl">劇本</span></div>' +
+                    '<span class="rbviz-hint">點節點可把鍵值帶入輸入框；← → 鍵逐步前進 / 倒帶，空白鍵播放 / 暫停</span>' +
+                '</div>' +
+                '<div class="rbviz-workbench">' +
+                    '<div class="rbviz-stagecol">' +
+                        '<div class="rbviz-stepdesc" data-testid="rbviz-desc"></div>' +
+                        '<div class="rbviz-stage" data-testid="rbviz-stage"></div>' +
+                        '<div class="rbviz-transport" data-testid="rbviz-transport"></div>' +
+                        '<div class="rbviz-legend">' +
+                            '<span><i class="lr"></i>紅節點</span><span><i class="lb"></i>黑節點</span>' +
+                            '<span><i class="lh"></i>本步驟主角</span><span><i class="lbe"></i>β 子樹（旋轉時換邊的那包）</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<aside class="rbviz-logcol">' +
+                        '<h4>步驟紀錄</h4>' +
+                        '<div class="rbviz-steplog" data-testid="rbviz-log"></div>' +
+                    '</aside>' +
+                '</div>' +
+            '</div>';
+
+        const input = host.querySelector('.rbviz-input');
+        const stage = new RBTreeViz.Stage(host.querySelector('.rbviz-stage'), {
+            emptyText: '空樹 —— 插入一個值，或載入一個劇本',
+        });
+        stage.onNodeClick = (key) => { input.value = key; };
+
+        const attachCfg = {
+            stage,
+            descEl: host.querySelector('[data-testid="rbviz-desc"]'),
+            logEl: host.querySelector('[data-testid="rbviz-log"]'),
+            transportEl: host.querySelector('[data-testid="rbviz-transport"]'),
+        };
+        if (!_rbState) {
+            const tree = new RBTreeViz.RBTree();
+            _rbState = { tree, hist: new RBTreeViz.History(Object.assign({ tree }, attachCfg)) };
+        } else {
+            _rbState.hist.attach(attachCfg);
+        }
+
+        function rbReset() {
+            _rbState.tree = new RBTreeViz.RBTree();
+            _rbState.hist.tree = _rbState.tree;
+            _rbState.hist.reset();
+        }
+        function rbInsert(v, opt) {
+            if (!Number.isFinite(v)) { showStatus('先輸入一個整數', '#fbbf24'); return false; }
+            v = Math.round(v);
+            if (_rbState.tree.size() >= 63) { showStatus('節點太多了（上限 63），先刪一些吧', '#fbbf24'); return false; }
+            if (_rbState.tree.find(v)) { showStatus(v + ' 已經在樹裡了', '#fbbf24'); return false; }
+            _rbState.hist.runOp('插入 ' + v, () => _rbState.tree.insert(v), opt);
+            return true;
+        }
+        function rbDelete(v, opt) {
+            if (!Number.isFinite(v)) { showStatus('先輸入一個整數', '#fbbf24'); return false; }
+            v = Math.round(v);
+            if (!_rbState.tree.find(v)) { showStatus('樹裡沒有 ' + v, '#fbbf24'); return false; }
+            _rbState.hist.runOp('刪除 ' + v, () => _rbState.tree.delete(v), opt);
+            return true;
+        }
+
+        host.querySelector('.rbviz-insert').addEventListener('click', () => { if (rbInsert(+input.value)) input.value = ''; });
+        host.querySelector('.rbviz-delete').addEventListener('click', () => { if (rbDelete(+input.value)) input.value = ''; });
+        input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { if (rbInsert(+input.value)) input.value = ''; } });
+        host.querySelector('.rbviz-clear').addEventListener('click', () => { rbReset(); showStatus('清空了', '#94a3b8'); });
+
+        const presetsEl = host.querySelector('[data-testid="rbviz-presets"]');
+        RBTreeViz.PRESETS.forEach((p) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'rbviz-preset';
+            b.textContent = p.name;
+            if (p.tip) b.title = p.tip;
+            b.addEventListener('click', () => {
+                rbReset();
+                for (const k of p.seed()) rbInsert(k, { play: false });
+                if (p.final) {
+                    if (p.final.op === 'insert') rbInsert(p.final.v);
+                    else rbDelete(p.final.v);
+                } else if (p.replay) {
+                    _rbState.hist.goTo(0, false);
+                    _rbState.hist.play();
+                }
+                if (p.tip) showStatus(p.tip, '#94a3b8');
+            });
+            presetsEl.appendChild(b);
+        });
+    }
+
+    // 鍵盤操作（沙盒）：← → 逐步、空白鍵播放/暫停 —— 只在紅黑樹模式作用
+    document.addEventListener('keydown', (e) => {
+        if (currentMode !== 'tree-rb' || !_rbState) return;
+        if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+        const h = _rbState.hist;
+        if (e.key === 'ArrowRight') { e.preventDefault(); h.pause(); h.goTo(h.cursor + 1); }
+        else if (e.key === 'ArrowLeft') { e.preventDefault(); h.pause(); h.goTo(h.cursor - 1); }
+        else if (e.key === ' ') { e.preventDefault(); h.playing ? h.pause() : h.play(); }
+    });
 
     let _magicLatinState = null;
     function renderMagicLatin() {

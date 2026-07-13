@@ -32,7 +32,7 @@ open index.html
 |------|-------------|
 | BST | Binary Search Tree |
 | AVL | Self-balancing BST with rotations |
-| Red-Black Tree | Approximated coloring visualization |
+| Red-Black Tree | Real CLRS insert/delete; every rotation & recolor is a rewindable step |
 | Splay Tree | Splay (zig/zig-zig/zig-zag) operations |
 | Trie | Prefix tree with string input |
 | Radix Tree | Compressed prefix tree |
