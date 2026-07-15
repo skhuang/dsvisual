@@ -6508,12 +6508,14 @@ document.addEventListener('DOMContentLoaded', () => {
         function paintAdj(fr) {
             const seq = (fr.phase === 'build') ? fr.seq : finalSeq;
             const activeRows = (fr.phase === 'build') ? new Set(fr.pair) : new Set();
+            const scanning = (fr.phase === 'find') ? fr.scanning : null;
             let html = '';
             for (let i = 0; i < st.n; i++) {
+                const highlightSet = (scanning && scanning.from === i) ? new Set([scanning.to]) : null;
                 html += '<div class="eq-adj-row' + (activeRows.has(i) ? ' eq-row-active' : '') + '">' +
                     '<span class="eq-adj-idx">' + i + '</span>' +
                     '<span class="eq-adj-arrow">&rarr;</span>' +
-                    chainHtml(seq[i], null) +
+                    chainHtml(seq[i], highlightSet) +
                     '</div>';
             }
             adjEl.innerHTML = html;
@@ -6586,8 +6588,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         host.querySelector('.eq-build').onclick = () => {
             try {
-                const parsed = ListEquivalenceViz.parseInput(host.querySelector('.eq-n').value, host.querySelector('.eq-pairs').value);
-                parsed.n = Math.min(12, parsed.n);
+                const nClamped = Math.min(12, Math.max(1, parseInt(host.querySelector('.eq-n').value, 10) || 1));
+                const parsed = ListEquivalenceViz.parseInput(String(nClamped), host.querySelector('.eq-pairs').value);
                 parsed.pairs = parsed.pairs.slice(0, 20);
                 _equivState = parsed;
                 renderListEquivalence();
