@@ -644,12 +644,12 @@
     const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 
     // seed: values inserted silently (play:false)。
-    // final: 最後一個會播放動畫的操作；沒有 final 的劇本改成從頭重播整段。
+    // final: 壓軸操作 —— 載入後停在它前一步，按 ▶ 才播放；沒有 final 的劇本停在第 0 步從頭看。
     const PRESETS = [
         {
             name: '樹的成長：依序插入 1–15',
             tip: '從空樹看整棵樹怎麼靠旋轉長平衡 —— 播放中隨時可以暫停、倒帶',
-            seed: () => range(1, 15), replay: true,
+            seed: () => range(1, 15),
         },
         {
             name: '深樹連鎖 I：變色一路爬頂（18 顆）',
@@ -679,7 +679,6 @@
                 for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
                 return pool.slice(0, 15);
             },
-            replay: true,
         },
     ];
 

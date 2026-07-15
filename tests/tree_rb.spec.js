@@ -70,16 +70,15 @@ test.describe('tree-rb (紅黑樹旋轉觀測站)', () => {
         await expect(page.locator('#status-message')).toContainText('已經在樹裡了');
     });
 
-    test('delete preset replays a chain of rotations and removes the node', async ({ page }) => {
+    test('delete preset loads paused on the built tree; slider reaches the deletion', async ({ page }) => {
         const sec = page.locator('[data-method-section="tree-rb"]');
         await sec.locator('.rbviz-preset', { hasText: '刪除三連旋' }).click();
-        // Pause playback, then jump the slider to the final step.
-        await sec.locator('[data-testid="rbviz-transport"] .tbtn.play').click();
+        // Presets no longer autoplay: parked on the fully-built tree, ▶ untouched.
+        await expect(sec.locator('[data-testid="rbviz-transport"] .tbtn.play')).toHaveText('▶');
+        await expect(sec.locator('[data-testid="rbviz-stage"] .nd')).toHaveCount(31);
+        // Jump the slider to the final step: 15 deleted → 30 nodes, with rotation steps logged.
         await sec.locator('[data-testid="rbviz-transport"] input[type=range]')
             .evaluate((el) => { el.value = el.max; el.dispatchEvent(new Event('input', { bubbles: true })); });
-        await sec.locator('[data-testid="rbviz-transport"] input[type=range]')
-            .evaluate((el) => { el.value = el.max; el.dispatchEvent(new Event('input', { bubbles: true })); });
-        // 31 inserted, 15 deleted → 30 nodes; the delete emitted rotation steps.
         await expect(sec.locator('[data-testid="rbviz-stage"] .nd')).toHaveCount(30);
         await expect(sec.locator('[data-testid="rbviz-log"] .dot.k-rotate').first()).toBeAttached();
     });

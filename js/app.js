@@ -5990,13 +5990,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 rbReset();
                 for (const k of p.seed()) rbInsert(k, { play: false });
                 if (p.final) {
-                    if (p.final.op === 'insert') rbInsert(p.final.v);
-                    else rbDelete(p.final.v);
-                } else if (p.replay) {
+                    // Park on the fully-built tree, one step before the final
+                    // operation, so ▶ plays exactly that operation.
+                    const ready = _rbState.hist.steps.length - 1;
+                    if (p.final.op === 'insert') rbInsert(p.final.v, { play: false });
+                    else rbDelete(p.final.v, { play: false });
+                    _rbState.hist.goTo(ready, false);
+                } else {
                     _rbState.hist.goTo(0, false);
-                    _rbState.hist.play();
                 }
-                if (p.tip) showStatus(p.tip, '#94a3b8');
+                showStatus((p.tip ? p.tip + '。' : '') + '劇本已載入，按 ▶ 開始播放', '#94a3b8');
             });
             presetsEl.appendChild(b);
         });
