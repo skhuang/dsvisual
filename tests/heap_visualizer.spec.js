@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const { loadMethod } = require('./helpers');
 const path = require('path');
 
 const heapModes = [
@@ -10,15 +11,6 @@ const heapModes = [
     { id: 'heap-dary', file: 'heap_dary.cpp', title: 'D-ary Heap' },
     { id: 'heap-pairing', file: 'heap_pairing.cpp', title: 'Pairing Heap' },
 ];
-
-async function loadMethod(page, methodId) {
-    const navItem = page.locator(
-        `.category-nav-item:has(.category-nav-method[data-method-id="${methodId}"])`);
-    await navItem.locator('.category-nav-btn').click();
-    await navItem.locator(`.category-nav-method[data-method-id="${methodId}"]`).click();
-    const card = page.locator(`[data-method-section="${methodId}"]`);
-    await expect(card).toHaveAttribute('data-runtime-state', 'active');
-}
 
 test.describe('Heap Visualizer Suite', () => {
     test.beforeEach(async ({ page }) => {

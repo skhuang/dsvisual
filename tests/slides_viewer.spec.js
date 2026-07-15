@@ -1,16 +1,8 @@
 const { test, expect } = require('@playwright/test');
+const { loadMethod } = require('./helpers');
 const path = require('path');
 
 const FILE_URL = 'file://' + path.resolve(__dirname, '..', 'index.html');
-
-async function loadMethod(page, methodId) {
-    const navItem = page.locator(
-        `.category-nav-item:has(.category-nav-method[data-method-id="${methodId}"])`);
-    await navItem.locator('.category-nav-btn').click();
-    await navItem.locator(`.category-nav-method[data-method-id="${methodId}"]`).click();
-    const card = page.locator(`[data-method-section="${methodId}"]`);
-    await expect(card).toHaveAttribute('data-runtime-state', 'active');
-}
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => {

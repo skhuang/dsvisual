@@ -1,13 +1,7 @@
 const { test, expect } = require('@playwright/test');
+const { loadMethod } = require('./helpers');
 const path = require('path');
 const FILE_URL = 'file://' + path.resolve(__dirname, '../index.html');
-
-async function loadMethod(page, methodId) {
-    const navItem = page.locator(`.category-nav-item:has(.category-nav-method[data-method-id="${methodId}"])`);
-    await navItem.locator('.category-nav-btn').click();
-    await navItem.locator(`.category-nav-method[data-method-id="${methodId}"]`).click();
-    await expect(page.locator(`[data-method-section="${methodId}"]`)).toHaveAttribute('data-runtime-state', 'active');
-}
 
 test.describe('Unified step controls — Run/Pause/Resume + Speed', () => {
     test.beforeEach(async ({ page }) => {
