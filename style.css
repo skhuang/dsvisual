@@ -2590,6 +2590,18 @@ pre.code-panel-body[class*="language-"] {
 .pp-term.pp-cur { background: #fde68a; border-color: #f59e0b; }
 .pp-term.out { background: #dcfce7; border-color: #86efac; }
 .pp-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
+.msl-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.msl-controls .msl-input { flex: 1; min-width: 180px; }
+.msl-label { margin-bottom: 6px; color: #1e40af; font-style: italic; }
+.msl-stage { height: 340px; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; }
+.msl-nodes { position: relative; }
+.msl-colhead, .msl-rowhead { position: absolute; transform: translate(-50%, -50%); font-weight: 700; font-size: 0.78rem; color: #475569; }
+.msl-node { position: absolute; transform: translate(-50%, -50%); min-width: 30px; height: 26px; padding: 0 6px; background: var(--node-bg); color: #fff; border: 2px solid white; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; box-shadow: 0 3px 5px rgba(0,0,0,0.25); z-index: 5; transition: background 0.3s ease, border-color 0.3s ease; }
+.msl-node.msl-node-active { background: #f59e0b; border-color: #b45309; }
+.msl-link { stroke: #64748b; stroke-width: 2; }
+.msl-link.msl-link-faint { stroke: #cbd5e1; stroke-width: 1.5; }
+.msl-link.msl-link-wrap { stroke-dasharray: 3 3; }
+.msl-link.msl-link-active { stroke: #f59e0b; stroke-width: 2.5; }
 .magic-wrap { width: 100%; display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
 .magic-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; color: var(--text-muted); font-weight: 800; font-size: 13px; }
 .magic-controls select { margin-left: 6px; padding: 6px 10px; border: 1px solid var(--card-border); border-radius: var(--app-radius-sm); background: var(--card-bg); color: var(--text-main); font: inherit; font-weight: 800; }

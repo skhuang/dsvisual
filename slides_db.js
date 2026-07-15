@@ -20747,6 +20747,45 @@ SLIDES_DB["matrix-sparse"] = {
       ] }
   ]
 };
+SLIDES_DB["matrix-sparse-list"] = {
+  "category": "Arrays",
+  "title": { "zh": "稀疏矩陣的正交鏈結串列表示法", "en": "Sparse Matrix as an Orthogonal Linked List" },
+  "slides": [
+    { "heading": { "zh": "為什麼要用鏈結串列?", "en": "Why a Linked Representation?" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "三元組陣列(matrix-sparse)是固定大小的表示法:插入或刪除一個非零元素,需要搬移整個陣列。若矩陣會隨程式執行動態增減非零項(例如逐步累加、逐步刪除),鏈結串列可以在 O(1) 完成單一節點的插入/刪除,不必搬移其他元素。", "en": "The triple-array representation (matrix-sparse) is fixed-size: inserting or deleting one nonzero entry means shifting the whole array. When the set of nonzeros changes dynamically at run time — entries added or removed one at a time — a linked structure inserts or deletes a single node in O(1), with no shifting of the rest." } },
+        { "type": "note", "text": { "zh": "代價是每個非零元素多了兩個指標(right、down)的額外空間。", "en": "The cost is two extra pointers (right, down) per nonzero entry." } }
+      ] },
+    { "heading": { "zh": "正交(列 + 欄)鏈結串列", "en": "Orthogonal (Row + Column) Linked Lists" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "每個非零元素是一個節點 (row, col, val),同時屬於兩條鏈:它所在列的「列鏈」(以 right 指標串接),以及它所在欄的「欄鏈」(以 down 指標串接)。每列、每欄各有一個表頭(header),指向該鏈的第一個節點。", "en": "Every nonzero entry is a node (row, col, val) that belongs to two chains at once: the row chain it sits in (linked via right), and the column chain it sits in (linked via down). Each row and each column has its own header pointing to the first node of that chain." } },
+        { "type": "code", "lang": "cpp", "file": "matrix_sparse_list.cpp", "code": "struct Node { int row, col, val; Node* right; Node* down; };" }
+      ] },
+    { "heading": { "zh": "建構：逐一插入", "en": "Construction: Insert One at a Time" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "依列為主序掃描矩陣,遇到非零元素就建立一個節點。", "en": "Scan the matrix in row-major order; create a node whenever a nonzero entry is found." },
+          { "zh": "把新節點接到它所在列鏈的尾端(rowTail[i]->right)。", "en": "Append the new node to the tail of its row chain (rowTail[i]->right)." },
+          { "zh": "同時把它接到它所在欄鏈的尾端(colTail[j]->down)。", "en": "At the same time, append it to the tail of its column chain (colTail[j]->down)." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "matrix_sparse_list.cpp", "code": "if (!rowHead[i]) rowHead[i] = n; else rowTail[i]->right = n; rowTail[i] = n;\nif (!colHead[j]) colHead[j] = n; else colTail[j]->down = n;  colTail[j] = n;" }
+      ] },
+    { "heading": { "zh": "轉置：列與欄互換", "en": "Transpose: Swap Rows and Columns" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "轉置後,原本的「欄」變成新的「列」。因為每個節點本來就同時掛在列鏈與欄鏈上,轉置不需要重新掃描或搬移資料——只要把每欄的鏈結串列,直接當成轉置矩陣的列鏈結串列來讀(沿著 down 指標走,把它解讀成 right 方向)。", "en": "After transposing, what used to be a column becomes a new row. Since every node is already linked into both a row chain and a column chain, transposing needs no rescanning or data movement — simply read each column's chain (walking its down pointers) as the corresponding row chain of the transposed matrix." } },
+        { "type": "code", "lang": "cpp", "file": "matrix_sparse_list.cpp", "code": "for (int j = 0; j < C; ++j) {\n    cout << \"  r\" << j << \":\";\n    for (Node* p = colHead[j]; p; p = p->down)\n        cout << \" (\" << p->row << \",\" << p->val << \")\";\n}" }
+      ] },
+    { "heading": { "zh": "與三元組陣列（matrix-sparse）比較", "en": "Contrast with the Triple Array (matrix-sparse)" },
+      "blocks": [
+        { "type": "table", "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "三元組陣列", "en": "Triple array" }, { "zh": "正交鏈結串列", "en": "Orthogonal linked list" } ], "rows": [
+          [ { "zh": "儲存大小", "en": "Size" }, { "zh": "固定,需先知道非零項數", "en": "Fixed; nonzero count must be known up front" }, { "zh": "動態,隨插入/刪除增減", "en": "Dynamic; grows/shrinks with insert/delete" } ],
+          [ { "zh": "插入/刪除一項", "en": "Insert/delete one entry" }, { "zh": "O(terms),需搬移陣列", "en": "O(terms) — array must shift" }, { "zh": "O(1)(找到位置後)", "en": "O(1) once the position is found" } ],
+          [ { "zh": "轉置", "en": "Transpose" }, { "zh": "O(cols + terms),用 rowSize/startPos 排序寫入", "en": "O(cols + terms) via rowSize/startPos scatter" }, { "zh": "O(1) 重新解讀,不搬移節點", "en": "O(1) reinterpretation — no nodes are moved" } ],
+          [ { "zh": "額外空間", "en": "Overhead" }, { "zh": "無指標,但需三個並列陣列", "en": "No pointers, but three parallel arrays" }, { "zh": "每節點 2 個指標 + 列/欄表頭", "en": "2 pointers per node + row/col headers" } ]
+        ] }
+      ] }
+  ]
+};
 SLIDES_DB["poly-padd"] = {
   "category": "Arrays",
   "title": { "zh": "多項式相加", "en": "Polynomial Addition" },
