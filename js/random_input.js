@@ -132,6 +132,23 @@
     return grid.map((r) => r.join(',')).join(';');
   }
 
+  function matrixSparseListText(rng, difficulty) {
+    let rows, cols;
+    if (difficulty === 'edge') { rows = randInt(rng, 2, 3); cols = randInt(rng, 2, 3); }
+    else if (difficulty === 'large') { rows = 6; cols = 6; }
+    else { rows = randInt(rng, 3, 5); cols = randInt(rng, 3, 5); }
+    const grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => 0));
+    if (difficulty === 'edge') {
+      // all zeros — leave grid as-is
+    } else if (difficulty === 'special') {
+      for (let i = 0; i < Math.min(rows, cols); i++) grid[i][i] = randInt(rng, 1, 9);
+    } else {
+      const nz = Math.max(2, Math.floor(rows * cols * 0.3));
+      for (let k = 0; k < nz; k++) grid[randInt(rng, 0, rows - 1)][randInt(rng, 0, cols - 1)] = randInt(rng, 1, 9);
+    }
+    return grid.map((r) => r.join(',')).join(';');
+  }
+
   function polyInput(rng, difficulty) {
     const term = (e) => randInt(rng, 1, 9) + ':' + e;
     if (difficulty === 'edge') return { a: term(randInt(rng, 0, 3)), b: term(randInt(rng, 0, 3)) };
@@ -230,6 +247,7 @@
       case 'tree-expression': return { text: exprPostfix(rng, difficulty) };
       case 'tree-obst': return obstInput(rng, difficulty);
       case 'matrix-sparse': return { text: matrixText(rng, difficulty) };
+      case 'matrix-sparse-list': return { text: matrixSparseListText(rng, difficulty) };
       case 'poly-padd': return polyInput(rng, difficulty);
       case 'maze-stack': return { text: mazeText(rng, difficulty) };
       case 'tree-mway': return mwayInput(rng, difficulty);

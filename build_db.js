@@ -87,6 +87,7 @@ const mappings = {
     'sort_external.cpp': 'codeSortExternal',
     'sort_polyphase.cpp': 'codeSortPolyphase',
     'matrix_sparse.cpp': 'codeMatrixSparse',
+    'matrix_sparse_list.cpp': 'codeMatrixSparseList',
     'poly_padd.cpp': 'codePolyPadd',
     'magic_square.cpp': 'codeMagicSquare',
     'magic_latin.cpp': 'codeMagicLatin',
