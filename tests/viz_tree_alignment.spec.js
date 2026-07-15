@@ -1,14 +1,6 @@
 const { test, expect } = require('@playwright/test');
+const { loadMethod } = require('./helpers');
 const path = require('path');
-
-async function loadMethod(page, methodId) {
-    const navItem = page.locator(
-        `.category-nav-item:has(.category-nav-method[data-method-id="${methodId}"])`);
-    await navItem.locator('.category-nav-btn').click();
-    await navItem.locator(`.category-nav-method[data-method-id="${methodId}"]`).click();
-    const card = page.locator(`[data-method-section="${methodId}"]`);
-    await expect(card).toHaveAttribute('data-runtime-state', 'active');
-}
 
 // For each edge <line>, both endpoints must coincide with a node's VISUAL center
 // (accounting for the .tree-node translate(-50%,-50%) centering). Returns the worst

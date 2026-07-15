@@ -1,16 +1,8 @@
 const { test, expect } = require('@playwright/test');
+const { loadMethod } = require('./helpers');
 const path = require('path');
 
 const fileUri = 'file://' + path.resolve(__dirname, '../index.html');
-
-async function loadMethod(page, methodId) {
-  const navItem = page.locator(
-    `.category-nav-item:has(.category-nav-method[data-method-id="${methodId}"])`);
-  await navItem.locator('.category-nav-btn').click();
-  await navItem.locator(`.category-nav-method[data-method-id="${methodId}"]`).click();
-  const card = page.locator(`[data-method-section="${methodId}"]`);
-  await expect(card).toHaveAttribute('data-runtime-state', 'active');
-}
 
 function readVal(page) { return page.locator('#std-value').inputValue(); }
 function inRange(v) { const n = parseInt(v, 10); return Number.isInteger(n) && n >= 1 && n <= 99; }

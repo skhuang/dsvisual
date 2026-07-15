@@ -1,18 +1,10 @@
 const { test, expect, devices } = require('@playwright/test');
+const { loadMethod } = require('./helpers');
 const path = require('path');
 
 const fileUri = 'file://' + path.resolve(__dirname, '../index.html');
 const { defaultBrowserType: _iphoneBrowser, ...iphone12 } = devices['iPhone 12'];
 const { defaultBrowserType: _ipadBrowser, ...ipadMini } = devices['iPad Mini'];
-
-async function loadMethod(page, methodId) {
-    const navItem = page.locator(
-        `.category-nav-item:has(.category-nav-method[data-method-id="${methodId}"])`);
-    await navItem.locator('.category-nav-btn').click();
-    await navItem.locator(`.category-nav-method[data-method-id="${methodId}"]`).click();
-    const card = page.locator(`[data-method-section="${methodId}"]`);
-    await expect(card).toHaveAttribute('data-runtime-state', 'active');
-}
 
 test.describe('Responsive Viewport: iPhone 12', () => {
   test.use(iphone12);
