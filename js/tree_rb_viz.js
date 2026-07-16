@@ -343,14 +343,21 @@
         }
     }
 
+    function _pickLang(m) {
+        if (m == null) return '';
+        if (typeof m === 'string') return m;
+        const zh = (typeof window !== 'undefined' && window.I18N && window.I18N.getCurrentLanguage() === 'zh');
+        return zh ? m.zh : m.en;
+    }
+
     const KIND_META = {
-        'insert': { cls: 'k-insert', label: '插入' },
-        'recolor': { cls: 'k-recolor', label: '變色' },
-        'rotate-left': { cls: 'k-rotate', label: '左旋' },
-        'rotate-right': { cls: 'k-rotate', label: '右旋' },
-        'delete': { cls: 'k-delete', label: '刪除' },
-        'note': { cls: 'k-note', label: '說明' },
-        'init': { cls: 'k-note', label: '起點' },
+        'insert': { cls: 'k-insert', label: { zh: '插入', en: 'Insert' } },
+        'recolor': { cls: 'k-recolor', label: { zh: '變色', en: 'Recolor' } },
+        'rotate-left': { cls: 'k-rotate', label: { zh: '左旋', en: 'Left-rot' } },
+        'rotate-right': { cls: 'k-rotate', label: { zh: '右旋', en: 'Right-rot' } },
+        'delete': { cls: 'k-delete', label: { zh: '刪除', en: 'Delete' } },
+        'note': { cls: 'k-note', label: { zh: '說明', en: 'Note' } },
+        'init': { cls: 'k-note', label: { zh: '起點', en: 'Start' } },
     };
 
     /* ================= 舞台：畫樹 + 補間動畫 ================= */
@@ -366,7 +373,7 @@
             this.svg.append(this.gE, this.gN, this.gM);
             this.empty = document.createElement('div');
             this.empty.className = 'rbviz-empty';
-            this.empty.textContent = this.opts.emptyText || '空樹';
+            this.empty.textContent = _pickLang(this.opts.emptyText) || _pickLang({ zh: '空樹', en: 'Empty tree' });
             host.append(this.svg, this.empty);
             this.nodeEls = new Map(); // id -> {g, key, sub}
             this.edgeEls = new Map(); // childId -> line
@@ -501,7 +508,7 @@
             if (this.opts.marker && nodes.length) {
                 const first = nodes[0], p = pos.get(first.id);
                 const t = document.createElementNS(SVGNS, 'text');
-                t.textContent = '▲ 下一個上場';
+                t.textContent = _pickLang({ zh: '▲ 下一個上場', en: '▲ up next' });
                 t.setAttribute('x', p.x); t.setAttribute('y', p.y + R + (this.opts.sub ? 30 : 16));
                 const gm = document.createElementNS(SVGNS, 'g');
                 gm.setAttribute('class', 'next-marker'); gm.append(t);
@@ -591,27 +598,30 @@
                 b.className = 'tbtn'; b.textContent = txt; b.title = title;
                 b.addEventListener('click', fn); el.append(b); return b;
             };
-            mk('⏮', '上一個操作的開頭', () => this.prevOp());
-            mk('◀', '上一步（← 鍵）', () => { this.pause(); this.goTo(this.cursor - 1); });
-            this.playBtn = mk('▶', '播放 / 暫停', () => this.playing ? this.pause() : this.play());
+            mk('⏮', _pickLang({ zh: '上一個操作的開頭', en: 'Start of previous operation' }), () => this.prevOp());
+            mk('◀', _pickLang({ zh: '上一步（← 鍵）', en: 'Previous step (←)' }), () => { this.pause(); this.goTo(this.cursor - 1); });
+            this.playBtn = mk('▶', _pickLang({ zh: '播放 / 暫停', en: 'Play / Pause' }), () => this.playing ? this.pause() : this.play());
             this.playBtn.classList.add('play');
-            mk('▶︎', '下一步（→ 鍵）', () => { this.pause(); this.goTo(this.cursor + 1); });
-            mk('⏭', '下一個操作的開頭', () => this.nextOp());
+            mk('▶︎', _pickLang({ zh: '下一步（→ 鍵）', en: 'Next step (→)' }), () => { this.pause(); this.goTo(this.cursor + 1); });
+            mk('⏭', _pickLang({ zh: '下一個操作的開頭', en: 'Start of next operation' }), () => this.nextOp());
             this.slider = document.createElement('input');
             this.slider.type = 'range'; this.slider.min = 0; this.slider.max = 0; this.slider.value = 0;
-            this.slider.setAttribute('aria-label', '步驟位置');
+            this.slider.setAttribute('aria-label', _pickLang({ zh: '步驟位置', en: 'Step position' }));
             this.slider.addEventListener('input', () => { this.pause(); this.goTo(+this.slider.value, false); });
             el.append(this.slider);
             this.speedSel = document.createElement('select');
-            this.speedSel.innerHTML = '<option value="1500">慢</option><option value="900" selected>中</option><option value="560">快</option>';
-            this.speedSel.setAttribute('aria-label', '播放速度');
+            this.speedSel.innerHTML = '<option value="1500">' + _pickLang({ zh: '慢', en: 'Slow' }) + '</option><option value="900" selected>' + _pickLang({ zh: '中', en: 'Medium' }) + '</option><option value="560">' + _pickLang({ zh: '快', en: 'Fast' }) + '</option>';
+            this.speedSel.setAttribute('aria-label', _pickLang({ zh: '播放速度', en: 'Playback speed' }));
             el.append(this.speedSel);
             this.cnt = document.createElement('span'); this.cnt.className = 'cnt';
             el.append(this.cnt);
         }
         reset(initText) {
             this.pause();
-            this.steps = [{ snap: null, kind: 'init', title: initText || '空樹', detail: '插入節點，或載入一個劇本', hl: [], opId: 0, opLabel: '起點' }];
+            this.steps = [{ snap: null, kind: 'init',
+                title: initText || { zh: '空樹', en: 'Empty tree' },
+                detail: { zh: '插入節點，或載入一個劇本', en: 'Insert a node, or load a scenario' },
+                hl: [], opId: 0, opLabel: { zh: '起點', en: 'Start' } }];
             this.cursor = 0; this.opSeq = 0;
             this.renderLog(); this.goTo(0, false);
         }
@@ -636,17 +646,19 @@
             // 描述橫幅
             const m = KIND_META[st.kind] || KIND_META.note;
             this.descEl.innerHTML = '';
-            const badge = document.createElement('span'); badge.className = 'rbviz-badge ' + m.cls; badge.textContent = m.label;
+            const badge = document.createElement('span'); badge.className = 'rbviz-badge ' + m.cls; badge.textContent = _pickLang(m.label);
             const txt = document.createElement('div'); txt.className = 'txt';
             const op = document.createElement('div'); op.className = 'op';
-            op.textContent = st.opId ? `操作 ${st.opId}／${this.opSeq} ・ ${st.opLabel}` : st.opLabel;
-            const b = document.createElement('b'); b.textContent = st.title;
-            const p = document.createElement('p'); p.textContent = st.detail || '';
+            op.textContent = st.opId
+                ? _pickLang({ zh: `操作 ${st.opId}／${this.opSeq} ・ `, en: `Op ${st.opId}/${this.opSeq} · ` }) + _pickLang(st.opLabel)
+                : _pickLang(st.opLabel);
+            const b = document.createElement('b'); b.textContent = _pickLang(st.title);
+            const p = document.createElement('p'); p.textContent = _pickLang(st.detail) || '';
             txt.append(op, b, p);
             this.descEl.append(badge, txt);
             // 進度
             this.slider.max = this.steps.length - 1; this.slider.value = i;
-            this.cnt.textContent = `步 ${i} / ${this.steps.length - 1}`;
+            this.cnt.textContent = _pickLang({ zh: `步 ${i} / ${this.steps.length - 1}`, en: `Step ${i} / ${this.steps.length - 1}` });
             this.rows.forEach((r, j) => r && r.classList.toggle('on', j === i));
             const row = this.rows[i];
             if (row) row.scrollIntoView({ block: 'nearest' });
@@ -659,13 +671,13 @@
                 if (st.opId !== lastOp) {
                     lastOp = st.opId;
                     const h = document.createElement('div'); h.className = 'op-h';
-                    h.textContent = `${st.opId}. ${st.opLabel}`;
+                    h.textContent = `${st.opId}. ` + _pickLang(st.opLabel);
                     this.logEl.append(h);
                 }
                 const r = document.createElement('button'); r.type = 'button'; r.className = 'row';
                 const m = KIND_META[st.kind] || KIND_META.note;
                 const d = document.createElement('span'); d.className = 'dot ' + m.cls;
-                r.append(d, document.createTextNode(st.title));
+                r.append(d, document.createTextNode(_pickLang(st.title)));
                 r.addEventListener('click', () => { this.pause(); this.goTo(i); });
                 this.logEl.append(r);
                 this.rows.push(r);
@@ -711,37 +723,37 @@
         {
             id: 'grow-1-15',
             name: { zh: '樹的成長：依序插入 1–15', en: 'Tree growth: insert 1–15 in order' },
-            tip: '從空樹看整棵樹怎麼靠旋轉長平衡 —— 播放中隨時可以暫停、倒帶',
+            tip: { zh: '從空樹看整棵樹怎麼靠旋轉長平衡 —— 播放中隨時可以暫停、倒帶', en: 'Watch the whole tree grow balanced through rotations from empty — pause or rewind anytime during playback' },
             seed: () => range(1, 15),
         },
         {
             id: 'recolor-18',
             name: { zh: '深樹連鎖 I：變色一路爬頂（18 顆）', en: 'Recolor cascade I: recolor climbs to the root (18 nodes)' },
-            tip: '看紅紅衝突連兩次 Case 1 往上竄，最後在頂端旋轉收尾',
+            tip: { zh: '看紅紅衝突連兩次 Case 1 往上竄，最後在頂端旋轉收尾', en: 'See a red-red violation climb up through two Case 1 recolors, finishing with a rotation at the top' },
             seed: () => range(1, 17), final: { op: 'insert', v: 18 },
         },
         {
             id: 'recolor-38',
             name: { zh: '深樹連鎖 II：更深更長（38 顆）', en: 'Recolor cascade II: deeper and longer (38 nodes)' },
-            tip: '三連 Case 1 變色爬了三層，最後旋轉 —— 這就是深樹的連鎖修復',
+            tip: { zh: '三連 Case 1 變色爬了三層，最後旋轉 —— 這就是深樹的連鎖修復', en: 'Three Case 1 recolors climb three levels, then a rotation — the cascading fix-up of a deep tree' },
             seed: () => range(1, 37), final: { op: 'insert', v: 38 },
         },
         {
             id: 'delete-3rot',
             name: { zh: '刪除三連旋（31 顆）', en: 'Delete → three consecutive rotations (31 nodes)' },
-            tip: '一次刪除觸發連續三次旋轉 —— 刪除是紅黑樹最兇的路徑',
+            tip: { zh: '一次刪除觸發連續三次旋轉 —— 刪除是紅黑樹最兇的路徑', en: 'One deletion triggers three consecutive rotations — deletion is the fiercest path in a red-black tree' },
             seed: () => DEL31.slice(), final: { op: 'delete', v: 15 },
         },
         {
             id: 'delete-recolor',
             name: { zh: '刪除變色上竄（16 顆）', en: 'Delete: recolor propagates up (16 nodes)' },
-            tip: '「缺一層黑」靠 Delete Case 2 往上丟兩次，中間夾一次旋轉',
+            tip: { zh: '「缺一層黑」靠 Delete Case 2 往上丟兩次，中間夾一次旋轉', en: 'The "missing black" propagates up twice via Delete Case 2, with a rotation in between' },
             seed: () => DEL16.slice(), final: { op: 'delete', v: 1 },
         },
         {
             id: 'random-15',
             name: { zh: '隨機 15 顆', en: 'Random 15 nodes' },
-            tip: '',
+            tip: { zh: '', en: '' },
             seed: () => {
                 const pool = Array.from({ length: 99 }, (_, i) => i + 1);
                 for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }

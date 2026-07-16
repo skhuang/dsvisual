@@ -3,7 +3,7 @@
 // printed interesting cascades are omitted).
 const { test } = require('node:test');
 const assert = require('node:assert');
-const { RBTree, RED, BLACK, PRESETS } = require('../../js/tree_rb_viz.js');
+const { RBTree, RED, BLACK, PRESETS, KIND_META } = require('../../js/tree_rb_viz.js');
 
 // Validates the five red-black rules plus BST order and parent pointers.
 // Returns the node count.
@@ -120,5 +120,15 @@ test('presets have stable id and bilingual name', () => {
     for (const p of PRESETS) {
         assert.strictEqual(typeof p.id, 'string');
         assert.ok(p.name && typeof p.name.zh === 'string' && typeof p.name.en === 'string');
+    }
+});
+
+test('KIND_META labels and preset tips are bilingual', () => {
+    for (const k of Object.keys(KIND_META)) {
+        const lbl = KIND_META[k].label;
+        assert.ok(lbl && typeof lbl.zh === 'string' && typeof lbl.en === 'string', k + '.label');
+    }
+    for (const p of PRESETS) {
+        assert.ok(p.tip && typeof p.tip.zh === 'string' && typeof p.tip.en === 'string', p.id + '.tip');
     }
 });
