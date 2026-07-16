@@ -3,7 +3,7 @@
 // printed interesting cascades are omitted).
 const { test } = require('node:test');
 const assert = require('node:assert');
-const { RBTree, RED, BLACK, PRESETS } = require('../../js/tree_rb_viz.js');
+const { RBTree, RED, BLACK, PRESETS, KIND_META } = require('../../js/tree_rb_viz.js');
 
 // Validates the five red-black rules plus BST order and parent pointers.
 // Returns the node count.
@@ -74,7 +74,7 @@ test('onStep emits a snapshot-able step for every mutation', () => {
     const kinds = [];
     t.onStep = (s) => {
         kinds.push(s.kind);
-        assert.ok(s.title.length > 0);
+        assert.ok(s.title && s.title.zh.length > 0 && s.title.en.length > 0);
         // serialize() must be callable mid-operation (History snapshots each step)
         t.serialize();
     };
@@ -94,8 +94,41 @@ test('preset seeds produce valid trees and legal final ops', () => {
         for (const k of p.seed()) t.insert(k);
         validate(t);
         if (p.final) {
-            if (p.final.op === 'insert') assert.equal(t.find(p.final.v), null, p.name + ': final insert must be new');
-            else assert.notEqual(t.find(p.final.v), null, p.name + ': final delete must exist');
+            if (p.final.op === 'insert') assert.equal(t.find(p.final.v), null, p.id + ': final insert must be new');
+            else assert.notEqual(t.find(p.final.v), null, p.id + ': final delete must exist');
         }
+    }
+});
+
+test('every emitted step has bilingual {zh,en} title and detail', () => {
+    const t = new RBTree();
+    const steps = [];
+    t.onStep = (s) => steps.push(s);
+    [10, 20, 30, 15, 25, 5, 1].forEach((k) => t.insert(k));
+    [20, 10, 30].forEach((k) => t.delete(k));
+    assert.ok(steps.length > 0);
+    for (const s of steps) {
+        for (const f of ['title', 'detail']) {
+            assert.ok(s[f] && typeof s[f].zh === 'string' && s[f].zh.length > 0, f + '.zh');
+            assert.ok(s[f] && typeof s[f].en === 'string' && s[f].en.length > 0, f + '.en');
+        }
+    }
+});
+
+test('presets have stable id and bilingual name', () => {
+    assert.ok(PRESETS.length >= 6);
+    for (const p of PRESETS) {
+        assert.strictEqual(typeof p.id, 'string');
+        assert.ok(p.name && typeof p.name.zh === 'string' && typeof p.name.en === 'string');
+    }
+});
+
+test('KIND_META labels and preset tips are bilingual', () => {
+    for (const k of Object.keys(KIND_META)) {
+        const lbl = KIND_META[k].label;
+        assert.ok(lbl && typeof lbl.zh === 'string' && typeof lbl.en === 'string', k + '.label');
+    }
+    for (const p of PRESETS) {
+        assert.ok(p.tip && typeof p.tip.zh === 'string' && typeof p.tip.en === 'string', p.id + '.tip');
     }
 });

@@ -4,7 +4,7 @@ const path = require('path');
 
 test.describe('tree-rb (紅黑樹旋轉觀測站)', () => {
     test.beforeEach(async ({ page }) => {
-        await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+        await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'zh'); } catch (e) {} });
         await page.goto('file://' + path.resolve(__dirname, '../index.html'));
         await loadMethod(page, 'tree-rb');
     });
@@ -66,7 +66,7 @@ test.describe('tree-rb (紅黑樹旋轉觀測站)', () => {
 
     test('delete preset loads paused on the built tree; slider reaches the deletion', async ({ page }) => {
         const sec = page.locator('[data-method-section="tree-rb"]');
-        await sec.locator('.rbviz-preset', { hasText: '刪除三連旋' }).click();
+        await sec.locator('.rbviz-preset[data-preset="delete-3rot"]').click();
         // Presets no longer autoplay: parked on the fully-built tree, ▶ untouched.
         await expect(sec.locator('[data-testid="rbviz-transport"] .tbtn.play')).toHaveText('▶');
         await expect(sec.locator('[data-testid="rbviz-stage"] .nd')).toHaveCount(31);
@@ -92,5 +92,24 @@ test.describe('tree-rb (紅黑樹旋轉觀測站)', () => {
         const sec = page.locator('[data-method-section="tree-bst"]');
         await expect(sec.locator('.method-section-grid .code-panel')).toHaveCount(1);
         await expect(sec.locator('[data-testid="code-drawer-toggle"]')).toHaveCount(0);
+    });
+});
+
+test.describe('tree-rb (English)', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+        await page.goto('file://' + path.resolve(__dirname, '../index.html'));
+        await loadMethod(page, 'tree-rb');
+    });
+
+    test('renders English UI and step log', async ({ page }) => {
+        const sec = page.locator('[data-method-section="tree-rb"]');
+        await expect(sec.locator('[data-testid="rbviz-insert"]')).toHaveText('Insert');
+        await expect(sec.locator('.rbviz-logcol h4')).toHaveText('Step Log');
+        const input = sec.locator('[data-testid="rbviz-input"]');
+        await input.fill('10'); await sec.locator('[data-testid="rbviz-insert"]').click();
+        await input.fill('20'); await sec.locator('[data-testid="rbviz-insert"]').click();
+        // Step log op-header shows the English op label
+        await expect(sec.locator('[data-testid="rbviz-log"] .op-h').first()).toContainText('Insert');
     });
 });

@@ -6078,17 +6078,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let _rbState = null;
     function renderTreeRB() {
         const host = acquireDynamicVizHost();
+        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
         host.innerHTML =
             '<div class="rbviz" data-testid="rbviz">' +
                 '<div class="rbviz-toolbar">' +
                     '<div class="rbviz-field">' +
-                        '<input type="number" class="rbviz-input" data-testid="rbviz-input" placeholder="鍵值" aria-label="鍵值">' +
-                        '<button type="button" class="btn primary rbviz-insert" data-testid="rbviz-insert">插入</button>' +
-                        '<button type="button" class="btn secondary rbviz-delete" data-testid="rbviz-delete">刪除</button>' +
-                        '<button type="button" class="btn exception rbviz-clear" data-testid="rbviz-clear">清空</button>' +
+                        '<input type="number" class="rbviz-input" data-testid="rbviz-input" placeholder="' + langOf({ zh: '鍵值', en: 'Key' }) + '" aria-label="' + langOf({ zh: '鍵值', en: 'Key' }) + '">' +
+                        '<button type="button" class="btn primary rbviz-insert" data-testid="rbviz-insert">' + langOf({ zh: '插入', en: 'Insert' }) + '</button>' +
+                        '<button type="button" class="btn secondary rbviz-delete" data-testid="rbviz-delete">' + langOf({ zh: '刪除', en: 'Delete' }) + '</button>' +
+                        '<button type="button" class="btn exception rbviz-clear" data-testid="rbviz-clear">' + langOf({ zh: '清空', en: 'Clear' }) + '</button>' +
                     '</div>' +
-                    '<div class="rbviz-presets" data-testid="rbviz-presets"><span class="lbl">劇本</span></div>' +
-                    '<span class="rbviz-hint">點節點可把鍵值帶入輸入框；← → 鍵逐步前進 / 倒帶，空白鍵播放 / 暫停</span>' +
+                    '<div class="rbviz-presets" data-testid="rbviz-presets"><span class="lbl">' + langOf({ zh: '劇本', en: 'Scenarios' }) + '</span></div>' +
+                    '<span class="rbviz-hint">' + langOf({ zh: '點節點可把鍵值帶入輸入框；← → 鍵逐步前進 / 倒帶，空白鍵播放 / 暫停', en: 'Click a node to load its key; ← → step forward / back, Space to play / pause' }) + '</span>' +
                 '</div>' +
                 '<div class="rbviz-workbench">' +
                     '<div class="rbviz-stagecol">' +
@@ -6096,12 +6097,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         '<div class="rbviz-stage" data-testid="rbviz-stage"></div>' +
                         '<div class="rbviz-transport" data-testid="rbviz-transport"></div>' +
                         '<div class="rbviz-legend">' +
-                            '<span><i class="lr"></i>紅節點</span><span><i class="lb"></i>黑節點</span>' +
-                            '<span><i class="lh"></i>本步驟主角</span><span><i class="lbe"></i>β 子樹（旋轉時換邊的那包）</span>' +
+                            '<span><i class="lr"></i>' + langOf({ zh: '紅節點', en: 'Red node' }) + '</span><span><i class="lb"></i>' + langOf({ zh: '黑節點', en: 'Black node' }) + '</span>' +
+                            '<span><i class="lh"></i>' + langOf({ zh: '本步驟主角', en: "This step's focus" }) + '</span><span><i class="lbe"></i>' + langOf({ zh: 'β 子樹（旋轉時換邊的那包）', en: 'β subtree (the bundle that switches sides on rotation)' }) + '</span>' +
                         '</div>' +
                     '</div>' +
                     '<aside class="rbviz-logcol">' +
-                        '<h4>步驟紀錄</h4>' +
+                        '<h4>' + langOf({ zh: '步驟紀錄', en: 'Step Log' }) + '</h4>' +
                         '<div class="rbviz-steplog" data-testid="rbviz-log"></div>' +
                     '</aside>' +
                 '</div>' +
@@ -6109,7 +6110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const input = host.querySelector('.rbviz-input');
         const stage = new RBTreeViz.Stage(host.querySelector('.rbviz-stage'), {
-            emptyText: '空樹 —— 插入一個值，或載入一個劇本',
+            emptyText: { zh: '空樹 —— 插入一個值，或載入一個劇本', en: 'Empty tree — insert a value, or load a scenario' },
         });
         stage.onNodeClick = (key) => { input.value = key; };
 
@@ -6132,33 +6133,35 @@ document.addEventListener('DOMContentLoaded', () => {
             _rbState.hist.reset();
         }
         function rbInsert(v, opt) {
-            if (!Number.isFinite(v)) { showStatus('先輸入一個整數', '#fbbf24'); return false; }
+            if (!Number.isFinite(v)) { showStatus(langOf({ zh: '先輸入一個整數', en: 'Enter an integer first' }), '#fbbf24'); return false; }
             v = Math.round(v);
-            if (_rbState.tree.size() >= 63) { showStatus('節點太多了（上限 63），先刪一些吧', '#fbbf24'); return false; }
-            if (_rbState.tree.find(v)) { showStatus(v + ' 已經在樹裡了', '#fbbf24'); return false; }
-            _rbState.hist.runOp('插入 ' + v, () => _rbState.tree.insert(v), opt);
+            if (_rbState.tree.size() >= 63) { showStatus(langOf({ zh: '節點太多了（上限 63），先刪一些吧', en: 'Too many nodes (max 63) — delete some first' }), '#fbbf24'); return false; }
+            if (_rbState.tree.find(v)) { showStatus(langOf({ zh: v + ' 已經在樹裡了', en: v + ' is already in the tree' }), '#fbbf24'); return false; }
+            _rbState.hist.runOp({ zh: '插入 ' + v, en: 'Insert ' + v }, () => _rbState.tree.insert(v), opt);
             return true;
         }
         function rbDelete(v, opt) {
-            if (!Number.isFinite(v)) { showStatus('先輸入一個整數', '#fbbf24'); return false; }
+            if (!Number.isFinite(v)) { showStatus(langOf({ zh: '先輸入一個整數', en: 'Enter an integer first' }), '#fbbf24'); return false; }
             v = Math.round(v);
-            if (!_rbState.tree.find(v)) { showStatus('樹裡沒有 ' + v, '#fbbf24'); return false; }
-            _rbState.hist.runOp('刪除 ' + v, () => _rbState.tree.delete(v), opt);
+            if (!_rbState.tree.find(v)) { showStatus(langOf({ zh: '樹裡沒有 ' + v, en: v + " isn't in the tree" }), '#fbbf24'); return false; }
+            _rbState.hist.runOp({ zh: '刪除 ' + v, en: 'Delete ' + v }, () => _rbState.tree.delete(v), opt);
             return true;
         }
 
         host.querySelector('.rbviz-insert').addEventListener('click', () => { if (rbInsert(+input.value)) input.value = ''; });
         host.querySelector('.rbviz-delete').addEventListener('click', () => { if (rbDelete(+input.value)) input.value = ''; });
         input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { if (rbInsert(+input.value)) input.value = ''; } });
-        host.querySelector('.rbviz-clear').addEventListener('click', () => { rbReset(); showStatus('清空了', '#94a3b8'); });
+        host.querySelector('.rbviz-clear').addEventListener('click', () => { rbReset(); showStatus(langOf({ zh: '清空了', en: 'Cleared' }), '#94a3b8'); });
 
         const presetsEl = host.querySelector('[data-testid="rbviz-presets"]');
         RBTreeViz.PRESETS.forEach((p) => {
             const b = document.createElement('button');
             b.type = 'button';
             b.className = 'rbviz-preset';
-            b.textContent = p.name;
-            if (p.tip) b.title = p.tip;
+            b.dataset.preset = p.id;
+            b.textContent = langOf(p.name);
+            const tip = langOf(p.tip || { zh: '', en: '' });
+            if (tip) b.title = tip;
             b.addEventListener('click', () => {
                 rbReset();
                 for (const k of p.seed()) rbInsert(k, { play: false });
@@ -6172,7 +6175,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     _rbState.hist.goTo(0, false);
                 }
-                showStatus((p.tip ? p.tip + '。' : '') + '劇本已載入，按 ▶ 開始播放', '#94a3b8');
+                const zhTip = (p.tip && p.tip.zh) || '', enTip = (p.tip && p.tip.en) || '';
+                showStatus(langOf({
+                    zh: (zhTip ? zhTip + '。' : '') + '劇本已載入，按 ▶ 開始播放',
+                    en: (enTip ? enTip + '. ' : '') + 'Scenario loaded — press ▶ to play'
+                }), '#94a3b8');
             });
             presetsEl.appendChild(b);
         });
