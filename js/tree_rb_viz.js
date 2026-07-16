@@ -76,9 +76,12 @@
             x.parent = y;
             const b = beta === this.NIL ? null : beta;
             this._emit('rotate-left',
-                (note ? note + '｜' : '') + `左旋 @ ${this._lbl(x)}`,
-                `${this._lbl(y)} 升上來當這棵小樹的根，${this._lbl(x)} 下沉成它的左子` +
-                (b ? `；中間子樹 β（根 ${this._lbl(b)}）換邊，改掛到 ${this._lbl(x)} 的右側` : `；β 子樹是空的，不用搬`),
+                { zh: (note ? note.zh + '｜' : '') + `左旋 @ ${this._lbl(x)}`,
+                  en: (note ? note.en + ' | ' : '') + `Left-rotate @ ${this._lbl(x)}` },
+                { zh: `${this._lbl(y)} 升上來當這棵小樹的根，${this._lbl(x)} 下沉成它的左子` +
+                    (b ? `；中間子樹 β（根 ${this._lbl(b)}）換邊，改掛到 ${this._lbl(x)} 的右側` : `；β 子樹是空的，不用搬`),
+                  en: `${this._lbl(y)} rises to the subtree root and ${this._lbl(x)} sinks to be its left child` +
+                    (b ? `; the middle subtree β (root ${this._lbl(b)}) switches sides, re-attaching as ${this._lbl(x)}'s right child` : `; the β subtree is empty, nothing to move`) },
                 [x, y],
                 { rot: 'L', pivot: x.id, riser: y.id, beta: b ? b.id : null });
         }
@@ -95,9 +98,12 @@
             x.parent = y;
             const b = beta === this.NIL ? null : beta;
             this._emit('rotate-right',
-                (note ? note + '｜' : '') + `右旋 @ ${this._lbl(x)}`,
-                `${this._lbl(y)} 升上來當這棵小樹的根，${this._lbl(x)} 下沉成它的右子` +
-                (b ? `；中間子樹 β（根 ${this._lbl(b)}）換邊，改掛到 ${this._lbl(x)} 的左側` : `；β 子樹是空的，不用搬`),
+                { zh: (note ? note.zh + '｜' : '') + `右旋 @ ${this._lbl(x)}`,
+                  en: (note ? note.en + ' | ' : '') + `Right-rotate @ ${this._lbl(x)}` },
+                { zh: `${this._lbl(y)} 升上來當這棵小樹的根，${this._lbl(x)} 下沉成它的右子` +
+                    (b ? `；中間子樹 β（根 ${this._lbl(b)}）換邊，改掛到 ${this._lbl(x)} 的左側` : `；β 子樹是空的，不用搬`),
+                  en: `${this._lbl(y)} rises to the subtree root and ${this._lbl(x)} sinks to be its right child` +
+                    (b ? `; the middle subtree β (root ${this._lbl(b)}) switches sides, re-attaching as ${this._lbl(x)}'s left child` : `; the β subtree is empty, nothing to move`) },
                 [x, y],
                 { rot: 'R', pivot: x.id, riser: y.id, beta: b ? b.id : null });
         }
@@ -112,9 +118,12 @@
             if (y === this.NIL) this.root = z;
             else if (key < y.key) y.left = z;
             else y.right = z;
-            this._emit('insert', `插入 ${this._lbl(z)}（先塗紅）`,
-                y === this.NIL ? `樹是空的，${this._lbl(z)} 直接當根`
-                    : `照 BST 規則走到底，掛在 ${this._lbl(y)} 的${key < y.key ? '左' : '右'}邊。新節點一律先塗紅，才不會破壞黑高度`,
+            this._emit('insert',
+                { zh: `插入 ${this._lbl(z)}（先塗紅）`, en: `Insert ${this._lbl(z)} (color it red first)` },
+                { zh: y === this.NIL ? `樹是空的，${this._lbl(z)} 直接當根`
+                        : `照 BST 規則走到底，掛在 ${this._lbl(y)} 的${key < y.key ? '左' : '右'}邊。新節點一律先塗紅，才不會破壞黑高度`,
+                  en: y === this.NIL ? `The tree is empty, so ${this._lbl(z)} becomes the root directly`
+                        : `Follow the BST rule to the bottom and attach as ${this._lbl(y)}'s ${key < y.key ? 'left' : 'right'} child. A new node is always colored red first so the black-height isn't disturbed` },
                 [z, y]);
             this._insertFixup(z);
             return z;
@@ -127,45 +136,59 @@
                     const u = g.right;
                     if (u.color === RED) {
                         p.color = BLACK; u.color = BLACK; g.color = RED;
-                        this._emit('recolor', `Case 1：叔叔 ${this._lbl(u)} 也是紅的 → 只變色`,
-                            `父 ${this._lbl(p)}、叔 ${this._lbl(u)} 轉黑，祖父 ${this._lbl(g)} 轉紅。紅紅衝突沒有消失，而是往上丟給 ${this._lbl(g)} —— 這就是會一路往上竄的那種修復`,
+                        this._emit('recolor',
+                            { zh: `Case 1：叔叔 ${this._lbl(u)} 也是紅的 → 只變色`,
+                              en: `Case 1: uncle ${this._lbl(u)} is also red → recolor only` },
+                            { zh: `父 ${this._lbl(p)}、叔 ${this._lbl(u)} 轉黑，祖父 ${this._lbl(g)} 轉紅。紅紅衝突沒有消失，而是往上丟給 ${this._lbl(g)} —— 這就是會一路往上竄的那種修復`,
+                              en: `Parent ${this._lbl(p)} and uncle ${this._lbl(u)} become black, grandparent ${this._lbl(g)} becomes red. The red-red violation isn't gone — it propagates up to ${this._lbl(g)}, the kind of fix-up that can climb all the way up` },
                             [z, p, u, g]);
                         z = g;
                     } else {
                         if (z === p.right) {
                             z = p;
-                            this.leftRotate(z, `Case 2：${this._lbl(z)} 在內側（LR 形）`);
+                            this.leftRotate(z, { zh: `Case 2：${this._lbl(z)} 在內側（LR 形）`, en: `Case 2: ${this._lbl(z)} is on the inner side (LR shape)` });
                         }
                         z.parent.color = BLACK; z.parent.parent.color = RED;
-                        this._emit('recolor', `Case 3：先變色，準備最後一旋`,
-                            `父 ${this._lbl(z.parent)} 轉黑、祖父 ${this._lbl(z.parent.parent)} 轉紅，等一下旋轉完顏色才會合法`,
+                        this._emit('recolor',
+                            { zh: `Case 3：先變色，準備最後一旋`, en: `Case 3: recolor first, ready for the final rotation` },
+                            { zh: `父 ${this._lbl(z.parent)} 轉黑、祖父 ${this._lbl(z.parent.parent)} 轉紅，等一下旋轉完顏色才會合法`,
+                              en: `Parent ${this._lbl(z.parent)} becomes black and grandparent ${this._lbl(z.parent.parent)} becomes red; the colors will only be legal once the rotation is done` },
                             [z.parent, z.parent.parent]);
-                        this.rightRotate(z.parent.parent, 'Case 3：外側（LL 形）');
+                        this.rightRotate(z.parent.parent, { zh: 'Case 3：外側（LL 形）', en: 'Case 3: outer case (LL shape)' });
                     }
                 } else {
                     const u = g.left;
                     if (u.color === RED) {
                         p.color = BLACK; u.color = BLACK; g.color = RED;
-                        this._emit('recolor', `Case 1：叔叔 ${this._lbl(u)} 也是紅的 → 只變色`,
-                            `父 ${this._lbl(p)}、叔 ${this._lbl(u)} 轉黑，祖父 ${this._lbl(g)} 轉紅。紅紅衝突往上丟給 ${this._lbl(g)}`,
+                        this._emit('recolor',
+                            { zh: `Case 1：叔叔 ${this._lbl(u)} 也是紅的 → 只變色`,
+                              en: `Case 1: uncle ${this._lbl(u)} is also red → recolor only` },
+                            { zh: `父 ${this._lbl(p)}、叔 ${this._lbl(u)} 轉黑，祖父 ${this._lbl(g)} 轉紅。紅紅衝突往上丟給 ${this._lbl(g)}`,
+                              en: `Parent ${this._lbl(p)} and uncle ${this._lbl(u)} become black, grandparent ${this._lbl(g)} becomes red. The red-red violation propagates up to ${this._lbl(g)}` },
                             [z, p, u, g]);
                         z = g;
                     } else {
                         if (z === p.left) {
                             z = p;
-                            this.rightRotate(z, `Case 2：${this._lbl(z)} 在內側（RL 形）`);
+                            this.rightRotate(z, { zh: `Case 2：${this._lbl(z)} 在內側（RL 形）`, en: `Case 2: ${this._lbl(z)} is on the inner side (RL shape)` });
                         }
                         z.parent.color = BLACK; z.parent.parent.color = RED;
-                        this._emit('recolor', `Case 3：先變色，準備最後一旋`,
-                            `父 ${this._lbl(z.parent)} 轉黑、祖父 ${this._lbl(z.parent.parent)} 轉紅，等一下旋轉完顏色才會合法`,
+                        this._emit('recolor',
+                            { zh: `Case 3：先變色，準備最後一旋`, en: `Case 3: recolor first, ready for the final rotation` },
+                            { zh: `父 ${this._lbl(z.parent)} 轉黑、祖父 ${this._lbl(z.parent.parent)} 轉紅，等一下旋轉完顏色才會合法`,
+                              en: `Parent ${this._lbl(z.parent)} becomes black and grandparent ${this._lbl(z.parent.parent)} becomes red; the colors will only be legal once the rotation is done` },
                             [z.parent, z.parent.parent]);
-                        this.leftRotate(z.parent.parent, 'Case 3：外側（RR 形）');
+                        this.leftRotate(z.parent.parent, { zh: 'Case 3：外側（RR 形）', en: 'Case 3: outer case (RR shape)' });
                     }
                 }
             }
             if (this.root.color !== BLACK) {
                 this.root.color = BLACK;
-                this._emit('recolor', `根一律塗黑`, `衝突竄到最頂了：把根 ${this._lbl(this.root)} 塗黑收尾，整棵樹黑高度 +1`, [this.root]);
+                this._emit('recolor',
+                    { zh: `根一律塗黑`, en: `Always color the root black` },
+                    { zh: `衝突竄到最頂了：把根 ${this._lbl(this.root)} 塗黑收尾，整棵樹黑高度 +1`,
+                      en: `The violation reached the top: color the root ${this._lbl(this.root)} black to finish; the whole tree's black-height increases by 1` },
+                    [this.root]);
             }
         }
 
@@ -183,11 +206,17 @@
             if (z.left === this.NIL) {
                 x = z.right;
                 this._transplant(z, z.right);
-                this._emit('delete', `摘掉 ${zl}`, `${zl} 沒有左子，右子樹直接接上來頂位`, [x]);
+                this._emit('delete',
+                    { zh: `摘掉 ${zl}`, en: `Remove ${zl}` },
+                    { zh: `${zl} 沒有左子，右子樹直接接上來頂位`, en: `${zl} has no left child, so its right subtree slots straight into its place` },
+                    [x]);
             } else if (z.right === this.NIL) {
                 x = z.left;
                 this._transplant(z, z.left);
-                this._emit('delete', `摘掉 ${zl}`, `${zl} 沒有右子，左子樹直接接上來頂位`, [x]);
+                this._emit('delete',
+                    { zh: `摘掉 ${zl}`, en: `Remove ${zl}` },
+                    { zh: `${zl} 沒有右子，左子樹直接接上來頂位`, en: `${zl} has no right child, so its left subtree slots straight into its place` },
+                    [x]);
             } else {
                 y = this.min(z.right); yColor = y.color; x = y.right;
                 if (y.parent === z) {
@@ -199,11 +228,17 @@
                 this._transplant(z, y);
                 y.left = z.left; y.left.parent = y;
                 y.color = z.color;
-                this._emit('delete', `摘掉 ${zl}：後繼 ${this._lbl(y)} 頂上`,
-                    `${zl} 有兩個小孩，由右子樹最小的 ${this._lbl(y)} 接手它的位置、連顏色一起繼承`, [y]);
+                this._emit('delete',
+                    { zh: `摘掉 ${zl}：後繼 ${this._lbl(y)} 頂上`, en: `Remove ${zl}: successor ${this._lbl(y)} takes its place` },
+                    { zh: `${zl} 有兩個小孩，由右子樹最小的 ${this._lbl(y)} 接手它的位置、連顏色一起繼承`,
+                      en: `${zl} has two children, so ${this._lbl(y)} — the minimum of its right subtree — takes over its position, inheriting its color too` },
+                    [y]);
             }
             if (yColor === BLACK) this._deleteFixup(x);
-            else this._emit('note', `不用修復`, `被摘掉的位置原本是紅的，黑高度沒變，直接收工`, []);
+            else this._emit('note',
+                { zh: `不用修復`, en: `No fix-up needed` },
+                { zh: `被摘掉的位置原本是紅的，黑高度沒變，直接收工`, en: `The removed spot was red, so the black-height is unchanged — done` },
+                []);
             return z;
         }
 
@@ -220,63 +255,90 @@
                     let w = p.right;
                     if (w.color === RED) {
                         w.color = BLACK; p.color = RED;
-                        this._emit('recolor', `Delete Case 1：兄弟 ${this._lbl(w)} 是紅的`,
-                            `先把兄弟 ${this._lbl(w)} 轉黑、父 ${this._lbl(p)} 轉紅，再旋轉把紅兄弟轉開，換一個黑兄弟來處理`, [w, p]);
-                        this.leftRotate(p, 'Delete Case 1');
+                        this._emit('recolor',
+                            { zh: `Delete Case 1：兄弟 ${this._lbl(w)} 是紅的`, en: `Delete Case 1: sibling ${this._lbl(w)} is red` },
+                            { zh: `先把兄弟 ${this._lbl(w)} 轉黑、父 ${this._lbl(p)} 轉紅，再旋轉把紅兄弟轉開，換一個黑兄弟來處理`,
+                              en: `First color sibling ${this._lbl(w)} black and parent ${this._lbl(p)} red, then rotate to swing the red sibling out of the way, leaving a black sibling to handle` },
+                            [w, p]);
+                        this.leftRotate(p, { zh: 'Delete Case 1', en: 'Delete Case 1' });
                         w = x.parent.right;
                     }
                     if (w.left.color === BLACK && w.right.color === BLACK) {
                         w.color = RED;
-                        this._emit('recolor', `Delete Case 2：兄弟 ${this._lbl(w)} 一家全黑 → 兄弟轉紅`,
-                            `這邊少一層黑，乾脆把兄弟 ${this._lbl(w)} 也轉紅，讓整段都少一層 —— 「缺黑」的問題往上丟給 ${this._lbl(x.parent)}，可能一路竄到根`, [w, x.parent]);
+                        this._emit('recolor',
+                            { zh: `Delete Case 2：兄弟 ${this._lbl(w)} 一家全黑 → 兄弟轉紅`, en: `Delete Case 2: sibling ${this._lbl(w)}'s whole family is black → color the sibling red` },
+                            { zh: `這邊少一層黑，乾脆把兄弟 ${this._lbl(w)} 也轉紅，讓整段都少一層 —— 「缺黑」的問題往上丟給 ${this._lbl(x.parent)}，可能一路竄到根`,
+                              en: `This side is short one black, so just color sibling ${this._lbl(w)} red too, making the whole segment short one — the "missing black" problem propagates up to ${this._lbl(x.parent)}, and may climb all the way to the root` },
+                            [w, x.parent]);
                         x = x.parent;
                     } else {
                         if (w.right.color === BLACK) {
                             w.left.color = BLACK; w.color = RED;
-                            this._emit('recolor', `Delete Case 3：紅侄在內側，先調色`,
-                                `${this._lbl(w.left)} 轉黑、${this._lbl(w)} 轉紅，準備把紅侄旋到外側`, [w.left, w]);
-                            this.rightRotate(w, 'Delete Case 3');
+                            this._emit('recolor',
+                                { zh: `Delete Case 3：紅侄在內側，先調色`, en: `Delete Case 3: the red nephew is on the inner side, recolor first` },
+                                { zh: `${this._lbl(w.left)} 轉黑、${this._lbl(w)} 轉紅，準備把紅侄旋到外側`,
+                                  en: `${this._lbl(w.left)} becomes black and ${this._lbl(w)} becomes red, ready to rotate the red nephew to the outer side` },
+                                [w.left, w]);
+                            this.rightRotate(w, { zh: 'Delete Case 3', en: 'Delete Case 3' });
                             w = x.parent.right;
                         }
                         w.color = x.parent.color; x.parent.color = BLACK; w.right.color = BLACK;
-                        this._emit('recolor', `Delete Case 4：定色，準備收尾旋轉`,
-                            `兄弟 ${this._lbl(w)} 接收父的顏色，父 ${this._lbl(x.parent)} 與紅侄 ${this._lbl(w.right)} 轉黑`, [w, x.parent, w.right]);
-                        this.leftRotate(x.parent, 'Delete Case 4');
+                        this._emit('recolor',
+                            { zh: `Delete Case 4：定色，準備收尾旋轉`, en: `Delete Case 4: fix the colors, ready for the final rotation` },
+                            { zh: `兄弟 ${this._lbl(w)} 接收父的顏色，父 ${this._lbl(x.parent)} 與紅侄 ${this._lbl(w.right)} 轉黑`,
+                              en: `Sibling ${this._lbl(w)} takes the parent's color, and parent ${this._lbl(x.parent)} and red nephew ${this._lbl(w.right)} both become black` },
+                            [w, x.parent, w.right]);
+                        this.leftRotate(x.parent, { zh: 'Delete Case 4', en: 'Delete Case 4' });
                         x = this.root;
                     }
                 } else {
                     let w = p.left;
                     if (w.color === RED) {
                         w.color = BLACK; p.color = RED;
-                        this._emit('recolor', `Delete Case 1：兄弟 ${this._lbl(w)} 是紅的`,
-                            `先把兄弟 ${this._lbl(w)} 轉黑、父 ${this._lbl(p)} 轉紅，再旋轉把紅兄弟轉開，換一個黑兄弟來處理`, [w, p]);
-                        this.rightRotate(p, 'Delete Case 1');
+                        this._emit('recolor',
+                            { zh: `Delete Case 1：兄弟 ${this._lbl(w)} 是紅的`, en: `Delete Case 1: sibling ${this._lbl(w)} is red` },
+                            { zh: `先把兄弟 ${this._lbl(w)} 轉黑、父 ${this._lbl(p)} 轉紅，再旋轉把紅兄弟轉開，換一個黑兄弟來處理`,
+                              en: `First color sibling ${this._lbl(w)} black and parent ${this._lbl(p)} red, then rotate to swing the red sibling out of the way, leaving a black sibling to handle` },
+                            [w, p]);
+                        this.rightRotate(p, { zh: 'Delete Case 1', en: 'Delete Case 1' });
                         w = x.parent.left;
                     }
                     if (w.right.color === BLACK && w.left.color === BLACK) {
                         w.color = RED;
-                        this._emit('recolor', `Delete Case 2：兄弟 ${this._lbl(w)} 一家全黑 → 兄弟轉紅`,
-                            `這邊少一層黑，乾脆把兄弟 ${this._lbl(w)} 也轉紅，讓整段都少一層 —— 「缺黑」的問題往上丟給 ${this._lbl(x.parent)}，可能一路竄到根`, [w, x.parent]);
+                        this._emit('recolor',
+                            { zh: `Delete Case 2：兄弟 ${this._lbl(w)} 一家全黑 → 兄弟轉紅`, en: `Delete Case 2: sibling ${this._lbl(w)}'s whole family is black → color the sibling red` },
+                            { zh: `這邊少一層黑，乾脆把兄弟 ${this._lbl(w)} 也轉紅，讓整段都少一層 —— 「缺黑」的問題往上丟給 ${this._lbl(x.parent)}，可能一路竄到根`,
+                              en: `This side is short one black, so just color sibling ${this._lbl(w)} red too, making the whole segment short one — the "missing black" problem propagates up to ${this._lbl(x.parent)}, and may climb all the way to the root` },
+                            [w, x.parent]);
                         x = x.parent;
                     } else {
                         if (w.left.color === BLACK) {
                             w.right.color = BLACK; w.color = RED;
-                            this._emit('recolor', `Delete Case 3：紅侄在內側，先調色`,
-                                `${this._lbl(w.right)} 轉黑、${this._lbl(w)} 轉紅，準備把紅侄旋到外側`, [w.right, w]);
-                            this.leftRotate(w, 'Delete Case 3');
+                            this._emit('recolor',
+                                { zh: `Delete Case 3：紅侄在內側，先調色`, en: `Delete Case 3: the red nephew is on the inner side, recolor first` },
+                                { zh: `${this._lbl(w.right)} 轉黑、${this._lbl(w)} 轉紅，準備把紅侄旋到外側`,
+                                  en: `${this._lbl(w.right)} becomes black and ${this._lbl(w)} becomes red, ready to rotate the red nephew to the outer side` },
+                                [w.right, w]);
+                            this.leftRotate(w, { zh: 'Delete Case 3', en: 'Delete Case 3' });
                             w = x.parent.left;
                         }
                         w.color = x.parent.color; x.parent.color = BLACK; w.left.color = BLACK;
-                        this._emit('recolor', `Delete Case 4：定色，準備收尾旋轉`,
-                            `兄弟 ${this._lbl(w)} 接收父的顏色，父 ${this._lbl(x.parent)} 與紅侄 ${this._lbl(w.left)} 轉黑`, [w, x.parent, w.left]);
-                        this.rightRotate(x.parent, 'Delete Case 4');
+                        this._emit('recolor',
+                            { zh: `Delete Case 4：定色，準備收尾旋轉`, en: `Delete Case 4: fix the colors, ready for the final rotation` },
+                            { zh: `兄弟 ${this._lbl(w)} 接收父的顏色，父 ${this._lbl(x.parent)} 與紅侄 ${this._lbl(w.left)} 轉黑`,
+                              en: `Sibling ${this._lbl(w)} takes the parent's color, and parent ${this._lbl(x.parent)} and red nephew ${this._lbl(w.left)} both become black` },
+                            [w, x.parent, w.left]);
+                        this.rightRotate(x.parent, { zh: 'Delete Case 4', en: 'Delete Case 4' });
                         x = this.root;
                     }
                 }
             }
             if (x !== this.NIL && x.color === RED) {
                 x.color = BLACK;
-                this._emit('recolor', `把 ${this._lbl(x)} 塗黑，補回缺的那層黑`, `紅節點吸收掉多出來的黑，修復到此為止`, [x]);
+                this._emit('recolor',
+                    { zh: `把 ${this._lbl(x)} 塗黑，補回缺的那層黑`, en: `Color ${this._lbl(x)} black, making up for the missing black` },
+                    { zh: `紅節點吸收掉多出來的黑，修復到此為止`, en: `The red node absorbs the extra black; the fix-up ends here` },
+                    [x]);
             }
         }
     }
@@ -647,32 +709,38 @@
     // final: 壓軸操作 —— 載入後停在它前一步，按 ▶ 才播放；沒有 final 的劇本停在第 0 步從頭看。
     const PRESETS = [
         {
-            name: '樹的成長：依序插入 1–15',
+            id: 'grow-1-15',
+            name: { zh: '樹的成長：依序插入 1–15', en: 'Tree growth: insert 1–15 in order' },
             tip: '從空樹看整棵樹怎麼靠旋轉長平衡 —— 播放中隨時可以暫停、倒帶',
             seed: () => range(1, 15),
         },
         {
-            name: '深樹連鎖 I：變色一路爬頂（18 顆）',
+            id: 'recolor-18',
+            name: { zh: '深樹連鎖 I：變色一路爬頂（18 顆）', en: 'Recolor cascade I: recolor climbs to the root (18 nodes)' },
             tip: '看紅紅衝突連兩次 Case 1 往上竄，最後在頂端旋轉收尾',
             seed: () => range(1, 17), final: { op: 'insert', v: 18 },
         },
         {
-            name: '深樹連鎖 II：更深更長（38 顆）',
+            id: 'recolor-38',
+            name: { zh: '深樹連鎖 II：更深更長（38 顆）', en: 'Recolor cascade II: deeper and longer (38 nodes)' },
             tip: '三連 Case 1 變色爬了三層，最後旋轉 —— 這就是深樹的連鎖修復',
             seed: () => range(1, 37), final: { op: 'insert', v: 38 },
         },
         {
-            name: '刪除三連旋（31 顆）',
+            id: 'delete-3rot',
+            name: { zh: '刪除三連旋（31 顆）', en: 'Delete → three consecutive rotations (31 nodes)' },
             tip: '一次刪除觸發連續三次旋轉 —— 刪除是紅黑樹最兇的路徑',
             seed: () => DEL31.slice(), final: { op: 'delete', v: 15 },
         },
         {
-            name: '刪除變色上竄（16 顆）',
+            id: 'delete-recolor',
+            name: { zh: '刪除變色上竄（16 顆）', en: 'Delete: recolor propagates up (16 nodes)' },
             tip: '「缺一層黑」靠 Delete Case 2 往上丟兩次，中間夾一次旋轉',
             seed: () => DEL16.slice(), final: { op: 'delete', v: 1 },
         },
         {
-            name: '隨機 15 顆',
+            id: 'random-15',
+            name: { zh: '隨機 15 顆', en: 'Random 15 nodes' },
             tip: '',
             seed: () => {
                 const pool = Array.from({ length: 99 }, (_, i) => i + 1);
