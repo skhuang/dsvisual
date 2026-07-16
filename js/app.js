@@ -1116,6 +1116,26 @@ document.addEventListener('DOMContentLoaded', () => {
         return DIFFICULTY_VALUES.indexOf(v) === -1 ? 'normal' : v;
     }
 
+    function loadExamples(methodId) { try { return ExamplesStore.load(localStorage, methodId); } catch (e) { return []; } }
+    function saveExample(methodId, text, defaultText) { try { ExamplesStore.save(localStorage, methodId, text, defaultText); } catch (e) { /* ignore */ } }
+    function buildExamplesSelect(methodId, defaultText) {
+        var lang = (window.I18N && I18N.getCurrentLanguage) ? I18N.getCurrentLanguage() : 'en';
+        var escAttr = function (s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); };
+        var escText = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+        var trunc = function (s) { s = String(s); return s.length > 24 ? s.slice(0, 24) + '…' : s; };
+        var placeholder = lang === 'zh' ? '範例…' : 'Examples…';
+        var defLabel = lang === 'zh' ? '預設' : 'Default';
+        var h = '<select class="ex-select" data-method="' + escAttr(methodId) + '">';
+        h += '<option value="">' + placeholder + '</option>';
+        h += '<option value="' + escAttr(defaultText) + '">' + defLabel + '</option>';
+        loadExamples(methodId).forEach(function (e) {
+            if (e.text === defaultText) return;
+            h += '<option value="' + escAttr(e.text) + '">' + escText(trunc(e.text)) + '</option>';
+        });
+        h += '</select>';
+        return h;
+    }
+
     function setInputDifficulty(groupId, value) {
         if (DIFFICULTY_VALUES.indexOf(value) === -1) return;
         try { localStorage.setItem(DIFFICULTY_KEY_PREFIX + groupId, value); } catch (e) { /* ignore */ }
@@ -5721,6 +5741,7 @@ document.addEventListener('DOMContentLoaded', () => {
             '<div class="msl-controls">' +
               '<input type="text" class="msl-input" value="' + esc(st.text) + '">' +
               '<button type="button" class="msl-build">Build</button>' +
+              buildExamplesSelect('matrix-sparse-list', MatrixSparseListViz.DEFAULT) +
               '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="msl-phase-btn">' + (st.phase === 'build' ? 'Show Transpose' : 'Show Original') + '</button>' +
               '<span class="sm-hint">rows separated by ; , entries by ,</span>' +
@@ -5834,6 +5855,7 @@ document.addEventListener('DOMContentLoaded', () => {
         host.querySelector('.msl-build').onclick = () => {
             try {
                 st.text = host.querySelector('.msl-input').value;
+                saveExample('matrix-sparse-list', st.text, MatrixSparseListViz.DEFAULT);
                 renderMatrixSparseList();
             } catch (e) { /* ignore malformed input */ }
         };
@@ -5845,6 +5867,8 @@ document.addEventListener('DOMContentLoaded', () => {
             st.phase = st.phase === 'build' ? 'transpose' : 'build';
             renderMatrixSparseList();
         };
+        const mslEx = host.querySelector('.ex-select');
+        if (mslEx) mslEx.onchange = (ev) => { const v = ev.target.value; if (!v) return; st.text = v; renderMatrixSparseList(); };
     }
     let _polyState = null;
     function renderPolyPadd() {
@@ -6786,6 +6810,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const host = acquireDynamicVizHost();
         host.style.width = '100%';
         const st = _equivState;
+        const serEq = (s) => s.n + '|' + s.pairs.map((p) => p[0] + '=' + p[1]).join(',');
+        const defSerEq = serEq({ n: ListEquivalenceViz.DEFAULT.n, pairs: ListEquivalenceViz.DEFAULT.pairs });
         const { frames } = ListEquivalenceViz.equivalenceFrames(st.n, st.pairs);
         const finalSeq = ListEquivalenceViz.buildAdjacency(st.n, st.pairs);
 
@@ -6794,6 +6820,7 @@ document.addEventListener('DOMContentLoaded', () => {
               '<label>n <input type="number" class="eq-n" min="1" max="12" value="' + st.n + '"></label>' +
               '<input type="text" class="eq-pairs" value="' + st.pairs.map((p) => p[0] + '=' + p[1]).join(',') + '">' +
               '<button type="button" class="eq-build">Build</button>' +
+              buildExamplesSelect('list-equivalence', defSerEq) +
               '<button type="button" class="rand-btn" title="Random">🎲</button>' +
             '</div>' +
             '<div class="eq-stage">' +
@@ -6902,12 +6929,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const parsed = ListEquivalenceViz.parseInput(String(nClamped), host.querySelector('.eq-pairs').value);
                 parsed.pairs = parsed.pairs.slice(0, 20);
                 _equivState = parsed;
+                saveExample('list-equivalence', serEq(_equivState), defSerEq);
                 renderListEquivalence();
             } catch (e) { /* ignore malformed input */ }
         };
         host.querySelector('.rand-btn').onclick = () => {
             const inp = window.RandomInput && RandomInput.randomInputFor('list-equivalence', getInputDifficulty());
             if (inp) { _equivState = { n: inp.n, pairs: inp.pairs }; renderListEquivalence(); }
+        };
+        const eqEx = host.querySelector('.ex-select');
+        if (eqEx) eqEx.onchange = (ev) => {
+            const v = ev.target.value; if (!v) return;
+            const bar = v.indexOf('|');
+            const nStr = v.slice(0, bar), pairsStr = v.slice(bar + 1);
+            const nClamped = Math.min(12, Math.max(1, parseInt(nStr, 10) || 1));
+            const parsed = ListEquivalenceViz.parseInput(String(nClamped), pairsStr);
+            parsed.pairs = parsed.pairs.slice(0, 20);
+            _equivState = parsed;
+            renderListEquivalence();
         };
     }
 
