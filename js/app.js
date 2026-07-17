@@ -2776,7 +2776,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('pattern-pipefilter', renderPattern, () => codePatternPipeFilter, null);
         reg('pattern-di', renderPattern, () => codePatternDI, null);
         // nano-LLM
-        reg('nano-compute-graph', renderNanoComputeGraph, () => codeNanoComputeGraph, { host: 'dynamic' });
         reg('nano-bpe-train', renderNanoBpeTrain, () => codeNanoBpeTrain, { host: 'dynamic' });
         reg('nano-ngram-next', renderNanoNgramNext, () => codeNanoNgramNext, { host: 'dynamic' });
     }
@@ -2792,7 +2791,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'graph-prim') renderPrim();
         else if (currentMode === 'graph-bellman-ford') renderBellmanFord();
         else if (currentMode === 'graph-floyd-warshall') renderFloydWarshall();
-        else if (currentMode === 'nano-compute-graph') renderNanoComputeGraph();
         else if (currentMode === 'nano-bpe-train') renderNanoBpeTrain();
         else if (currentMode === 'nano-ngram-next') renderNanoNgramNext();
         else if (currentMode === 'tree-rb') renderTreeRB();
@@ -3932,40 +3930,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (e.key === 'ArrowLeft') { e.preventDefault(); h.pause(); h.goTo(h.cursor - 1); }
         else if (e.key === ' ') { e.preventDefault(); h.playing ? h.pause() : h.play(); }
     });
-
-    let _cgState = null;
-    function renderNanoComputeGraph() {
-        const host = acquireDynamicVizHost();
-        if (!_cgState) _cgState = { preset: 'mul-add' };
-        const presets = {
-            'mul-add': { nodes: [ {id:'a',op:'const',val:2}, {id:'b',op:'const',val:3}, {id:'m',op:'mul'}, {id:'c',op:'const',val:4}, {id:'s',op:'add'} ],
-                         edges: [ ['a','m'],['b','m'],['m','s'],['c','s'] ] },
-        };
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const frames = NanoComputeGraphViz.buildFrames(presets[_cgState.preset]).frames;
-        const nodes = presets[_cgState.preset].nodes;
-        let idx = 0;
-        host.innerHTML =
-            '<div class="cg-nodes" data-testid="cg-nodes"></div>' +
-            '<div class="cg-order" data-testid="cg-order"></div>' +
-            '<div class="ss-phase cg-phase"></div>';
-        function paint() {
-            const fr = frames[idx];
-            host.querySelector('.cg-nodes').innerHTML = nodes.map((n) => {
-                let cls = 'cg-node';
-                if (fr.evaluated.indexOf(n.id) >= 0) cls += ' done';
-                if (n.id === fr.active) cls += ' active';
-                const v = (fr.values[n.id] != null) ? ' = ' + fr.values[n.id] : '';
-                return '<span class="' + cls + '">' + n.id + ':' + n.op + v + '</span>';
-            }).join('');
-            host.querySelector('.cg-order').textContent = 'topo: ' + fr.order.join(' → ');
-            host.querySelector('.cg-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-    }
 
     let _bpeTrainState = null;
     function renderNanoBpeTrain() {
