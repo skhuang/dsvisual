@@ -886,6 +886,15 @@ const descDB = {
             <span class="badge space">Space: O(N)</span>
         </div>
     `,
+    'tree-array-rep': `
+        <h3>Sequential (Array) Representation of a Binary Tree</h3>
+        <p>A binary tree can be stored in a 1-indexed array where the node at index <code>i</code> has its left child at <code>2i</code>, right child at <code>2i+1</code>, and parent at <code>⌊i/2⌋</code>. No pointers are needed — the position encodes the structure.</p>
+        <p>This is compact for a <strong>complete</strong> tree (no gaps) but wasteful for a <strong>skewed</strong> tree: a tree of height <code>h</code> may need up to <code>2<sup>h+1</sup>−1</code> slots while holding as few as <code>h+1</code> nodes. The viz marks the wasted slots so the space cost is visible.</p>
+        <div class="complexities">
+            <span class="badge time">Index ops: O(1)</span>
+            <span class="badge space">Space: O(2^h) worst case</span>
+        </div>
+    `,
     'nano-bpe-encode': `
         <h3>BPE Encode — Trie Longest Match</h3>
         <p>Tokenize text against a trained vocabulary by walking a character trie and greedily taking the longest matching piece at each position.</p>
