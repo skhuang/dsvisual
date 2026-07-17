@@ -1036,8 +1036,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return DIFFICULTY_VALUES.indexOf(v) === -1 ? 'normal' : v;
     }
 
-    function loadExamples(methodId) { try { return ExamplesStore.load(localStorage, methodId); } catch (e) { return []; } }
-
     function setInputDifficulty(groupId, value) {
         if (DIFFICULTY_VALUES.indexOf(value) === -1) return;
         try { localStorage.setItem(DIFFICULTY_KEY_PREFIX + groupId, value); } catch (e) { /* ignore */ }
