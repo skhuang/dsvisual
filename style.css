@@ -2992,3 +2992,17 @@ pre.code-panel-body[class*="language-"] {
 .code-drawer-body .code-panel-body { max-height: none; flex: 1; }
 
 .ex-select { max-width: 160px; padding: 2px 4px; border: 1px solid var(--card-border, #cbd5e1); border-radius: 6px; background: var(--card-bg, #fff); font-size: 0.85rem; color: var(--text-main, #1e293b); }
+
+/* tree-expression boolean mode */
+.et-mode { display: flex; gap: 6px; margin-bottom: 8px; }
+.et-mode-btn { padding: 4px 12px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; cursor: pointer; font-size: 13px; }
+.et-mode-btn.active { background: #1a4d8f; color: #fff; border-color: #1a4d8f; }
+.et-asg { margin: 8px 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.et-asg-btn { padding: 3px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; cursor: pointer; font-family: 'Fira Code', monospace; }
+.tree-node.et-true { background: #16a34a; color: #fff; border-color: #16a34a; }
+.tree-node.et-false { background: #e2e8f0; color: #475569; }
+.et-truth { margin: 8px 0; overflow-x: auto; }
+table.et-tt { border-collapse: collapse; font-family: 'Fira Code', monospace; font-size: 13px; }
+table.et-tt th, table.et-tt td { border: 1px solid #cbd5e1; padding: 2px 10px; text-align: center; }
+table.et-tt tr.et-tt-cur { background: #fef9c3; }
+.et-verdict { margin-top: 6px; font-weight: bold; color: #1a4d8f; }
