@@ -180,6 +180,7 @@ For each mode id the domain owns, **remove** from `app.js`:
   (286 unit + 207 Playwright, all green) and a grep of `app.js` for linear
   render/handler/state names, all clean. `deque`'s `_dequeData` was
   normalized from a DOM-stashed property to a module-local `let`.
+- **search** — `js/domains/search.js` (search-linear, search-binary).
 
 ## Remaining domains to migrate
 
@@ -187,15 +188,6 @@ Each of these is a separate future plan; the state slices below are what a
 Task-2-equivalent PR for that domain needs to lift out of `app.js` (current
 line numbers, so re-check before relying on them — they will have shifted
 once earlier domains are migrated):
-
-### search (search-linear, search-binary)
-- State: `arrLinear`/`arrBinary` (fixed demo vectors, currently `const`s).
-- Renderer: `renderSearchArray(arr)`.
-- Handlers: `runLinearSearch`/`runBinarySearch`; button listeners for
-  `btnSearchGo`/`btnSearchPause`/`btnSearchStop` (Pause/Stop are shared with
-  sort via `handlePauseClick`/`handleStopClick`, which stay in app.js).
-- Registered directly via `reg('search-linear', ...)`/`reg('search-binary', ...)`
-  in `registerBehaviors()` — not yet a domain module.
 
 ### tree (tree-bst, tree-avl, tree-splay, tree-trie, tree-radix, tree-ternary, tree-btree, tree-bplus, tree-rb)
 - State: `bstRoot`, `trieRoot`, `radixRoot`, `tstRoot`, `btreeData`,
