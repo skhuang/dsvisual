@@ -2776,7 +2776,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('pattern-pipefilter', renderPattern, () => codePatternPipeFilter, null);
         reg('pattern-di', renderPattern, () => codePatternDI, null);
         // nano-LLM
-        reg('nano-bpe-encode', renderNanoBpeEncode, () => codeNanoBpeEncode, { host: 'dynamic' });
         reg('nano-compute-graph', renderNanoComputeGraph, () => codeNanoComputeGraph, { host: 'dynamic' });
         reg('nano-bpe-train', renderNanoBpeTrain, () => codeNanoBpeTrain, { host: 'dynamic' });
         reg('nano-ngram-next', renderNanoNgramNext, () => codeNanoNgramNext, { host: 'dynamic' });
@@ -2793,7 +2792,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'graph-prim') renderPrim();
         else if (currentMode === 'graph-bellman-ford') renderBellmanFord();
         else if (currentMode === 'graph-floyd-warshall') renderFloydWarshall();
-        else if (currentMode === 'nano-bpe-encode') renderNanoBpeEncode();
         else if (currentMode === 'nano-compute-graph') renderNanoComputeGraph();
         else if (currentMode === 'nano-bpe-train') renderNanoBpeTrain();
         else if (currentMode === 'nano-ngram-next') renderNanoNgramNext();
@@ -3934,46 +3932,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (e.key === 'ArrowLeft') { e.preventDefault(); h.pause(); h.goTo(h.cursor - 1); }
         else if (e.key === ' ') { e.preventDefault(); h.playing ? h.pause() : h.play(); }
     });
-
-    let _bpeEncState = null;
-    function renderNanoBpeEncode() {
-        const host = acquireDynamicVizHost();
-        if (!_bpeEncState) _bpeEncState = { vocab: ['a','b','ab','abc','c'], input: 'aabcabx' };
-        const st = _bpeEncState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const frames = NanoBpeEncodeViz.buildFrames(st.vocab, st.input).frames;
-        let idx = 0;
-        host.innerHTML =
-            '<div class="ss-controls">' +
-              'vocab <input type="text" class="be-vocab" value="' + st.vocab.join(',') + '">' +
-              'input <input type="text" class="be-input" value="' + st.input + '">' +
-              '<button type="button" class="be-apply">Apply</button>' +
-            '</div>' +
-            '<div class="be-input-row" data-testid="be-input"></div>' +
-            '<div class="be-tokens" data-testid="be-tokens"></div>' +
-            '<div class="ss-phase be-phase"></div>';
-        function paint() {
-            const fr = frames[idx];
-            host.querySelector('.be-input-row').innerHTML = st.input.split('').map((ch, i) => {
-                let cls = 'be-ch';
-                if (i >= fr.matchStart && i < fr.matchEnd) cls += ' match';
-                if (i === fr.cursor) cls += ' cursor';
-                return '<span class="' + cls + '">' + ch + '</span>';
-            }).join('');
-            host.querySelector('.be-tokens').innerHTML = fr.tokens.map((t) =>
-                '<span class="be-token">' + t + '</span>').join('');
-            host.querySelector('.be-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-        host.appendChild(buildStepControls(step, reset, 600));
-        paint();
-        host.querySelector('.be-apply').onclick = () => {
-            const vocab = host.querySelector('.be-vocab').value.split(',').map((s) => s.trim()).filter(Boolean);
-            const input = host.querySelector('.be-input').value.trim();
-            if (vocab.length && input) { st.vocab = vocab; st.input = input; renderNanoBpeEncode(); }
-        };
-    }
 
     let _cgState = null;
     function renderNanoComputeGraph() {
