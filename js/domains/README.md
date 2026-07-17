@@ -175,6 +175,11 @@ For each mode id the domain owns, **remove** from `app.js`:
   207 Playwright, all green) and a grep of `app.js` for sort render/handler/
   state names, all clean. Added `getDelay` to `VizKit` as a shared anim
   primitive (heap's `animateHeapEvents` still uses the app.js closure copy).
+- **linear** — `js/domains/linear.js` (stack-array, stack-list, queue,
+  list-array, list-linked, deque). DONE — verified via `npm run test:all`
+  (286 unit + 207 Playwright, all green) and a grep of `app.js` for linear
+  render/handler/state names, all clean. `deque`'s `_dequeData` was
+  normalized from a DOM-stashed property to a module-local `let`.
 
 ## Remaining domains to migrate
 
@@ -182,19 +187,6 @@ Each of these is a separate future plan; the state slices below are what a
 Task-2-equivalent PR for that domain needs to lift out of `app.js` (current
 line numbers, so re-check before relying on them — they will have shifted
 once earlier domains are migrated):
-
-### linear (stack-array, stack-list, queue, deque, list-array, list-linked)
-- State: `stackData`, `qArr`/`qFront`/`qRear`/`qCount`, `mainListData`.
-  Deque is the odd one out — it currently stashes `_dequeData` on the
-  runtime host DOM node inside `renderDeque()` rather than a module `let`;
-  decide during migration whether to normalize it to a module `let` (and
-  whether it should gain a mode-switch reset, since today it doesn't).
-- Renderers: `renderStack`, `renderQueue`, `renderLists`, `renderDeque`.
-- Handlers: push/pop/enqueue/dequeue/list-insert/list-remove are inlined in
-  click listeners rather than named `runXxx` functions — will need to be
-  extracted into named functions as part of the move.
-- Existing reset in `switchMode`: `stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0;`
-  and `if (currentMode === 'list-array' || currentMode === 'list-linked') mainListData = [];`
 
 ### search (search-linear, search-binary)
 - State: `arrLinear`/`arrBinary` (fixed demo vectors, currently `const`s).
