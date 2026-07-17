@@ -245,6 +245,8 @@ function getMethodGroupForMode(mode) {
 }
 
 function getCodeForMethod(methodId) {
+    const b = (typeof window !== 'undefined' && window.VizRegistry) ? window.VizRegistry.behavior(methodId) : null;
+    if (b && b.code) return b.code();
     const codeByMethod = {
         'stack-array': codeArray,
         'stack-list': codeLinkedList,
@@ -1424,6 +1426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     };
     renderMethodSections(getMethodGroupForMode(currentMode).id);
+    registerBehaviors();
     bindDifficultySelect();
     const MAX_SIZE = 5;
 
@@ -2686,8 +2689,141 @@ document.addEventListener('DOMContentLoaded', () => {
         syncHeapTutorialChrome();
         if (window.Prism && codeDisplay.isConnected) Prism.highlightElement(codeDisplay);
     }
+    function registerBehaviors() {
+        const R = window.VizRegistry;
+        if (!R) return;
+        const reg = (id, render, code, layout) => R.attach(id, { render, code, layout: layout || null });
+        // Linear Structures
+        reg('stack-array', renderStack, () => codeArray, null);
+        reg('stack-list', renderStack, () => codeLinkedList, null);
+        reg('queue', renderQueue, () => codeQueue, { host: 'dynamic' });
+        reg('list-array', renderLists, () => codeListArray, null);
+        reg('list-linked', renderLists, () => codeListLinked, null);
+        reg('deque', renderDeque, () => codeDeque, { host: 'dynamic' });
+        reg('expr-infix-postfix', renderExprInfixPostfix, () => codeExprInfixPostfix, { host: 'dynamic' });
+        reg('maze-stack', renderMazeStack, () => codeMazeStack, { host: 'dynamic' });
+        reg('list-doubly', renderListDoubly, () => codeListDoubly, { host: 'dynamic' });
+        reg('list-equivalence', renderListEquivalence, () => codeListEquivalence, { host: 'dynamic' });
+        // Arrays
+        reg('matrix-sparse', renderMatrixSparse, () => codeMatrixSparse, { host: 'dynamic' });
+        reg('matrix-sparse-list', renderMatrixSparseList, () => codeMatrixSparseList, { host: 'dynamic' });
+        reg('poly-padd', renderPolyPadd, () => codePolyPadd, { host: 'dynamic' });
+        reg('magic-square', renderMagicSquare, () => codeMagicSquare, { host: 'dynamic' });
+        reg('magic-latin', renderMagicLatin, () => codeMagicLatin, { host: 'dynamic' });
+        reg('magic-torus', renderMagicTorus, () => codeMagicTorus, { host: 'dynamic' });
+        reg('magic-formula', renderMagicFormula, () => codeMagicFormula, { host: 'dynamic' });
+        reg('magic-symmetry', renderMagicSymmetry, () => codeMagicSymmetry, { host: 'dynamic' });
+        // Trees
+        reg('tree-bst', renderTree, () => codeTreeBST, null);
+        reg('tree-avl', renderTree, () => codeTreeAVL, null);
+        reg('tree-rb', renderTreeRB, () => codeTreeRB, { host: 'dynamic' });
+        reg('tree-splay', renderTree, () => codeTreeSplay, null);
+        reg('tree-trie', renderAdvTrees, () => codeTreeTrie, null);
+        reg('tree-radix', renderAdvTrees, () => codeTreeRadix, null);
+        reg('tree-ternary', renderAdvTrees, () => codeTreeTST, null);
+        reg('tree-btree', renderAdvTrees, () => codeTreeBTree, null);
+        reg('tree-bplus', renderAdvTrees, () => codeTreeBPlus, null);
+        reg('tree-dsu', renderDSU, () => codeTreeDSU, { host: 'dynamic' });
+        reg('tree-segment', renderSegmentTree, () => codeTreeSegment, { host: 'dynamic' });
+        reg('tree-fenwick', renderFenwick, () => codeTreeFenwick, { host: 'dynamic' });
+        reg('tree-traversal', renderTreeTraversal, () => codeTreeTraversal, { host: 'dynamic' });
+        reg('huffman', renderHuffman, () => codeHuffman, { host: 'dynamic' });
+        reg('tree-obst', renderTreeObst, () => codeTreeObst, { host: 'dynamic' });
+        reg('tree-threaded', renderTreeThreaded, () => codeTreeThreaded, { host: 'dynamic' });
+        reg('tree-mway', renderTreeMway, () => codeTreeMway, { host: 'dynamic' });
+        reg('tree-expression', renderTreeExpression, () => codeTreeExpression, { host: 'dynamic' });
+        reg('tree-general-binary', renderTreeGeneralBinary, () => codeTreeGeneralBinary, { host: 'dynamic' });
+        reg('game-tree', renderGameTree, () => codeGameTree, { host: 'dynamic' });
+        // Graphs
+        reg('graph', renderGraph, () => codeGraph, { host: 'dynamic' });
+        reg('graph-adjlist', renderGraph, () => codeGraphAdjlist, { host: 'dynamic' });
+        reg('graph-traversal', renderGraphDual, () => codeGraphTraversal, { host: 'dynamic' });
+        reg('graph-bfs', renderGraph, () => codeGraphBFS, { host: 'dynamic' });
+        reg('graph-dfs', renderGraph, () => codeGraphDFS, { host: 'dynamic' });
+        reg('graph-kruskal', renderGraph, () => codeGraphKruskal, { host: 'dynamic' });
+        reg('graph-dijkstra', renderGraph, () => codeGraphDijkstra, { host: 'dynamic' });
+        reg('graph-topo', renderGraph, () => codeGraphTopo, { host: 'dynamic' });
+        reg('graph-prim', renderPrim, () => codeGraphPrim, { host: 'dynamic' });
+        reg('graph-bellman-ford', renderBellmanFord, () => codeGraphBellmanFord, { host: 'dynamic' });
+        reg('graph-floyd-warshall', renderFloydWarshall, () => codeGraphFloydWarshall, { host: 'dynamic' });
+        reg('graph-aoe', renderGraphAoe, () => codeGraphAoe, { host: 'dynamic' });
+        // Hash & Probabilistic
+        reg('hash-chain', renderHashes, () => codeHashChain, null);
+        reg('hash-open', renderHashes, () => codeHashOpen, null);
+        reg('hash-bucket', renderHashes, () => codeHashBucket, null);
+        reg('bloom-filter', renderBloomFilter, () => codeBloomFilter, { host: 'dynamic' });
+        reg('skip-list', renderSkipList, () => codeSkipList, { host: 'dynamic' });
+        reg('count-min-sketch', renderCountMinSketch, () => codeCountMinSketch, { host: 'dynamic' });
+        reg('cache-lru', renderLruCache, () => codeLruCache, { host: 'dynamic' });
+        // Heaps / Priority Queues
+        reg('heap-binary', renderHeap, () => codeHeapBinary, null);
+        reg('heap-binomial', renderHeap, () => codeHeapBinomial, null);
+        reg('heap-fibonacci', renderHeap, () => codeHeapFibonacci, null);
+        reg('heap-leftist', renderHeap, () => codeHeapLeftist, null);
+        reg('heap-skew', renderHeap, () => codeHeapSkew, null);
+        reg('heap-dary', renderHeap, () => codeHeapDary, null);
+        reg('heap-pairing', renderHeap, () => codeHeapPairing, null);
+        // Sorting
+        reg('sort-bubble', renderSortBars, () => codeSortBubble, null);
+        reg('sort-select', renderSortBars, () => codeSortSelect, null);
+        reg('sort-insert', renderSortBars, () => codeSortInsert, null);
+        reg('sort-quick', renderSortBars, () => codeSortQuick, null);
+        reg('sort-merge', renderSortBars, () => codeSortMerge, null);
+        reg('sort-shell', renderSortBars, () => codeSortShell, null);
+        reg('sort-bucket', renderSortBars, () => codeSortBucket, null);
+        reg('sort-count', renderSortBars, () => codeSortCounting, null);
+        reg('sort-radix', renderSortBars, () => codeSortRadix, null);
+        reg('sort-heap', renderSortBars, () => codeSortHeap, null);
+        reg('sort-shaker', renderSortBars, () => codeSortShaker, null);
+        reg('sort-external', renderSortExternal, () => codeSortExternal, { host: 'dynamic' });
+        reg('sort-polyphase', renderSortPolyphase, () => codeSortPolyphase, { host: 'dynamic' });
+        // Searching & String Matching
+        reg('search-linear', () => renderSearchArray(arrLinear), () => codeSearchLinear, null);
+        reg('search-binary', () => renderSearchArray(arrBinary), () => codeSearchBinary, null);
+        reg('search-kmp', renderKMP, () => codeSearchKMP, { host: 'dynamic' });
+        reg('search-bm', renderBM, () => codeSearchBM, { host: 'dynamic' });
+        reg('search-rk', renderRK, () => codeSearchRK, { host: 'dynamic' });
+        reg('search-strcompare', renderStringCompare, () => codeSearchStrCompare, { host: 'dynamic' });
+        reg('search-zalgo', renderZAlgo, () => codeSearchZAlgo, { host: 'dynamic' });
+        reg('search-aho', renderAhoCorasick, () => codeSearchAho, { host: 'dynamic' });
+        reg('search-fibonacci', renderSearchFibonacci, () => codeSearchFibonacci, { host: 'dynamic' });
+        reg('search-interpolation', renderSearchInterpolation, () => codeSearchInterpolation, { host: 'dynamic' });
+        // File Structures
+        reg('file-isam', renderFileIsam, () => codeFileIsam, { host: 'dynamic' });
+        reg('file-inverted', renderFileInverted, () => codeFileInverted, { host: 'dynamic' });
+        // Memory / GC
+        reg('gc-memory', renderGcMemory, () => codeGcMemory, { host: 'dynamic' });
+        // Recursion
+        reg('recursion', renderRecursion, () => codeRecursion, { host: 'dynamic' });
+        // OOP Concepts
+        reg('oop-inheritance', renderOOP, () => codeOOPInheritance, null);
+        reg('oop-polymorphism', renderOOP, () => codeOOPPolymorphism, null);
+        reg('oop-encapsulation', renderOOP, () => codeOOPEncapsulation, null);
+        reg('oop-abstraction', renderOOP, () => codeOOPAbstraction, null);
+        reg('oop-adhoc', renderOOP, () => codeOOPAdhoc, null);
+        reg('oop-templates', renderOOP, () => codeOOPTemplates, null);
+        // Design Patterns
+        reg('pattern-singleton', renderPattern, () => codePatternSingleton, null);
+        reg('pattern-factory', renderPattern, () => codePatternFactory, null);
+        reg('pattern-adapter', renderPattern, () => codePatternAdapter, null);
+        reg('pattern-decorator', renderPattern, () => codePatternDecorator, null);
+        reg('pattern-observer', renderPattern, () => codePatternObserver, null);
+        reg('pattern-strategy', renderPattern, () => codePatternStrategy, null);
+        reg('pattern-mvc', renderPattern, () => codePatternMVC, null);
+        reg('pattern-layered', renderPattern, () => codePatternLayered, null);
+        reg('pattern-pubsub', renderPattern, () => codePatternPubSub, null);
+        reg('pattern-pipefilter', renderPattern, () => codePatternPipeFilter, null);
+        reg('pattern-di', renderPattern, () => codePatternDI, null);
+        // nano-LLM
+        reg('nano-bpe-encode', renderNanoBpeEncode, () => codeNanoBpeEncode, { host: 'dynamic' });
+        reg('nano-compute-graph', renderNanoComputeGraph, () => codeNanoComputeGraph, { host: 'dynamic' });
+        reg('nano-bpe-train', renderNanoBpeTrain, () => codeNanoBpeTrain, { host: 'dynamic' });
+        reg('nano-ngram-next', renderNanoNgramNext, () => codeNanoNgramNext, { host: 'dynamic' });
+    }
     function renderAll() {
         syncDifficultySelect();
+        const b = window.VizRegistry && window.VizRegistry.behavior(currentMode);
+        if (b && b.render) { b.render(); return; }
         if(currentMode === 'maze-stack') renderMazeStack();
         else if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
