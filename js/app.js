@@ -1413,6 +1413,7 @@ document.addEventListener('DOMContentLoaded', () => {
         t,
         showStatus,
         executeAnimWrapper,
+        getDelay,
     };
     if (window.VizCore) {
         window.VizCore.bindMode(() => currentMode, (m) => { currentMode = m; });
