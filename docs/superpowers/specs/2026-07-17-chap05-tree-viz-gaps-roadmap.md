@@ -94,8 +94,8 @@ app.js. Modeled on `js/viz/viz_expr_tree.js` (built in #1).
 ## Status
 
 - [x] #1 `tree-expression` boolean mode — merged (PR #132)
-- [ ] #2 `tree-reconstruct` — spec/plan in progress
-- [ ] #3 `tree-array-rep`
+- [x] #2 `tree-reconstruct` — merged (PR #133)
+- [ ] #3 `tree-array-rep` — spec/plan in progress
 - [ ] #4 `tree-catalan`
 - [ ] #5 `decision-tree-coins`
 - [ ] #6 `tree-copy-equal`
