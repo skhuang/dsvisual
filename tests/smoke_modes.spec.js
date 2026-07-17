@@ -1,5 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const path = require('path');
+const { loadMethod } = require('./helpers');
 const FILE = 'file://' + path.resolve(__dirname, '../index.html');
 
 // One representative method per group — the load+dispatch path we must not regress.
@@ -13,13 +14,6 @@ const MODES = [
   // from an unevaluated SVG y-coordinate expression. Not fixed here; this net
   // is a baseline regression guard, not a bug-fix vehicle.
 ];
-
-async function loadMethod(page, id) {
-  const nav = page.locator(`.category-nav-item:has(.category-nav-method[data-method-id="${id}"])`);
-  await nav.locator('.category-nav-btn').click();
-  await nav.locator(`.category-nav-method[data-method-id="${id}"]`).click();
-  await expect(page.locator(`[data-method-section="${id}"]`)).toHaveAttribute('data-runtime-state', 'active');
-}
 
 for (const id of MODES) {
   test(`mode ${id} loads with no console errors`, async ({ page }) => {
