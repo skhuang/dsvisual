@@ -1364,7 +1364,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnHeapTutorialExit = document.getElementById('btn-heap-tutorial-exit');
 
     const hashActions = document.getElementById('hash-actions');
-    const btnHashAdd = document.getElementById('btn-hash-add'); const hashVal = document.getElementById('hash-val');
     const hashChContainer = document.getElementById('hash-ch-container');
     const hashOaContainer = document.getElementById('hash-oa-container');
     const hashBucketContainer = document.getElementById('hash-bucket-container');
@@ -1412,7 +1411,13 @@ document.addEventListener('DOMContentLoaded', () => {
         getInputDifficulty,
         langOf: (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en,
         t,
+        showStatus,
+        executeAnimWrapper,
     };
+    if (window.VizCore) {
+        window.VizCore.bindMode(() => currentMode, (m) => { currentMode = m; });
+        window.VizCore.domains().forEach((d) => { if (d.init) d.init(); });
+    }
     registerBehaviors();
     bindDifficultySelect();
     const MAX_SIZE = 5;
@@ -1438,9 +1443,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let mstEdgeKeys = new Set(); let graphCandidateEdgeKey = null;
     let dijkstraDistances = new Map(); let dijkstraVisited = new Set(); let shortestPathEdges = new Set(); 
     let topoOrder = []; let topoVisited = new Set(); let topoEdges = []; let bstRoot = null; let mainListData = []; let sortArrData = [];
-    let hashChData = Array.from({length: 5}, () => []); // Array of arrays representing Chains
-    let hashOaData = new Array(5).fill(null); // Simple array
-    let hashBucketData = Array.from({length: 4}, () => []); // 4 buckets, max 2 items each
     let treeDrawLoop = null;
     let heapEventTimer = null;
 
@@ -1782,9 +1784,6 @@ document.addEventListener('DOMContentLoaded', () => {
         visualizerRuntime.setMode(nextMode);
         stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0; edges = freshEdges(); weightedEdges = freshWeightedEdges(); mstEdgeKeys.clear(); graphCandidateEdgeKey = null; bstRoot = null;
         if(currentMode === 'list-array' || currentMode === 'list-linked') mainListData = [];
-        if(currentMode === 'hash-chain') hashChData = Array.from({length: 5}, () => []);
-        if(currentMode === 'hash-open') hashOaData = new Array(5).fill(null);
-        if(currentMode === 'hash-bucket') hashBucketData = Array.from({length: 4}, () => []);
         trieRoot = { children: {}, endOfWord: false }; radixRoot = { edges: {} }; tstRoot = null; btreeData = []; bplusData = [];
         if(currentMode.includes('heap-')) {
             heapOrderSelect.value = heapIsMin ? 'min' : 'max';
@@ -1792,6 +1791,7 @@ document.addEventListener('DOMContentLoaded', () => {
             heapModels[currentMode].clear();
             heapModels[currentMode].setOrder(heapIsMin);
         }
+        if (window.VizCore) window.VizCore.domains().forEach((d) => { if (d.onModeSwitch) d.onModeSwitch(currentMode); });
         renderMethodSections(getMethodGroupForMode(currentMode).id);
         updateLayout();
         if(currentMode.includes('sort-') && sortArrData.length === 0) generateSortArray();
@@ -2202,12 +2202,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSearchArray(arr);
     });
     
-    // Hash Insert Logic
-    btnHashAdd.addEventListener('click', () => {
-        const val = parseInt(hashVal.value); if(isNaN(val)) return showStatus('Enter valid number.', '#f87171');
-        executeAnimWrapper(async () => await runHashInsert(val));
-    });
-
     btnTextTreeAdd.addEventListener('click', () => {
         let str = textTreeVal.value.trim().toUpperCase();
         if(!str) return showStatus('Enter a word!', '#f87171');
@@ -2706,10 +2700,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('graph-prim', renderPrim, () => codeGraphPrim, { host: 'dynamic' });
         reg('graph-bellman-ford', renderBellmanFord, () => codeGraphBellmanFord, { host: 'dynamic' });
         reg('graph-floyd-warshall', renderFloydWarshall, () => codeGraphFloydWarshall, { host: 'dynamic' });
-        // Hash & Probabilistic
-        reg('hash-chain', renderHashes, () => codeHashChain, null);
-        reg('hash-open', renderHashes, () => codeHashOpen, null);
-        reg('hash-bucket', renderHashes, () => codeHashBucket, null);
         // Heaps / Priority Queues
         reg('heap-binary', renderHeap, () => codeHeapBinary, null);
         reg('heap-binomial', renderHeap, () => codeHeapBinomial, null);
@@ -2774,7 +2764,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
-        else if (currentMode.includes('hash-')) renderHashes();
         else if (currentMode.includes('sort-')) renderSortBars();
         else if (currentMode.includes('heap-')) renderHeap();
         else if (currentMode.includes('oop-')) renderOOP();
@@ -3252,73 +3241,6 @@ document.addEventListener('DOMContentLoaded', () => {
             slotM.classList.remove('mid'); mPtr.classList.remove('visible'); await sleep(800);
         }
         showStatus(target + " not found in array.", '#f87171'); lPtr.classList.remove('visible'); rPtr.classList.remove('visible');
-    }
-
-    async function runHashInsert(val) {
-        if(currentMode === 'hash-chain') {
-            const num = 5; let idx = ((val % num) + num) % num;
-            showStatus(val + " % " + num + " = " + idx, "#fbbf24"); await sleep(1000);
-            hashChData[idx].push(val); renderHashes(); showStatus("Chained at Index " + idx, "#34d399");
-        } else if(currentMode === 'hash-open') {
-            const num = 5; let idx = ((val % num) + num) % num;
-            showStatus(val + " % " + num + " = " + idx, "#fbbf24"); await sleep(800);
-            const startIdx = idx;
-            while(hashOaData[idx] !== null) {
-                showStatus("Index " + idx + " occupied! Probing...", "#f87171");
-                const s = document.getElementById("hoa-slot-" + idx); if(s) { s.classList.add('swapping'); await sleep(800); s.classList.remove('swapping'); }
-                idx = (idx + 1) % num;
-                if(idx === startIdx) { showStatus("Hash Table Full!", "#f87171"); return; }
-            }
-            hashOaData[idx] = val; renderHashes(); showStatus("Inserted at Index " + idx, "#34d399");
-        } else if(currentMode === 'hash-bucket') {
-            const numBuckets = 4; const bCapacity = 2; let idx = ((val % numBuckets) + numBuckets) % numBuckets;
-            showStatus(val + " % " + numBuckets + " = Bucket " + idx, "#fbbf24"); await sleep(800);
-            const startIdx = idx;
-            while(hashBucketData[idx].length >= bCapacity) {
-                showStatus("Bucket " + idx + " Block full! Overflowing...", "#f87171");
-                const b = document.getElementById("hb-block-" + idx); if(b) { b.classList.add('swapping'); await sleep(800); b.classList.remove('swapping'); }
-                idx = (idx + 1) % numBuckets;
-                if(idx === startIdx) { showStatus("All Buckets Saturated!", "#f87171"); return; }
-            }
-            hashBucketData[idx].push(val); renderHashes(); showStatus("Inserted into Bucket " + idx, "#34d399");
-        }
-    }
-
-    function renderHashes() {
-        if(currentMode === 'hash-chain') {
-            hashChContainer.innerHTML = '';
-            hashChData.forEach((chain, i) => {
-                const row = document.createElement('div'); row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.gap = '10px'; row.style.marginBottom = '15px';
-                const head = document.createElement('div'); head.className = 'q-slot'; head.style.borderStyle = 'solid'; head.innerHTML = "<span>[" + i + "]</span>"; row.appendChild(head);
-                chain.forEach(v => {
-                    const arrow = document.createElement('div'); arrow.textContent = '→'; arrow.style.color = '#34d399'; row.appendChild(arrow);
-                    const node = document.createElement('div'); node.className = 'la-slot'; node.style.background = 'var(--primary-color)'; node.style.borderColor = '#1e1b4b'; node.textContent = v; row.appendChild(node);
-                });
-                const arrow2 = document.createElement('div'); arrow2.textContent = '→'; arrow2.style.color = '#34d399'; row.appendChild(arrow2);
-                const nul = document.createElement('div'); nul.style.color = '#94a3b8'; nul.textContent = 'NULL'; row.appendChild(nul);
-                hashChContainer.appendChild(row);
-            });
-        } else if(currentMode === 'hash-open') {
-            hashOaContainer.innerHTML = ''; hashOaContainer.style.display = 'flex'; hashOaContainer.style.gap = '5px';
-            hashOaData.forEach((val, i) => {
-                const slot = document.createElement('div'); slot.className = 'q-slot'; slot.id = 'hoa-slot-' + i; slot.innerHTML = "<span>[" + i + "]</span>";
-                if(val !== null) { const vDiv = document.createElement('div'); vDiv.className = 'q-item'; vDiv.textContent = val; slot.appendChild(vDiv); }
-                hashOaContainer.appendChild(slot);
-            });
-        } else if(currentMode === 'hash-bucket') {
-            hashBucketContainer.innerHTML = ''; hashBucketContainer.style.display = 'flex'; hashBucketContainer.style.gap = '25px'; hashBucketContainer.style.flexWrap = 'wrap'; hashBucketContainer.style.marginTop = '20px';
-            hashBucketData.forEach((bucket, i) => {
-                const bBlock = document.createElement('div'); bBlock.id = 'hb-block-' + i; bBlock.style.border = '3px solid var(--primary-color)'; bBlock.style.borderRadius = '8px'; bBlock.style.padding = '10px'; bBlock.style.position = 'relative'; bBlock.style.display = 'flex'; bBlock.style.flexDirection = 'column'; bBlock.style.gap = '5px'; bBlock.style.transition = 'background 0.3s';
-                const label = document.createElement('div'); label.textContent = 'Bucket ' + i; label.style.position = 'absolute'; label.style.top = '-20px'; label.style.left = '50%'; label.style.transform = 'translate(-50%, 0)'; label.style.fontSize = '0.8rem'; label.style.color = '#cbd5e1'; label.style.fontWeight = 'bold'; label.style.whiteSpace = 'nowrap'; bBlock.appendChild(label);
-                for(let s=0; s<2; s++) {
-                    const slot = document.createElement('div'); slot.className = 'la-slot'; slot.style.width = '60px'; slot.style.height = '45px'; 
-                    if(bucket[s] !== undefined) { slot.textContent = bucket[s]; slot.style.background = 'var(--node-bg)'; slot.style.borderColor = '#1e293b'; } 
-                    else { slot.textContent = ''; slot.style.background = 'rgba(255,255,255,0.05)'; slot.style.borderStyle = 'dashed'; }
-                    bBlock.appendChild(slot);
-                }
-                hashBucketContainer.appendChild(bBlock);
-            });
-        }
     }
 
     function renderAdvTrees() {
