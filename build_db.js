@@ -107,6 +107,7 @@ const mappings = {
     'tree_mway.cpp': 'codeTreeMway',
     'tree_expression.cpp': 'codeTreeExpression',
     'tree_general_binary.cpp': 'codeTreeGeneralBinary',
+    'tree_reconstruct.cpp': 'codeTreeReconstruct',
     'game_tree.cpp': 'codeGameTree',
     'gc_memory.cpp': 'codeGcMemory',
     'file_isam.cpp': 'codeFileIsam',

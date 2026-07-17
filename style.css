@@ -3006,3 +3006,22 @@ table.et-tt { border-collapse: collapse; font-family: 'Fira Code', monospace; fo
 table.et-tt th, table.et-tt td { border: 1px solid #cbd5e1; padding: 2px 10px; text-align: center; }
 table.et-tt tr.et-tt-cur { background: #fef9c3; }
 .et-verdict { margin-top: 6px; font-weight: bold; color: #1a4d8f; }
+
+/* tree-reconstruct */
+.rc-mode { display: flex; gap: 6px; margin-bottom: 8px; }
+.rc-mode-btn { padding: 4px 12px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; cursor: pointer; font-size: 13px; }
+.rc-mode-btn.active { background: #1a4d8f; color: #fff; border-color: #1a4d8f; }
+.rc-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 8px; }
+.rc-controls label { font-size: 13px; }
+.rc-controls input { font-family: 'Fira Code', monospace; margin-left: 4px; }
+.rc-seqs { margin: 10px 0; display: flex; flex-direction: column; gap: 6px; }
+.rc-strip { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.rc-label { font-weight: 700; margin-right: 6px; min-width: 70px; }
+.rc-cell { display: inline-block; min-width: 22px; text-align: center; padding: 2px 6px; border: 1px solid #cbd5e1; border-radius: 4px; font-family: 'Fira Code', monospace; }
+.rc-cell.rc-inrange { background: #eef6ff; }
+.rc-cell.rc-root { background: #1a4d8f; color: #fff; border-color: #1a4d8f; }
+.rc-cell.rc-split { outline: 2px solid #f59e0b; }
+.tree-node.rc-created { background: #16a34a; color: #fff; border-color: #16a34a; }
+.rc-verdict { margin-top: 6px; font-weight: bold; }
+.rc-verdict.rc-ok { color: #16a34a; }
+.rc-verdict.rc-err { color: #dc2626; }
