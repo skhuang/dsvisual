@@ -2768,7 +2768,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('search-linear', () => renderSearchArray(arrLinear), () => codeSearchLinear, null);
         reg('search-binary', () => renderSearchArray(arrBinary), () => codeSearchBinary, null);
         reg('search-strcompare', renderStringCompare, () => codeSearchStrCompare, { host: 'dynamic' });
-        reg('search-zalgo', renderZAlgo, () => codeSearchZAlgo, { host: 'dynamic' });
         reg('search-aho', renderAhoCorasick, () => codeSearchAho, { host: 'dynamic' });
         // File Structures
         // Memory / GC
@@ -2832,7 +2831,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (['tree-bst', 'tree-avl', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode === 'search-strcompare') renderStringCompare();
-        else if (currentMode === 'search-zalgo') renderZAlgo();
         else if (currentMode === 'search-aho') renderAhoCorasick();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
@@ -4165,73 +4163,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     '  |  actual = ' + actual;
             showStatus('Estimate ' + est + ' (actual ' + actual + ')', '#f59e0b');
         };
-    }
-
-    function renderZAlgo() {
-        const host = acquireDynamicVizHost();
-        const pattern = 'ABABCABAB';
-        const text = 'ABABDABACDABABCABAB';
-        const s = pattern + '$' + text;
-        const n = s.length, m = pattern.length;
-        const z = new Array(n).fill(0);
-        const trace = [];
-        (function () {
-            let l = 0, r = 0;
-            for (let i = 1; i < n; i++) {
-                if (i < r) z[i] = Math.min(r - i, z[i - l]);
-                while (i + z[i] < n && s[z[i]] === s[i + z[i]]) z[i]++;
-                if (i + z[i] > r) { l = i; r = i + z[i]; }
-                trace[i] = { l: l, r: r };
-            }
-        })();
-
-        let cur = 1;  // next index to reveal
-
-        const wrap = document.createElement('div');
-        wrap.className = 'zalgo-wrap';
-        wrap.innerHTML =
-            '<div class="zalgo-grid"></div>' +
-            '<div class="zalgo-stats" data-testid="zalgo-stats">computed: <span class="zalgo-count">0</span>' +
-                ' &nbsp;|&nbsp; matches: <span class="zalgo-matches">[]</span></div>';
-        host.appendChild(wrap);
-        const gridEl = wrap.querySelector('.zalgo-grid');
-        const countEl = wrap.querySelector('.zalgo-count');
-        const matchesEl = wrap.querySelector('.zalgo-matches');
-
-        function draw() {
-            const box = cur > 1 ? trace[cur - 1] : { l: 0, r: 0 };
-            let chr = '<div class="zalgo-row zalgo-chr">';
-            let zr = '<div class="zalgo-row zalgo-z">';
-            const matches = [];
-            for (let k = 0; k < n; k++) {
-                const inBox = box.r > box.l && k >= box.l && k < box.r;
-                chr += '<span class="zalgo-cell' + (inBox ? ' zalgo-box' : '') +
-                       (k === cur && cur < n ? ' zalgo-cur' : '') + '">' + s[k] + '</span>';
-                let zval = '-';
-                if (k > 0 && k < cur) {
-                    zval = z[k];
-                    if (z[k] === m) matches.push(k - m - 1);
-                } else if (k >= cur) {
-                    zval = '?';
-                }
-                zr += '<span class="zalgo-cell' + (k < cur && k > 0 && z[k] === m ? ' zalgo-match' : '') +
-                      '">' + zval + '</span>';
-            }
-            chr += '</div>';
-            zr += '</div>';
-            gridEl.innerHTML = chr + zr;
-            countEl.textContent = Math.max(0, cur - 1);
-            matchesEl.textContent = '[' + matches.join(',') + ']';
-        }
-        function step() {
-            if (cur >= n) return false;
-            cur++;
-            draw();
-            return cur < n;
-        }
-        function reset() { cur = 1; draw(); }
-        wrap.appendChild(buildStepControls(step, reset, 350));
-        draw();
     }
 
     function renderAhoCorasick() {
