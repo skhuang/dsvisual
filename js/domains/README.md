@@ -101,9 +101,9 @@ order, not registration order — a domain module that runs before
   }
 
   // Registration — one R().attach per mode id this domain owns (`render`
-  // and `code` are required; `layout` is usually null unless the mode uses
-  // a dynamic host, see hash-open's `{ host: 'dynamic' }` pattern elsewhere
-  // in app.js), then one registerDomain call for the whole module.
+  // and `code` are required; `layout` is usually null for stateful domains
+  // with dedicated DOM containers (like hash-open), or `{ host: 'dynamic' }`
+  // for dynamic-host viz), then one registerDomain call for the whole module.
   R().attach('foo-a', { render: renderFoo, code: () => codeFooA, layout: null });
   R().attach('foo-b', { render: renderFoo, code: () => codeFooB, layout: null });
   C().registerDomain({ id: 'foo', init: init, onModeSwitch: onModeSwitch });
