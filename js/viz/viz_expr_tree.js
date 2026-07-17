@@ -57,13 +57,13 @@
 
         const inputVal = bool ? st.boolText : st.text;
         const hint = bool
-            ? 'postfix boolean — vars a,b,c… consts 0/1 ops ∧(&) ∨(|) ¬(!) ⊕(^) →(>)'
+            ? langOf({ zh: '後序布林 — 變數 a,b,c… 常數 0/1 運算子 ∧(&) ∨(|) ¬(!) ⊕(^) →(>)', en: 'postfix boolean — vars a,b,c… consts 0/1 ops ∧(&) ∨(|) ¬(!) ⊕(^) →(>)' })
             : 'postfix; operands + operators (+ - * /), space-separated';
 
         host.innerHTML =
             '<div class="et-mode">' +
-              '<button type="button" class="et-mode-btn' + (!bool ? ' active' : '') + '" data-mode="arith">Arithmetic</button>' +
-              '<button type="button" class="et-mode-btn' + (bool ? ' active' : '') + '" data-mode="bool">Boolean</button>' +
+              '<button type="button" class="et-mode-btn' + (!bool ? ' active' : '') + '" data-mode="arith">' + langOf({ zh: '算術', en: 'Arithmetic' }) + '</button>' +
+              '<button type="button" class="et-mode-btn' + (bool ? ' active' : '') + '" data-mode="bool">' + langOf({ zh: '布林', en: 'Boolean' }) + '</button>' +
             '</div>' +
             '<div class="et-controls"><input type="text" class="et-input" value="' + inputVal + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="et-apply">Apply</button>' +
             '<span class="sm-hint">' + hint + '</span></div>' +
@@ -138,7 +138,7 @@
             if (fr.forest) {
                 paintForest(fr.forest, null);
                 if (bool) { const t = host.querySelector('.et-truth'); if (t) t.innerHTML = ''; renderAsgRow(); host.querySelector('.et-result').textContent = ''; }
-                else if (fr.action === 'done') { const v = ExprTreeViz.evalExprTree(fr.forest[0]); host.querySelector('.et-result').textContent = Number.isNaN(v) ? 'Result: (symbolic expression)' : ('Result = ' + v); }
+                else if (fr.action === 'done' && fr.forest.length === 1) { const v = ExprTreeViz.evalExprTree(fr.forest[0]); host.querySelector('.et-result').textContent = Number.isNaN(v) ? 'Result: (symbolic expression)' : ('Result = ' + v); }
                 else { host.querySelector('.et-result').textContent = ''; }
             } else if (fr.action === 'ttrow') {
                 paintForest([root], fr.asg);
@@ -157,7 +157,6 @@
 
         host.appendChild(K().buildStepControls(step, reset, 700));
         paint();
-        if (bool) renderAsgRow();
 
         host.querySelectorAll('.et-mode-btn').forEach((b) => {
             b.onclick = () => { const m = b.getAttribute('data-mode'); if (m !== st.mode) { st.mode = m; renderTreeExpression(); } };
