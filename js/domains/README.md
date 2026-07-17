@@ -185,25 +185,8 @@ For each mode id the domain owns, **remove** from `app.js`:
   normalized from a DOM-stashed property to a module-local `let`.
 - **search** — `js/domains/search.js` (search-linear, search-binary).
 - **heap** — `js/domains/heap.js` (heap-binary, heap-binomial, heap-fibonacci, heap-leftist, heap-skew, heap-dary, heap-pairing).
+- **tree** — `js/domains/tree.js` (tree-bst, tree-avl, tree-splay, tree-rb, tree-trie, tree-radix, tree-ternary, tree-btree, tree-bplus). DONE — verified via `npm run test:all` and a grep of `app.js` for tree render/handler/state names, all clean.
 
-## Remaining domains to migrate
+## Phase B complete
 
-Each of these is a separate future plan; the state slices below are what a
-Task-2-equivalent PR for that domain needs to lift out of `app.js` (current
-line numbers, so re-check before relying on them — they will have shifted
-once earlier domains are migrated):
-
-### tree (tree-bst, tree-avl, tree-splay, tree-trie, tree-radix, tree-ternary, tree-btree, tree-bplus, tree-rb)
-- State: `bstRoot`, `trieRoot`, `radixRoot`, `tstRoot`, `btreeData`,
-  `bplusData`, `_rbState`, `treeDrawLoop`.
-- Renderers: `renderTree`, `renderAdvTrees`, `renderTreeRB`.
-- Handlers: insert/search inlined in click listeners calling algorithm
-  functions that already live in `js/algos/tree_algos.js` /
-  `js/tree_traversal_viz.js` (those stay put — only the app.js-side glue
-  moves); `drawTreeEdgesContinually` (rAF loop reading `bstRoot`).
-- Existing reset in `switchMode`: `bstRoot = null;` and
-  `trieRoot = { children: {}, endOfWord: false }; radixRoot = { edges: {} }; tstRoot = null; btreeData = []; bplusData = [];`
-  Note tree-rb is special-cased separately at the top of `switchMode`
-  (`if (_rbState) _rbState.hist.pause();`) rather than reset — `_rbState`
-  itself is not cleared, only paused; treat tree-rb's `onModeSwitch` as
-  needing to preserve that pause-not-clear behavior.
+All stateful domains (hash, graph, sort, linear, search, heap, tree) have been extracted into `js/domains/*`. `js/app.js` is now shell + orchestration: nav, overview, slide viewer, `renderAll` / `switchMode` / `updateLayout` / `setAnimControls`, and the VizRegistry / VizCore / VizKit seam.
