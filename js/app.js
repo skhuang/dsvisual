@@ -11,88 +11,6 @@ async function sleep(ms) {
     }
 }
 
-// ========== TREE ALGORITHMS IN JS ==========
-class TreeNode {
-    constructor(val) { this.val = val; this.left = null; this.right = null; this.height = 1; this.color = 'red'; this.parent = null; this.id = 'tid-' + val; }
-}
-
-// BST
-function insertBST(node, v) {
-    if(!node) return new TreeNode(v);
-    if(v < node.val) node.left = insertBST(node.left, v);
-    else if (v > node.val) node.right = insertBST(node.right, v);
-    return node;
-}
-
-// AVL
-function getHeight(n) { return n ? n.height : 0; }
-function getBalance(n) { return n ? getHeight(n.left) - getHeight(n.right) : 0; }
-function rightRotate(y) {
-    let x = y.left; let T2 = x.right; x.right = y; y.left = T2;
-    y.height = Math.max(getHeight(y.left), getHeight(y.right)) + 1; x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1;
-    return x;
-}
-function leftRotate(x) {
-    let y = x.right; let T2 = y.left; y.left = x; x.right = T2;
-    x.height = Math.max(getHeight(x.left), getHeight(x.right)) + 1; y.height = Math.max(getHeight(y.left), getHeight(y.right)) + 1;
-    return y;
-}
-function insertAVL(node, val) {
-    if(!node) return new TreeNode(val);
-    if(val < node.val) node.left = insertAVL(node.left, val); else if(val > node.val) node.right = insertAVL(node.right, val); else return node;
-    node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
-    let bal = getBalance(node);
-    if(bal > 1 && val < node.left.val) return rightRotate(node);
-    if(bal < -1 && val > node.right.val) return leftRotate(node);
-    if(bal > 1 && val > node.left.val) { node.left = leftRotate(node.left); return rightRotate(node); }
-    if(bal < -1 && val < node.right.val) { node.right = rightRotate(node.right); return leftRotate(node); }
-    return node;
-}
-
-// Splay
-function splayRightRotate(x) { let y = x.left; x.left = y.right; y.right = x; return y; }
-function splayLeftRotate(x) { let y = x.right; x.right = y.left; y.left = x; return y; }
-function splayNode(root, key) {
-    if(!root || root.val === key) return root;
-    if(root.val > key) {
-        if(!root.left) return root;
-        if(root.left.val > key) { root.left.left = splayNode(root.left.left, key); root = splayRightRotate(root); }
-        else if(root.left.val < key) { root.left.right = splayNode(root.left.right, key); if(root.left.right) root.left = splayLeftRotate(root.left); }
-        return root.left ? splayRightRotate(root) : root;
-    } else {
-        if(!root.right) return root;
-        if(root.right.val > key) { root.right.left = splayNode(root.right.left, key); if(root.right.left) root.right = splayRightRotate(root.right); }
-        else if(root.right.val < key) { root.right.right = splayNode(root.right.right, key); root = splayLeftRotate(root); }
-        return root.right ? splayLeftRotate(root) : root;
-    }
-}
-function insertSplay(root, k) {
-    if(!root) return new TreeNode(k);
-    root = splayNode(root, k);
-    if(root.val === k) return root;
-    let n = new TreeNode(k);
-    if(root.val > k) { n.right = root; n.left = root.left; root.left = null; } else { n.left = root; n.right = root.right; root.right = null; }
-    return n;
-}
-
-// Red-Black Simplified logic 
-// A full RB in JS is 200 lines. We use an approximation using standard BST + random coloring for pure visual mapping.
-// Wait, a true RB is better. To save complexity in this file, we will use BST logic but color them alternately simulating rotations.
-function insertRB_Mock(node, v) {
-    // True RB requires complex parent pointers not easily functional in compact JS
-    // We will just do BST and color based on depth logic to fake it slightly for the visualization sandbox
-    if(!node) { let n = new TreeNode(v); n.color = 'red'; return n; }
-    if(v < node.val) node.left = insertRB_Mock(node.left, v);
-    else if (v > node.val) node.right = insertRB_Mock(node.right, v);
-    return node;
-}
-function assignRBColors(node, isRoot=true) {
-    if(!node) return;
-    if(isRoot) node.color = 'black';
-    if(node.left) { node.left.color = node.color === 'black' ? 'red' : 'black'; assignRBColors(node.left, false); }
-    if(node.right) { node.right.color = node.color === 'black' ? 'red' : 'black'; assignRBColors(node.right, false); }
-}
-
 const METHOD_GROUPS = [
     {
         id: 'linear',
@@ -327,6 +245,8 @@ function getMethodGroupForMode(mode) {
 }
 
 function getCodeForMethod(methodId) {
+    const b = (typeof window !== 'undefined' && window.VizRegistry) ? window.VizRegistry.behavior(methodId) : null;
+    if (b && b.code) return b.code();
     const codeByMethod = {
         'stack-array': codeArray,
         'stack-list': codeLinkedList,
@@ -1506,6 +1426,14 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     };
     renderMethodSections(getMethodGroupForMode(currentMode).id);
+    window.VizKit = {
+        acquireDynamicVizHost,
+        buildStepControls,
+        getInputDifficulty,
+        langOf: (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en,
+        t,
+    };
+    registerBehaviors();
     bindDifficultySelect();
     const MAX_SIZE = 5;
 
@@ -2466,10 +2394,6 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'matrix_sparse_list.cpp';
             codeDisplay.textContent = codeMatrixSparseList;
         }
-        else if (currentMode === 'matrix-sparse') {
-            codeTitle.textContent = 'matrix_sparse.cpp';
-            codeDisplay.textContent = codeMatrixSparse;
-        }
         else if (currentMode === 'poly-padd') {
             codeTitle.textContent = 'poly_padd.cpp';
             codeDisplay.textContent = codePolyPadd;
@@ -2768,10 +2692,120 @@ document.addEventListener('DOMContentLoaded', () => {
         syncHeapTutorialChrome();
         if (window.Prism && codeDisplay.isConnected) Prism.highlightElement(codeDisplay);
     }
+    function registerBehaviors() {
+        const R = window.VizRegistry;
+        if (!R) return;
+        const reg = (id, render, code, layout) => R.attach(id, { render, code, layout: layout || null });
+        // Linear Structures
+        reg('stack-array', renderStack, () => codeArray, null);
+        reg('stack-list', renderStack, () => codeLinkedList, null);
+        reg('queue', renderQueue, () => codeQueue, { host: 'dynamic' });
+        reg('list-array', renderLists, () => codeListArray, null);
+        reg('list-linked', renderLists, () => codeListLinked, null);
+        reg('deque', renderDeque, () => codeDeque, { host: 'dynamic' });
+        reg('list-equivalence', renderListEquivalence, () => codeListEquivalence, { host: 'dynamic' });
+        // Arrays
+        reg('matrix-sparse-list', renderMatrixSparseList, () => codeMatrixSparseList, { host: 'dynamic' });
+        reg('magic-latin', renderMagicLatin, () => codeMagicLatin, { host: 'dynamic' });
+        reg('magic-torus', renderMagicTorus, () => codeMagicTorus, { host: 'dynamic' });
+        reg('magic-formula', renderMagicFormula, () => codeMagicFormula, { host: 'dynamic' });
+        reg('magic-symmetry', renderMagicSymmetry, () => codeMagicSymmetry, { host: 'dynamic' });
+        // Trees
+        reg('tree-bst', renderTree, () => codeTreeBST, null);
+        reg('tree-avl', renderTree, () => codeTreeAVL, null);
+        reg('tree-rb', renderTreeRB, () => codeTreeRB, { host: 'dynamic' });
+        reg('tree-splay', renderTree, () => codeTreeSplay, null);
+        reg('tree-trie', renderAdvTrees, () => codeTreeTrie, null);
+        reg('tree-radix', renderAdvTrees, () => codeTreeRadix, null);
+        reg('tree-ternary', renderAdvTrees, () => codeTreeTST, null);
+        reg('tree-btree', renderAdvTrees, () => codeTreeBTree, null);
+        reg('tree-bplus', renderAdvTrees, () => codeTreeBPlus, null);
+        reg('tree-dsu', renderDSU, () => codeTreeDSU, { host: 'dynamic' });
+        reg('tree-segment', renderSegmentTree, () => codeTreeSegment, { host: 'dynamic' });
+        reg('tree-fenwick', renderFenwick, () => codeTreeFenwick, { host: 'dynamic' });
+        reg('tree-traversal', renderTreeTraversal, () => codeTreeTraversal, { host: 'dynamic' });
+        reg('huffman', renderHuffman, () => codeHuffman, { host: 'dynamic' });
+        // Graphs
+        reg('graph', renderGraph, () => codeGraph, { host: 'dynamic' });
+        reg('graph-adjlist', renderGraph, () => codeGraphAdjlist, { host: 'dynamic' });
+        reg('graph-traversal', renderGraphDual, () => codeGraphTraversal, { host: 'dynamic' });
+        reg('graph-bfs', renderGraph, () => codeGraphBFS, { host: 'dynamic' });
+        reg('graph-dfs', renderGraph, () => codeGraphDFS, { host: 'dynamic' });
+        reg('graph-kruskal', renderGraph, () => codeGraphKruskal, { host: 'dynamic' });
+        reg('graph-dijkstra', renderGraph, () => codeGraphDijkstra, { host: 'dynamic' });
+        reg('graph-topo', renderGraph, () => codeGraphTopo, { host: 'dynamic' });
+        reg('graph-prim', renderPrim, () => codeGraphPrim, { host: 'dynamic' });
+        reg('graph-bellman-ford', renderBellmanFord, () => codeGraphBellmanFord, { host: 'dynamic' });
+        reg('graph-floyd-warshall', renderFloydWarshall, () => codeGraphFloydWarshall, { host: 'dynamic' });
+        // Hash & Probabilistic
+        reg('hash-chain', renderHashes, () => codeHashChain, null);
+        reg('hash-open', renderHashes, () => codeHashOpen, null);
+        reg('hash-bucket', renderHashes, () => codeHashBucket, null);
+        reg('bloom-filter', renderBloomFilter, () => codeBloomFilter, { host: 'dynamic' });
+        reg('skip-list', renderSkipList, () => codeSkipList, { host: 'dynamic' });
+        reg('count-min-sketch', renderCountMinSketch, () => codeCountMinSketch, { host: 'dynamic' });
+        // Heaps / Priority Queues
+        reg('heap-binary', renderHeap, () => codeHeapBinary, null);
+        reg('heap-binomial', renderHeap, () => codeHeapBinomial, null);
+        reg('heap-fibonacci', renderHeap, () => codeHeapFibonacci, null);
+        reg('heap-leftist', renderHeap, () => codeHeapLeftist, null);
+        reg('heap-skew', renderHeap, () => codeHeapSkew, null);
+        reg('heap-dary', renderHeap, () => codeHeapDary, null);
+        reg('heap-pairing', renderHeap, () => codeHeapPairing, null);
+        // Sorting
+        reg('sort-bubble', renderSortBars, () => codeSortBubble, null);
+        reg('sort-select', renderSortBars, () => codeSortSelect, null);
+        reg('sort-insert', renderSortBars, () => codeSortInsert, null);
+        reg('sort-quick', renderSortBars, () => codeSortQuick, null);
+        reg('sort-merge', renderSortBars, () => codeSortMerge, null);
+        reg('sort-shell', renderSortBars, () => codeSortShell, null);
+        reg('sort-bucket', renderSortBars, () => codeSortBucket, null);
+        reg('sort-count', renderSortBars, () => codeSortCounting, null);
+        reg('sort-radix', renderSortBars, () => codeSortRadix, null);
+        reg('sort-heap', renderSortBars, () => codeSortHeap, null);
+        reg('sort-shaker', renderSortBars, () => codeSortShaker, null);
+        // Searching & String Matching
+        reg('search-linear', () => renderSearchArray(arrLinear), () => codeSearchLinear, null);
+        reg('search-binary', () => renderSearchArray(arrBinary), () => codeSearchBinary, null);
+        reg('search-kmp', renderKMP, () => codeSearchKMP, { host: 'dynamic' });
+        reg('search-bm', renderBM, () => codeSearchBM, { host: 'dynamic' });
+        reg('search-rk', renderRK, () => codeSearchRK, { host: 'dynamic' });
+        reg('search-strcompare', renderStringCompare, () => codeSearchStrCompare, { host: 'dynamic' });
+        reg('search-zalgo', renderZAlgo, () => codeSearchZAlgo, { host: 'dynamic' });
+        reg('search-aho', renderAhoCorasick, () => codeSearchAho, { host: 'dynamic' });
+        // File Structures
+        // Memory / GC
+        // Recursion
+        // OOP Concepts
+        reg('oop-inheritance', renderOOP, () => codeOOPInheritance, null);
+        reg('oop-polymorphism', renderOOP, () => codeOOPPolymorphism, null);
+        reg('oop-encapsulation', renderOOP, () => codeOOPEncapsulation, null);
+        reg('oop-abstraction', renderOOP, () => codeOOPAbstraction, null);
+        reg('oop-adhoc', renderOOP, () => codeOOPAdhoc, null);
+        reg('oop-templates', renderOOP, () => codeOOPTemplates, null);
+        // Design Patterns
+        reg('pattern-singleton', renderPattern, () => codePatternSingleton, null);
+        reg('pattern-factory', renderPattern, () => codePatternFactory, null);
+        reg('pattern-adapter', renderPattern, () => codePatternAdapter, null);
+        reg('pattern-decorator', renderPattern, () => codePatternDecorator, null);
+        reg('pattern-observer', renderPattern, () => codePatternObserver, null);
+        reg('pattern-strategy', renderPattern, () => codePatternStrategy, null);
+        reg('pattern-mvc', renderPattern, () => codePatternMVC, null);
+        reg('pattern-layered', renderPattern, () => codePatternLayered, null);
+        reg('pattern-pubsub', renderPattern, () => codePatternPubSub, null);
+        reg('pattern-pipefilter', renderPattern, () => codePatternPipeFilter, null);
+        reg('pattern-di', renderPattern, () => codePatternDI, null);
+        // nano-LLM
+        reg('nano-bpe-encode', renderNanoBpeEncode, () => codeNanoBpeEncode, { host: 'dynamic' });
+        reg('nano-compute-graph', renderNanoComputeGraph, () => codeNanoComputeGraph, { host: 'dynamic' });
+        reg('nano-bpe-train', renderNanoBpeTrain, () => codeNanoBpeTrain, { host: 'dynamic' });
+        reg('nano-ngram-next', renderNanoNgramNext, () => codeNanoNgramNext, { host: 'dynamic' });
+    }
     function renderAll() {
         syncDifficultySelect();
-        if(currentMode === 'maze-stack') renderMazeStack();
-        else if(currentMode.includes('stack')) renderStack();
+        const b = window.VizRegistry && window.VizRegistry.behavior(currentMode);
+        if (b && b.render) { b.render(); return; }
+        if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
         else if (currentMode === 'deque') renderDeque();
         else if (currentMode === 'bloom-filter') renderBloomFilter();
@@ -2786,32 +2820,13 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-segment') renderSegmentTree();
         else if (currentMode === 'tree-fenwick') renderFenwick();
         else if (currentMode === 'tree-traversal') renderTreeTraversal();
-        else if (currentMode === 'tree-general-binary') renderTreeGeneralBinary();
-        else if (currentMode === 'game-tree') renderGameTree();
         else if (currentMode === 'huffman') renderHuffman();
         else if (currentMode === 'matrix-sparse-list') renderMatrixSparseList();
-        else if (currentMode === 'matrix-sparse') renderMatrixSparse();
-        else if (currentMode === 'poly-padd') renderPolyPadd();
-        else if (currentMode === 'magic-square') renderMagicSquare();
         else if (currentMode === 'magic-latin') renderMagicLatin();
         else if (currentMode === 'magic-torus') renderMagicTorus();
         else if (currentMode === 'magic-formula') renderMagicFormula();
         else if (currentMode === 'magic-symmetry') renderMagicSymmetry();
-        else if (currentMode === 'tree-obst') renderTreeObst();
-        else if (currentMode === 'tree-threaded') renderTreeThreaded();
-        else if (currentMode === 'tree-mway') renderTreeMway();
-        else if (currentMode === 'tree-expression') renderTreeExpression();
-        else if (currentMode === 'sort-external') renderSortExternal();
-        else if (currentMode === 'gc-memory') renderGcMemory();
-        else if (currentMode === 'recursion') renderRecursion();
-        else if (currentMode === 'file-isam') renderFileIsam();
-        else if (currentMode === 'file-inverted') renderFileInverted();
-        else if (currentMode === 'sort-polyphase') renderSortPolyphase();
-        else if (currentMode === 'graph-aoe') renderGraphAoe();
-        else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
-        else if (currentMode === 'list-doubly') renderListDoubly();
         else if (currentMode === 'list-equivalence') renderListEquivalence();
-        else if (currentMode === 'cache-lru') renderLruCache();
         else if (currentMode === 'nano-bpe-encode') renderNanoBpeEncode();
         else if (currentMode === 'nano-compute-graph') renderNanoComputeGraph();
         else if (currentMode === 'nano-bpe-train') renderNanoBpeTrain();
@@ -2825,8 +2840,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'search-strcompare') renderStringCompare();
         else if (currentMode === 'search-zalgo') renderZAlgo();
         else if (currentMode === 'search-aho') renderAhoCorasick();
-        else if (currentMode === 'search-fibonacci') renderSearchFibonacci();
-        else if (currentMode === 'search-interpolation') renderSearchInterpolation();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
@@ -4383,478 +4396,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let _ttState = null;
-    let _tgbState = null;
-    function renderTreeGeneralBinary() {
-        if (!_tgbState) _tgbState = { text: TreeGeneralBinaryViz.SAMPLE };
-        const host = acquireDynamicVizHost();
-        const gen = TreeGeneralBinaryViz.parseGeneralTree(_tgbState.text);
-        const bin = TreeGeneralBinaryViz.toBinary(gen);
-        const { frames } = TreeGeneralBinaryViz.convertFrames(gen);
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="tt-controls">' +
-              '<input type="text" class="tgb-input" placeholder="A:B,C,D;B:E,F" value="' + String(_tgbState.text).replace(/"/g, '&quot;') + '">' +
-              '<button type="button" class="tgb-build">Build</button>' +
-            '</div>' +
-            '<div class="tgb-stage" style="display:flex;gap:16px;flex-wrap:wrap">' +
-              '<div style="flex:1 1 280px;min-width:260px">' +
-                '<div class="tgb-col-head" style="font-weight:700;margin-bottom:4px">General tree</div>' +
-                '<div class="tgb-general" style="position:relative;overflow:hidden;height:300px;border:1px solid #e2e8f0;border-radius:8px">' +
-                  '<svg class="tgb-general-edges" style="position:absolute;inset:0;width:100%;height:100%"></svg>' +
-                  '<div class="tgb-general-nodes"></div>' +
-                '</div>' +
-              '</div>' +
-              '<div style="flex:1 1 280px;min-width:260px">' +
-                '<div class="tgb-col-head" style="font-weight:700;margin-bottom:4px">Binary tree (left-child / right-sibling)</div>' +
-                '<div class="tgb-binary" style="position:relative;overflow:hidden;height:300px;border:1px solid #e2e8f0;border-radius:8px">' +
-                  '<svg class="tgb-binary-edges" style="position:absolute;inset:0;width:100%;height:100%"></svg>' +
-                  '<div class="tgb-binary-nodes"></div>' +
-                '</div>' +
-              '</div>' +
-            '</div>';
-
-        // ---- General tree layout: x by leaf order, y by depth ----
-        const genMeta = {}; // id -> {x,y}
-        (function () {
-            let leafCursor = 0;
-            const colW = 64, rowH = 64, padX = 40, padY = 34;
-            function layout(node, depth) {
-                const kids = gen.children[node] || [];
-                let x;
-                if (!kids.length) { x = padX + (leafCursor++) * colW; }
-                else {
-                    const xs = kids.map((k) => layout(k, depth + 1));
-                    x = (xs[0] + xs[xs.length - 1]) / 2;
-                }
-                genMeta[node] = { x: x, y: padY + depth * rowH };
-                return x;
-            }
-            if (gen.root) layout(gen.root, 0);
-        })();
-
-        // ---- Binary tree layout from {id,left,right} ----
-        const binMeta = {}; // id -> {x,y}
-        (function () {
-            let col = 0;
-            const colW = 56, rowH = 64, padX = 40, padY = 34;
-            function layout(bn, depth) {
-                if (!bn) return;
-                layout(bn.left, depth + 1);
-                binMeta[bn.id] = { x: padX + (col++) * colW, y: padY + depth * rowH };
-                layout(bn.right, depth + 1);
-            }
-            layout(bin, 0);
-        })();
-
-        const genNodesEl = host.querySelector('.tgb-general-nodes');
-        const genEdgesEl = host.querySelector('.tgb-general-edges');
-        const binNodesEl = host.querySelector('.tgb-binary-nodes');
-        const binEdgesEl = host.querySelector('.tgb-binary-edges');
-
-        // Static general nodes
-        Object.keys(genMeta).forEach((id) => {
-            const m = genMeta[id];
-            const d = document.createElement('div');
-            d.className = 'tree-node'; d.id = 'tgb-g-' + id; d.textContent = id;
-            d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
-            genNodesEl.appendChild(d);
-        });
-        // Static binary nodes
-        Object.keys(binMeta).forEach((id) => {
-            const m = binMeta[id];
-            const d = document.createElement('div');
-            d.className = 'tree-node'; d.id = 'tgb-b-' + id; d.textContent = id;
-            d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
-            binNodesEl.appendChild(d);
-        });
-
-        function lineSvg(a, b, color, width) {
-            return '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y +
-                   '" stroke="' + color + '" stroke-width="' + width + '"/>';
-        }
-
-        function paint() {
-            const fr = frames[idx] || frames[frames.length - 1] || { links: [], active: null };
-            const active = fr.active;
-            const isActive = (l) => active && l.from === active.from && l.to === active.to && l.kind === active.kind;
-
-            // General tree: draw all parent->child edges; highlight the edge whose child matches a cumulative link
-            let g = '';
-            const litChildren = {};
-            fr.links.forEach((l) => { litChildren[l.to] = l; });
-            (function walk(node) {
-                const kids = gen.children[node] || [];
-                kids.forEach((k) => {
-                    const a = genMeta[node], b = genMeta[k];
-                    if (a && b) {
-                        const lk = litChildren[k];
-                        const isAct = lk && isActive(lk);
-                        const color = isAct ? '#ef4444' : (lk ? (lk.kind === 'left' ? '#2563eb' : '#16a34a') : '#94a3b8');
-                        g += lineSvg(a, b, color, isAct ? 3 : 2);
-                    }
-                    walk(k);
-                });
-            })(gen.root);
-            genEdgesEl.innerHTML = g;
-
-            // Binary tree: draw cumulative links only (left=blue, right=green); active=red
-            let b = '';
-            fr.links.forEach((l) => {
-                const a = binMeta[l.from], c = binMeta[l.to];
-                if (!a || !c) return;
-                const isAct = isActive(l);
-                const color = isAct ? '#ef4444' : (l.kind === 'left' ? '#2563eb' : '#16a34a');
-                b += lineSvg(a, c, color, isAct ? 3 : 2);
-            });
-            binEdgesEl.innerHTML = b;
-
-            // Node highlighting
-            host.querySelectorAll('.tgb-general .tree-node, .tgb-binary .tree-node').forEach((el) => el.classList.remove('active'));
-            if (active) {
-                const ga = document.getElementById('tgb-g-' + active.to);
-                const ba = document.getElementById('tgb-b-' + active.to);
-                if (ga) ga.classList.add('active');
-                if (ba) ba.classList.add('active');
-            }
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-
-        host.querySelector('.tgb-build').onclick = () => {
-            try {
-                _tgbState.text = host.querySelector('.tgb-input').value;
-                renderTreeGeneralBinary();
-            } catch (e) { /* ignore malformed input */ }
-        };
-    }
-    let _gameState = null;
-    function renderGameTree() {
-        if (!_gameState) _gameState = { leaves: GameTreeViz.SAMPLE_LEAVES.slice(), useAB: true };
-        const host = acquireDynamicVizHost();
-        const { root } = GameTreeViz.buildGameTree(_gameState.leaves, 2);
-        const { frames } = GameTreeViz.minimaxFrames(root, _gameState.useAB);
-        let idx = 0;
-
-        // ---- Layout: leaves left-to-right, parents centered over children ----
-        const meta = {}; // id -> {x,y,node}
-        (function () {
-            let leafCursor = 0;
-            const colW = 60, rowH = 70, padX = 36, padY = 30;
-            function layout(node, depth) {
-                let x;
-                if (node.leaf || !node.children.length) { x = padX + (leafCursor++) * colW; }
-                else {
-                    const xs = node.children.map((c) => layout(c, depth + 1));
-                    x = (xs[0] + xs[xs.length - 1]) / 2;
-                }
-                meta[node.id] = { x: x, y: padY + depth * rowH, node: node };
-                return x;
-            }
-            layout(root, 0);
-        })();
-
-        host.innerHTML =
-            '<div class="tt-controls">' +
-              '<input type="text" class="gt-input" value="' + _gameState.leaves.join(',') + '">' +
-              '<button type="button" class="gt-build">Build</button>' +
-              '<label style="margin-left:8px"><input type="checkbox" class="gt-ab" ' + (_gameState.useAB ? 'checked' : '') + '> &alpha;-&beta;</label>' +
-            '</div>' +
-            '<div class="gt-stage" style="position:relative;overflow:hidden;height:320px">' +
-              '<svg class="gt-edges" style="position:absolute;inset:0;width:100%;height:100%"></svg>' +
-              '<div class="gt-nodes"></div>' +
-            '</div>' +
-            '<div class="gt-info" style="margin-top:6px;font-weight:700"></div>';
-
-        const nodesEl = host.querySelector('.gt-nodes');
-        const edgesEl = host.querySelector('.gt-edges');
-
-        // Static edges
-        let edgeSvg = '';
-        Object.keys(meta).forEach((id) => {
-            const m = meta[id];
-            (m.node.children || []).forEach((c) => {
-                const b = meta[c.id];
-                if (b) edgeSvg += '<line x1="' + m.x + '" y1="' + m.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>';
-            });
-        });
-        edgesEl.innerHTML = edgeSvg;
-
-        // Static nodes
-        Object.keys(meta).forEach((id) => {
-            const m = meta[id], node = m.node;
-            const d = document.createElement('div');
-            d.className = 'tree-node'; d.id = 'gt-node-' + id;
-            d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
-            if (node.leaf) d.dataset.symbol = String(node.value);
-            else d.dataset.symbol = node.isMax ? '▲' : '▽';
-            d.textContent = d.dataset.symbol;
-            nodesEl.appendChild(d);
-        });
-
-        function paint() {
-            // Cumulative state up to idx
-            const pruned = new Set();
-            const returned = {}; // id -> value
-            const abText = {};   // id -> {alpha,beta,value}
-            let current = null;
-            for (let i = 0; i <= idx && i < frames.length; i++) {
-                const f = frames[i];
-                if (f.type === 'prune') (f.pruned || []).forEach((p) => pruned.add(p));
-                if (f.type === 'return' || f.type === 'leaf') returned[f.id] = f.value;
-                if (f.type === 'enter' || f.type === 'update') {
-                    abText[f.id] = { alpha: f.alpha, beta: f.beta, value: f.type === 'update' ? f.value : undefined };
-                }
-                if (f.type === 'enter' || f.type === 'update' || f.type === 'leaf' || f.type === 'return') current = f.id;
-            }
-            const fmt = (v) => (v === Infinity ? '∞' : v === -Infinity ? '-∞' : String(v));
-
-            Object.keys(meta).forEach((id) => {
-                const el = document.getElementById('gt-node-' + id);
-                if (!el) return;
-                el.classList.remove('active', 'visited');
-                const nid = meta[id].node.id;
-                if (pruned.has(nid)) el.classList.add('gt-pruned'); else el.classList.remove('gt-pruned');
-                let label = el.dataset.symbol;
-                if (Object.prototype.hasOwnProperty.call(returned, nid) && !meta[id].node.leaf) {
-                    label = el.dataset.symbol + '=' + fmt(returned[nid]);
-                    el.classList.add('visited');
-                }
-                el.textContent = label;
-                if (nid === current) el.classList.add('active');
-            });
-
-            const fr = frames[idx];
-            let info = '';
-            if (fr) {
-                const ab = abText[fr.id];
-                if (fr.type === 'prune') info = 'Prune at node ' + fr.id + ': α=' + fmt(fr.alpha) + ' ≥ β=' + fmt(fr.beta);
-                else if (fr.type === 'leaf') info = 'Leaf node ' + fr.id + ' = ' + fmt(fr.value);
-                else if (ab) info = 'Node ' + fr.id + ': α=' + fmt(ab.alpha) + ', β=' + fmt(ab.beta) + (ab.value !== undefined ? ', best=' + fmt(ab.value) : '');
-            }
-            if (Object.prototype.hasOwnProperty.call(returned, root.id)) {
-                info += (info ? '  |  ' : '') + 'Root value = ' + fmt(returned[root.id]);
-            }
-            host.querySelector('.gt-info').textContent = info;
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-
-        host.querySelector('.gt-build').onclick = () => {
-            try {
-                const vals = host.querySelector('.gt-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter((n) => Number.isFinite(n));
-                if (vals.length) { _gameState.leaves = vals; renderGameTree(); }
-            } catch (e) { /* ignore malformed input */ }
-        };
-        host.querySelector('.gt-ab').onchange = (e) => {
-            _gameState.useAB = e.target.checked;
-            renderGameTree();
-        };
-    }
-    let _recState = null;
-    function renderRecursion() {
-        if (!_recState) _recState = { example: 'fibonacci', inputs: JSON.parse(JSON.stringify(RecursionViz.DEFAULTS)) };
-        const host = acquireDynamicVizHost();
-        host.style.width = '100%';
-        const ex = _recState.example;
-        const inputs = _recState.inputs;
-        const { frames, nodes, result } = RecursionViz.recursionTrace(ex, inputs[ex]);
-
-        // Build parent -> children map (children in id order)
-        const childrenOf = {};
-        let root = null;
-        nodes.forEach((n) => {
-            if (n.parentId === null) root = n;
-            else { (childrenOf[n.parentId] = childrenOf[n.parentId] || []).push(n.id); }
-        });
-
-        // Custom n-ary layout: x by in-order leaf index, y by depth
-        const meta = {}; // id -> {node, x, y}
-        const colW = 74, rowH = 70, padX = 40, padY = 30;
-        let leafCursor = 0;
-        function layout(id) {
-            const kids = childrenOf[id] || [];
-            let x;
-            if (!kids.length) { x = padX + (leafCursor++) * colW; }
-            else {
-                const xs = kids.map((c) => layout(c));
-                x = (xs[0] + xs[xs.length - 1]) / 2;
-            }
-            meta[id] = { node: nodes[id], x: x, y: padY + nodes[id].depth * rowH };
-            return x;
-        }
-
-        const readableLabels = {
-            fibonacci: 'Fibonacci', reverse: 'Reverse String', permutations: 'Permutations',
-            'binary-search': 'Binary Search', quicksort: 'Quicksort'
-        };
-        let optsHtml = '';
-        RecursionViz.EXAMPLES.forEach((e) => {
-            optsHtml += '<option value="' + e + '"' + (e === ex ? ' selected' : '') + '>' + (readableLabels[e] || e) + '</option>';
-        });
-
-        let inputsHtml = '';
-        if (ex === 'fibonacci') {
-            inputsHtml = '<input type="number" class="rec-n" min="0" max="7" value="' + inputs.fibonacci.n + '">';
-        } else if (ex === 'reverse' || ex === 'permutations') {
-            inputsHtml = '<input type="text" class="rec-text" value="' + inputs[ex].text + '">';
-        } else if (ex === 'binary-search') {
-            inputsHtml = '<input type="text" class="rec-arr" value="' + inputs['binary-search'].arr.join(',') + '"> ' +
-                         '<input type="number" class="rec-target" value="' + inputs['binary-search'].target + '">';
-        } else if (ex === 'quicksort') {
-            inputsHtml = '<input type="text" class="rec-arr" value="' + inputs.quicksort.arr.join(',') + '">';
-        }
-
-        host.innerHTML =
-            '<div class="tt-controls">' +
-              '<select class="rec-example">' + optsHtml + '</select>' +
-              inputsHtml +
-              '<button type="button" class="rec-build">Build</button>' +
-            '</div>' +
-            '<div class="rec-stage">' +
-              '<div class="rec-tree" style="position:relative;overflow:auto;height:320px">' +
-                '<svg class="rec-edges" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none"></svg>' +
-                '<div class="rec-nodes"></div>' +
-              '</div>' +
-              '<div class="rec-stack"></div>' +
-            '</div>' +
-            '<div class="rec-info"></div>';
-
-        const treeEl = host.querySelector('.rec-tree');
-        const nodesEl = host.querySelector('.rec-nodes');
-        const edgesEl = host.querySelector('.rec-edges');
-        const stackEl = host.querySelector('.rec-stack');
-        const infoEl = host.querySelector('.rec-info');
-
-        host.querySelector('.rec-example').onchange = (e) => {
-            _recState.example = e.target.value;
-            renderRecursion();
-        };
-        host.querySelector('.rec-build').onclick = () => {
-            try {
-                if (ex === 'fibonacci') {
-                    const v = host.querySelector('.rec-n').value;
-                    inputs.fibonacci.n = Math.max(0, Math.min(7, parseInt(v, 10) || 0));
-                } else if (ex === 'reverse') {
-                    inputs.reverse.text = host.querySelector('.rec-text').value.slice(0, 6);
-                } else if (ex === 'permutations') {
-                    inputs.permutations.text = host.querySelector('.rec-text').value.slice(0, 4);
-                } else if (ex === 'binary-search') {
-                    const arr = host.querySelector('.rec-arr').value.split(',').map((x) => parseInt(x.trim(), 10)).filter(Number.isFinite).slice(0, 15);
-                    inputs['binary-search'].arr = arr;
-                    inputs['binary-search'].target = parseInt(host.querySelector('.rec-target').value, 10);
-                } else if (ex === 'quicksort') {
-                    inputs.quicksort.arr = host.querySelector('.rec-arr').value.split(',').map((x) => parseInt(x.trim(), 10)).filter(Number.isFinite).slice(0, 10);
-                }
-                renderRecursion();
-            } catch (e) { /* ignore malformed input */ }
-        };
-
-        // Guard: no calls recorded (empty or degenerate input) — show a friendly note, keep controls usable.
-        if (!root || !frames.length) {
-            if (treeEl) treeEl.innerHTML = '<div class="rec-info">No recursive calls for this input.</div>';
-            if (stackEl) stackEl.innerHTML = '';
-            return;
-        }
-
-        layout(root.id);
-
-        // Size the tree area so scrolling works
-        const maxX = Math.max.apply(null, Object.keys(meta).map((id) => meta[id].x));
-        const maxY = Math.max.apply(null, Object.keys(meta).map((id) => meta[id].y));
-        nodesEl.style.width = (maxX + padX) + 'px';
-        nodesEl.style.height = (maxY + padY) + 'px';
-        edgesEl.style.width = (maxX + padX) + 'px';
-        edgesEl.style.height = (maxY + padY) + 'px';
-
-        let idx = 0;
-
-        const fmtResult = (r) => {
-            if (Array.isArray(r)) return '[' + r.join(', ') + ']';
-            return String(r);
-        };
-
-        function paint() {
-            // Which node ids are revealed (called) and which have returned by now
-            const revealed = {};
-            const returnedVal = {};
-            for (let k = 0; k <= idx && k < frames.length; k++) {
-                const f = frames[k];
-                if (f.event === 'call') revealed[f.id] = true;
-                if (f.event === 'return') returnedVal[f.id] = f.value;
-            }
-            const cur = frames[idx];
-
-            // Edges (only where both endpoints revealed)
-            let edgeSvg = '';
-            Object.keys(revealed).forEach((idStr) => {
-                const id = parseInt(idStr, 10);
-                const n = nodes[id];
-                if (n.parentId !== null && revealed[n.parentId]) {
-                    const a = meta[n.parentId], b = meta[id];
-                    edgeSvg += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>';
-                }
-            });
-            edgesEl.innerHTML = edgeSvg;
-
-            // Nodes
-            nodesEl.innerHTML = '';
-            Object.keys(revealed).forEach((idStr) => {
-                const id = parseInt(idStr, 10);
-                const m = meta[id];
-                const d = document.createElement('div');
-                d.className = 'tree-node rec-node';
-                d.style.left = m.x + 'px'; d.style.top = m.y + 'px';
-                let label = m.node.label;
-                if (Object.prototype.hasOwnProperty.call(returnedVal, id)) {
-                    label += ' = ' + fmtResult(returnedVal[id]);
-                    d.classList.add('visited');
-                }
-                if (cur && id === cur.id) {
-                    d.classList.add('active');
-                    if (cur.event === 'return') d.classList.add('rec-returning');
-                }
-                d.textContent = label;
-                nodesEl.appendChild(d);
-            });
-
-            // Stack (bottom -> top; top = current)
-            let stackHtml = '<div class="rec-stack-title">Call Stack</div>';
-            if (cur && cur.stack.length) {
-                for (let s = 0; s < cur.stack.length; s++) {
-                    const nid = cur.stack[s];
-                    const isTop = s === cur.stack.length - 1;
-                    stackHtml += '<div class="rec-chip' + (isTop ? ' rec-chip-top' : '') + '">' + nodes[nid].label + '</div>';
-                }
-            } else {
-                stackHtml += '<div class="rec-chip-empty">(empty)</div>';
-            }
-            stackEl.innerHTML = stackHtml;
-
-            // Info line
-            let info = '';
-            if (cur) {
-                info = (cur.event === 'call' ? 'Call ' : 'Return ') + nodes[cur.id].label;
-                if (cur.event === 'return') info += ' → ' + fmtResult(cur.value);
-            }
-            if (idx === frames.length - 1) {
-                info += (info ? '  |  ' : '') + 'Result: ' + fmtResult(result);
-            }
-            infoEl.textContent = info;
-        }
-
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return true; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        paint();
-        host.appendChild(buildStepControls(step, reset, 700));
-    }
     function renderTreeTraversal() {
         const host = acquireDynamicVizHost();
         if (!_ttState) {
@@ -5052,678 +4593,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function renderGraphAoe() {
-        const host = acquireDynamicVizHost();
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const net = AoeViz.AOE_PRESET;
-        const built = AoeViz.buildAoeFrames(net.nodes, net.edges);
-        const frames = built.frames;
-        let idx = 0;
-        const nodeById = (id) => net.nodes.find((n) => n.id === id);
-
-        host.innerHTML =
-            '<div class="aoe-stage"><svg class="aoe-svg" viewBox="0 0 700 280" width="100%">' +
-              '<defs><marker id="aoe-arrow" markerWidth="9" markerHeight="9" refX="14" refY="3" orient="auto">' +
-              '<path d="M0,0 L8,3 L0,6 Z" fill="#94a3b8"/></marker></defs>' +
-              '<g class="aoe-edges"></g><g class="aoe-nodes"></g></svg></div>' +
-            '<div class="aoe-table"></div>' +
-            '<div class="aoe-phase"></div>';
-
-        const edgesG = host.querySelector('.aoe-edges');
-        const nodesG = host.querySelector('.aoe-nodes');
-
-        function paint() {
-            if (!host.querySelector('.aoe-table')) return; // host wiped (method switched) — ignore stale tick
-            const fr = frames[idx];
-            const crit = new Set((fr.criticalEdges || []).map((e) => e.u + '-' + e.v));
-            edgesG.innerHTML = net.edges.map((e) => {
-                const a = nodeById(e.u), b = nodeById(e.v);
-                const isC = crit.has(e.u + '-' + e.v);
-                const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-                return '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" ' +
-                    'stroke="' + (isC ? '#dc2626' : '#94a3b8') + '" stroke-width="' + (isC ? 3 : 2) + '" marker-end="url(#aoe-arrow)"/>' +
-                    '<text x="' + mx + '" y="' + (my - 4) + '" fill="' + (isC ? '#dc2626' : '#475569') + '" font-size="12" text-anchor="middle">' + e.w + '</text>';
-            }).join('');
-            nodesG.innerHTML = net.nodes.map((n) => {
-                const active = fr.current === n.id;
-                const eeT = fr.ee[n.id] != null ? 'ee=' + fr.ee[n.id] : '';
-                const leT = fr.le[n.id] != null ? 'le=' + fr.le[n.id] : '';
-                return '<circle cx="' + n.x + '" cy="' + n.y + '" r="16" fill="' + (active ? '#f59e0b' : '#fff') + '" stroke="#1e40af" stroke-width="2"/>' +
-                    '<text x="' + n.x + '" y="' + (n.y + 4) + '" text-anchor="middle" font-size="13" font-weight="700">' + n.id + '</text>' +
-                    '<text x="' + n.x + '" y="' + (n.y - 22) + '" text-anchor="middle" font-size="10" fill="#2563eb">' + eeT + '</text>' +
-                    '<text x="' + n.x + '" y="' + (n.y + 30) + '" text-anchor="middle" font-size="10" fill="#7c3aed">' + leT + '</text>';
-            }).join('');
-            const rows = net.nodes.map((n) => '<tr><td>' + n.id + '</td><td>' + (fr.ee[n.id] != null ? fr.ee[n.id] : '') + '</td><td>' + (fr.le[n.id] != null ? fr.le[n.id] : '') + '</td></tr>').join('');
-            host.querySelector('.aoe-table').innerHTML = '<table class="aoe-tbl"><thead><tr><th>v</th><th>ee</th><th>le</th></tr></thead><tbody>' + rows + '</tbody></table>';
-            host.querySelector('.aoe-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 800));
-        paint();
-    }
-    let _exprState = null;
-    function renderExprInfixPostfix() {
-        const host = acquireDynamicVizHost();
-        if (!_exprState) _exprState = { text: 'A*(B+C)*D' };
-        const st = _exprState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        let frames = [], postfix = [];
-        try {
-            const tokens = ExprViz.tokenize(st.text);
-            const conv = ExprViz.buildShuntingYardFrames(tokens);
-            postfix = conv.postfix;
-            const evalRes = ExprViz.buildPostfixEvalFrames(postfix);
-            frames = conv.frames.concat(evalRes.frames);
-        } catch (e) {
-            host.innerHTML = '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="expr-apply">Apply</button></div>' +
-                '<div class="expr-error" style="color:#dc2626;margin-top:8px;"></div>';
-            host.querySelector('.expr-input').value = st.text;
-            host.querySelector('.expr-error').textContent = 'Parse error: ' + e.message;
-            host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
-            return;
-        }
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="expr-apply">Apply</button></div>' +
-            '<div class="expr-phasebadge"></div>' +
-            '<div class="expr-stack"><strong>Stack:</strong> <span class="expr-stack-cells"></span></div>' +
-            '<div class="expr-out"><strong>Output:</strong> <span class="expr-out-cells"></span></div>' +
-            '<div class="expr-phase"></div>';
-        host.querySelector('.expr-input').value = st.text;
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.expr-stack-cells')) return;
-            host.querySelector('.expr-phasebadge').textContent = fr.phase === 'convert'
-                ? 'Phase 1 — Convert (postfix: ' + postfix.join(' ') + ')'
-                : 'Phase 2 — Evaluate';
-            const stackArr = fr.phase === 'convert' ? fr.opStack : fr.valStack;
-            const outArr = fr.phase === 'convert' ? fr.output : [];
-            host.querySelector('.expr-stack-cells').innerHTML = stackArr.map((v) => '<span class="expr-cell">' + v + '</span>').join('');
-            host.querySelector('.expr-out-cells').innerHTML = outArr.map((v) => '<span class="expr-cell out">' + v + '</span>').join('');
-            host.querySelector('.expr-phase').textContent = (fr.token ? '[' + fr.token + '] ' : '') + langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('expr-infix-postfix', getInputDifficulty());
-            if (!inp) return;
-            _exprState.text = inp.text;
-            renderExprInfixPostfix();
-        };
-    }
-
-    let _obstState = null;
-    function renderTreeObst() {
-        const host = acquireDynamicVizHost();
-        if (!_obstState) _obstState = { keys: [10, 20, 30, 40], freqs: [4, 2, 6, 3] };
-        const st = _obstState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const n = st.keys.length;
-        const res = ObstViz.buildObstFrames(st.keys, st.freqs);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="obst-controls">' +
-              '<input type="text" class="obst-keys" value="' + st.keys.join(',') + '" placeholder="keys e.g. 10,20,30">' +
-              '<input type="text" class="obst-freqs" value="' + st.freqs.join(',') + '" placeholder="freqs e.g. 4,2,6">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="obst-apply">Apply</button>' +
-            '</div>' +
-            '<div class="obst-grid"></div>' +
-            '<div class="obst-tree-stage"><svg class="obst-edges"></svg><div class="obst-nodes"></div></div>' +
-            '<div class="obst-phase"></div>';
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.obst-grid')) return;
-            let html = '<table class="obst-tbl"><tr><th>i\\j</th>';
-            for (let j = 0; j < n; j++) html += '<th>' + st.keys[j] + '</th>';
-            html += '</tr>';
-            for (let i = 0; i < n; i++) {
-                html += '<tr><th>' + st.keys[i] + '</th>';
-                for (let j = 0; j < n; j++) {
-                    if (j < i) { html += '<td class="obst-empty"></td>'; continue; }
-                    const v = fr.cost[i + ',' + j];
-                    const cur = (fr.phase === 'fill' && fr.i === i && fr.j === j) ? ' obst-cur' : '';
-                    html += '<td class="obst-cell' + cur + '">' + (v != null ? v : '') + '</td>';
-                }
-                html += '</tr>';
-            }
-            html += '</table>';
-            host.querySelector('.obst-grid').innerHTML = html;
-            const nodesEl = host.querySelector('.obst-nodes');
-            const edgesEl = host.querySelector('.obst-edges');
-            if (fr.phase === 'tree') {
-                const meta = [];
-                computeTreeLayout(res.tree, 200, 30, 90, meta);
-                const byId = {}; meta.forEach((m) => { byId[m.id] = m; });
-                edgesEl.innerHTML = '';
-                (function walk(nd) { if (!nd) return; [nd.left, nd.right].forEach((c) => { if (!c) return; const a = byId[nd.id], b = byId[c.id]; edgesEl.innerHTML += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>'; walk(c); }); })(res.tree);
-                nodesEl.innerHTML = '';
-                meta.forEach((m) => { const d = document.createElement('div'); d.className = 'tree-node'; d.textContent = m.val; d.style.left = m.x + 'px'; d.style.top = m.y + 'px'; nodesEl.appendChild(d); });
-            } else { nodesEl.innerHTML = ''; edgesEl.innerHTML = ''; }
-            host.querySelector('.obst-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 600));
-        paint();
-        host.querySelector('.obst-apply').onclick = () => {
-            const ks = host.querySelector('.obst-keys').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            const fs = host.querySelector('.obst-freqs').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            if (ks.length && ks.length === fs.length) { ks.sort((a, b) => a - b); st.keys = ks; st.freqs = fs; renderTreeObst(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('tree-obst', getInputDifficulty());
-            if (!inp) return;
-            _obstState.keys = inp.keys;
-            _obstState.freqs = inp.freqs;
-            renderTreeObst();
-        };
-    }
-    let _extState = null;
-    function renderSortExternal() {
-        const host = acquireDynamicVizHost();
-        if (!_extState) _extState = { data: [5, 3, 8, 1, 9, 2, 7, 4, 6, 0], M: 4 };
-        const st = _extState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const res = ExtSortViz.buildExternalSortFrames(st.data, st.M);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="ext-controls">' +
-              '<input type="text" class="ext-data" value="' + st.data.join(',') + '">' +
-              '<label>M <input type="number" class="ext-m" min="1" max="20" value="' + st.M + '" style="width:54px"></label>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="ext-apply">Apply</button>' +
-            '</div>' +
-            '<div class="ext-runs"></div>' +
-            '<div class="ext-tree-stage"><div class="ext-tree-nodes"></div></div>' +
-            '<div class="ext-out"><strong>Output:</strong> <span class="ext-out-cells"></span></div>' +
-            '<div class="ext-phase"></div>';
-
-        function cells(arr, cls) { return arr.map((v) => '<span class="ext-cell ' + (cls || '') + '">' + v + '</span>').join(' '); }
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.ext-runs')) return;
-            host.querySelector('.ext-runs').innerHTML = fr.runs.map((r, i) =>
-                '<div class="ext-run"><span class="ext-run-label">run ' + (i + 1) + (i === fr.current ? ' ★' : '') + '</span> ' + cells(r) + '</div>').join('');
-            const nodesEl = host.querySelector('.ext-tree-nodes');
-            nodesEl.innerHTML = '';
-            const tree = fr.tree || [];
-            if (tree.length > 1) {
-                const W = host.querySelector('.ext-tree-stage').clientWidth || 700;
-                for (let i = 1; i < tree.length; i++) {
-                    if (!tree[i]) continue;
-                    const level = Math.floor(Math.log2(i));
-                    const posInLevel = i - Math.pow(2, level);
-                    const count = Math.pow(2, level);
-                    const x = (posInLevel + 0.5) / count * W;
-                    const y = level * 52 + 20;
-                    const d = document.createElement('div');
-                    const isWinner = (i === 1 && fr.winnerRun >= 0);
-                    d.className = 'ext-tnode' + (isWinner ? ' winner' : '') + (tree[i].run < 0 ? ' pad' : '');
-                    d.textContent = tree[i].val == null ? '∞' : tree[i].val;
-                    d.style.left = x + 'px'; d.style.top = y + 'px';
-                    nodesEl.appendChild(d);
-                }
-            }
-            host.querySelector('.ext-out-cells').innerHTML = cells(fr.output, 'out');
-            host.querySelector('.ext-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 600));
-        paint();
-        host.querySelector('.ext-apply').onclick = () => {
-            const d = host.querySelector('.ext-data').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            const m = parseInt(host.querySelector('.ext-m').value, 10);
-            if (d.length && m >= 1) { st.data = d; st.M = m; renderSortExternal(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('sort-external', getInputDifficulty());
-            if (!inp) return;
-            _extState.data = inp.data;
-            _extState.M = inp.M;
-            renderSortExternal();
-        };
-    }
-
-    let _gcState = null;
-    function renderGcMemory() {
-        if (!_gcState) _gcState = { mode: 'mark-sweep' };
-        const host = acquireDynamicVizHost();
-        const { frames } = GcMemoryViz.gcMemoryFrames(_gcState.mode);
-        let idx = 0;
-
-        const modes = [['mark-sweep', 'Mark-Sweep'], ['refcount', 'Reference Counting'], ['buddy', 'Buddy System']];
-        host.innerHTML =
-            '<div class="gc-controls">' +
-              '<select class="gc-mode">' +
-                modes.map((m) => '<option value="' + m[0] + '"' + (m[0] === _gcState.mode ? ' selected' : '') + '>' + m[1] + '</option>').join('') +
-              '</select>' +
-              '<span class="gc-badge"></span>' +
-            '</div>' +
-            '<div class="gc-stage"></div>';
-
-        const stage = host.querySelector('.gc-stage');
-        const badge = host.querySelector('.gc-badge');
-
-        function paint() {
-            const fr = frames[idx];
-            stage.innerHTML = '';
-            if (_gcState.mode === 'mark-sweep') {
-                badge.textContent = 'phase: ' + fr.phase + (fr.active != null ? '  (obj ' + fr.active + ')' : '');
-                const grid = document.createElement('div');
-                grid.className = 'gc-grid';
-                fr.heap.forEach((o) => {
-                    const c = document.createElement('div');
-                    c.className = 'gc-cell' + (o.free ? ' gc-free' : (o.mark ? ' gc-mark' : '')) + (o.id === fr.active ? ' gc-active' : '');
-                    c.innerHTML = '<div class="gc-cell-id">#' + o.id + '</div><div class="gc-cell-meta">' + (o.free ? 'freed' : (o.mark ? 'marked' : '·')) + '</div>';
-                    grid.appendChild(c);
-                });
-                stage.appendChild(grid);
-            } else if (_gcState.mode === 'refcount') {
-                badge.textContent = fr.action;
-                const grid = document.createElement('div');
-                grid.className = 'gc-grid';
-                fr.objs.forEach((o) => {
-                    const c = document.createElement('div');
-                    c.className = 'gc-cell' + (o.free ? ' gc-free' : '') + (o.id === fr.active ? ' gc-active' : '');
-                    c.innerHTML = '<div class="gc-cell-id">' + o.id + '</div><div class="gc-cell-meta">rc=' + o.count + (o.free ? ' freed' : '') + '</div>';
-                    grid.appendChild(c);
-                });
-                stage.appendChild(grid);
-            } else {
-                badge.textContent = fr.action;
-                const bar = document.createElement('div');
-                bar.className = 'gc-bar';
-                fr.blocks.forEach((b) => {
-                    const seg = document.createElement('div');
-                    seg.className = 'gc-seg' + (b.free ? ' gc-seg-free' : ' gc-seg-alloc') + (b.start === fr.active ? ' gc-active' : '');
-                    seg.style.width = (100 * b.size / fr.total) + '%';
-                    seg.textContent = (b.free ? '' : (b.id + ' ')) + b.size;
-                    bar.appendChild(seg);
-                });
-                stage.appendChild(bar);
-            }
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-
-        host.querySelector('.gc-mode').onchange = function () {
-            _gcState.mode = this.value;
-            renderGcMemory();
-        };
-    }
-
-    let _isamState = null;
-    function renderFileIsam() {
-        if (!_isamState) _isamState = { keys: FileIsamViz.SAMPLE_KEYS.slice(), blockSize: FileIsamViz.SAMPLE_BLOCK, key: 50 };
-        const host = acquireDynamicVizHost();
-        const isam = FileIsamViz.buildIsam(_isamState.keys, _isamState.blockSize);
-        const { frames } = FileIsamViz.searchFrames(isam, _isamState.key);
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="isam-controls">' +
-              '<label>Search key <input type="number" class="isam-key" value="' + _isamState.key + '"></label>' +
-              '<button type="button" class="isam-search">Search</button>' +
-              '<span class="isam-badge"></span>' +
-            '</div>' +
-            '<div class="isam-stage"></div>';
-
-        const stage = host.querySelector('.isam-stage');
-        const badge = host.querySelector('.isam-badge');
-
-        function paint() {
-            const fr = frames[idx];
-            stage.innerHTML = '';
-
-            const idxRow = document.createElement('div');
-            idxRow.className = 'isam-index-row';
-            const idxLabel = document.createElement('div');
-            idxLabel.className = 'isam-row-label';
-            idxLabel.textContent = 'Index';
-            idxRow.appendChild(idxLabel);
-            isam.index.forEach((e, i) => {
-                const c = document.createElement('div');
-                c.className = 'isam-idx-cell' + (fr.phase === 'index' && fr.activeIndex === i ? ' isam-active' : '');
-                c.textContent = e.minKey === Infinity ? '∞' : e.minKey;
-                idxRow.appendChild(c);
-            });
-            stage.appendChild(idxRow);
-
-            const blkRow = document.createElement('div');
-            blkRow.className = 'isam-block-row';
-            const blkLabel = document.createElement('div');
-            blkLabel.className = 'isam-row-label';
-            blkLabel.textContent = 'Blocks';
-            blkRow.appendChild(blkLabel);
-            isam.blocks.forEach((b, bi) => {
-                const blkActive = (fr.activeBlock === bi);
-                const block = document.createElement('div');
-                block.className = 'isam-block' +
-                    (blkActive && (fr.phase === 'block' || fr.phase === 'scan' || fr.phase === 'found' || fr.phase === 'overflow') ? ' isam-block-active' : '') +
-                    (blkActive && fr.phase === 'notfound' ? ' isam-block-miss' : '');
-                if (!b.keys.length) {
-                    const empty = document.createElement('div');
-                    empty.className = 'isam-slot isam-empty';
-                    empty.textContent = '·';
-                    block.appendChild(empty);
-                } else {
-                    b.keys.forEach((k, s) => {
-                        const slot = document.createElement('div');
-                        const slotActive = blkActive && fr.activeSlot === s;
-                        slot.className = 'isam-slot' +
-                            (slotActive && fr.phase === 'scan' ? ' isam-active' : '') +
-                            (slotActive && fr.phase === 'found' && !fr.overflow ? ' isam-found' : '');
-                        slot.textContent = k;
-                        block.appendChild(slot);
-                    });
-                }
-                if (b.overflow && b.overflow.length) {
-                    const arrow = document.createElement('div');
-                    arrow.className = 'isam-overflow-arrow';
-                    arrow.textContent = '→';
-                    block.appendChild(arrow);
-                    b.overflow.forEach((k, s) => {
-                        const slot = document.createElement('div');
-                        const slotActive = blkActive && fr.activeSlot === s;
-                        slot.className = 'isam-slot isam-overflow-slot' +
-                            (slotActive && fr.phase === 'overflow' ? ' isam-active' : '') +
-                            (slotActive && fr.phase === 'found' && fr.overflow ? ' isam-found' : '');
-                        slot.textContent = k;
-                        block.appendChild(slot);
-                    });
-                }
-                blkRow.appendChild(block);
-            });
-            stage.appendChild(blkRow);
-
-            badge.textContent = 'phase: ' + fr.phase + '  (key ' + fr.key + ')';
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-
-        host.querySelector('.isam-search').onclick = function () {
-            try {
-                const v = parseInt(host.querySelector('.isam-key').value, 10);
-                if (Number.isFinite(v)) { _isamState.key = v; renderFileIsam(); }
-            } catch (e) { /* ignore invalid input */ }
-        };
-    }
-
-    let _invState = null;
-    function renderFileInverted() {
-        if (!_invState) _invState = { docs: FileInvertedViz.SAMPLE_DOCS.slice(), query: 'cat' };
-        const host = acquireDynamicVizHost();
-        const { frames, index } = FileInvertedViz.buildFrames(_invState.docs);
-        const q = FileInvertedViz.queryFrames(index, _invState.query);
-        const qTerm = String(_invState.query).toLowerCase();
-        const qPostings = q.postings;
-        const qSet = {};
-        qPostings.forEach((d) => { qSet[d] = true; });
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="inv-controls">' +
-              '<input type="text" class="inv-query" value="' + _invState.query + '">' +
-              '<button type="button" class="inv-query-btn">Query</button>' +
-              '<span class="inv-query-line"></span>' +
-            '</div>' +
-            '<div class="inv-stage">' +
-              '<div class="inv-docs"></div>' +
-              '<div class="inv-index"></div>' +
-            '</div>';
-
-        const docsPane = host.querySelector('.inv-docs');
-        const idxPane = host.querySelector('.inv-index');
-        const qLine = host.querySelector('.inv-query-line');
-
-        function paint() {
-            const fr = frames[idx];
-            const active = fr.active;
-
-            docsPane.innerHTML = '<div class="inv-pane-title">Documents</div>';
-            _invState.docs.forEach((doc, di) => {
-                const row = document.createElement('div');
-                row.className = 'inv-doc' +
-                    (active && active.doc === di ? ' inv-doc-active' : '') +
-                    (qSet[di] ? ' inv-doc-hit' : '');
-                row.textContent = di + ': ' + doc;
-                docsPane.appendChild(row);
-            });
-
-            idxPane.innerHTML = '<div class="inv-pane-title">Inverted Index (term &rarr; docIds)</div>';
-            const terms = Object.keys(fr.index).sort();
-            terms.forEach((term) => {
-                const row = document.createElement('div');
-                row.className = 'inv-term-row' +
-                    (active && active.term === term ? ' inv-term-active' : '') +
-                    (term === qTerm ? ' inv-term-query' : '');
-                const tEl = document.createElement('span');
-                tEl.className = 'inv-term';
-                tEl.textContent = term;
-                const pEl = document.createElement('span');
-                pEl.className = 'inv-postings';
-                pEl.textContent = '[' + fr.index[term].join(', ') + ']';
-                row.appendChild(tEl);
-                row.appendChild(pEl);
-                idxPane.appendChild(row);
-            });
-
-            qLine.textContent = 'query: ' + qTerm + ' → [' + qPostings.join(', ') + ']';
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-
-        host.querySelector('.inv-query-btn').onclick = function () {
-            try {
-                _invState.query = host.querySelector('.inv-query').value;
-                renderFileInverted();
-            } catch (e) { /* ignore invalid input */ }
-        };
-    }
-
-    let _polyphaseState = null;
-    function renderSortPolyphase() {
-        const host = acquireDynamicVizHost();
-        if (!_polyphaseState) _polyphaseState = { data: SortPolyphaseViz.SAMPLE.slice() };
-        const st = _polyphaseState;
-        const res = SortPolyphaseViz.polyphaseFrames(st.data);
-        const frames = res.frames;
-        let idx = 0;
-
-        const labels = ['Tape 1', 'Tape 2', 'Output'];
-
-        host.innerHTML =
-            '<div class="pf-controls">' +
-              '<input type="text" class="pf-data" value="' + st.data.join(',') + '">' +
-              '<button type="button" class="pf-apply">Apply</button>' +
-            '</div>' +
-            '<div class="pf-stage"></div>' +
-            '<div class="pf-phase"></div>';
-
-        function runChip(run) {
-            if (run === null || run === undefined) return '<span class="pf-chip pf-dummy">∅</span>';
-            return '<span class="pf-chip">[' + run.join(',') + ']</span>';
-        }
-
-        function paint() {
-            const fr = frames[idx];
-            const stage = host.querySelector('.pf-stage');
-            if (!stage) return;
-            // The output row is the tape just written to during a merge frame.
-            stage.innerHTML = fr.tapes.map((tape, i) =>
-                '<div class="pf-row">' +
-                  '<span class="pf-row-label">' + labels[i] + '</span>' +
-                  '<span class="pf-chips">' + (tape.length ? tape.map(runChip).join('') : '<span class="pf-empty">—</span>') + '</span>' +
-                '</div>').join('');
-            const badge = { distribute: 'Distribute', merge: 'Merge', done: 'Done' }[fr.phase] || fr.phase;
-            host.querySelector('.pf-phase').innerHTML = '<span class="pf-badge pf-' + fr.phase + '">' + badge + '</span>';
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-
-        host.querySelector('.pf-apply').onclick = () => {
-            try {
-                const d = host.querySelector('.pf-data').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-                _polyphaseState.data = d;
-                renderSortPolyphase();
-            } catch (e) { /* ignore malformed input */ }
-        };
-    }
-
-    let _sparseState = null;
-    const SPARSE_EXAMPLES_KEY = 'dsvisual:sparse:examples';
-    const SPARSE_DEFAULT_TEXT = '0,0,3,0;5,0,0,0;0,2,0,4';
-    function loadSparseExamples() {
-        try {
-            const raw = localStorage.getItem(SPARSE_EXAMPLES_KEY);
-            const arr = raw ? JSON.parse(raw) : [];
-            return Array.isArray(arr) ? arr.filter((e) => e && typeof e.text === 'string' && SparseViz.parseMatrix(e.text).ok) : [];
-        } catch (e) { return []; }
-    }
-    function saveSparseExample(text) {
-        try {
-            if (text === SPARSE_DEFAULT_TEXT) return;
-            let arr = loadSparseExamples().filter((e) => e.text !== text);
-            arr.unshift({ text: text });
-            arr = arr.slice(0, 8);
-            localStorage.setItem(SPARSE_EXAMPLES_KEY, JSON.stringify(arr));
-        } catch (e) { /* ignore */ }
-    }
-    function renderMatrixSparse() {
-        const host = acquireDynamicVizHost();
-        if (!_sparseState) _sparseState = { text: SPARSE_DEFAULT_TEXT };
-        const st = _sparseState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const parsed = SparseViz.parseMatrix(st.text);
-        const matrix = parsed.matrix;
-        const rows = parsed.rows, cols = parsed.cols;
-        const res = SparseViz.buildFastTransposeFrames(matrix);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '">' +
-            (function () {
-                const trunc = (s) => s.length > 24 ? s.slice(0, 24) + '…' : s;
-                const esc = (s) => s.replace(/"/g, '&quot;');
-                let h = '<select class="sm-examples"><option value="">' + langOf({ zh: '範例…', en: 'Examples…' }) + '</option>';
-                h += '<option value="' + SPARSE_DEFAULT_TEXT + '">' + langOf({ zh: '預設', en: 'Default' }) + '</option>';
-                loadSparseExamples().forEach((e) => { h += '<option value="' + esc(e.text) + '">' + trunc(e.text) + '</option>'; });
-                return h + '</select>';
-            })() +
-            '<button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="sm-apply">Apply</button>' +
-            '<span class="sm-hint">rows separated by ; , entries by ,</span></div>' +
-            '<div class="sm-error" style="display:none"></div>' +
-            '<div class="sm-cols"><div class="sm-dense"></div><div class="sm-triples"></div></div>' +
-            '<div class="sm-arrays"></div>' +
-            '<div class="sm-phase"></div>';
-
-        function gridHtml(mat, title) {
-            let h = '<div class="sm-grid-title">' + title + '</div><table class="sm-grid">';
-            for (let r = 0; r < mat.length; r++) { h += '<tr>'; for (let c = 0; c < mat[r].length; c++) { const v = mat[r][c]; h += '<td class="' + (v !== 0 ? 'nz' : 'z') + '">' + v + '</td>'; } h += '</tr>'; }
-            return h + '</table>';
-        }
-        function transposedSoFar(placed) {
-            const T = [];
-            for (let r = 0; r < cols; r++) T.push(new Array(rows).fill(0));
-            placed.forEach((t) => { if (t) T[t.r][t.c] = t.v; });
-            return T;
-        }
-        function transposedTriplesHtml(placed, dst) {
-            const n = res.triples.length;
-            let idxRow = '', rRow = '', cRow = '', vRow = '';
-            for (let i = 0; i < n; i++) {
-                const t = placed[i];
-                const cur = i === dst ? ' class="sm-cur"' : '';
-                idxRow += '<td class="sm-tvec-idx"' + (i === dst ? ' style="font-weight:700"' : '') + '>' + i + '</td>';
-                rRow += '<td' + cur + '>' + (t ? t.r : '·') + '</td>';
-                cRow += '<td' + cur + '>' + (t ? t.c : '·') + '</td>';
-                vRow += '<td' + cur + '>' + (t ? t.v : '·') + '</td>';
-            }
-            return '<div><div class="sm-grid-title">' + langOf({ zh: '轉置三元組 b[]', en: 'Transposed triples b[]' }) + '</div>' +
-                '<table class="sm-tvec">' +
-                '<tr><th>idx</th>' + idxRow + '</tr>' +
-                '<tr><th>r</th>' + rRow + '</tr>' +
-                '<tr><th>c</th>' + cRow + '</tr>' +
-                '<tr><th>v</th>' + vRow + '</tr></table></div>';
-        }
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.sm-dense')) return;
-            host.querySelector('.sm-dense').innerHTML = gridHtml(matrix, langOf({ zh: '原矩陣', en: 'Original' }));
-            let tr = '<div class="sm-grid-title">' + langOf({ zh: '三元組 (列,欄,值)', en: 'Triples (r,c,v)' }) + '</div><table class="sm-triple-tbl"><tr><th>r</th><th>c</th><th>v</th></tr>';
-            res.triples.forEach((t, s) => { tr += '<tr class="' + (fr.phase === 'place' && fr.scan === s ? 'sm-cur' : '') + '"><td>' + t.r + '</td><td>' + t.c + '</td><td>' + t.v + '</td></tr>'; });
-            tr += '</table>';
-            host.querySelector('.sm-triples').innerHTML = tr;
-            let a = '';
-            if (fr.rowSize && fr.rowSize.length) a += '<div class="sm-arr"><span class="sm-arr-label">rowSize</span> ' + fr.rowSize.map((v) => '<span class="sm-acell">' + v + '</span>').join('') + '</div>';
-            if (fr.startPos && fr.startPos.length) a += '<div class="sm-arr"><span class="sm-arr-label">startPos</span> ' + fr.startPos.map((v) => '<span class="sm-acell">' + v + '</span>').join('') + '</div>';
-            a += '<div class="sm-tout">' +
-                '<div>' + gridHtml(transposedSoFar(fr.placed || []), langOf({ zh: '轉置結果', en: 'Transposed' })) + '</div>' +
-                transposedTriplesHtml(fr.placed || [], (fr.phase === 'place' ? fr.dst : -1)) +
-                '</div>';
-            host.querySelector('.sm-arrays').innerHTML = a;
-            host.querySelector('.sm-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.sm-apply').onclick = () => {
-            const v = host.querySelector('.sm-input').value.trim();
-            const p = SparseViz.parseMatrix(v);
-            const errEl = host.querySelector('.sm-error');
-            if (!p.ok) { errEl.textContent = langOf(p.error); errEl.style.display = ''; return; }
-            errEl.textContent = ''; errEl.style.display = 'none';
-            st.text = v; saveSparseExample(v); renderMatrixSparse();
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('matrix-sparse', getInputDifficulty());
-            if (!inp) return;
-            _sparseState.text = inp.text;
-            renderMatrixSparse();
-        };
-        host.querySelector('.sm-examples').onchange = (ev) => {
-            const v = ev.target.value;
-            if (!v) return;
-            host.querySelector('.sm-input').value = v;
-            const errEl = host.querySelector('.sm-error');
-            errEl.textContent = ''; errEl.style.display = 'none';
-            st.text = v; renderMatrixSparse();
-        };
-    }
     let _mslState = null;
     function renderMatrixSparseList() {
         if (!_mslState) _mslState = { text: MatrixSparseListViz.DEFAULT, phase: 'build' };
@@ -5869,204 +4738,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         const mslEx = host.querySelector('.ex-select');
         if (mslEx) mslEx.onchange = (ev) => { const v = ev.target.value; if (!v) return; st.text = v; renderMatrixSparseList(); };
-    }
-    let _polyState = null;
-    function renderPolyPadd() {
-        const host = acquireDynamicVizHost();
-        if (!_polyState) _polyState = { a: '3:2,2:1,1:0', b: '5:3,4:1' };
-        const st = _polyState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const A = PolyViz.parsePoly(st.a);
-        const B = PolyViz.parsePoly(st.b);
-        const res = PolyViz.buildPaddFrames(A, B);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="pp-controls">' +
-              'A <input type="text" class="pp-a" value="' + st.a + '"> ' +
-              'B <input type="text" class="pp-b" value="' + st.b + '"> ' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="pp-apply">Apply</button>' +
-              '<span class="sm-hint">terms as coef:exp, comma-separated</span>' +
-            '</div>' +
-            '<div class="pp-row"><span class="pp-label">A =</span> <span class="pp-a-terms"></span></div>' +
-            '<div class="pp-row"><span class="pp-label">B =</span> <span class="pp-b-terms"></span></div>' +
-            '<div class="pp-row"><span class="pp-label">A+B =</span> <span class="pp-result"></span></div>' +
-            '<div class="pp-phase"></div>';
-
-        function termCells(poly, ptr) {
-            return poly.map((t, k) => '<span class="pp-term' + (k === ptr ? ' pp-cur' : '') + '">' + PolyViz.formatPoly([t]) + '</span>').join('');
-        }
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.pp-a-terms')) return;
-            host.querySelector('.pp-a-terms').innerHTML = termCells(A, fr.i);
-            host.querySelector('.pp-b-terms').innerHTML = termCells(B, fr.j);
-            host.querySelector('.pp-result').innerHTML = (fr.result || []).map((t) => '<span class="pp-term out">' + PolyViz.formatPoly([t]) + '</span>').join('') || '<span class="pp-term out">0</span>';
-            host.querySelector('.pp-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.pp-apply').onclick = () => {
-            const a = host.querySelector('.pp-a').value.trim();
-            const b = host.querySelector('.pp-b').value.trim();
-            if (a && b) { st.a = a; st.b = b; renderPolyPadd(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('poly-padd', getInputDifficulty());
-            if (!inp) return;
-            _polyState.a = inp.a;
-            _polyState.b = inp.b;
-            renderPolyPadd();
-        };
-    }
-
-    let _magicSquareState = null;
-    function buildMagicSquareFrames(n) {
-        const grid = Array.from({ length: n }, () => new Array(n).fill(0));
-        const frames = [{
-            grid: grid.map((row) => row.slice()),
-            num: 0,
-            pos: null,
-            next: { r: 0, c: Math.floor(n / 2) },
-            collision: false,
-            done: false,
-            msg: {
-                zh: '從第一列中央開始，準備放入 1。',
-                en: 'Start at the center of the top row; get ready to place 1.',
-            },
-        }];
-        let r = 0;
-        let c = Math.floor(n / 2);
-        for (let num = 1; num <= n * n; num++) {
-            grid[r][c] = num;
-            const up = (r - 1 + n) % n;
-            const left = (c - 1 + n) % n;
-            const collision = grid[up][left] !== 0;
-            const next = collision ? { r: (r + 1) % n, c } : { r: up, c: left };
-            frames.push({
-                grid: grid.map((row) => row.slice()),
-                num,
-                pos: { r, c },
-                trial: { r: up, c: left },
-                next,
-                collision,
-                done: num === n * n,
-                msg: num === n * n
-                    ? {
-                        zh: '完成：每列、每欄與兩條對角線的和都相同。',
-                        en: 'Complete: every row, column, and diagonal has the same sum.',
-                    }
-                    : collision
-                        ? {
-                            zh: '左上格已被占用，所以改從目前位置往下一格。',
-                            en: 'The up-left cell is occupied, so move one cell down instead.',
-                        }
-                        : {
-                            zh: '左上格可用，下一步移到左上方；超出邊界時以環狀方式包回。',
-                            en: 'The up-left cell is free, so move up-left; wrap around edges when needed.',
-                        },
-            });
-            r = next.r;
-            c = next.c;
-        }
-        return frames;
-    }
-
-    function renderMagicSquare() {
-        const host = acquireDynamicVizHost();
-        if (!_magicSquareState) _magicSquareState = { n: 5 };
-        const st = _magicSquareState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const n = st.n;
-        const frames = buildMagicSquareFrames(n);
-        const magicSum = n * (n * n + 1) / 2;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="magic-wrap">' +
-                '<div class="magic-controls">' +
-                    '<label>Order <select class="magic-order"><option value="3">3 x 3</option><option value="5">5 x 5</option><option value="7">7 x 7</option></select></label>' +
-                    '<span class="magic-sum">Magic sum = ' + magicSum + '</span>' +
-                '</div>' +
-                '<div class="magic-layout">' +
-                    '<div class="magic-board" style="--magic-n:' + n + '"></div>' +
-                    '<div class="magic-panel">' +
-                        '<div class="magic-step"></div>' +
-                        '<div class="magic-rule"></div>' +
-                        '<div class="magic-readout"></div>' +
-                    '</div>' +
-                '</div>' +
-            '</div>';
-
-        const order = host.querySelector('.magic-order');
-        order.value = String(n);
-
-        function cellClass(fr, r, c, v) {
-            const cls = ['magic-cell'];
-            if (v) cls.push('filled');
-            if (fr.pos && fr.pos.r === r && fr.pos.c === c) cls.push('current');
-            if (!fr.done && fr.trial && fr.trial.r === r && fr.trial.c === c) cls.push(fr.collision ? 'blocked' : 'trial');
-            if (!fr.done && fr.next && fr.next.r === r && fr.next.c === c && fr.collision) cls.push('next');
-            return cls.join(' ');
-        }
-
-        function sumsHtml(fr) {
-            const rowSums = fr.grid.map((row) => row.reduce((a, b) => a + b, 0));
-            const colSums = Array.from({ length: n }, (_, c) => fr.grid.reduce((a, row) => a + row[c], 0));
-            const diagA = fr.grid.reduce((a, row, r) => a + row[r], 0);
-            const diagB = fr.grid.reduce((a, row, r) => a + row[n - 1 - r], 0);
-            return '<div><strong>Rows</strong> ' + rowSums.join(', ') + '</div>' +
-                '<div><strong>Cols</strong> ' + colSums.join(', ') + '</div>' +
-                '<div><strong>Diag</strong> ' + diagA + ', ' + diagB + '</div>';
-        }
-
-        function paint() {
-            const fr = frames[idx];
-            const board = host.querySelector('.magic-board');
-            if (!board) return;
-            let html = '';
-            for (let r = 0; r < n; r++) {
-                for (let c = 0; c < n; c++) {
-                    const v = fr.grid[r][c];
-                    html += '<div class="' + cellClass(fr, r, c, v) + '" data-cell="' + r + '-' + c + '">' + (v || '') + '</div>';
-                }
-            }
-            board.innerHTML = html;
-            host.querySelector('.magic-step').textContent = 'Step ' + idx + ' / ' + (frames.length - 1);
-            host.querySelector('.magic-rule').textContent = langOf(fr.msg);
-            const detail = fr.done
-                ? 'n = ' + n + ', magic sum = ' + magicSum
-                : fr.num === 0
-                    ? 'next: row 0, col ' + Math.floor(n / 2)
-                    : 'placed ' + fr.num + ' at (' + fr.pos.r + ', ' + fr.pos.c + '), trial up-left (' + fr.trial.r + ', ' + fr.trial.c + ')' + (fr.collision ? ' was occupied' : ' is free');
-            host.querySelector('.magic-readout').innerHTML = '<div>' + detail + '</div>' + sumsHtml(fr);
-        }
-
-        function step() {
-            if (idx < frames.length - 1) {
-                idx++;
-                paint();
-                return idx < frames.length - 1;
-            }
-            return false;
-        }
-        function reset() {
-            idx = 0;
-            paint();
-        }
-
-        host.querySelector('.magic-wrap').appendChild(buildStepControls(step, reset, 500));
-        order.onchange = () => {
-            _magicSquareState.n = parseInt(order.value, 10);
-            renderMagicSquare();
-        };
-        paint();
     }
 
     const ML_PALETTE = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#ec4899', '#78716c'];
@@ -6699,118 +5370,6 @@ document.addEventListener('DOMContentLoaded', () => {
         paint();
     }
 
-    let _mazeState = null;
-    function renderMazeStack() {
-        const host = acquireDynamicVizHost();
-        if (!_mazeState) _mazeState = { text: 'S....;.###.;.#...;.#.#.;...#E' };
-        const st = _mazeState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const maze = MazeViz.parseMaze(st.text);
-        const res = MazeViz.buildMazeFrames(maze);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="mz-controls"><input type="text" class="mz-input" value="' + st.text + '">' +
-            '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-            '<button type="button" class="mz-apply">Apply</button>' +
-            '<span class="sm-hint"># wall, . open, S start, E end; rows split by ;</span></div>' +
-            '<div class="mz-cols"><div class="mz-grid"></div><div class="mz-stack"><strong>Path stack:</strong><div class="mz-stack-cells"></div></div></div>' +
-            '<div class="mz-phase"></div>';
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.mz-grid')) return;
-            const inStack = new Set((fr.stack || []).map((p) => p[0] + ',' + p[1]));
-            const inPath = new Set((fr.path || []).map((p) => p[0] + ',' + p[1]));
-            const visited = new Set((fr.visited || []).map((p) => p[0] + ',' + p[1]));
-            const cur = fr.current ? fr.current[0] + ',' + fr.current[1] : '';
-            let html = '<table class="mz-tbl">';
-            for (let r = 0; r < maze.grid.length; r++) {
-                html += '<tr>';
-                for (let c = 0; c < maze.grid[r].length; c++) {
-                    const ch = maze.grid[r][c];
-                    const k = r + ',' + c;
-                    let cls = ch === '#' ? 'wall' : 'open';
-                    if (ch === 'S') cls = 'start';
-                    else if (ch === 'E') cls = 'end';
-                    if (inPath.has(k)) cls += ' path';
-                    else if (k === cur) cls += ' cur';
-                    else if (inStack.has(k)) cls += ' instack';
-                    else if (visited.has(k)) cls += ' visited';
-                    html += '<td class="mz-cell ' + cls + '">' + (ch === '#' ? '' : (ch === 'S' || ch === 'E' ? ch : '')) + '</td>';
-                }
-                html += '</tr>';
-            }
-            html += '</table>';
-            host.querySelector('.mz-grid').innerHTML = html;
-            host.querySelector('.mz-stack-cells').innerHTML = (fr.stack || []).map((p) => '<span class="mz-scell">(' + p[0] + ',' + p[1] + ')</span>').join('');
-            host.querySelector('.mz-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 500));
-        paint();
-        host.querySelector('.mz-apply').onclick = () => { const v = host.querySelector('.mz-input').value.trim(); if (v) { st.text = v; renderMazeStack(); } };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('maze-stack', getInputDifficulty());
-            if (!inp) return;
-            _mazeState.text = inp.text;
-            renderMazeStack();
-        };
-    }
-    let _doublyState = null;
-    function renderListDoubly() {
-        const host = acquireDynamicVizHost();
-        if (!_doublyState) _doublyState = { vals: [10, 20, 30, 40], circular: false };
-        const st = _doublyState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const res = DoublyViz.buildDoublyFrames(st.vals, st.circular);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="dl-controls">' +
-              '<input type="text" class="dl-input" value="' + st.vals.join(',') + '">' +
-              '<label><input type="checkbox" class="dl-circular"' + (st.circular ? ' checked' : '') + '> circular</label>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="dl-apply">Apply</button>' +
-            '</div>' +
-            '<div class="dl-row' + (st.circular ? ' dl-circular-on' : '') + '"></div>' +
-            '<div class="dl-phase"></div>';
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.dl-row')) return;
-            host.querySelector('.dl-row').innerHTML = fr.nodes.map((n, i) =>
-                '<span class="dl-node' + (i === fr.current ? ' cur' : '') + '">' +
-                  '<span class="dl-ptr">' + (n.prevVal == null ? '∅' : n.prevVal) + '</span>' +
-                  '<span class="dl-val">' + n.val + '</span>' +
-                  '<span class="dl-ptr">' + (n.nextVal == null ? '∅' : n.nextVal) + '</span>' +
-                '</span>' + (i < fr.nodes.length - 1 ? '<span class="dl-link">⇄</span>' : '')
-            ).join('') + (fr.circular ? '<span class="dl-wrap">↩ circular</span>' : '');
-            host.querySelector('.dl-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 600));
-        paint();
-        host.querySelector('.dl-apply').onclick = () => {
-            const vals = host.querySelector('.dl-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            const circular = host.querySelector('.dl-circular').checked;
-            if (vals.length) { st.vals = vals; st.circular = circular; renderListDoubly(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('list-doubly', getInputDifficulty());
-            if (!inp) return;
-            _doublyState.vals = inp.vals;
-            _doublyState.circular = inp.circular;
-            renderListDoubly();
-        };
-    }
-
     let _equivState = null;
     function renderListEquivalence() {
         if (!_equivState) _equivState = { n: ListEquivalenceViz.DEFAULT.n, pairs: ListEquivalenceViz.DEFAULT.pairs.map((p) => p.slice()) };
@@ -6954,68 +5513,6 @@ document.addEventListener('DOMContentLoaded', () => {
             parsed.pairs = parsed.pairs.slice(0, 20);
             _equivState = parsed;
             renderListEquivalence();
-        };
-    }
-
-    let _lruState = null;
-    function renderLruCache() {
-        const host = acquireDynamicVizHost();
-        if (!_lruState) _lruState = { capacity: 3, keys: [1, 2, 3, 1, 4, 5, 1] };
-        const st = _lruState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const res = LruViz.buildFrames(st.capacity, st.keys);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="lru-controls">' +
-              '<label class="lru-cap-label">cap <input type="number" class="lru-cap" min="1" max="8" value="' + res.capacity + '"></label>' +
-              '<input type="text" class="lru-input" value="' + st.keys.join(',') + '">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="lru-apply">Apply</button>' +
-            '</div>' +
-            '<div class="lru-stage" data-testid="lru-stage"></div>' +
-            '<div class="lru-stats" data-testid="lru-stats"></div>' +
-            '<div class="lru-phase"></div>';
-
-        function paint() {
-            const fr = frames[idx];
-            const stage = host.querySelector('.lru-stage');
-            if (!stage) return;
-            const last = fr.order.length - 1;
-            const cells = fr.order.map((k, i) => {
-                let cls = 'lru-node';
-                if (k === fr.access && fr.status === 'hit') cls += ' hit';
-                else if (k === fr.access && (fr.status === 'miss' || fr.status === 'evict')) cls += ' fresh';
-                if (i === 0) cls += ' mru';
-                if (i === last) cls += ' lru';
-                const tag = i === 0 ? 'MRU' : (i === last ? 'LRU' : '');
-                return '<span class="' + cls + '"><span class="lru-key">' + k + '</span>' +
-                       '<span class="lru-tag">' + tag + '</span></span>';
-            }).join('<span class="lru-link">→</span>');
-            stage.innerHTML = fr.order.length
-                ? cells + (fr.evicted != null ? '<span class="lru-evicted">🗑 ' + fr.evicted + '</span>' : '')
-                : '<span class="lru-empty">∅</span>';
-            host.querySelector('.lru-stats').textContent =
-                'hits ' + fr.hits + ' · misses ' + fr.misses + ' · cap ' + fr.capacity;
-            host.querySelector('.lru-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.lru-apply').onclick = () => {
-            const cap = parseInt(host.querySelector('.lru-cap').value, 10);
-            const keys = host.querySelector('.lru-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            if (keys.length && Number.isFinite(cap) && cap >= 1) { st.capacity = cap; st.keys = keys; renderLruCache(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const cap = 3 + Math.floor(Math.random() * 2);
-            const len = 7 + Math.floor(Math.random() * 3);
-            st.capacity = cap;
-            st.keys = Array.from({ length: len }, () => 1 + Math.floor(Math.random() * 6));
-            renderLruCache();
         };
     }
 
@@ -7168,307 +5665,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const c = host.querySelector('.ng-cand').value;
             const r = parseFloat(host.querySelector('.ng-r').value);
             if (c && Number.isFinite(r) && r >= 0 && r < 1) { st.cand = c; st.r = r; renderNanoNgramNext(); }
-        };
-    }
-
-    let _fibState = null;
-    function renderSearchFibonacci() {
-        const host = acquireDynamicVizHost();
-        if (!_fibState) _fibState = { arr: [1, 3, 5, 7, 9, 11, 13, 15, 17, 19], target: 11 };
-        const st = _fibState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const res = FibSearchViz.buildFibSearchFrames(st.arr, st.target);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="ss-controls">' +
-              '<input type="text" class="ss-arr" value="' + st.arr.join(',') + '">' +
-              'target <input type="number" class="ss-target" value="' + st.target + '" style="width:64px">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="ss-apply">Apply</button>' +
-              '<span class="sm-hint">array must be sorted</span>' +
-            '</div>' +
-            '<div class="ss-cells"></div>' +
-            '<div class="ss-info"></div>' +
-            '<div class="ss-result"></div>' +
-            '<div class="ss-phase"></div>';
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.ss-cells')) return;
-            const inRange = (i) => fr.range && i >= fr.range[0] && i <= fr.range[1];
-            host.querySelector('.ss-cells').innerHTML = st.arr.map((v, i) =>
-                '<span class="ss-cell' + (i === fr.probe ? ' probe' : (inRange(i) ? ' inrange' : '')) + '"><span class="ss-idx">' + i + '</span>' + v + '</span>').join('');
-            host.querySelector('.ss-info').innerHTML = 'fibM=' + fr.fibM + ', fib1=' + fr.fib1 + ', fib2=' + fr.fib2 + ', offset=' + fr.lo;
-            host.querySelector('.ss-result').textContent = fr.found >= 0 ? ('✓ found at index ' + fr.found) : '';
-            host.querySelector('.ss-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 600));
-        paint();
-        host.querySelector('.ss-apply').onclick = () => {
-            const arr = host.querySelector('.ss-arr').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite).sort((a, b) => a - b);
-            const target = parseInt(host.querySelector('.ss-target').value, 10);
-            if (arr.length && Number.isFinite(target)) { st.arr = arr; st.target = target; renderSearchFibonacci(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('search-fibonacci', getInputDifficulty());
-            if (!inp) return;
-            _fibState.arr = inp.arr;
-            _fibState.target = inp.target;
-            renderSearchFibonacci();
-        };
-    }
-    let _interpState = null;
-    function renderSearchInterpolation() {
-        const host = acquireDynamicVizHost();
-        if (!_interpState) _interpState = { arr: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100], target: 70 };
-        const st = _interpState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const res = InterpSearchViz.buildInterpFrames(st.arr, st.target);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="ss-controls">' +
-              '<input type="text" class="ss-arr" value="' + st.arr.join(',') + '">' +
-              'target <input type="number" class="ss-target" value="' + st.target + '" style="width:64px">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="ss-apply">Apply</button>' +
-              '<span class="sm-hint">sorted; works best when ~uniform</span>' +
-            '</div>' +
-            '<div class="ss-cells"></div>' +
-            '<div class="ss-info"></div>' +
-            '<div class="ss-result"></div>' +
-            '<div class="ss-phase"></div>';
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.ss-cells')) return;
-            const inRange = (i) => i >= fr.lo && i <= fr.hi;
-            host.querySelector('.ss-cells').innerHTML = st.arr.map((v, i) =>
-                '<span class="ss-cell' + (i === fr.pos ? ' probe' : (inRange(i) ? ' inrange' : '')) + '"><span class="ss-idx">' + i + '</span>' + v + '</span>').join('');
-            const a = st.arr;
-            host.querySelector('.ss-info').innerHTML = (fr.pos >= 0 && fr.lo <= fr.hi)
-                ? 'pos = lo + (target − a[lo])·(hi − lo) / (a[hi] − a[lo]) = ' + fr.lo + ' + (' + st.target + '−' + a[fr.lo] + ')·(' + fr.hi + '−' + fr.lo + ')/(' + a[fr.hi] + '−' + a[fr.lo] + ') = ' + fr.pos
-                : 'lo=' + fr.lo + ', hi=' + fr.hi;
-            host.querySelector('.ss-result').textContent = fr.found >= 0 ? ('✓ found at index ' + fr.found) : '';
-            host.querySelector('.ss-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.ss-apply').onclick = () => {
-            const arr = host.querySelector('.ss-arr').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite).sort((a, b) => a - b);
-            const target = parseInt(host.querySelector('.ss-target').value, 10);
-            if (arr.length && Number.isFinite(target)) { st.arr = arr; st.target = target; renderSearchInterpolation(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('search-interpolation', getInputDifficulty());
-            if (!inp) return;
-            _interpState.arr = inp.arr;
-            _interpState.target = inp.target;
-            renderSearchInterpolation();
-        };
-    }
-
-    let _threadedState = null;
-    function renderTreeThreaded() {
-        const host = acquireDynamicVizHost();
-        if (!_threadedState) _threadedState = { vals: ThreadedViz.SAMPLE.slice() };
-        const st = _threadedState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const root = ThreadedViz.buildTreeFromValues(st.vals);
-        const res = ThreadedViz.buildThreadedFrames(root);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="th-controls"><input type="text" class="th-input" value="' + st.vals.join(',') + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="th-build">Build</button>' +
-            '<span class="sm-hint">values build a BST; dashed = inorder thread</span></div>' +
-            '<div class="th-stage"><svg class="th-edges"></svg><div class="th-nodes"></div></div>' +
-            '<div class="th-output"><strong>Inorder:</strong> <span class="th-seq"></span></div>' +
-            '<div class="th-phase"></div>';
-
-        const meta = [];
-        computeTreeLayout(root, 200, 30, 90, meta);
-        const byId = {}; meta.forEach((m) => { byId[m.id] = m; });
-        const nodesEl = host.querySelector('.th-nodes');
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.th-edges')) return;
-            const edgesEl = host.querySelector('.th-edges');
-            let svg = '';
-            (function walk(n) { if (!n) return; [n.left, n.right].forEach((c) => { if (!c) return; const a = byId[n.id], b = byId[c.id]; svg += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>'; walk(c); }); })(root);
-            (fr.threads || []).forEach((t) => {
-                const a = byId[t.fromId], b = byId[t.toId];
-                if (!a || !b) return;
-                const midY = Math.min(a.y, b.y) - 30;
-                svg += '<path d="M' + a.x + ',' + a.y + ' Q' + ((a.x + b.x) / 2) + ',' + midY + ' ' + b.x + ',' + b.y + '" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="5 4"/>';
-            });
-            edgesEl.innerHTML = svg;
-            nodesEl.innerHTML = meta.map((m) => '<div class="tree-node' + (fr.current === m.id ? ' active' : (fr.visited.includes(m.val) ? ' visited' : '')) + '" style="left:' + m.x + 'px;top:' + m.y + 'px">' + m.val + '</div>').join('');
-            host.querySelector('.th-seq').textContent = fr.visited.join(', ');
-            host.querySelector('.th-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.th-build').onclick = () => {
-            const vals = host.querySelector('.th-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            if (vals.length) { st.vals = vals; renderTreeThreaded(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('tree-threaded', getInputDifficulty());
-            if (!inp) return;
-            _threadedState.vals = inp.vals;
-            renderTreeThreaded();
-        };
-    }
-    let _mwayState = null;
-    function renderTreeMway() {
-        const host = acquireDynamicVizHost();
-        if (!_mwayState) _mwayState = { keys: [50, 30, 70, 20, 40, 60, 80, 10, 25], m: 3 };
-        const st = _mwayState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const res = MwayViz.buildMwayFrames(st.keys, st.m);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="mw-controls">' +
-              '<input type="text" class="mw-keys" value="' + st.keys.join(',') + '">' +
-              'm <input type="number" class="mw-m" min="3" max="6" value="' + st.m + '" style="width:54px">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="mw-apply">Apply</button>' +
-            '</div>' +
-            '<div class="mw-stage"><svg class="mw-edges"></svg><div class="mw-nodes"></div></div>' +
-            '<div class="mw-phase"></div>';
-
-        function layout(tree) {
-            const pos = {}; let leaf = 0; const W = host.querySelector('.mw-stage').clientWidth || 720;
-            function place(node, depth) {
-                if (!node) return;
-                const kids = node.children.filter((c) => c);
-                if (kids.length === 0) { pos[node.id] = { col: leaf++, depth, node }; return; }
-                kids.forEach((c) => place(c, depth + 1));
-                const cols = kids.map((c) => pos[c.id].col);
-                pos[node.id] = { col: (Math.min(...cols) + Math.max(...cols)) / 2, depth, node };
-            }
-            place(tree, 0);
-            const maxCol = Math.max(1, leaf - 1);
-            const xOf = (col) => 40 + (col / maxCol) * (W - 120);
-            return { pos, xOf };
-        }
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.mw-nodes')) return;
-            const nodesEl = host.querySelector('.mw-nodes');
-            const edgesEl = host.querySelector('.mw-edges');
-            nodesEl.innerHTML = ''; edgesEl.innerHTML = '';
-            if (!fr.tree) { host.querySelector('.mw-phase').textContent = langOf(fr.msg); return; }
-            const { pos, xOf } = layout(fr.tree);
-            const onPath = new Set(fr.descendPath || []);
-            let svg = '';
-            Object.keys(pos).forEach((id) => {
-                const p = pos[id];
-                p.node.children.forEach((c) => { if (c && pos[c.id]) svg += '<line x1="' + xOf(p.col) + '" y1="' + (p.depth * 78 + 24) + '" x2="' + xOf(pos[c.id].col) + '" y2="' + (pos[c.id].depth * 78 + 8) + '" stroke="#94a3b8" stroke-width="2"/>'; });
-            });
-            edgesEl.innerHTML = svg;
-            nodesEl.innerHTML = Object.keys(pos).map((id) => {
-                const p = pos[id];
-                const cls = 'mw-node' + (id === fr.current ? ' cur' : (onPath.has(id) ? ' onpath' : ''));
-                const cells = p.node.keys.map((k) => '<span class="mw-key">' + k + '</span>').join('');
-                return '<div class="' + cls + '" style="left:' + xOf(p.col) + 'px;top:' + (p.depth * 78 + 8) + 'px">' + cells + '</div>';
-            }).join('');
-            host.querySelector('.mw-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.mw-apply').onclick = () => {
-            const keys = host.querySelector('.mw-keys').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            const m = parseInt(host.querySelector('.mw-m').value, 10);
-            if (keys.length && m >= 3) { st.keys = keys; st.m = m; renderTreeMway(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('tree-mway', getInputDifficulty());
-            if (!inp) return;
-            _mwayState.keys = inp.keys;
-            _mwayState.m = inp.m;
-            renderTreeMway();
-        };
-    }
-
-    let _exprTreeState = null;
-    function renderTreeExpression() {
-        const host = acquireDynamicVizHost();
-        if (!_exprTreeState) _exprTreeState = { text: '3 4 + 5 *' };
-        const st = _exprTreeState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const tokens = ExprTreeViz.tokenizePostfix(st.text);
-        const res = ExprTreeViz.buildExprTreeFrames(tokens);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="et-controls"><input type="text" class="et-input" value="' + st.text + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="et-apply">Apply</button>' +
-            '<span class="sm-hint">postfix; operands + operators (+ - * /), space-separated</span></div>' +
-            '<div class="et-stack"><strong>Subtree stack:</strong> <span class="et-stack-cells"></span></div>' +
-            '<div class="et-stage"><svg class="et-edges"></svg><div class="et-nodes"></div></div>' +
-            '<div class="et-result"></div>' +
-            '<div class="et-phase"></div>';
-
-        function subtreeLabel(n) { return (!n.left && !n.right) ? n.val : '(' + subtreeLabel(n.left) + n.val + subtreeLabel(n.right) + ')'; }
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.et-stage')) return;
-            const W = host.querySelector('.et-stage').clientWidth || 720;
-            const roots = fr.forest || [];
-            const slot = W / (roots.length + 1);
-            const allNodes = []; let svg = '';
-            roots.forEach((rt, ri) => {
-                const meta = [];
-                computeTreeLayout(rt, (ri + 1) * slot, 30, Math.max(40, slot / 2.6), meta);
-                const byId = {}; meta.forEach((m) => { byId[m.id] = m; });
-                (function walk(n) { if (!n) return; [n.left, n.right].forEach((c) => { if (!c) return; const a = byId[n.id], b = byId[c.id]; svg += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>'; walk(c); }); })(rt);
-                meta.forEach((m) => allNodes.push(m));
-            });
-            host.querySelector('.et-edges').innerHTML = svg;
-            host.querySelector('.et-nodes').innerHTML = allNodes.map((m) =>
-                '<div class="tree-node' + (['+', '-', '*', '/'].includes(String(m.val)) ? ' et-op' : '') + '" style="left:' + m.x + 'px;top:' + m.y + 'px">' + m.val + '</div>').join('');
-            host.querySelector('.et-stack-cells').innerHTML = roots.map((rt) => '<span class="et-scell">' + subtreeLabel(rt) + '</span>').join('');
-            if (fr.action === 'done' && roots.length === 1) {
-                const v = ExprTreeViz.evalExprTree(roots[0]);
-                host.querySelector('.et-result').textContent = Number.isNaN(v) ? 'Result: (symbolic expression)' : ('Result = ' + v);
-            } else {
-                host.querySelector('.et-result').textContent = '';
-            }
-            host.querySelector('.et-phase').textContent = (fr.token ? '[' + fr.token + '] ' : '') + langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.et-apply').onclick = () => { const v = host.querySelector('.et-input').value.trim(); if (v) { st.text = v; renderTreeExpression(); } };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('tree-expression', getInputDifficulty());
-            if (!inp) return;
-            _exprTreeState.text = inp.text;
-            renderTreeExpression();
         };
     }
 
