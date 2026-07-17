@@ -1419,10 +1419,6 @@ document.addEventListener('DOMContentLoaded', () => {
     registerBehaviors();
     bindDifficultySelect();
 
-    // Search Vectors
-    const arrLinear = [23, 12, 56, 8, 38, 2, 72, 91, 16, 5];
-    const arrBinary = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
-
     // Core sets
     let bstRoot = null;
     let treeDrawLoop = null;
@@ -2015,7 +2011,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // (Search, Sort layout bindings omitted for strictness matching original JS...)
     function handlePauseClick() { if (animState === 'playing') { animState = 'paused'; setAnimControls(true); showStatus('Paused', '#fbbf24'); } else if (animState === 'paused') { animState = 'playing'; setAnimControls(true); showStatus('Resumed', '#34d399'); } }
     btnSearchPause.addEventListener('click', handlePauseClick); btnSortPause.addEventListener('click', handlePauseClick);
-    function handleStopClick() { if(animState === 'playing' || animState === 'paused') { animState = 'stopped'; setTimeout(() => { animState = 'idle'; setAnimControls(false); if(currentMode.includes('sort')) { const b = window.VizRegistry && window.VizRegistry.behavior(currentMode); if (b && b.render) b.render(); } else if(currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear); else if(currentMode.includes('heap-')) renderHeap(); showStatus('Stopped & Reset.', '#f87171'); }, 100); } }
+    function handleStopClick() { if(animState === 'playing' || animState === 'paused') { animState = 'stopped'; setTimeout(() => { animState = 'idle'; setAnimControls(false); if(currentMode.includes('sort')) { const b = window.VizRegistry && window.VizRegistry.behavior(currentMode); if (b && b.render) b.render(); } else if (currentMode.includes('search')) { const b = window.VizRegistry && window.VizRegistry.behavior(currentMode); if (b && b.render) b.render(); } else if(currentMode.includes('heap-')) renderHeap(); showStatus('Stopped & Reset.', '#f87171'); }, 100); } }
     btnSearchStop.addEventListener('click', handleStopClick); btnSortStop.addEventListener('click', handleStopClick);
     function setAnimControls(isPlaying) {
         if(currentMode.includes('search')) { btnSearchGo.disabled = isPlaying; btnSearchPause.disabled = !isPlaying; btnSearchStop.disabled = !isPlaying; btnSearchPause.textContent = animState === 'paused' ? t('btn.resume') : t('btn.pause'); }
@@ -2057,18 +2053,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { if (e === 'STOPPED') return; else throw e; }
     }
 
-    btnSearchGo.addEventListener('click', () => { const target = parseInt(searchVal.value); if(isNaN(target)) return showStatus('Enter valid target.', '#f87171'); if (currentMode === 'search-linear') executeAnimWrapper(async () => await runLinearSearch(target)); else if (currentMode === 'search-binary') executeAnimWrapper(async () => await runBinarySearch(target)); });
-    btnSearchRandom.addEventListener('click', () => {
-        if (animState === 'playing' || animState === 'paused') return;
-        const inp = window.RandomInput && RandomInput.randomInputFor(currentMode, getInputDifficulty());
-        if (!inp) return;
-        const arr = currentMode === 'search-binary' ? arrBinary : arrLinear;
-        arr.length = 0;
-        inp.arr.forEach((v) => arr.push(v));
-        searchVal.value = inp.target;
-        renderSearchArray(arr);
-    });
-    
     btnTextTreeAdd.addEventListener('click', () => {
         let str = textTreeVal.value.trim().toUpperCase();
         if(!str) return showStatus('Enter a word!', '#f87171');
@@ -2541,8 +2525,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('heap-dary', renderHeap, () => codeHeapDary, null);
         reg('heap-pairing', renderHeap, () => codeHeapPairing, null);
         // Searching & String Matching
-        reg('search-linear', () => renderSearchArray(arrLinear), () => codeSearchLinear, null);
-        reg('search-binary', () => renderSearchArray(arrBinary), () => codeSearchBinary, null);
         // File Structures
         // Memory / GC
         // Recursion
@@ -2574,7 +2556,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentMode === 'tree-rb') renderTreeRB();
         else if (['tree-bst', 'tree-avl', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
-        else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('heap-')) renderHeap();
         else if (currentMode.includes('oop-')) renderOOP();
         else if (currentMode.includes('pattern-')) renderPattern();
@@ -2798,34 +2779,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderHeapTutorialPanel();
     }
     
-    async function runLinearSearch(target) {
-        renderSearchArray(arrLinear); showStatus('Linear Search', '#60a5fa');
-        const lPtr = document.getElementById('ptr-l'); lPtr.classList.add('visible'); lPtr.textContent = 'i';
-        for (let i = 0; i < arrLinear.length; i++) {
-            const slot = document.getElementById('ss-' + i); lPtr.style.left = slot.offsetLeft + 'px'; slot.classList.add('active'); await sleep(800);
-            if (arrLinear[i] === target) { slot.classList.remove('active'); slot.classList.add('found'); return; } else { slot.classList.remove('active'); slot.classList.add('dim'); }
-        }
-        lPtr.classList.remove('visible');
-    }
-    async function runBinarySearch(target) {
-        renderSearchArray(arrBinary); showStatus('Starting Binary Search...', '#60a5fa');
-        const lPtr = document.getElementById('ptr-l'); const rPtr = document.getElementById('ptr-r'); const mPtr = document.getElementById('ptr-m');
-        lPtr.classList.add('visible'); rPtr.classList.add('visible'); let left = 0; let right = arrBinary.length - 1;
-        while (left <= right) {
-            const slotL = document.getElementById('ss-' + left); const slotR = document.getElementById('ss-' + right);
-            lPtr.style.left = slotL.offsetLeft + 'px'; rPtr.style.left = slotR.offsetLeft + 'px';
-            for(let i=0; i<arrBinary.length; i++) { const s = document.getElementById('ss-' + i); if(i < left || i > right) s.classList.add('dim'); }
-            await sleep(1000); let mid = Math.floor(left + (right - left) / 2); showStatus("L=" + left + ", R=" + right + " => M=" + mid, '#fcd34d');
-            const slotM = document.getElementById('ss-' + mid); mPtr.style.left = slotM.offsetLeft + 'px'; mPtr.classList.add('visible'); slotM.classList.add('mid');
-            await sleep(1200);
-            if (arrBinary[mid] === target) { slotM.classList.remove('mid'); slotM.classList.add('found'); showStatus("Found " + target + " at index " + mid + "!", '#34d399'); return; }
-            if (arrBinary[mid] < target) { showStatus("arr[" + mid + "] < " + target + ". Ignore left half.", '#94a3b8'); left = mid + 1; } 
-            else { showStatus("arr[" + mid + "] > " + target + ". Ignore right half.", '#94a3b8'); right = mid - 1; }
-            slotM.classList.remove('mid'); mPtr.classList.remove('visible'); await sleep(800);
-        }
-        showStatus(target + " not found in array.", '#f87171'); lPtr.classList.remove('visible'); rPtr.classList.remove('visible');
-    }
-
     function renderAdvTrees() {
         advTreeContainer.innerHTML = '';
         const svgNS = "http://www.w3.org/2000/svg";
@@ -2914,11 +2867,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function renderSearchArray(arr) {
-        const sa = document.getElementById('search-array'); const sp = document.getElementById('search-pointers'); sa.innerHTML = ''; sp.innerHTML = '';
-        arr.forEach((v, i) => { const slot = document.createElement('div'); slot.className = 's-slot'; slot.id = 'ss-' + i; slot.innerHTML = "<span>[" + i + "]</span>" + v; sa.appendChild(slot); });
-        ['ptr-l', 'ptr-r', 'ptr-m'].forEach(cls => { const p = document.createElement('div'); p.className = 's-ptr ' + cls; p.id = cls; if(cls === 'ptr-l') p.textContent = 'L'; else if(cls === 'ptr-r') p.textContent = 'R'; else p.textContent = 'M'; sp.appendChild(p); });
-    }
     function acquireDynamicVizHost() {
         const vizContainer = document.getElementById('visualizer-container');
         if (vizContainer) vizContainer.classList.add('hidden');
