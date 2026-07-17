@@ -2741,7 +2741,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('hash-chain', renderHashes, () => codeHashChain, null);
         reg('hash-open', renderHashes, () => codeHashOpen, null);
         reg('hash-bucket', renderHashes, () => codeHashBucket, null);
-        reg('bloom-filter', renderBloomFilter, () => codeBloomFilter, { host: 'dynamic' });
         reg('skip-list', renderSkipList, () => codeSkipList, { host: 'dynamic' });
         reg('count-min-sketch', renderCountMinSketch, () => codeCountMinSketch, { host: 'dynamic' });
         // Heaps / Priority Queues
@@ -2802,7 +2801,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if(currentMode.includes('stack')) renderStack();
         else if (currentMode === 'queue') renderQueue();
         else if (currentMode === 'deque') renderDeque();
-        else if (currentMode === 'bloom-filter') renderBloomFilter();
         else if (currentMode === 'skip-list') renderSkipList();
         else if (currentMode === 'count-min-sketch') renderCountMinSketch();
         else if (currentMode === 'graph-traversal') renderGraphDual();
@@ -3872,79 +3870,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         setBtn();
         return strip;
-    }
-
-    function renderBloomFilter() {
-        const host = acquireDynamicVizHost();
-        const SIZE = 32;
-        function h1(s) { let h = 5381; for (const c of s) h = (h * 33 + c.charCodeAt(0)) >>> 0; return h % SIZE; }
-        function h2(s) { let h = 0; for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0; return h % SIZE; }
-        function h3(s) { let h = 7; for (const c of s) h = (h * 17 + c.charCodeAt(0) + 1) >>> 0; return h % SIZE; }
-        function hashes(s) { return [h1(s), h2(s), h3(s)]; }
-
-        if (!Array.isArray(runtimeVisualizer._bloomBits)) {
-            runtimeVisualizer._bloomBits = new Array(SIZE).fill(false);
-            runtimeVisualizer._bloomItems = [];
-            for (const w of ['cat', 'dog', 'bird']) {
-                for (const i of hashes(w)) runtimeVisualizer._bloomBits[i] = true;
-                runtimeVisualizer._bloomItems.push(w);
-            }
-        }
-        const bits = runtimeVisualizer._bloomBits;
-        const items = runtimeVisualizer._bloomItems;
-        const savedVal = runtimeVisualizer._bloomInputVal || 'fish';
-
-        const wrap = document.createElement('div');
-        wrap.className = 'bloom-wrap';
-        let html = '<div class="bloom-row">';
-        for (let i = 0; i < SIZE; i++) {
-            html += '<span class="bloom-cell' + (bits[i] ? ' bloom-on' : '') +
-                    '" data-bit="' + i + '">' + (bits[i] ? 1 : 0) + '</span>';
-        }
-        html += '</div>';
-        html += '<div class="bloom-hashes" data-testid="bloom-hashes"></div>';
-        html += '<div class="bloom-items"><strong>inserted:</strong> <span class="bloom-items-list"></span></div>';
-        html += '<div class="bloom-controls" role="group">' +
-                    '<input type="text" data-bloom-val>' +
-                    '<button type="button" data-action="bloom-insert">Insert</button>' +
-                    '<button type="button" data-action="bloom-query">Query</button>' +
-                '</div>';
-        wrap.innerHTML = html;
-        host.appendChild(wrap);
-
-        const valInput = wrap.querySelector('[data-bloom-val]');
-        valInput.value = savedVal;
-        wrap.querySelector('.bloom-items-list').textContent = items.join(', ');
-        const hashesEl = wrap.querySelector('.bloom-hashes');
-        valInput.addEventListener('input', () => { runtimeVisualizer._bloomInputVal = valInput.value.trim(); });
-        function highlight(idxs, cls) {
-            wrap.querySelectorAll('.bloom-cell').forEach((c) => c.classList.remove('bloom-hit', 'bloom-miss'));
-            for (const i of idxs) {
-                const cell = wrap.querySelector('.bloom-cell[data-bit="' + i + '"]');
-                if (cell) cell.classList.add(cls);
-            }
-        }
-        wrap.querySelector('[data-action="bloom-insert"]').onclick = () => {
-            const key = valInput.value.trim();
-            if (!key) { showStatus('Enter a word', '#f87171'); return; }
-            runtimeVisualizer._bloomInputVal = key;
-            const idxs = hashes(key);
-            for (const i of idxs) bits[i] = true;
-            if (!items.includes(key)) items.push(key);
-            renderBloomFilter();
-            showStatus('Inserted "' + key + '" → bits {' + idxs.join(', ') + '}', '#34d399');
-        };
-        wrap.querySelector('[data-action="bloom-query"]').onclick = () => {
-            const key = valInput.value.trim();
-            if (!key) { showStatus('Enter a word', '#f87171'); return; }
-            runtimeVisualizer._bloomInputVal = key;
-            const idxs = hashes(key);
-            hashesEl.textContent = 'hashes of "' + key + '" → {' + idxs.join(', ') + '}';
-            const present = idxs.every((i) => bits[i]);
-            highlight(idxs, present ? 'bloom-hit' : 'bloom-miss');
-            if (present) showStatus('"' + key + '" possibly present', '#f59e0b');
-            else showStatus('"' + key + '" definitely not present', '#60a5fa');
-        };
     }
 
     function renderSkipList() {
