@@ -1322,19 +1322,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const codeTitle = document.getElementById('code-title') || document.createElement('span');
 
     // Controls
-    const btnStdAdd = document.getElementById('btn-std-add'); const btnStdRemove = document.getElementById('btn-std-remove'); const stdVal = document.getElementById('std-value');
-    function randStdValue() { return Math.floor(Math.random() * 99) + 1; }
-    if (stdVal) stdVal.value = String(randStdValue());
+    const btnStdAdd = document.getElementById('btn-std-add'); const btnStdRemove = document.getElementById('btn-std-remove');
     const btnGraphAdd = document.getElementById('btn-graph-add'); const graphU = document.getElementById('graph-u'); const graphV = document.getElementById('graph-v');
     const graphW = document.getElementById('graph-w'); const btnGraphKruskal = document.getElementById('btn-graph-kruskal'); const btnGraphClear = document.getElementById('btn-graph-clear');
     const graphSource = document.getElementById('graph-source'); const graphTarget = document.getElementById('graph-target');
     const btnGraphDijkstra = document.getElementById('btn-graph-dijkstra'); const btnGraphTopo = document.getElementById('btn-graph-topo');
     const btnTreeAdd = document.getElementById('btn-tree-add'); const treeVal = document.getElementById('tree-val'); const btnTreeSearch = document.getElementById('btn-tree-search');
-    
+
     const btnSearchGo = document.getElementById('btn-search-go'); const btnSearchPause = document.getElementById('btn-search-pause'); const btnSearchStop = document.getElementById('btn-search-stop'); const searchVal = document.getElementById('search-val');
     const btnSearchRandom = document.getElementById('btn-search-random');
-    const btnListAdd = document.getElementById('btn-list-add'); const btnListRemove = document.getElementById('btn-list-remove'); const listIdx = document.getElementById('list-idx'); const listValInput = document.getElementById('list-val');
-    
+
     const btnSortRandom = document.getElementById('btn-sort-random'); const btnSortStart = document.getElementById('btn-sort-start');
     const btnSortPause = document.getElementById('btn-sort-pause'); const btnSortStop = document.getElementById('btn-sort-stop');
     const sortSpeedInput = document.getElementById('sort-speed');
@@ -1421,15 +1418,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     registerBehaviors();
     bindDifficultySelect();
-    const MAX_SIZE = 5;
 
     // Search Vectors
     const arrLinear = [23, 12, 56, 8, 38, 2, 72, 91, 16, 5];
     const arrBinary = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91];
 
     // Core sets
-    let stackData = []; let qArr = new Array(5).fill(null); let qFront = 0; let qRear = -1; let qCount = 0;
-    let bstRoot = null; let mainListData = [];
+    let bstRoot = null;
     let treeDrawLoop = null;
     let heapEventTimer = null;
 
@@ -1757,8 +1752,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (heapTutorialState.active && nextMode !== heapTutorialState.mode) exitHeapTutorial(true);
         if (_rbState) _rbState.hist.pause(); // stop RB playback when leaving/re-entering the mode
         visualizerRuntime.setMode(nextMode);
-        stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0; bstRoot = null;
-        if(currentMode === 'list-array' || currentMode === 'list-linked') mainListData = [];
+        bstRoot = null;
         trieRoot = { children: {}, endOfWord: false }; radixRoot = { edges: {} }; tstRoot = null; btreeData = []; bplusData = [];
         if(currentMode.includes('heap-')) {
             heapOrderSelect.value = heapIsMin ? 'min' : 'max';
@@ -1776,29 +1770,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if(currentMode === 'tree-splay') btnTreeSearch.classList.remove('hidden'); else btnTreeSearch.classList.add('hidden');
     }
-
-    // STD Hooks...
-    btnStdAdd.addEventListener('click', () => {
-        const val = parseInt(stdVal.value); if(isNaN(val)) return showStatus('Enter a valid number.', '#f87171');
-        if(currentMode.includes('stack')) { if(currentMode === 'stack-array' && stackData.length >= MAX_SIZE) return showStatus('Stack Overflow!', '#f87171'); stackData.push(val); showStatus("Pushed " + val, '#60a5fa'); renderStack('push'); }
-        else if (currentMode === 'queue') { if (qCount >= MAX_SIZE) return showStatus('Queue Overflow!', '#f87171'); qRear = (qRear + 1) % MAX_SIZE; qArr[qRear] = val; qCount++; showStatus("Enqueued " + val, '#60a5fa'); renderQueue('enqueue'); }
-        stdVal.value = String(randStdValue());
-    });
-    btnStdRemove.addEventListener('click', () => {
-        if(currentMode.includes('stack')) { if(stackData.length === 0) return showStatus('Stack Underflow!', '#f87171'); const popped = stackData.pop(); showStatus("Popped " + popped, '#ec4899'); renderStack('pop'); }
-        else if (currentMode === 'queue') { if(qCount === 0) return showStatus('Queue Underflow!', '#f87171'); const deq = qArr[qFront]; qArr[qFront] = null; qFront = (qFront + 1) % MAX_SIZE; qCount--; showStatus("Dequeued " + deq, '#ec4899'); renderQueue('dequeue'); }
-    });
-    btnListAdd.addEventListener('click', () => {
-        const i = parseInt(listIdx.value); const v = parseInt(listValInput.value);
-        if(isNaN(i) || isNaN(v)) return showStatus('Invalid input', '#f87171');
-        if(i < 0 || i > mainListData.length) return showStatus('Index out of bounds', '#f87171');
-        mainListData.splice(i, 0, v); showStatus("Inserted " + v + " at index " + i, '#60a5fa'); renderLists(); listValInput.value = Math.floor(Math.random() * 100);
-    });
-    btnListRemove.addEventListener('click', () => {
-        const i = parseInt(listIdx.value); if(isNaN(i)) return showStatus('Invalid input', '#f87171');
-        if(i < 0 || i >= mainListData.length) return showStatus('Index out of bounds', '#f87171');
-        const v = mainListData[i]; mainListData.splice(i, 1); showStatus("Removed " + v + " from index " + i, '#ec4899'); renderLists();
-    });
 
     heapOrderSelect.addEventListener('change', () => {
         setHeapComparator(heapOrderSelect.value === 'min');
@@ -2550,13 +2521,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const R = window.VizRegistry;
         if (!R) return;
         const reg = (id, render, code, layout) => R.attach(id, { render, code, layout: layout || null });
-        // Linear Structures
-        reg('stack-array', renderStack, () => codeArray, null);
-        reg('stack-list', renderStack, () => codeLinkedList, null);
-        reg('queue', renderQueue, () => codeQueue, { host: 'dynamic' });
-        reg('list-array', renderLists, () => codeListArray, null);
-        reg('list-linked', renderLists, () => codeListLinked, null);
-        reg('deque', renderDeque, () => codeDeque, { host: 'dynamic' });
         // Arrays
         // Trees
         reg('tree-bst', renderTree, () => codeTreeBST, null);
@@ -2607,14 +2571,10 @@ document.addEventListener('DOMContentLoaded', () => {
         syncDifficultySelect();
         const b = window.VizRegistry && window.VizRegistry.behavior(currentMode);
         if (b && b.render) { b.render(); return; }
-        if(currentMode.includes('stack')) renderStack();
-        else if (currentMode === 'queue') renderQueue();
-        else if (currentMode === 'deque') renderDeque();
-        else if (currentMode === 'tree-rb') renderTreeRB();
+        if (currentMode === 'tree-rb') renderTreeRB();
         else if (['tree-bst', 'tree-avl', 'tree-splay'].includes(currentMode)) renderTree();
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
-        else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('heap-')) renderHeap();
         else if (currentMode.includes('oop-')) renderOOP();
         else if (currentMode.includes('pattern-')) renderPattern();
@@ -2959,38 +2919,6 @@ document.addEventListener('DOMContentLoaded', () => {
         arr.forEach((v, i) => { const slot = document.createElement('div'); slot.className = 's-slot'; slot.id = 'ss-' + i; slot.innerHTML = "<span>[" + i + "]</span>" + v; sa.appendChild(slot); });
         ['ptr-l', 'ptr-r', 'ptr-m'].forEach(cls => { const p = document.createElement('div'); p.className = 's-ptr ' + cls; p.id = cls; if(cls === 'ptr-l') p.textContent = 'L'; else if(cls === 'ptr-r') p.textContent = 'R'; else p.textContent = 'M'; sp.appendChild(p); });
     }
-    function renderLists() {
-        if (currentMode === 'list-array') { listArrContainer.innerHTML = ''; mainListData.forEach((val, i) => { const s = document.createElement('div'); s.className = 'la-slot'; s.setAttribute('data-index', i); s.textContent = val; listArrContainer.appendChild(s); });
-        } else if (currentMode === 'list-linked') {
-            listLLContainer.innerHTML = '';
-            mainListData.forEach((val, i) => {
-                const w = document.createElement('div'); w.className = 'lll-node-wrapper'; const n = document.createElement('div'); n.className = 'lll-node'; n.innerHTML = "<div class='lll-data'>" + val + "</div><div class='lll-next'></div>"; w.appendChild(n);
-                if (i < mainListData.length - 1) { const c = document.createElement('div'); c.className = 'lll-conn'; w.appendChild(c); }
-                listLLContainer.appendChild(w);
-            });
-            if (mainListData.length > 0) { const n = document.createElement('div'); n.style.padding = '0 10px'; n.style.color = '#f87171'; n.style.fontFamily = 'monospace'; n.textContent = "NULL"; listLLContainer.appendChild(n); }
-        }
-    }
-    function renderStack(action) {
-        if(currentMode === 'stack-array') {
-            const slots = arrayContainer.querySelectorAll('.slot'); slots.forEach(slot => { const ext = slot.querySelector('.item-block'); if(ext && action !== 'pop_animating') slot.removeChild(ext); });
-            stackData.forEach((val, idx) => { const s = slots[4 - idx]; const blk = document.createElement('div'); blk.className = 'item-block'; blk.textContent = val; if(action === 'push' && idx === stackData.length - 1) blk.classList.add('anim-push'); s.appendChild(blk); });
-            if(action === 'pop') { const s = slots[4 - stackData.length]; if(s) { const d = document.createElement('div'); d.className = 'item-block anim-pop'; d.textContent = "∅"; d.style.background = "#4b5563"; s.appendChild(d); setTimeout(() => { if(s.contains(d)) s.removeChild(d); }, 400); } }
-        } else if (currentMode === 'stack-list') {
-            const ns = document.getElementById('nodes-container'); ns.innerHTML = ''; const rev = [...stackData].reverse();
-            rev.forEach((val, index) => {
-                const wrapper = document.createElement('div'); wrapper.className = 'll-node-wrapper'; const node = document.createElement('div'); node.className = 'll-node'; node.innerHTML = "<div class='ll-data'>" + val + "</div><div class='ll-next'></div>"; wrapper.appendChild(node);
-                if(index < rev.length - 1) { const conn = document.createElement('div'); conn.style.height = '15px'; conn.style.width = '2px'; conn.style.background = 'var(--primary-color)'; wrapper.appendChild(conn); }
-                if(action === 'push' && index === 0) wrapper.classList.add('anim-push'); ns.appendChild(wrapper);
-            });
-        }
-    }
-    function renderQueue() {
-        const slots = [0,1,2,3,4].map(i => document.getElementById("qs-" + i));
-        for(let i=0; i<5; i++) { const ext = slots[i].querySelector('.q-item'); if(ext) slots[i].removeChild(ext); if(qArr[i] !== null) { const div = document.createElement('div'); div.className = 'q-item'; div.textContent = qArr[i]; slots[i].appendChild(div); } }
-        const pf = document.getElementById('front-ptr'); const pr = document.getElementById('rear-ptr');
-        if (qCount === 0) { pf.style.left =  (30 + qFront * 65) + 'px'; pr.style.left = (30 + (qRear<0?0:qRear) * 65) + 'px'; } else { pf.style.left = (30 + qFront * 65) + 'px'; pr.style.left = (30 + qRear * 65) + 'px'; }
-    }
     function acquireDynamicVizHost() {
         const vizContainer = document.getElementById('visualizer-container');
         if (vizContainer) vizContainer.classList.add('hidden');
@@ -3004,60 +2932,6 @@ document.addEventListener('DOMContentLoaded', () => {
         host.innerHTML = '';
         host.style.width = '';
         return host;
-    }
-
-    function renderDeque() {
-        const host = acquireDynamicVizHost();
-        if (!Array.isArray(runtimeVisualizer._dequeData)) {
-            runtimeVisualizer._dequeData = [10, 20, 30];
-        }
-        const data = runtimeVisualizer._dequeData;
-        const wrap = document.createElement('div');
-        wrap.className = 'deque-wrap';
-        let html = '<div class="deque-caption">head &rarr; ... &rarr; tail</div>';
-        html += '<div class="deque-row">';
-        html += '<span class="deque-null">null</span>';
-        for (let i = 0; i < data.length; i++) {
-            html += '<span class="deque-arrow">&#8646;</span>';
-            const endClass = (i === 0 ? ' deque-head' : '') + (i === data.length - 1 ? ' deque-tail' : '');
-            html += '<span class="deque-node' + endClass + '">' + data[i] + '</span>';
-        }
-        html += '<span class="deque-arrow">&#8646;</span>';
-        html += '<span class="deque-null">null</span>';
-        html += '</div>';
-        html += '<div class="deque-controls" role="group">' +
-                    '<input type="number" value="42" data-deque-val>' +
-                    '<button type="button" data-action="push-front">Push Front</button>' +
-                    '<button type="button" data-action="push-back">Push Back</button>' +
-                    '<button type="button" data-action="pop-front">Pop Front</button>' +
-                    '<button type="button" data-action="pop-back">Pop Back</button>' +
-                '</div>';
-        wrap.innerHTML = html;
-        host.appendChild(wrap);
-
-        const valInput = wrap.querySelector('[data-deque-val]');
-        function readVal() {
-            const v = parseInt(valInput.value, 10);
-            return Number.isNaN(v) ? 0 : v;
-        }
-        wrap.querySelector('[data-action="push-front"]').onclick = () => {
-            data.unshift(readVal());
-            renderDeque();
-        };
-        wrap.querySelector('[data-action="push-back"]').onclick = () => {
-            data.push(readVal());
-            renderDeque();
-        };
-        wrap.querySelector('[data-action="pop-front"]').onclick = () => {
-            if (data.length === 0) { showStatus('Deque is empty', '#f87171'); return; }
-            data.shift();
-            renderDeque();
-        };
-        wrap.querySelector('[data-action="pop-back"]').onclick = () => {
-            if (data.length === 0) { showStatus('Deque is empty', '#f87171'); return; }
-            data.pop();
-            renderDeque();
-        };
     }
 
     function buildStepControls(onStep, onReset, runIntervalMs) {
