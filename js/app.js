@@ -1426,6 +1426,13 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     };
     renderMethodSections(getMethodGroupForMode(currentMode).id);
+    window.VizKit = {
+        acquireDynamicVizHost,
+        buildStepControls,
+        getInputDifficulty,
+        langOf: (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en,
+        t,
+    };
     registerBehaviors();
     bindDifficultySelect();
     const MAX_SIZE = 5;
