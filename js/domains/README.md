@@ -117,6 +117,9 @@ Notes from the hash migration:
   also stays put; it's nav config, not state.
 - Everything inside the module is private except what `R().attach` and
   `C().registerDomain` expose. No new globals beyond the one IIFE.
+- A domain descriptor may optionally expose a `syncChrome()` hook (called
+  after `setAnimControls`/`updateLayout`) in addition to `init` and
+  `onModeSwitch`.
 
 ## app.js changes when migrating a domain
 
@@ -181,6 +184,7 @@ For each mode id the domain owns, **remove** from `app.js`:
   render/handler/state names, all clean. `deque`'s `_dequeData` was
   normalized from a DOM-stashed property to a module-local `let`.
 - **search** — `js/domains/search.js` (search-linear, search-binary).
+- **heap** — `js/domains/heap.js` (heap-binary, heap-binomial, heap-fibonacci, heap-leftist, heap-skew, heap-dary, heap-pairing).
 
 ## Remaining domains to migrate
 
@@ -203,28 +207,3 @@ once earlier domains are migrated):
   (`if (_rbState) _rbState.hist.pause();`) rather than reset — `_rbState`
   itself is not cleared, only paused; treat tree-rb's `onModeSwitch` as
   needing to preserve that pause-not-clear behavior.
-
-### heap (heap-binary, heap-binomial, heap-fibonacci, heap-leftist, heap-skew, heap-dary, heap-pairing)
-- State: `heapIsMin`, `heapModels` (map of mode id → `HeapModels.createHeapModel(...)`),
-  `heapTutorialState`, `heapEventTimer`.
-- Renderer: `renderHeap` (largest renderer besides `renderGraph`, ~465 lines).
-- Handlers: `animateHeapEvents`, `clearHeapEventMarks`, `getActiveHeapModel`,
-  `resetHeapModels`, `setHeapComparator`, the heap-tutorial family
-  (`buildHeapTutorial`/`startHeapTutorial`/`exitHeapTutorial`/
-  `advanceHeapTutorial`/`maybeAdvanceHeapTutorial`/`syncHeapTutorialChrome`/
-  `renderHeapTutorialPanel`, ~155 lines together), plus inlined button
-  listeners for insert/peek/extract/merge/change/delete/find-min/stats.
-- Existing reset in `switchMode`:
-  ```
-  if (heapTutorialState.active && nextMode !== heapTutorialState.mode) exitHeapTutorial(true);
-  ...
-  if(currentMode.includes('heap-')) {
-      heapOrderSelect.value = heapIsMin ? 'min' : 'max';
-      clearHeapEventMarks();
-      heapModels[currentMode].clear();
-      heapModels[currentMode].setOrder(heapIsMin);
-  }
-  ```
-  This is the largest and most stateful of the four remaining domains —
-  plan for a dedicated `heapOrderSelect` DOM ref inside the module's own
-  `dom` object and for the tutorial state machine to move as a unit.
