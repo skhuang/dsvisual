@@ -2773,7 +2773,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('search-strcompare', renderStringCompare, () => codeSearchStrCompare, { host: 'dynamic' });
         reg('search-zalgo', renderZAlgo, () => codeSearchZAlgo, { host: 'dynamic' });
         reg('search-aho', renderAhoCorasick, () => codeSearchAho, { host: 'dynamic' });
-        reg('search-interpolation', renderSearchInterpolation, () => codeSearchInterpolation, { host: 'dynamic' });
         // File Structures
         reg('file-isam', renderFileIsam, () => codeFileIsam, { host: 'dynamic' });
         reg('file-inverted', renderFileInverted, () => codeFileInverted, { host: 'dynamic' });
@@ -2847,7 +2846,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'search-strcompare') renderStringCompare();
         else if (currentMode === 'search-zalgo') renderZAlgo();
         else if (currentMode === 'search-aho') renderAhoCorasick();
-        else if (currentMode === 'search-interpolation') renderSearchInterpolation();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
         else if (currentMode.includes('hash-')) renderHashes();
@@ -6046,61 +6044,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const c = host.querySelector('.ng-cand').value;
             const r = parseFloat(host.querySelector('.ng-r').value);
             if (c && Number.isFinite(r) && r >= 0 && r < 1) { st.cand = c; st.r = r; renderNanoNgramNext(); }
-        };
-    }
-
-    let _interpState = null;
-    function renderSearchInterpolation() {
-        const host = acquireDynamicVizHost();
-        if (!_interpState) _interpState = { arr: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100], target: 70 };
-        const st = _interpState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const res = InterpSearchViz.buildInterpFrames(st.arr, st.target);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="ss-controls">' +
-              '<input type="text" class="ss-arr" value="' + st.arr.join(',') + '">' +
-              'target <input type="number" class="ss-target" value="' + st.target + '" style="width:64px">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="ss-apply">Apply</button>' +
-              '<span class="sm-hint">sorted; works best when ~uniform</span>' +
-            '</div>' +
-            '<div class="ss-cells"></div>' +
-            '<div class="ss-info"></div>' +
-            '<div class="ss-result"></div>' +
-            '<div class="ss-phase"></div>';
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.ss-cells')) return;
-            const inRange = (i) => i >= fr.lo && i <= fr.hi;
-            host.querySelector('.ss-cells').innerHTML = st.arr.map((v, i) =>
-                '<span class="ss-cell' + (i === fr.pos ? ' probe' : (inRange(i) ? ' inrange' : '')) + '"><span class="ss-idx">' + i + '</span>' + v + '</span>').join('');
-            const a = st.arr;
-            host.querySelector('.ss-info').innerHTML = (fr.pos >= 0 && fr.lo <= fr.hi)
-                ? 'pos = lo + (target − a[lo])·(hi − lo) / (a[hi] − a[lo]) = ' + fr.lo + ' + (' + st.target + '−' + a[fr.lo] + ')·(' + fr.hi + '−' + fr.lo + ')/(' + a[fr.hi] + '−' + a[fr.lo] + ') = ' + fr.pos
-                : 'lo=' + fr.lo + ', hi=' + fr.hi;
-            host.querySelector('.ss-result').textContent = fr.found >= 0 ? ('✓ found at index ' + fr.found) : '';
-            host.querySelector('.ss-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.ss-apply').onclick = () => {
-            const arr = host.querySelector('.ss-arr').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite).sort((a, b) => a - b);
-            const target = parseInt(host.querySelector('.ss-target').value, 10);
-            if (arr.length && Number.isFinite(target)) { st.arr = arr; st.target = target; renderSearchInterpolation(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('search-interpolation', getInputDifficulty());
-            if (!inp) return;
-            _interpState.arr = inp.arr;
-            _interpState.target = inp.target;
-            renderSearchInterpolation();
         };
     }
 
