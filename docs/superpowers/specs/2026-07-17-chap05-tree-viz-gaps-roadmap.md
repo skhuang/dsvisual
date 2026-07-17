@@ -40,20 +40,27 @@ can be revised between cycles.
 ## Per-viz deliverable anatomy (the "complete past process")
 
 Every NEW viz (#2–#6) ships this artifact set; the enhancement (#1) touches the
-subset that applies. Modeled on `tree-traversal`/`huffman`/`list-equivalence`.
+subset that applies. **Post-refactor layout (Stage 4, on `main` @ 62b835e+):**
+per-visualizer renderers now live in `js/viz/viz_*.js` modules coordinated by a
+`VizRegistry`/`VizCore`/`VizKit` seam (see `js/domains/README.md`), NOT inside
+app.js. Modeled on `js/viz/viz_expr_tree.js` (built in #1).
 
 1. **Pure frame-generator module** `js/<name>_viz.js` — dual-export IIFE
    (`window.<Name>Viz` + `module.exports`); pure `buildFrames(...) -> Frame[]`
    where each Frame is a redrawable snapshot with bilingual `msg:{zh,en}`. No DOM.
-2. **`render<Name>()`** added inside the app.js main closure, using the existing
-   private helpers `acquireDynamicVizHost()`, `buildStepControls(onStep,onReset,
-   intervalMs)`, and `computeTreeLayout()` where a tree is drawn. Calls the pure
-   module for frames. (Rationale: keep testable logic out of the 300KB+ app.js.)
+2. **Render module** `js/viz/viz_<name>.js` — a dual-export IIFE that defines
+   `render<Name>()` using `K() = global.VizKit` helpers (`acquireDynamicVizHost`,
+   `buildStepControls`, `langOf`, `getInputDifficulty`, …), draws the tree via a
+   local `computeTreeLayout` copy, calls the pure module for frames, and ends with
+   `global.VizRegistry.attach('<id>', { render, code: () => code<Name>, layout })`.
+   Add a `<script src="js/viz/viz_<name>.js" defer>` tag in `index.html` (after
+   `js/code_db.js`, before `js/app.js`).
 3. **Registry entry** in `METHOD_GROUPS` (app.js `trees` group): `{id, title,
    file, visualizer, controls}`.
-4. **Paired C++ demo** `cpp/<name>.cpp` (shown in the code drawer; wired through
-   the existing code/build path).
-5. **`desc_db.js`** long-form bilingual (zh/en) HTML description for the info panel.
+4. **Paired C++ demo** `cpp/<name>.cpp` + a `'<name>.cpp': 'code<Name>'` mapping
+   in `build_db.js`; run `node build_db.js` to regenerate `js/code_db.js`.
+5. **`desc_db.js`** long-form HTML description for the info panel (the file is
+   English-only file-wide — match that convention; bilingual lives in the UI).
 6. **Editable input + "Examples…" localStorage control** per
    `docs/conventions/example-feature.md` (`buildExamplesSelect`/`saveExample`),
    when the viz has a full-input control.
@@ -86,8 +93,8 @@ subset that applies. Modeled on `tree-traversal`/`huffman`/`list-equivalence`.
 
 ## Status
 
-- [ ] #1 `tree-expression` boolean mode — brainstorm next
-- [ ] #2 `tree-reconstruct`
+- [x] #1 `tree-expression` boolean mode — merged (PR #132)
+- [ ] #2 `tree-reconstruct` — spec/plan in progress
 - [ ] #3 `tree-array-rep`
 - [ ] #4 `tree-catalan`
 - [ ] #5 `decision-tree-coins`
