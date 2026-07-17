@@ -877,6 +877,15 @@ const descDB = {
         </div>
         <p><strong>Boolean mode:</strong> enter a propositional formula in postfix (variables a,b,c…, constants 0/1, operators ∧(&) ∨(|) ¬(!) ⊕(^) →(>)), build its expression tree and evaluate it postorder under an assignment; a truth-table sweep enumerates all 2<sup>k</sup> assignments and decides tautology, contradiction (unsatisfiable), or contingent (satisfiable).</p>
     `,
+    'tree-reconstruct': `
+        <h3>Reconstruct a Binary Tree from Two Traversals</h3>
+        <p>Given two traversal sequences of a tree with distinct keys, rebuild the tree. In <strong>preorder+inorder</strong> and <strong>postorder+inorder</strong> the first (or last) element of pre/post is the root; its position in inorder splits the remaining keys into the left and right subtrees, and the construction recurses — unique for any binary tree.</p>
+        <p><strong>Preorder+postorder</strong> is different: it determines the tree uniquely <em>only for full binary trees</em> (every node has 0 or 2 children). A single-child node cannot be placed unambiguously, so this viz reports such input as ambiguous — the teaching point that not every pair of traversals fixes the tree.</p>
+        <div class="complexity">
+            <span class="badge time">Build: O(N)</span>
+            <span class="badge space">Space: O(N)</span>
+        </div>
+    `,
     'nano-bpe-encode': `
         <h3>BPE Encode — Trie Longest Match</h3>
         <p>Tokenize text against a trained vocabulary by walking a character trie and greedily taking the longest matching piece at each position.</p>
