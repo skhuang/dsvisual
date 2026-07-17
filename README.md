@@ -93,12 +93,19 @@ open index.html
 dsvisual/
 ├── index.html          # Main UI (mode toggles, visualization canvas, controls)
 ├── style.css           # Glassmorphism-style CSS
-├── app.js              # Core logic: JS data structure implementations + animation engine
-├── code_db.js          # Auto-generated: C++ source strings for display (do not edit manually)
-├── desc_db.js          # Algorithm descriptions and complexity notes
-├── build_db.js         # Node.js script: rebuilds code_db.js from .cpp files
-├── heap_models.js      # Shared heap logic used by UI and unit tests
-├── *.cpp               # C++ source files (one per algorithm/data structure)
+├── js/
+│   ├── app.js           # Host: METHOD_GROUPS, dispatch (renderAll/getCodeForMethod), shared UI chrome
+│   ├── core/
+│   │   └── registry.js  # VizRegistry: attach/behavior/has — id -> {render, code, layout} lookup table
+│   ├── algos/
+│   │   └── tree_algos.js # Pure tree algorithms shared across viz modules
+│   ├── viz/
+│   │   └── viz_*.js      # Self-contained visualization modules; each calls VizRegistry.attach(id, {...})
+│   ├── code_db.js        # Auto-generated: C++ source strings for display (do not edit manually)
+│   ├── desc_db.js        # Algorithm descriptions and complexity notes
+│   └── heap_models.js    # Shared heap logic used by UI and unit tests
+├── build_db.js          # Node.js script: rebuilds code_db.js from .cpp files
+├── *.cpp                # C++ source files (one per algorithm/data structure)
 ├── tests/
 │   ├── visualizer.spec.js       # Core Playwright suite
 │   ├── heap_visualizer.spec.js  # Heap E2E suite
@@ -106,6 +113,14 @@ dsvisual/
 │       └── heap_models.test.js  # Node unit tests for heap invariants
 └── playwright.config.js
 ```
+
+`js/app.js` exposes `window.VizKit` (host helpers: `acquireDynamicVizHost`, `buildStepControls`, `getInputDifficulty`, `langOf`, `t`) and drives rendering/code-lookup through `window.VizRegistry` — `renderAll`/`getCodeForMethod` consult the registry before falling back to their built-in per-method logic. Note that not every method has migrated: stateful visualizations with heavier shared state (stack/queue/graph/tree/hash/heap) still live directly in `js/app.js`; only the self-contained ones have been extracted into `js/viz/` so far.
+
+**Adding a new visualization** no longer requires editing `app.js`'s dispatch switches. Instead:
+
+1. Create `js/viz/viz_<name>.js` that calls `VizRegistry.attach('<method-id>', { render, code, layout })` (any subset of those keys — `attach` partial-merges).
+2. Add its `<script src="js/viz/viz_<name>.js" defer></script>` tag in `index.html`.
+3. Add a `METHOD_GROUPS` entry in `js/app.js` so the method shows up in the nav/menu.
 
 ## Getting Started
 
