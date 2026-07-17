@@ -1037,24 +1037,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadExamples(methodId) { try { return ExamplesStore.load(localStorage, methodId); } catch (e) { return []; } }
-    function saveExample(methodId, text, defaultText) { try { ExamplesStore.save(localStorage, methodId, text, defaultText); } catch (e) { /* ignore */ } }
-    function buildExamplesSelect(methodId, defaultText) {
-        var lang = (window.I18N && I18N.getCurrentLanguage) ? I18N.getCurrentLanguage() : 'en';
-        var escAttr = function (s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); };
-        var escText = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
-        var trunc = function (s) { s = String(s); return s.length > 24 ? s.slice(0, 24) + '…' : s; };
-        var placeholder = lang === 'zh' ? '範例…' : 'Examples…';
-        var defLabel = lang === 'zh' ? '預設' : 'Default';
-        var h = '<select class="ex-select" data-method="' + escAttr(methodId) + '">';
-        h += '<option value="">' + placeholder + '</option>';
-        h += '<option value="' + escAttr(defaultText) + '">' + defLabel + '</option>';
-        loadExamples(methodId).forEach(function (e) {
-            if (e.text === defaultText) return;
-            h += '<option value="' + escAttr(e.text) + '">' + escText(trunc(e.text)) + '</option>';
-        });
-        h += '</select>';
-        return h;
-    }
 
     function setInputDifficulty(groupId, value) {
         if (DIFFICULTY_VALUES.indexOf(value) === -1) return;
@@ -3633,32 +3615,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dfsVisitedEl.textContent = '';
             host.querySelectorAll('.nodes circle').forEach(c => c.setAttribute('fill', '#fff'));
         };
-    }
-
-    // Builds two stacked rows: the text row and the pattern row aligned at `offset`.
-    // hi is null, or { kind: 'cell', textIdx, patIdx, status } highlighting one cell in
-    // each row, or { kind: 'window', status } highlighting the whole m-cell window.
-    // status is 'match' | 'mismatch' | 'collision'.
-    function buildAlignmentRow(text, pattern, offset, hi) {
-        function cls(on) { return on && hi && hi.status ? ' strsearch-' + hi.status : ''; }
-        let t = '<div class="strsearch-row strsearch-text">';
-        for (let k = 0; k < text.length; k++) {
-            let on = false;
-            if (hi && hi.kind === 'cell') on = (k === hi.textIdx);
-            else if (hi && hi.kind === 'window') on = (k >= offset && k < offset + pattern.length);
-            t += '<span class="strsearch-cell' + cls(on) + '">' + text[k] + '</span>';
-        }
-        t += '</div>';
-        let p = '<div class="strsearch-row strsearch-pattern">';
-        for (let k = 0; k < offset; k++) p += '<span class="strsearch-cell strsearch-spacer"></span>';
-        for (let k = 0; k < pattern.length; k++) {
-            let on = false;
-            if (hi && hi.kind === 'cell') on = (k === hi.patIdx);
-            else if (hi && hi.kind === 'window') on = true;
-            p += '<span class="strsearch-cell' + cls(on) + '">' + pattern[k] + '</span>';
-        }
-        p += '</div>';
-        return t + p;
     }
 
     function renderDeque() {
