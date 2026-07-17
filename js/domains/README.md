@@ -169,6 +169,12 @@ For each mode id the domain owns, **remove** from `app.js`:
   graph-prim, graph-bellman-ford, graph-floyd-warshall). DONE — verified via
   `npm run test:all` (286 unit + 207 Playwright, all green) and a grep of
   `app.js` for graph render/handler/state names, all clean.
+- **sort** — `js/domains/sort.js` (sort-bubble, sort-select, sort-insert,
+  sort-quick, sort-merge, sort-shell, sort-bucket, sort-count, sort-radix,
+  sort-heap, sort-shaker). DONE — verified via `npm run test:all` (286 unit +
+  207 Playwright, all green) and a grep of `app.js` for sort render/handler/
+  state names, all clean. Added `getDelay` to `VizKit` as a shared anim
+  primitive (heap's `animateHeapEvents` still uses the app.js closure copy).
 
 ## Remaining domains to migrate
 
@@ -189,6 +195,15 @@ once earlier domains are migrated):
   extracted into named functions as part of the move.
 - Existing reset in `switchMode`: `stackData = []; qArr = new Array(5).fill(null); qFront = 0; qRear = -1; qCount = 0;`
   and `if (currentMode === 'list-array' || currentMode === 'list-linked') mainListData = [];`
+
+### search (search-linear, search-binary)
+- State: `arrLinear`/`arrBinary` (fixed demo vectors, currently `const`s).
+- Renderer: `renderSearchArray(arr)`.
+- Handlers: `runLinearSearch`/`runBinarySearch`; button listeners for
+  `btnSearchGo`/`btnSearchPause`/`btnSearchStop` (Pause/Stop are shared with
+  sort via `handlePauseClick`/`handleStopClick`, which stay in app.js).
+- Registered directly via `reg('search-linear', ...)`/`reg('search-binary', ...)`
+  in `registerBehaviors()` — not yet a domain module.
 
 ### tree (tree-bst, tree-avl, tree-splay, tree-trie, tree-radix, tree-ternary, tree-btree, tree-bplus, tree-rb)
 - State: `bstRoot`, `trieRoot`, `radixRoot`, `tstRoot`, `btreeData`,
