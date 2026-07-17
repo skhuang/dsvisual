@@ -1429,7 +1429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Core sets
     let stackData = []; let qArr = new Array(5).fill(null); let qFront = 0; let qRear = -1; let qCount = 0;
-    let bstRoot = null; let mainListData = []; let sortArrData = [];
+    let bstRoot = null; let mainListData = [];
     let treeDrawLoop = null;
     let heapEventTimer = null;
 
@@ -1751,18 +1751,6 @@ document.addEventListener('DOMContentLoaded', () => {
         clearHeapEventMarks();
     }
 
-    function generateSortArray() {
-        const inp = window.RandomInput && RandomInput.randomInputFor('sort', getInputDifficulty());
-        if (inp && Array.isArray(inp.data) && inp.data.length) {
-            sortArrData = inp.data.slice();
-        } else {
-            sortArrData = [];
-            for (let i = 0; i < 15; i++) sortArrData.push(Math.floor(Math.random() * 95) + 5);
-        }
-        renderSortBars();
-        showStatus("Generated Random Array.", "#94a3b8");
-    }
-
     updateLayout();
 
     function switchMode(nextMode) {
@@ -1781,7 +1769,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.VizCore) window.VizCore.domains().forEach((d) => { if (d.onModeSwitch) d.onModeSwitch(currentMode); });
         renderMethodSections(getMethodGroupForMode(currentMode).id);
         updateLayout();
-        if(currentMode.includes('sort-') && sortArrData.length === 0) generateSortArray();
         renderAll();
         statusMsg.textContent = t('status.switched-to', { mode: t('method.' + currentMode) }); statusMsg.style.color = '#34d399';
         methodDropdownButtons.forEach((btn, mid) => {
@@ -2057,7 +2044,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // (Search, Sort layout bindings omitted for strictness matching original JS...)
     function handlePauseClick() { if (animState === 'playing') { animState = 'paused'; setAnimControls(true); showStatus('Paused', '#fbbf24'); } else if (animState === 'paused') { animState = 'playing'; setAnimControls(true); showStatus('Resumed', '#34d399'); } }
     btnSearchPause.addEventListener('click', handlePauseClick); btnSortPause.addEventListener('click', handlePauseClick);
-    function handleStopClick() { if(animState === 'playing' || animState === 'paused') { animState = 'stopped'; setTimeout(() => { animState = 'idle'; setAnimControls(false); if(currentMode.includes('sort')) renderSortBars(); else if(currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear); else if(currentMode.includes('heap-')) renderHeap(); showStatus('Stopped & Reset.', '#f87171'); }, 100); } }
+    function handleStopClick() { if(animState === 'playing' || animState === 'paused') { animState = 'stopped'; setTimeout(() => { animState = 'idle'; setAnimControls(false); if(currentMode.includes('sort')) { const b = window.VizRegistry && window.VizRegistry.behavior(currentMode); if (b && b.render) b.render(); } else if(currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear); else if(currentMode.includes('heap-')) renderHeap(); showStatus('Stopped & Reset.', '#f87171'); }, 100); } }
     btnSearchStop.addEventListener('click', handleStopClick); btnSortStop.addEventListener('click', handleStopClick);
     function setAnimControls(isPlaying) {
         if(currentMode.includes('search')) { btnSearchGo.disabled = isPlaying; btnSearchPause.disabled = !isPlaying; btnSearchStop.disabled = !isPlaying; btnSearchPause.textContent = animState === 'paused' ? t('btn.resume') : t('btn.pause'); }
@@ -2131,22 +2118,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 tstRoot = ins(tstRoot, str, 0); renderAdvTrees(); showStatus("TST Inserted: " + str, "#34d399");
             }
         });
-    });
-
-    btnSortRandom.addEventListener('click', () => { if(animState === 'playing' || animState === 'paused') return; generateSortArray(); });
-    btnSortStart.addEventListener('click', () => {
-        renderSortBars(); 
-        if (currentMode === 'sort-bubble') executeAnimWrapper(async () => await runBubbleSort());
-        else if (currentMode === 'sort-select') executeAnimWrapper(async () => await runSelectionSort());
-        else if (currentMode === 'sort-insert') executeAnimWrapper(async () => await runInsertionSort());
-        else if (currentMode === 'sort-quick') executeAnimWrapper(async () => { await runQuickSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
-        else if (currentMode === 'sort-merge') executeAnimWrapper(async () => { await runMergeSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
-        else if (currentMode === 'sort-shell') executeAnimWrapper(async () => { await runShellSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
-        else if (currentMode === 'sort-bucket') executeAnimWrapper(async () => { await runBucketSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
-        else if (currentMode === 'sort-count') executeAnimWrapper(async () => { await runCountingSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
-        else if (currentMode === 'sort-radix') executeAnimWrapper(async () => { await runRadixSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
-        else if (currentMode === 'sort-heap') executeAnimWrapper(async () => { await runHeapSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
-        else if (currentMode === 'sort-shaker') executeAnimWrapper(async () => { await runShakerSort(); if(animState!=='stopped') {for(let i=0;i<sortArrData.length;i++) setBarColor(i, 'sorted');} });
     });
 
     function showStatus(msg, color) { statusMsg.textContent = msg; statusMsg.style.color = color; }
@@ -2605,18 +2576,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('heap-skew', renderHeap, () => codeHeapSkew, null);
         reg('heap-dary', renderHeap, () => codeHeapDary, null);
         reg('heap-pairing', renderHeap, () => codeHeapPairing, null);
-        // Sorting
-        reg('sort-bubble', renderSortBars, () => codeSortBubble, null);
-        reg('sort-select', renderSortBars, () => codeSortSelect, null);
-        reg('sort-insert', renderSortBars, () => codeSortInsert, null);
-        reg('sort-quick', renderSortBars, () => codeSortQuick, null);
-        reg('sort-merge', renderSortBars, () => codeSortMerge, null);
-        reg('sort-shell', renderSortBars, () => codeSortShell, null);
-        reg('sort-bucket', renderSortBars, () => codeSortBucket, null);
-        reg('sort-count', renderSortBars, () => codeSortCounting, null);
-        reg('sort-radix', renderSortBars, () => codeSortRadix, null);
-        reg('sort-heap', renderSortBars, () => codeSortHeap, null);
-        reg('sort-shaker', renderSortBars, () => codeSortShaker, null);
         // Searching & String Matching
         reg('search-linear', () => renderSearchArray(arrLinear), () => codeSearchLinear, null);
         reg('search-binary', () => renderSearchArray(arrBinary), () => codeSearchBinary, null);
@@ -2656,19 +2615,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (['tree-trie', 'tree-radix', 'tree-ternary', 'tree-btree', 'tree-bplus'].includes(currentMode)) renderAdvTrees();
         else if (currentMode.includes('search')) renderSearchArray(currentMode === 'search-binary' ? arrBinary : arrLinear);
         else if (currentMode.includes('list-')) renderLists();
-        else if (currentMode.includes('sort-')) renderSortBars();
         else if (currentMode.includes('heap-')) renderHeap();
         else if (currentMode.includes('oop-')) renderOOP();
         else if (currentMode.includes('pattern-')) renderPattern();
     }
-
-    // Sort renderers omitted mapping exactly to previous standard block 
-    function renderSortBars() {
-        sortContainer.innerHTML = '';
-        sortArrData.forEach((val, i) => { const bar = document.createElement('div'); bar.className = 'sort-bar'; bar.id = 'sb-' + i; bar.style.height = (val * 2.5) + 'px'; bar.innerHTML = '<span>' + val + '</span>'; sortContainer.appendChild(bar); });
-    }
-    function setBarVal(index, val) { sortArrData[index] = val; const bar = document.getElementById('sb-' + index); if(bar) { bar.style.height = (val * 2.5) + 'px'; bar.innerHTML = '<span>' + val + '</span>'; } }
-    function setBarColor(index, classN) { const bar = document.getElementById('sb-' + index); if(bar) bar.className = 'sort-bar ' + classN; }
 
     function renderHeap() {
         const model = getActiveHeapModel();
@@ -2888,225 +2838,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderHeapTutorialPanel();
     }
     
-    async function runBubbleSort() {
-        showStatus("Bubble Sort", "#60a5fa"); const n = sortArrData.length;
-        for (let i = 0; i < n - 1; i++) {
-            for (let j = 0; j < n - i - 1; j++) {
-                setBarColor(j, 'comparing'); setBarColor(j+1, 'comparing'); await sleep(getDelay());
-                if (sortArrData[j] > sortArrData[j + 1]) {
-                    setBarColor(j, 'swapping'); setBarColor(j+1, 'swapping');
-                    let temp = sortArrData[j]; setBarVal(j, sortArrData[j+1]); setBarVal(j+1, temp); await sleep(getDelay());
-                }
-                setBarColor(j, ''); setBarColor(j+1, '');
-            }
-            setBarColor(n - i - 1, 'sorted');
-        }
-        setBarColor(0, 'sorted');
-    }
-    // I am skipping rewriting Selection/Insertion/Quick/Merge/Shell 60 lines internally logic to save block limits since they haven't changed!
-    async function runSelectionSort() {
-        showStatus("Selection Sort", "#60a5fa"); const n = sortArrData.length;
-        for (let i = 0; i < n - 1; i++) {
-            let min_idx = i; setBarColor(min_idx, 'pivot');
-            for (let j = i + 1; j < n; j++) {
-                setBarColor(j, 'comparing'); await sleep(getDelay());
-                if (sortArrData[j] < sortArrData[min_idx]) { if(min_idx !== i) setBarColor(min_idx, ''); min_idx = j; setBarColor(min_idx, 'swapping'); } else setBarColor(j, '');
-            }
-            if(min_idx !== i) { let temp = sortArrData[min_idx]; setBarVal(min_idx, sortArrData[i]); setBarVal(i, temp); }
-            setBarColor(min_idx, ''); setBarColor(i, 'sorted');
-        }
-        setBarColor(n-1, 'sorted');
-    }
-    async function runInsertionSort() {
-        showStatus("Insertion Sort", "#60a5fa"); const n = sortArrData.length; setBarColor(0, 'sorted');
-        for (let i = 1; i < n; i++) {
-            let key = sortArrData[i]; let j = i - 1; setBarColor(i, 'swapping'); await sleep(getDelay());
-            while (j >= 0 && sortArrData[j] > key) {
-                setBarColor(j, 'comparing'); setBarVal(j + 1, sortArrData[j]); await sleep(getDelay());
-                setBarColor(j, 'sorted'); setBarColor(j+1, 'sorted'); j = j - 1;
-            }
-            setBarVal(j + 1, key); setBarColor(j+1, 'sorted');
-        }
-    }
-    async function runQuickSort() { showStatus("Quick Sort", "#60a5fa"); await qsHelper(0, sortArrData.length - 1); }
-    async function qsHelper(low, high) {
-        if (low < high) { let pi = await qsPartition(low, high); await qsHelper(low, pi - 1); await qsHelper(pi + 1, high); } 
-        else if (low >= 0 && high >= 0 && low === high) setBarColor(low, 'sorted');
-    }
-    async function qsPartition(low, high) {
-        let pivot = sortArrData[high]; setBarColor(high, 'pivot'); let i = low - 1;
-        for (let j = low; j < high; j++) {
-            setBarColor(j, 'comparing'); await sleep(getDelay());
-            if (sortArrData[j] < pivot) { i++; let temp = sortArrData[i]; setBarVal(i, sortArrData[j]); setBarVal(j, temp); setBarColor(i, 'swapping'); }
-            if(i !== j) setBarColor(j, '');
-        }
-        await sleep(getDelay()); let temp = sortArrData[i+1]; setBarVal(i+1, sortArrData[high]); setBarVal(high, temp); setBarColor(high, ''); setBarColor(i+1, 'sorted');
-        for(let k=low; k<=i; k++) setBarColor(k, ''); return i + 1;
-    }
-    async function runMergeSort() { showStatus("Merge Sort", "#60a5fa"); await msHelper(0, sortArrData.length - 1); }
-    async function msHelper(l, r) { if (l >= r) return; let m = Math.floor(l + (r - l) / 2); await msHelper(l, m); await msHelper(m + 1, r); await msMerge(l, m, r); }
-    async function msMerge(l, m, r) {
-        let n1 = m - l + 1, n2 = r - m; let L = [], R = [];
-        for(let i=0; i<n1; i++) L.push(sortArrData[l + i]); for(let j=0; j<n2; j++) R.push(sortArrData[m + 1 + j]);
-        let i = 0, j = 0, k = l;
-        while (i < n1 && j < n2) {
-            setBarColor(k, 'comparing'); await sleep(getDelay());
-            if (L[i] <= R[j]) { setBarVal(k, L[i]); i++; } else { setBarVal(k, R[j]); j++; }
-            setBarColor(k, 'sorted'); k++;
-        }
-        while (i < n1) { setBarVal(k, L[i]); setBarColor(k, 'sorted'); i++; k++; await sleep(getDelay()/2); }
-        while (j < n2) { setBarVal(k, R[j]); setBarColor(k, 'sorted'); j++; k++; await sleep(getDelay()/2); }
-    }
-    async function runShellSort() {
-        showStatus("Shell Sort", "#60a5fa"); let n = sortArrData.length;
-        for (let gap = Math.floor(n / 2); gap > 0; gap = Math.floor(gap / 2)) {
-            for (let i = gap; i < n; i++) {
-                let temp = sortArrData[i]; let j; setBarColor(i, 'pivot');
-                for (j = i; j >= gap && sortArrData[j - gap] > temp; j -= gap) {
-                    setBarColor(j - gap, 'comparing'); await sleep(getDelay()); setBarVal(j, sortArrData[j - gap]); setBarColor(j, 'swapping'); setBarColor(j - gap, '');
-                }
-                setBarVal(j, temp); setBarColor(i, ''); setBarColor(j, '');
-            }
-        }
-    }
-
-    async function runBucketSort() {
-        showStatus("Bucket Sort: Distributing elements into logical buckets", "#fbbf24");
-        // Simulated visualization: We color code ranges
-        let max = Math.max(...sortArrData);
-        for(let i=0; i<sortArrData.length; i++) {
-            let bucketIdx = Math.floor((sortArrData[i] / max) * 4); // 5 colors map
-            const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#a78bfa'];
-            document.getElementById('sb-' + i).style.background = colors[bucketIdx] || colors[4];
-            await sleep(getDelay() / 4);
-        }
-        await sleep(getDelay());
-        showStatus("Bucket Sort: Sorting inside individual buckets & Re-assembling", "#3b82f6");
-        for (let i = 1; i < sortArrData.length; i++) {
-            let key = sortArrData[i]; let j = i - 1;
-            while (j >= 0 && sortArrData[j] > key) {
-                sortArrData[j + 1] = sortArrData[j];
-                renderSortBars(); await sleep(getDelay() / 2); // Visual step
-                j = j - 1;
-            }
-            sortArrData[j + 1] = key;
-        }
-    }
-
-    async function runCountingSort() {
-        showStatus("Counting Sort: Building Frequency Map", "#fbbf24");
-        let max = Math.max(...sortArrData); let min = Math.min(...sortArrData);
-        let count = new Array(max - min + 1).fill(0); let output = new Array(sortArrData.length).fill(0);
-        
-        for (let i = 0; i < sortArrData.length; i++) {
-            setBarColor(i, 'active'); await sleep(getDelay() / 4);
-            count[sortArrData[i] - min]++; setBarColor(i, 'default');
-        }
-        showStatus("Counting Sort: Re-populating target Array based on accumulated addresses", "#60a5fa");
-        for (let i = 1; i < count.length; i++) { count[i] += count[i - 1]; }
-        for (let i = sortArrData.length - 1; i >= 0; i--) {
-            output[count[sortArrData[i] - min] - 1] = sortArrData[i];
-            count[sortArrData[i] - min]--;
-        }
-        for(let i = 0; i < sortArrData.length; i++) {
-            sortArrData[i] = output[i]; renderSortBars(); setBarColor(i, 'sorted'); await sleep(getDelay() / 2);
-        }
-    }
-
-    async function runRadixSort() {
-        let max = Math.max(...sortArrData);
-        for(let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
-            showStatus('Radix Sort: Distributing strictly based on digit value (' + exp + 's place)', '#f472b6');
-            let output = new Array(sortArrData.length).fill(0); let count = new Array(10).fill(0);
-            for(let i=0; i<sortArrData.length; i++) count[Math.floor((sortArrData[i] / exp) % 10)]++;
-            for(let i=1; i<10; i++) count[i] += count[i - 1];
-            for(let i=sortArrData.length - 1; i>=0; i--) { output[count[Math.floor((sortArrData[i] / exp) % 10)] - 1] = sortArrData[i]; count[Math.floor((sortArrData[i] / exp) % 10)]--; }
-            for(let i=0; i<sortArrData.length; i++) {
-                sortArrData[i] = output[i]; renderSortBars(); setBarColor(i, 'active'); await sleep(getDelay() / 2); setBarColor(i, 'default');
-            }
-        }
-    }
-
-    async function runHeapSort() {
-        let n = sortArrData.length;
-        async function heapify(n, i) {
-            let largest = i; let l = 2*i + 1; let r = 2*i + 2;
-            if(l < n && sortArrData[l] > sortArrData[largest]) largest = l;
-            if(r < n && sortArrData[r] > sortArrData[largest]) largest = r;
-            if(largest !== i) {
-                setBarColor(i, 'active'); setBarColor(largest, 'active'); await sleep(getDelay());
-                let t = sortArrData[i]; sortArrData[i] = sortArrData[largest]; sortArrData[largest] = t;
-                renderSortBars(); await sleep(getDelay()); await heapify(n, largest);
-            }
-        }
-
-        showStatus("Heap Sort: Building absolute Max Heap (Heapify Structure)", "#fbbf24");
-        for(let i = Math.floor(n / 2) - 1; i >= 0; i--) { await heapify(n, i); }
-        
-        showStatus("Heap Sort: Extracting Max Element & Restoring Tree", "#60a5fa");
-        for(let i = n - 1; i > 0; i--) {
-            setBarColor(0, 'active'); setBarColor(i, 'active'); await sleep(getDelay());
-            let t = sortArrData[0]; sortArrData[0] = sortArrData[i]; sortArrData[i] = t;
-            renderSortBars(); setBarColor(i, 'sorted'); await sleep(getDelay()); await heapify(i, 0);
-        }
-        setBarColor(0, 'sorted');
-    }
-
-
-
-    async function runShakerSort() {
-        showStatus('Shaker Sort: Starting bidirectional bubble passes', '#fbbf24');
-        let n = sortArrData.length;
-        let left = 0, right = n - 1;
-        let swapped;
-
-        while (left < right) {
-            // Forward pass (left to right)
-            swapped = false;
-            for (let i = left; i < right; i++) {
-                setBarColor(i, 'comparing'); setBarColor(i + 1, 'comparing'); await sleep(getDelay());
-                if (sortArrData[i] > sortArrData[i + 1]) {
-                    setBarColor(i, 'swapping'); setBarColor(i + 1, 'swapping');
-                    let temp = sortArrData[i]; setBarVal(i, sortArrData[i + 1]); setBarVal(i + 1, temp);
-                    await sleep(getDelay());
-                    swapped = true;
-                }
-                setBarColor(i, ''); setBarColor(i + 1, '');
-            }
-            // Largest element is now at 'right'
-            setBarColor(right, 'sorted');
-            right--;
-
-            // If no swap occurred, array is sorted
-            if (!swapped) break;
-
-            // Backward pass (right to left)
-            swapped = false;
-            for (let i = right; i > left; i--) {
-                setBarColor(i - 1, 'comparing'); setBarColor(i, 'comparing'); await sleep(getDelay());
-                if (sortArrData[i - 1] > sortArrData[i]) {
-                    setBarColor(i - 1, 'swapping'); setBarColor(i, 'swapping');
-                    let temp = sortArrData[i - 1]; setBarVal(i - 1, sortArrData[i]); setBarVal(i, temp);
-                    await sleep(getDelay());
-                    swapped = true;
-                }
-                setBarColor(i - 1, ''); setBarColor(i, '');
-            }
-            // Smallest element is now at 'left'
-            setBarColor(left, 'sorted');
-            left++;
-
-            // If no swap occurred, array is sorted
-            if (!swapped) break;
-        }
-
-        // Mark remaining unsorted as sorted
-        for (let i = left; i <= right; i++) {
-            setBarColor(i, 'sorted');
-        }
-        showStatus('Shaker Sort complete!', '#34d399');
-    }
-
     async function runLinearSearch(target) {
         renderSearchArray(arrLinear); showStatus('Linear Search', '#60a5fa');
         const lPtr = document.getElementById('ptr-l'); lPtr.classList.add('visible'); lPtr.textContent = 'i';
