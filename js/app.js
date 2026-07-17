@@ -2708,7 +2708,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('list-equivalence', renderListEquivalence, () => codeListEquivalence, { host: 'dynamic' });
         // Arrays
         reg('matrix-sparse-list', renderMatrixSparseList, () => codeMatrixSparseList, { host: 'dynamic' });
-        reg('poly-padd', renderPolyPadd, () => codePolyPadd, { host: 'dynamic' });
         reg('magic-latin', renderMagicLatin, () => codeMagicLatin, { host: 'dynamic' });
         reg('magic-torus', renderMagicTorus, () => codeMagicTorus, { host: 'dynamic' });
         reg('magic-formula', renderMagicFormula, () => codeMagicFormula, { host: 'dynamic' });
@@ -2841,7 +2840,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'game-tree') renderGameTree();
         else if (currentMode === 'huffman') renderHuffman();
         else if (currentMode === 'matrix-sparse-list') renderMatrixSparseList();
-        else if (currentMode === 'poly-padd') renderPolyPadd();
         else if (currentMode === 'magic-latin') renderMagicLatin();
         else if (currentMode === 'magic-torus') renderMagicTorus();
         else if (currentMode === 'magic-formula') renderMagicFormula();
@@ -5739,61 +5737,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         const mslEx = host.querySelector('.ex-select');
         if (mslEx) mslEx.onchange = (ev) => { const v = ev.target.value; if (!v) return; st.text = v; renderMatrixSparseList(); };
-    }
-    let _polyState = null;
-    function renderPolyPadd() {
-        const host = acquireDynamicVizHost();
-        if (!_polyState) _polyState = { a: '3:2,2:1,1:0', b: '5:3,4:1' };
-        const st = _polyState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const A = PolyViz.parsePoly(st.a);
-        const B = PolyViz.parsePoly(st.b);
-        const res = PolyViz.buildPaddFrames(A, B);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="pp-controls">' +
-              'A <input type="text" class="pp-a" value="' + st.a + '"> ' +
-              'B <input type="text" class="pp-b" value="' + st.b + '"> ' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="pp-apply">Apply</button>' +
-              '<span class="sm-hint">terms as coef:exp, comma-separated</span>' +
-            '</div>' +
-            '<div class="pp-row"><span class="pp-label">A =</span> <span class="pp-a-terms"></span></div>' +
-            '<div class="pp-row"><span class="pp-label">B =</span> <span class="pp-b-terms"></span></div>' +
-            '<div class="pp-row"><span class="pp-label">A+B =</span> <span class="pp-result"></span></div>' +
-            '<div class="pp-phase"></div>';
-
-        function termCells(poly, ptr) {
-            return poly.map((t, k) => '<span class="pp-term' + (k === ptr ? ' pp-cur' : '') + '">' + PolyViz.formatPoly([t]) + '</span>').join('');
-        }
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.pp-a-terms')) return;
-            host.querySelector('.pp-a-terms').innerHTML = termCells(A, fr.i);
-            host.querySelector('.pp-b-terms').innerHTML = termCells(B, fr.j);
-            host.querySelector('.pp-result').innerHTML = (fr.result || []).map((t) => '<span class="pp-term out">' + PolyViz.formatPoly([t]) + '</span>').join('') || '<span class="pp-term out">0</span>';
-            host.querySelector('.pp-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.pp-apply').onclick = () => {
-            const a = host.querySelector('.pp-a').value.trim();
-            const b = host.querySelector('.pp-b').value.trim();
-            if (a && b) { st.a = a; st.b = b; renderPolyPadd(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('poly-padd', getInputDifficulty());
-            if (!inp) return;
-            _polyState.a = inp.a;
-            _polyState.b = inp.b;
-            renderPolyPadd();
-        };
     }
 
     const ML_PALETTE = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#14b8a6', '#3b82f6', '#8b5cf6', '#ec4899', '#78716c'];
