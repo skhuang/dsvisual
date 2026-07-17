@@ -2725,7 +2725,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('tree-fenwick', renderFenwick, () => codeTreeFenwick, { host: 'dynamic' });
         reg('tree-traversal', renderTreeTraversal, () => codeTreeTraversal, { host: 'dynamic' });
         reg('huffman', renderHuffman, () => codeHuffman, { host: 'dynamic' });
-        reg('tree-obst', renderTreeObst, () => codeTreeObst, { host: 'dynamic' });
         reg('tree-mway', renderTreeMway, () => codeTreeMway, { host: 'dynamic' });
         reg('tree-expression', renderTreeExpression, () => codeTreeExpression, { host: 'dynamic' });
         reg('tree-general-binary', renderTreeGeneralBinary, () => codeTreeGeneralBinary, { host: 'dynamic' });
@@ -2841,7 +2840,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'magic-torus') renderMagicTorus();
         else if (currentMode === 'magic-formula') renderMagicFormula();
         else if (currentMode === 'magic-symmetry') renderMagicSymmetry();
-        else if (currentMode === 'tree-obst') renderTreeObst();
         else if (currentMode === 'tree-mway') renderTreeMway();
         else if (currentMode === 'tree-expression') renderTreeExpression();
         else if (currentMode === 'sort-external') renderSortExternal();
@@ -5091,77 +5089,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    let _obstState = null;
-    function renderTreeObst() {
-        const host = acquireDynamicVizHost();
-        if (!_obstState) _obstState = { keys: [10, 20, 30, 40], freqs: [4, 2, 6, 3] };
-        const st = _obstState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        const n = st.keys.length;
-        const res = ObstViz.buildObstFrames(st.keys, st.freqs);
-        const frames = res.frames;
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="obst-controls">' +
-              '<input type="text" class="obst-keys" value="' + st.keys.join(',') + '" placeholder="keys e.g. 10,20,30">' +
-              '<input type="text" class="obst-freqs" value="' + st.freqs.join(',') + '" placeholder="freqs e.g. 4,2,6">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
-              '<button type="button" class="obst-apply">Apply</button>' +
-            '</div>' +
-            '<div class="obst-grid"></div>' +
-            '<div class="obst-tree-stage"><svg class="obst-edges"></svg><div class="obst-nodes"></div></div>' +
-            '<div class="obst-phase"></div>';
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.obst-grid')) return;
-            let html = '<table class="obst-tbl"><tr><th>i\\j</th>';
-            for (let j = 0; j < n; j++) html += '<th>' + st.keys[j] + '</th>';
-            html += '</tr>';
-            for (let i = 0; i < n; i++) {
-                html += '<tr><th>' + st.keys[i] + '</th>';
-                for (let j = 0; j < n; j++) {
-                    if (j < i) { html += '<td class="obst-empty"></td>'; continue; }
-                    const v = fr.cost[i + ',' + j];
-                    const cur = (fr.phase === 'fill' && fr.i === i && fr.j === j) ? ' obst-cur' : '';
-                    html += '<td class="obst-cell' + cur + '">' + (v != null ? v : '') + '</td>';
-                }
-                html += '</tr>';
-            }
-            html += '</table>';
-            host.querySelector('.obst-grid').innerHTML = html;
-            const nodesEl = host.querySelector('.obst-nodes');
-            const edgesEl = host.querySelector('.obst-edges');
-            if (fr.phase === 'tree') {
-                const meta = [];
-                computeTreeLayout(res.tree, 200, 30, 90, meta);
-                const byId = {}; meta.forEach((m) => { byId[m.id] = m; });
-                edgesEl.innerHTML = '';
-                (function walk(nd) { if (!nd) return; [nd.left, nd.right].forEach((c) => { if (!c) return; const a = byId[nd.id], b = byId[c.id]; edgesEl.innerHTML += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#94a3b8" stroke-width="2"/>'; walk(c); }); })(res.tree);
-                nodesEl.innerHTML = '';
-                meta.forEach((m) => { const d = document.createElement('div'); d.className = 'tree-node'; d.textContent = m.val; d.style.left = m.x + 'px'; d.style.top = m.y + 'px'; nodesEl.appendChild(d); });
-            } else { nodesEl.innerHTML = ''; edgesEl.innerHTML = ''; }
-            host.querySelector('.obst-phase').textContent = langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 600));
-        paint();
-        host.querySelector('.obst-apply').onclick = () => {
-            const ks = host.querySelector('.obst-keys').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            const fs = host.querySelector('.obst-freqs').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
-            if (ks.length && ks.length === fs.length) { ks.sort((a, b) => a - b); st.keys = ks; st.freqs = fs; renderTreeObst(); }
-        };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('tree-obst', getInputDifficulty());
-            if (!inp) return;
-            _obstState.keys = inp.keys;
-            _obstState.freqs = inp.freqs;
-            renderTreeObst();
-        };
-    }
     let _extState = null;
     function renderSortExternal() {
         const host = acquireDynamicVizHost();
