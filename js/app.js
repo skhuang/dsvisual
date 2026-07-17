@@ -1412,7 +1412,13 @@ document.addEventListener('DOMContentLoaded', () => {
         getInputDifficulty,
         langOf: (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en,
         t,
+        showStatus,
+        executeAnimWrapper,
     };
+    if (window.VizCore) {
+        window.VizCore.bindMode(() => currentMode, (m) => { currentMode = m; });
+        window.VizCore.domains().forEach((d) => { if (d.init) d.init(); });
+    }
     registerBehaviors();
     bindDifficultySelect();
     const MAX_SIZE = 5;
@@ -1792,6 +1798,7 @@ document.addEventListener('DOMContentLoaded', () => {
             heapModels[currentMode].clear();
             heapModels[currentMode].setOrder(heapIsMin);
         }
+        if (window.VizCore) window.VizCore.domains().forEach((d) => { if (d.onModeSwitch) d.onModeSwitch(currentMode); });
         renderMethodSections(getMethodGroupForMode(currentMode).id);
         updateLayout();
         if(currentMode.includes('sort-') && sortArrData.length === 0) generateSortArray();
