@@ -2703,7 +2703,6 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('list-array', renderLists, () => codeListArray, null);
         reg('list-linked', renderLists, () => codeListLinked, null);
         reg('deque', renderDeque, () => codeDeque, { host: 'dynamic' });
-        reg('expr-infix-postfix', renderExprInfixPostfix, () => codeExprInfixPostfix, { host: 'dynamic' });
         reg('list-equivalence', renderListEquivalence, () => codeListEquivalence, { host: 'dynamic' });
         // Arrays
         reg('matrix-sparse-list', renderMatrixSparseList, () => codeMatrixSparseList, { host: 'dynamic' });
@@ -2851,7 +2850,6 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'file-isam') renderFileIsam();
         else if (currentMode === 'file-inverted') renderFileInverted();
         else if (currentMode === 'sort-polyphase') renderSortPolyphase();
-        else if (currentMode === 'expr-infix-postfix') renderExprInfixPostfix();
         else if (currentMode === 'list-equivalence') renderListEquivalence();
         else if (currentMode === 'nano-bpe-encode') renderNanoBpeEncode();
         else if (currentMode === 'nano-compute-graph') renderNanoComputeGraph();
@@ -5090,63 +5088,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!inp) return;
             _hfState.text = inp.text;
             renderHuffman();
-        };
-    }
-
-    let _exprState = null;
-    function renderExprInfixPostfix() {
-        const host = acquireDynamicVizHost();
-        if (!_exprState) _exprState = { text: 'A*(B+C)*D' };
-        const st = _exprState;
-        const langOf = (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en;
-        let frames = [], postfix = [];
-        try {
-            const tokens = ExprViz.tokenize(st.text);
-            const conv = ExprViz.buildShuntingYardFrames(tokens);
-            postfix = conv.postfix;
-            const evalRes = ExprViz.buildPostfixEvalFrames(postfix);
-            frames = conv.frames.concat(evalRes.frames);
-        } catch (e) {
-            host.innerHTML = '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="expr-apply">Apply</button></div>' +
-                '<div class="expr-error" style="color:#dc2626;margin-top:8px;"></div>';
-            host.querySelector('.expr-input').value = st.text;
-            host.querySelector('.expr-error').textContent = 'Parse error: ' + e.message;
-            host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
-            return;
-        }
-        let idx = 0;
-
-        host.innerHTML =
-            '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="expr-apply">Apply</button></div>' +
-            '<div class="expr-phasebadge"></div>' +
-            '<div class="expr-stack"><strong>Stack:</strong> <span class="expr-stack-cells"></span></div>' +
-            '<div class="expr-out"><strong>Output:</strong> <span class="expr-out-cells"></span></div>' +
-            '<div class="expr-phase"></div>';
-        host.querySelector('.expr-input').value = st.text;
-
-        function paint() {
-            const fr = frames[idx];
-            if (!host.querySelector('.expr-stack-cells')) return;
-            host.querySelector('.expr-phasebadge').textContent = fr.phase === 'convert'
-                ? 'Phase 1 — Convert (postfix: ' + postfix.join(' ') + ')'
-                : 'Phase 2 — Evaluate';
-            const stackArr = fr.phase === 'convert' ? fr.opStack : fr.valStack;
-            const outArr = fr.phase === 'convert' ? fr.output : [];
-            host.querySelector('.expr-stack-cells').innerHTML = stackArr.map((v) => '<span class="expr-cell">' + v + '</span>').join('');
-            host.querySelector('.expr-out-cells').innerHTML = outArr.map((v) => '<span class="expr-cell out">' + v + '</span>').join('');
-            host.querySelector('.expr-phase').textContent = (fr.token ? '[' + fr.token + '] ' : '') + langOf(fr.msg);
-        }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(buildStepControls(step, reset, 700));
-        paint();
-        host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
-        host.querySelector('.rand-btn').onclick = () => {
-            const inp = window.RandomInput && RandomInput.randomInputFor('expr-infix-postfix', getInputDifficulty());
-            if (!inp) return;
-            _exprState.text = inp.text;
-            renderExprInfixPostfix();
         };
     }
 
