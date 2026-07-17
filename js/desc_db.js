@@ -875,6 +875,8 @@ const descDB = {
             <span class="badge time">Build/Eval: O(N)</span>
             <span class="badge space">Space: O(N)</span>
         </div>
+        <p><strong>布林模式:</strong>以後序輸入命題公式(變數 a,b,c…、常數 0/1、運算子 ∧(&) ∨(|) ¬(!) ⊕(^) →(>)),建出運算式樹並在指派下以後序求值;真值表掃描列舉全部 2<sup>k</sup> 種指派,判定恆真(tautology)、矛盾(contradiction,不可滿足)或可滿足(contingent)。</p>
+        <p><strong>Boolean mode:</strong> enter a propositional formula in postfix (variables a,b,c…, constants 0/1, operators ∧(&) ∨(|) ¬(!) ⊕(^) →(>)), build its expression tree and evaluate it postorder under an assignment; a truth-table sweep enumerates all 2<sup>k</sup> assignments and decides tautology, contradiction (unsatisfiable), or contingent (satisfiable).</p>
     `,
     'nano-bpe-encode': `
         <h3>BPE Encode — Trie Longest Match</h3>
