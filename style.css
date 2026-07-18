@@ -3085,3 +3085,22 @@ ul.dc-tree, ul.dc-tree ul { list-style: none; margin: 0; padding-left: 18px; }
 .dc-edge { display: inline-block; min-width: 14px; color: #b8336a; font-weight: 700; }
 .dc-tnode.dc-active > .dc-weigh, .dc-leaf.dc-active { background: #fef9c3; border-radius: 3px; padding: 0 3px; }
 .dc-leaf { color: #1a4d8f; }
+
+/* tree-copy-equal */
+.ce-mode { display: flex; gap: 6px; margin-bottom: 8px; }
+.ce-mode-btn { padding: 4px 14px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; cursor: pointer; font-size: 13px; }
+.ce-mode-btn.active { background: #1a4d8f; color: #fff; border-color: #1a4d8f; }
+.ce-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 8px; }
+.ce-controls label { font-size: 13px; }
+.ce-controls input { font-family: 'Fira Code', monospace; margin-left: 4px; }
+.ce-preset { padding: 3px 10px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; cursor: pointer; font-size: 12px; }
+.ce-panels { display: flex; gap: 12px; flex-wrap: wrap; }
+.ce-panel { flex: 1 1 300px; min-width: 260px; }
+.ce-ptitle { font-weight: 700; font-size: 13px; margin-bottom: 4px; color: #1a4d8f; }
+.ce-stage { position: relative; min-height: 200px; }
+.ce-stage .ce-edges { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tree-node.ce-active { background: #16a34a; color: #fff; border-color: #16a34a; }
+.tree-node.ce-mismatch { background: #dc2626; color: #fff; border-color: #dc2626; }
+.ce-verdict { margin-top: 8px; font-weight: bold; }
+.ce-verdict.ce-ok { color: #16a34a; }
+.ce-verdict.ce-err { color: #dc2626; }
