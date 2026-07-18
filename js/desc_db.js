@@ -904,6 +904,15 @@ const descDB = {
             <span class="badge space">Cₙ grows ~4ⁿ / n^1.5</span>
         </div>
     `,
+    'decision-tree-coins': `
+        <h3>The 8-Coins Puzzle — a Ternary Decision Tree</h3>
+        <p>Among 8 coins one is counterfeit — heavier or lighter — and an equal-arm balance gives three outcomes per weighing (left down, balanced, right down). This is a <strong>ternary decision tree</strong>: each internal node is a weighing, each of its three edges an outcome, and each leaf names the fake coin and its direction.</p>
+        <p>Three weighings give <code>3³ = 27</code> leaves, enough to distinguish the <code>16</code> possible answers (8 coins × heavy/light) — an information-theoretic argument for why 3 weighings suffice. The viz walks the fixed EIGHTCOINS procedure for any chosen fake and verifies it identifies all 16.</p>
+        <div class="complexities">
+            <span class="badge time">Weighings: 3</span>
+            <span class="badge space">Outcomes: 3³ = 27 ≥ 16</span>
+        </div>
+    `,
     'nano-bpe-encode': `
         <h3>BPE Encode — Trie Longest Match</h3>
         <p>Tokenize text against a trained vocabulary by walking a character trie and greedily taking the longest matching piece at each position.</p>
