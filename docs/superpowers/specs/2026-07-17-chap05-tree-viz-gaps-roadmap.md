@@ -98,4 +98,4 @@ app.js. Modeled on `js/viz/viz_expr_tree.js` (built in #1).
 - [x] #3 `tree-array-rep` — merged (PR #134)
 - [x] #4 `tree-catalan` — merged (PR #135)
 - [x] #5 `decision-tree-coins` — merged (PR #136)
-- [ ] #6 `tree-copy-equal` — spec/plan in progress
+- [x] #6 `tree-copy-equal` — merged (PR #137)  ✅ PROGRAM COMPLETE
