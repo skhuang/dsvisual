@@ -56,6 +56,11 @@
             'method.tree-mway': 'm-way Search Tree',
             'method.tree-expression': 'Expression Tree',
             'method.tree-general-binary': 'General ↔ Binary Tree',
+            'method.tree-reconstruct': 'Reconstruct Tree',
+            'method.tree-array-rep': 'Array Representation',
+            'method.tree-catalan': 'Counting Trees (Catalan)',
+            'method.decision-tree-coins': '8-Coins Decision Tree',
+            'method.tree-copy-equal': 'Tree COPY & EQUAL',
             'method.game-tree': 'Game Tree (Minimax / α-β)',
 
             // Methods — Graphs
@@ -295,6 +300,11 @@
             'method.tree-mway': 'm 路搜尋樹',
             'method.tree-expression': '運算式樹',
             'method.tree-general-binary': '一般樹 ↔ 二元樹',
+            'method.tree-reconstruct': '重建二元樹',
+            'method.tree-array-rep': '循序(陣列)表示',
+            'method.tree-catalan': '計數二元樹(Catalan)',
+            'method.decision-tree-coins': '八枚硬幣決策樹',
+            'method.tree-copy-equal': '二元樹 COPY 與 EQUAL',
             'method.game-tree': '賽局樹(Minimax / α-β 剪枝)',
 
             // Methods — Graphs
