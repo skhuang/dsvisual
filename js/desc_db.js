@@ -904,6 +904,15 @@ const descDB = {
             <span class="badge space">Cₙ grows ~4ⁿ / n^1.5</span>
         </div>
     `,
+    'tree-copy-equal': `
+        <h3>Tree COPY and EQUAL</h3>
+        <p><strong>COPY</strong> makes a deep copy of a binary tree: create a new node, then recursively copy the left and right subtrees. The result is a fully independent tree with the same shape and values — <code>equal(original, copy)</code> is always true.</p>
+        <p><strong>EQUAL</strong> tests whether two trees are identical by structure and content: both empty is equal; if one node is present where the other is null the shapes differ (<em>structural</em> mismatch); if two present nodes hold different values that is a <em>value</em> mismatch; otherwise recurse on both subtrees. The viz stops at the first mismatch and marks it.</p>
+        <div class="complexities">
+            <span class="badge time">COPY / EQUAL: O(n)</span>
+            <span class="badge space">Space: O(h) recursion</span>
+        </div>
+    `,
     'decision-tree-coins': `
         <h3>The 8-Coins Puzzle — a Ternary Decision Tree</h3>
         <p>Among 8 coins one is counterfeit — heavier or lighter — and an equal-arm balance gives three outcomes per weighing (left down, balanced, right down). This is a <strong>ternary decision tree</strong>: each internal node is a weighing, each of its three edges an outcome, and each leaf names the fake coin and its direction.</p>
