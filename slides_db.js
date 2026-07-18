@@ -21608,4 +21608,162 @@ SLIDES_DB["nano-ngram-next"] = {
     ]
 };
 
+SLIDES_DB["tree-array-rep"] = {
+  "category": "Trees",
+  "title": { "zh": "循序(陣列)表示", "en": "Sequential (Array) Representation" },
+  "slides": [
+    { "heading": { "zh": "用陣列存二元樹", "en": "Storing a Binary Tree in an Array" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "把二元樹放進 1-based 陣列,節點位置本身就編碼了結構,不需指標。", "en": "Place a binary tree in a 1-indexed array; the position itself encodes the structure — no pointers needed." } },
+        { "type": "bullets", "items": [
+          { "zh": "節點 $i$ 的左子在 $2i$", "en": "node $i$'s left child at $2i$" },
+          { "zh": "右子在 $2i+1$", "en": "right child at $2i+1$" },
+          { "zh": "父節點在 $\\lfloor i/2 \\rfloor$", "en": "parent at $\\lfloor i/2 \\rfloor$" }
+        ] }
+      ] },
+    { "heading": { "zh": "索引運算", "en": "Index Arithmetic" },
+      "blocks": [
+        { "type": "code", "lang": "cpp", "file": "tree_array_rep.cpp", "code": "int left(int i)  { return 2*i; }\nint right(int i) { return 2*i + 1; }\nint parent(int i){ return i/2; }" },
+        { "type": "note", "text": { "zh": "空位以 \"-\" 佔位;層序讀入 token,位置 k 即索引 k。", "en": "Empty slots hold \"-\"; read level-order tokens, position k = index k." } }
+      ] },
+    { "heading": { "zh": "偏斜樹的浪費", "en": "Waste in a Skewed Tree" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "完全樹沒有浪費;偏斜樹很浪費:高度 $h$ 的樹可能需要 $2^{h+1}-1$ 個槽,卻只有 $h+1$ 個節點。", "en": "A complete tree wastes nothing; a skewed tree is wasteful: a height-$h$ tree may need $2^{h+1}-1$ slots while holding as few as $h+1$ nodes." } }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "table", "headers": [ { "zh": "面向", "en": "Aspect" }, { "zh": "成本", "en": "Cost" } ],
+          "rows": [
+            [ { "zh": "索引運算", "en": "Index ops" }, { "zh": "O(1)", "en": "O(1)" } ],
+            [ { "zh": "空間(最壞)", "en": "Space (worst)" }, { "zh": "$O(2^h)$", "en": "$O(2^h)$" } ]
+          ] }
+      ] }
+  ]
+};
+SLIDES_DB["tree-reconstruct"] = {
+  "category": "Trees",
+  "title": { "zh": "由兩序列重建二元樹", "en": "Reconstruct a Tree from Two Traversals" },
+  "slides": [
+    { "heading": { "zh": "問題", "en": "The Problem" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "給定相異鍵的兩個走訪序列,重建原二元樹。", "en": "Given two traversal sequences of a tree with distinct keys, rebuild the tree." } },
+        { "type": "bullets", "items": [
+          { "zh": "前序+中序:唯一(任意二元樹)", "en": "preorder+inorder: unique (any binary tree)" },
+          { "zh": "後序+中序:唯一(任意二元樹)", "en": "postorder+inorder: unique (any binary tree)" },
+          { "zh": "前序+後序:僅對完全二元樹唯一", "en": "preorder+postorder: unique only for full binary trees" }
+        ] }
+      ] },
+    { "heading": { "zh": "前序+中序", "en": "Preorder + Inorder" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "前序頭是根。", "en": "The preorder head is the root." },
+          { "zh": "在中序找到根:左段為左子樹、右段為右子樹。", "en": "Find the root in inorder; the left part is the left subtree, the right part the right subtree." },
+          { "zh": "對兩段遞迴。", "en": "Recurse on both parts." }
+        ] }
+      ] },
+    { "heading": { "zh": "前序+後序的歧義", "en": "Preorder + Postorder Ambiguity" },
+      "blocks": [
+        { "type": "note", "text": { "zh": "前序+後序只有在「完全二元樹(每節點 0 或 2 子)」時唯一;單一子節點無法判定是左是右。", "en": "Preorder+postorder is unique only for full binary trees (every node 0 or 2 children); a single-child node can't be placed unambiguously." } }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "時間 O(n)(以雜湊表定位根)", "en": "Time O(n) (hash-map to locate the root)" },
+          { "zh": "空間 O(n)", "en": "Space O(n)" }
+        ] }
+      ] }
+  ]
+};
+SLIDES_DB["tree-catalan"] = {
+  "category": "Trees",
+  "title": { "zh": "計數二元樹(Catalan 數)", "en": "Counting Binary Trees (Catalan)" },
+  "slides": [
+    { "heading": { "zh": "有幾種形狀?", "en": "How Many Shapes?" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "$n$ 個節點的相異二元樹形狀數,正是第 $n$ 個 Catalan 數 $C_n$。", "en": "The number of distinct binary-tree shapes with $n$ nodes is the $n$th Catalan number $C_n$." } }
+      ] },
+    { "heading": { "zh": "遞迴", "en": "The Recurrence" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "依根分割:左 $i$ 個、右 $n-1-i$ 個,任一左形狀配任一右形狀。", "en": "Split on the root: $i$ nodes left, $n-1-i$ right; any left shape pairs with any right shape." } },
+        { "type": "math", "tex": "C_n = \\sum_{i=0}^{n-1} C_i \\cdot C_{n-1-i}", "caption": { "zh": "卷積遞迴", "en": "convolution recurrence" } }
+      ] },
+    { "heading": { "zh": "封閉形與數列", "en": "Closed Form & Sequence" },
+      "blocks": [
+        { "type": "math", "tex": "C_n = \\frac{1}{n+1}\\binom{2n}{n}", "caption": { "zh": "封閉形", "en": "closed form" } },
+        { "type": "paragraph", "text": { "zh": "數列:1, 1, 2, 5, 14, 42, 132, 429, …", "en": "Sequence: 1, 1, 2, 5, 14, 42, 132, 429, …" } }
+      ] },
+    { "heading": { "zh": "還出現在哪裡", "en": "Where Else Catalan Appears" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "合法括號序列", "en": "balanced parenthesis sequences" },
+          { "zh": "凸多邊形的三角剖分", "en": "triangulations of a convex polygon" },
+          { "zh": "不越過對角線的格路徑", "en": "monotonic lattice paths under the diagonal" }
+        ] }
+      ] }
+  ]
+};
+SLIDES_DB["decision-tree-coins"] = {
+  "category": "Trees",
+  "title": { "zh": "八枚硬幣決策樹", "en": "8-Coins Decision Tree" },
+  "slides": [
+    { "heading": { "zh": "問題", "en": "The Puzzle" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "8 枚硬幣中有一枚偽幣(較重或較輕);用等臂天平在 3 次秤重內找出它與方向。", "en": "Among 8 coins one is counterfeit (heavier or lighter); using an equal-arm balance, find it and its direction in 3 weighings." } }
+      ] },
+    { "heading": { "zh": "三分決策樹", "en": "A Ternary Decision Tree" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "每次秤重有三種結果:左重 / 平衡 / 右重", "en": "each weighing has three outcomes: left down / balanced / right down" },
+          { "zh": "內部節點是一次秤重,三條邊是三種結果", "en": "internal nodes are weighings; the three edges are the outcomes" },
+          { "zh": "葉節點指出偽幣與較重/較輕", "en": "leaves name the fake coin and heavy/light" }
+        ] }
+      ] },
+    { "heading": { "zh": "EIGHTCOINS 程序", "en": "The EIGHTCOINS Procedure" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "秤 {a,b,c} 對 {d,e,f}。", "en": "Weigh {a,b,c} vs {d,e,f}." },
+          { "zh": "平衡 → 偽幣在 {g,h};否則在較重/較輕的那一組。", "en": "Balanced → fake in {g,h}; else in the heavier/lighter group." },
+          { "zh": "第二次秤重縮小範圍,第三次與一枚已知好幣比較定案(COMP)。", "en": "A second weighing narrows it; a third compares against a known-good coin (COMP)." }
+        ] }
+      ] },
+    { "heading": { "zh": "資訊理論最佳性", "en": "Information-Theoretic Optimality" },
+      "blocks": [
+        { "type": "note", "text": { "zh": "3 次三分結果共有 $3^3 = 27$ 個葉,足以區分 16 種答案(8 幣 × 重/輕)。", "en": "Three ternary weighings give $3^3 = 27$ leaves, enough to distinguish the 16 answers (8 coins × heavy/light)." } },
+        { "type": "math", "tex": "3^3 = 27 \\geq 16", "caption": { "zh": "為何 3 次足夠", "en": "why 3 weighings suffice" } }
+      ] }
+  ]
+};
+SLIDES_DB["tree-copy-equal"] = {
+  "category": "Trees",
+  "title": { "zh": "二元樹 COPY 與 EQUAL", "en": "Tree COPY & EQUAL" },
+  "slides": [
+    { "heading": { "zh": "兩個配對操作", "en": "Two Paired Operations" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "COPY 深拷貝一棵樹;EQUAL 判斷兩棵樹是否結構與內容皆相同。", "en": "COPY makes a deep copy of a tree; EQUAL tests whether two trees are identical in structure and content." } }
+      ] },
+    { "heading": { "zh": "COPY(深拷貝)", "en": "COPY (Deep Copy)" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "先建新節點,再遞迴拷貝左右子樹;得到完全獨立的樹,且 equal(原, 副) 恆為真。", "en": "Create the node, then recursively copy the left and right subtrees; the result is fully independent and equal(original, copy) is always true." } },
+        { "type": "code", "lang": "cpp", "file": "tree_copy_equal.cpp", "code": "TreeNode* copyTree(TreeNode* t) {\n    if (!t) return nullptr;\n    TreeNode* c = new TreeNode{ t->val };\n    c->left  = copyTree(t->left);\n    c->right = copyTree(t->right);\n    return c;\n}" }
+      ] },
+    { "heading": { "zh": "EQUAL(結構 + 內容)", "en": "EQUAL (Structure + Content)" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "兩者皆空 → 相等。", "en": "Both empty → equal." },
+          { "zh": "一空一非空 → 結構不同。", "en": "One empty, one not → structural mismatch." },
+          { "zh": "值不同 → 值不同。", "en": "Different values → value mismatch." },
+          { "zh": "否則遞迴比較左右子樹。", "en": "Otherwise recurse on both subtrees." }
+        ] }
+      ] },
+    { "heading": { "zh": "複雜度", "en": "Complexity" },
+      "blocks": [
+        { "type": "table", "headers": [ { "zh": "操作", "en": "Operation" }, { "zh": "時間", "en": "Time" }, { "zh": "空間", "en": "Space" } ],
+          "rows": [
+            [ { "zh": "COPY", "en": "COPY" }, { "zh": "O(n)", "en": "O(n)" }, { "zh": "O(h)", "en": "O(h)" } ],
+            [ { "zh": "EQUAL", "en": "EQUAL" }, { "zh": "O(n)", "en": "O(n)" }, { "zh": "O(h)", "en": "O(h)" } ]
+          ] }
+      ] }
+  ]
+};
+
 module.exports = SLIDES_DB;
