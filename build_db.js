@@ -110,6 +110,7 @@ const mappings = {
     'tree_reconstruct.cpp': 'codeTreeReconstruct',
     'tree_array_rep.cpp': 'codeTreeArrayRep',
     'tree_catalan.cpp': 'codeTreeCatalan',
+    'decision_tree_coins.cpp': 'codeDecisionTreeCoins',
     'game_tree.cpp': 'codeGameTree',
     'gc_memory.cpp': 'codeGcMemory',
     'file_isam.cpp': 'codeFileIsam',

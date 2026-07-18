@@ -3064,3 +3064,24 @@ table.et-tt tr.et-tt-cur { background: #fef9c3; }
 .cat-seqtitle { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
 table.cat-seq { border-collapse: collapse; font-family: 'Fira Code', monospace; font-size: 12px; }
 table.cat-seq th, table.cat-seq td { border: 1px solid #cbd5e1; padding: 2px 8px; text-align: center; }
+
+/* decision-tree-coins */
+.dc-coins { display: flex; gap: 4px; margin: 6px 0; }
+.dc-coin { width: 28px; height: 28px; border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; cursor: pointer; font-family: 'Fira Code', monospace; }
+.dc-coin.active { background: #1a4d8f; color: #fff; border-color: #1a4d8f; }
+.dc-dir { display: flex; gap: 6px; align-items: center; }
+.dc-hl { padding: 3px 10px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 999px; cursor: pointer; font-size: 12px; }
+.dc-hl.active { background: #1a4d8f; color: #fff; border-color: #1a4d8f; }
+.dc-verify { padding: 3px 10px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 6px; cursor: pointer; font-size: 12px; }
+.dc-verifyout { font-size: 12px; font-weight: 700; }
+.dc-balancewrap { margin: 8px 0; }
+.dc-verdict { font-weight: bold; margin: 4px 0; }
+.dc-verdict.dc-ok, .dc-verifyout.dc-ok { color: #16a34a; }
+.dc-verifyout.dc-err { color: #dc2626; }
+.dc-treewrap { margin-top: 10px; overflow-x: auto; }
+.dc-treetitle { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+ul.dc-tree, ul.dc-tree ul { list-style: none; margin: 0; padding-left: 18px; }
+.dc-tree li { font-family: 'Fira Code', monospace; font-size: 12px; line-height: 1.7; }
+.dc-edge { display: inline-block; min-width: 14px; color: #b8336a; font-weight: 700; }
+.dc-tnode.dc-active > .dc-weigh, .dc-leaf.dc-active { background: #fef9c3; border-radius: 3px; padding: 0 3px; }
+.dc-leaf { color: #1a4d8f; }
