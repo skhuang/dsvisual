@@ -86,9 +86,13 @@ test.describe('i18n', () => {
         await firstPill.click();
         await expect(page.locator('[data-testid="overview-section"]')).toBeVisible();
         await expect(page.locator('[data-testid="method-sections"]')).toBeHidden();
-        // Grid has 14 categories and 117 tiles (one per method).
+        // Grid has 14 categories and one tile per registered method. Derive the
+        // expected tile count from the category-nav method entries (both come from
+        // METHOD_GROUPS) so adding a viz can't leave this assertion stale.
         await expect(page.locator('[data-testid="overview-grid"] .overview-category')).toHaveCount(14);
-        await expect(page.locator('[data-testid="overview-grid"] .overview-tile')).toHaveCount(117);
+        const methodCount = await page.locator('.category-nav-method').count();
+        expect(methodCount).toBeGreaterThan(0);
+        await expect(page.locator('[data-testid="overview-grid"] .overview-tile')).toHaveCount(methodCount);
         // Click a tile → overview hides, method activates.
         await page.locator('.overview-tile[data-method-id="tree-bst"]').click();
         await expect(page.locator('[data-testid="overview-section"]')).toBeHidden();
