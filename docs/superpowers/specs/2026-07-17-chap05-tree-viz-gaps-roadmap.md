@@ -96,6 +96,6 @@ app.js. Modeled on `js/viz/viz_expr_tree.js` (built in #1).
 - [x] #1 `tree-expression` boolean mode — merged (PR #132)
 - [x] #2 `tree-reconstruct` — merged (PR #133)
 - [x] #3 `tree-array-rep` — merged (PR #134)
-- [ ] #4 `tree-catalan` — spec/plan in progress
-- [ ] #5 `decision-tree-coins`
+- [x] #4 `tree-catalan` — merged (PR #135)
+- [ ] #5 `decision-tree-coins` — spec/plan in progress
 - [ ] #6 `tree-copy-equal`
