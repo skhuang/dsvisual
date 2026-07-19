@@ -21312,6 +21312,27 @@ SLIDES_DB["gc-memory"] = {
           { "zh": "釋放:歸還區塊後,若其『夥伴』(位址相鄰、同大小且空閒)也空閒,就合併(coalesce)成更大區塊,反覆向上。", "en": "Free: after returning a block, if its buddy (the adjacent, equal-sized free block) is also free, coalesce them into a larger block, repeating upward." }
         ] },
         { "type": "note", "text": { "zh": "夥伴位址用 start XOR size 計算。內部碎裂來自向上取整到 2 的冪;合併則對抗外部碎裂。", "en": "A buddy's address is computed as start XOR size. Rounding up to a power of two causes internal fragmentation; coalescing fights external fragmentation." } }
+      ] },
+    { "heading": { "zh": "指標反轉標記 (Pointer-Reversal Mark, MARK2)", "en": "Pointer-Reversal Mark (MARK2)" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "MARK2 是不需要輔助堆疊的標記法(Deutsch–Schorr–Waite 技巧):走訪時把剛經過的連結暫時反轉,當作回頭的路徑;走到死路後,再沿著反轉的連結往回走,並在路上把連結一一復原。", "en": "MARK2 is a stack-free marking technique (the Deutsch–Schorr–Waite trick): while descending, it temporarily reverses the link it just followed and uses that reversal as the path back; at a dead end it backs up along the reversed links, restoring each one on the way." } },
+        { "type": "bullets", "items": [
+          { "zh": "只需兩個額外變數(P、Q)加上每個節點一個位元(記錄哪個連結被反轉),完全不需要堆疊。", "en": "Only two extra variables (P, Q) plus one bit per node (recording which link is reversed) — no auxiliary stack at all." },
+          { "zh": "時間複雜度仍是 O(m),但常數較大:每個節點最多會被造訪三次。", "en": "Time complexity is still O(m), but with a larger constant factor — each node may be visited up to three times." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "gc_memory.cpp", "code": "void mark2(M2Node* root) {\n    M2Node* p = root;\n    M2Node* q = nullptr;         // q: reversed back-pointer, replaces the explicit stack\n    while (true) {\n        if (p && !p->mark) {                       // first visit: mark, descend, reverse\n            p->mark = true;\n            if (p->tag) { p->c = false; M2Node* t = p->dlink; p->dlink = q; q = p; p = t; }\n            else        { p->c = true;  M2Node* t = p->rlink; p->rlink = q; q = p; p = t; }\n        } else {                                    // dead end: back up, restoring links\n            if (!q) return;\n            if (!q->c) { q->c = true; M2Node* t = q->dlink; q->dlink = p; p = q->rlink; q->rlink = t; }\n            else       {              M2Node* t = q->rlink; q->rlink = p; p = q; q = t; }\n        }\n    }\n}" },
+        { "type": "note", "text": { "zh": "權衡:省下顯式堆疊,換來更多指標搬動與每個節點一個額外位元。", "en": "Trade-off: it saves the explicit stack at the cost of more pointer churn and one extra bit per node." } }
+      ] },
+    { "heading": { "zh": "記憶體壓縮 (Compaction, COMPACT)", "en": "Compaction (COMPACT)" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "標記完成後,存活與已回收的區塊會交錯散布在記憶體中。COMPACT 以三個回合(pass)把所有存活區塊滑向記憶體的一端,藉此消除外部碎裂。", "en": "After marking, live and freed blocks are interleaved in memory. COMPACT slides every live block toward one end of memory in three passes, eliminating external fragmentation." } },
+        { "type": "steps", "items": [
+          { "zh": "第一回合(assign new addresses):由左至右掃描,為每個存活區塊指定新位址,並累加已使用的空間。", "en": "Pass 1 (assign new addresses): scan left to right, assigning each live block a new address and accumulating used space." },
+          { "zh": "第二回合(rewrite links):把每個存活區塊裡的連結欄位,改寫成目標區塊的新位址。", "en": "Pass 2 (rewrite links): rewrite every link field of each live block to its target's new address." },
+          { "zh": "第三回合(relocate):把每個存活區塊實際搬移到它的新位址。", "en": "Pass 3 (relocate): physically move each live block to its new address." }
+        ] },
+        { "type": "code", "lang": "cpp", "file": "gc_memory.cpp", "code": "void compact(vector<CBlock>& mem) {                                     // mem is in address order\n    int av = 1;                                                        // pass 1: assign new addresses\n    for (auto& b : mem) if (b.live) { b.newAddr = av; av += b.size; }\n    unordered_map<int, int> remap; remap[0] = 0;                       // pass 2: rewrite links old -> new\n    for (auto& b : mem) if (b.live) remap[b.addr] = b.newAddr;\n    for (auto& b : mem) if (b.live) b.link = remap[b.link];\n    for (auto& b : mem) if (b.live) b.addr = b.newAddr;                // pass 3: relocate\n}" },
+        { "type": "note", "text": { "zh": "時間複雜度 O(n + s):n 為區塊數(三回合線性掃描),s 為實際搬動的資料量。", "en": "Time complexity O(n + s): n blocks are scanned in three linear passes, plus s words of data are actually relocated." } }
       ] }
   ]
 };
