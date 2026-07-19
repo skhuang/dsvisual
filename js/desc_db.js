@@ -1046,4 +1046,21 @@ const descDB = {
             <span class="badge space">Space: O(n²)</span>
         </div>
     `,
+    'gc-memory': `
+        <h3>Dynamic Storage &amp; Garbage Collection</h3>
+        <p>Automatic memory management reclaims heap objects that are no longer reachable from any root pointer. This mode compares several classic reclamation strategies over the same small heap.</p>
+        <hr>
+        <ul>
+            <li><strong>Mark-Sweep:</strong> traverse from every root marking reachable objects, then sweep the whole heap freeing anything left unmarked.</li>
+            <li><strong>Reference Counting:</strong> free an object the instant its incoming-reference count drops to zero; cannot reclaim cycles.</li>
+            <li><strong>Buddy System:</strong> allocate and free power-of-two blocks, splitting on demand and coalescing buddies to bound fragmentation.</li>
+            <li><strong>Pointer-Reversal Mark (MARK2):</strong> a stack-free marking walk that temporarily reverses each link it follows, then restores every link on the way back up.</li>
+            <li><strong>Compaction (COMPACT):</strong> 3-pass sliding compaction — assign new addresses to live blocks, rewrite every link to its target's new address, then relocate the blocks.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">MARK2 Time: O(m)</span>
+            <span class="badge space">MARK2 Space: O(1) + 1 bit/node</span>
+            <span class="badge time">COMPACT Time: O(n + s)</span>
+        </div>
+    `,
 };
