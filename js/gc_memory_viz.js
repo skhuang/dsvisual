@@ -106,13 +106,55 @@
     return { frames: frames };
   }
 
+  const PR_SCENARIO = {
+    nodes: [
+      { id: 'R', tag: 1, dlink: 'n1', rlink: 'S' },  // list node
+      { id: 'S', tag: 0, dlink: null, rlink: null }, // atom sibling
+      { id: 'n1', tag: 0, dlink: null, rlink: 'n2' },// atom
+      { id: 'n2', tag: 0, dlink: null, rlink: null } // atom
+    ],
+    root: 'R'
+  };
+  function pointerReversalFrames(scenario) {
+    scenario = scenario || PR_SCENARIO;
+    const nodes = {}; const order = scenario.nodes.map((n) => n.id);
+    const home = {};
+    scenario.nodes.forEach((n) => {
+      nodes[n.id] = { id: n.id, tag: n.tag, dlink: n.dlink, rlink: n.rlink, mark: false, c: 0 };
+      home[n.id] = { dlink: n.dlink, rlink: n.rlink };
+    });
+    const frames = [];
+    function snap(phase, p, q) {
+      return { phase: phase, p: p, q: q, nodes: order.map((id) => {
+        const o = nodes[id];
+        return { id: id, tag: o.tag, mark: o.mark, c: o.c, dlink: o.dlink, rlink: o.rlink,
+                 dRev: o.dlink !== home[id].dlink, rRev: o.rlink !== home[id].rlink };
+      }) };
+    }
+    let p = scenario.root, q = null;
+    frames.push(snap('start', p, q));
+    for (;;) {
+      if (p && !nodes[p].mark) {                 // first visit: mark, descend, reverse
+        nodes[p].mark = true;
+        if (nodes[p].tag) { nodes[p].c = 0; const t = nodes[p].dlink; nodes[p].dlink = q; q = p; p = t; frames.push(snap('descend dlink', p, q)); }
+        else { nodes[p].c = 1; const t = nodes[p].rlink; nodes[p].rlink = q; q = p; p = t; frames.push(snap('atom → rlink', p, q)); }
+      } else {                                    // dead end: back up along reversed links
+        if (!q) { frames.push(snap('done', p, q)); break; }
+        if (nodes[q].c === 0) { nodes[q].c = 1; const t = nodes[q].dlink; nodes[q].dlink = p; p = nodes[q].rlink; nodes[q].rlink = t; frames.push(snap('switch dlink→rlink', p, q)); }
+        else { const t = nodes[q].rlink; nodes[q].rlink = p; p = q; q = t; frames.push(snap('pop (restore)', p, q)); }
+      }
+    }
+    return { frames: frames };
+  }
+
   function gcMemoryFrames(mode) {
     if (mode === 'refcount') return refCountFrames();
     if (mode === 'buddy') return buddyFrames();
+    if (mode === 'pointer-reversal') return pointerReversalFrames();
     return markSweepFrames();
   }
 
-  const api = { markSweepFrames: markSweepFrames, refCountFrames: refCountFrames, buddyFrames: buddyFrames, gcMemoryFrames: gcMemoryFrames, MS_SCENARIO: MS_SCENARIO, RC_OPS: RC_OPS, BUDDY_OPS: BUDDY_OPS, BUDDY_TOTAL: BUDDY_TOTAL };
+  const api = { markSweepFrames: markSweepFrames, refCountFrames: refCountFrames, buddyFrames: buddyFrames, gcMemoryFrames: gcMemoryFrames, pointerReversalFrames: pointerReversalFrames, MS_SCENARIO: MS_SCENARIO, RC_OPS: RC_OPS, BUDDY_OPS: BUDDY_OPS, BUDDY_TOTAL: BUDDY_TOTAL, PR_SCENARIO: PR_SCENARIO };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.GcMemoryViz = api;
 })(typeof window !== 'undefined' ? window : globalThis);
