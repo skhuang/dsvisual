@@ -37,6 +37,13 @@ test('gc-memory loads, switches mode, steps', async ({ page }) => {
   await expect(page.locator('.gc-stage').first()).toBeVisible();
   await page.selectOption('.gc-mode', 'buddy');
   await page.click('[data-action="step"]');
+
+  for (const mode of ['pointer-reversal', 'compact']) {
+    await page.selectOption('.gc-mode', mode);
+    await expect(page.locator('.gc-stage')).toBeVisible();
+    await page.locator('.stepctl [data-action="step"]').click();
+    await expect(page.locator('.gc-badge')).not.toHaveText('');
+  }
 });
 
 test('file-isam loads, searches, steps', async ({ page }) => {

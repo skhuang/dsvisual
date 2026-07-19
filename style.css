@@ -2508,6 +2508,8 @@ pre.code-panel-body[class*="language-"] {
 .gc-seg-free { background: #f1f5f9; color: #94a3b8; }
 .gc-seg-alloc { background: #bfdbfe; color: #1e3a8a; }
 .gc-seg.gc-active { outline: 2px solid #f59e0b; outline-offset: -2px; }
+.gc-cell.gc-node-p { outline: 3px solid #2563eb; outline-offset: 1px; }
+.gc-cell.gc-node-q { border-color: #f59e0b; background: #fef3c7; }
 
 /* file-isam visualization */
 .isam-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
