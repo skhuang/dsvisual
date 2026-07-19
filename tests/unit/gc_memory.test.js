@@ -60,3 +60,22 @@ test('pointer reversal marks all reachable nodes and restores every link', () =>
 test('gcMemoryFrames dispatches pointer-reversal', () => {
   assert.ok(V.gcMemoryFrames('pointer-reversal').frames.length > 0);
 });
+
+test('compaction slides live blocks contiguous and rewrites links to new addresses', () => {
+  const { frames } = V.compactFrames();
+  const last = frames[frames.length - 1];
+  const byId = {}; last.blocks.forEach((b) => { byId[b.id] = b; });
+  // live blocks relocated to contiguous addresses 1,3,5 in order
+  assert.strictEqual(byId['A'].addr, 1);
+  assert.strictEqual(byId['C'].addr, 3);
+  assert.strictEqual(byId['D'].addr, 5);
+  // links rewritten to targets' new addresses: A->D(5), D->A(1)
+  assert.strictEqual(byId['A'].link, 5);
+  assert.strictEqual(byId['D'].link, 1);
+  // all three passes represented
+  [1, 2, 3].forEach((p) => assert.ok(frames.some((f) => f.pass === p), 'pass ' + p + ' present'));
+});
+
+test('gcMemoryFrames dispatches compact', () => {
+  assert.ok(V.gcMemoryFrames('compact').frames.length > 0);
+});

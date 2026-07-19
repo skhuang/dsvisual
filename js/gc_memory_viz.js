@@ -147,14 +147,46 @@
     return { frames: frames };
   }
 
+  const COMPACT_SCENARIO = {
+    total: 10,
+    blocks: [
+      { id: 'A', addr: 1, size: 2, live: true, link: 'D' },
+      { id: 'B', addr: 3, size: 2, live: false, link: null },
+      { id: 'C', addr: 5, size: 2, live: true, link: null },
+      { id: 'D', addr: 7, size: 2, live: true, link: 'A' },
+      { id: 'E', addr: 9, size: 1, live: false, link: null }
+    ]
+  };
+  function compactFrames(scenario) {
+    scenario = scenario || COMPACT_SCENARIO;
+    const total = scenario.total;
+    const blocks = scenario.blocks.map((b) => ({ id: b.id, addr: b.addr, size: b.size, live: b.live, link: b.link, newAddr: null }));
+    const byId = {}; blocks.forEach((b) => { byId[b.id] = b; });
+    const frames = [];
+    function snap(phase, active, av, pass) {
+      return { phase: phase, active: active, av: av, pass: pass, total: total,
+               blocks: blocks.map((b) => ({ id: b.id, addr: b.addr, size: b.size, live: b.live, link: b.link, newAddr: b.newAddr })) };
+    }
+    frames.push(snap('start', null, 1, 0));
+    let av = 1;                                                    // Pass 1: assign new addresses
+    blocks.forEach((b) => { if (b.live) { b.newAddr = av; av += b.size; frames.push(snap('pass1: newAddr[' + b.id + ']=' + b.newAddr, b.id, av, 1)); } });
+    blocks.forEach((b) => {                                        // Pass 2: rewrite links old->new addr
+      if (b.live && b.link != null) { const tgt = byId[b.link]; b.link = tgt ? tgt.newAddr : 0; frames.push(snap('pass2: link[' + b.id + ']=' + b.link, b.id, av, 2)); }
+    });
+    blocks.forEach((b) => { if (b.live) { b.addr = b.newAddr; frames.push(snap('pass3: move ' + b.id + ' → ' + b.addr, b.id, av, 3)); } }); // Pass 3: relocate
+    frames.push(snap('done', null, av, 3));
+    return { frames: frames };
+  }
+
   function gcMemoryFrames(mode) {
     if (mode === 'refcount') return refCountFrames();
     if (mode === 'buddy') return buddyFrames();
     if (mode === 'pointer-reversal') return pointerReversalFrames();
+    if (mode === 'compact') return compactFrames();
     return markSweepFrames();
   }
 
-  const api = { markSweepFrames: markSweepFrames, refCountFrames: refCountFrames, buddyFrames: buddyFrames, gcMemoryFrames: gcMemoryFrames, pointerReversalFrames: pointerReversalFrames, MS_SCENARIO: MS_SCENARIO, RC_OPS: RC_OPS, BUDDY_OPS: BUDDY_OPS, BUDDY_TOTAL: BUDDY_TOTAL, PR_SCENARIO: PR_SCENARIO };
+  const api = { markSweepFrames: markSweepFrames, refCountFrames: refCountFrames, buddyFrames: buddyFrames, gcMemoryFrames: gcMemoryFrames, pointerReversalFrames: pointerReversalFrames, compactFrames: compactFrames, MS_SCENARIO: MS_SCENARIO, RC_OPS: RC_OPS, BUDDY_OPS: BUDDY_OPS, BUDDY_TOTAL: BUDDY_TOTAL, PR_SCENARIO: PR_SCENARIO, COMPACT_SCENARIO: COMPACT_SCENARIO };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.GcMemoryViz = api;
 })(typeof window !== 'undefined' ? window : globalThis);
