@@ -41,6 +41,13 @@ test('gc-memory loads, switches mode, steps', async ({ page }) => {
   await expect(page.locator('.gc-stage .gc-node.gc-root').first()).toBeVisible();
   await expect(page.locator('.gc-stage .gc-legend')).toBeVisible();
 
+  await page.selectOption('.gc-mode', 'refcount');
+  await page.locator('.stepctl [data-action="step"]').click();
+  // refcount also renders as an object graph with a legend
+  await expect(page.locator('.gc-stage .gc-edge-layer')).toBeVisible();
+  await expect(page.locator('.gc-stage .gc-legend')).toBeVisible();
+  await expect(page.locator('.gc-stage .gc-node').first()).toBeVisible();
+
   await page.selectOption('.gc-mode', 'buddy');
   await page.click('[data-action="step"]');
 

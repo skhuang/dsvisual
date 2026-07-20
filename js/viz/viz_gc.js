@@ -127,15 +127,7 @@
                 renderObjectGraph(stage, { mode: 'mark-sweep', nodes: fr.heap, roots: fr.roots, activeId: fr.active });
             } else if (_gcState.mode === 'refcount') {
                 badge.textContent = fr.action;
-                const grid = document.createElement('div');
-                grid.className = 'gc-grid';
-                fr.objs.forEach((o) => {
-                    const c = document.createElement('div');
-                    c.className = 'gc-cell' + (o.free ? ' gc-free' : '') + (o.id === fr.active ? ' gc-active' : '');
-                    c.innerHTML = '<div class="gc-cell-id">' + o.id + '</div><div class="gc-cell-meta">rc=' + o.count + (o.free ? ' freed' : '') + '</div>';
-                    grid.appendChild(c);
-                });
-                stage.appendChild(grid);
+                renderObjectGraph(stage, { mode: 'refcount', nodes: fr.objs, roots: [], activeId: fr.active });
             } else if (_gcState.mode === 'buddy') {
                 badge.textContent = fr.action;
                 const bar = document.createElement('div');
