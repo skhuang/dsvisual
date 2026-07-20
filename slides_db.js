@@ -21858,4 +21858,77 @@ SLIDES_DB["pattern-builder"] = {
   ]
 };
 
+SLIDES_DB["pattern-command"] = {
+  "category": "Design Patterns",
+  "title": { "zh": "Command 模式", "en": "Command Pattern" },
+  "slides": [
+    { "heading": { "zh": "Command 模式", "en": "Command Pattern" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Command 是一種 Behavioral 設計模式,將請求封裝為一個獨立物件,使呼叫者可以參數化不同的請求、將請求排入佇列或記錄下來,並支援復原(undo)操作。", "en": "Command is a Behavioral design pattern that encapsulates a request as a standalone object, allowing clients to parameterize different requests, queue or log them, and support undoable operations." } }
+      ] },
+    { "heading": { "zh": "核心概念", "en": "Core Concept" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "`RemoteControl` 是 Invoker,持有 `Command` 物件並呼叫其 `execute()`,不需知道命令背後實際執行的細節;`LightOnCommand`、`LightOffCommand` 是具體命令(ConcreteCommand),各自持有 `Light`(Receiver)的參考,並將呼叫轉發給 Receiver 的實際動作方法。", "en": "`RemoteControl` is the Invoker — it holds a `Command` object and calls its `execute()` without knowing what actually happens behind it; `LightOnCommand` and `LightOffCommand` are ConcreteCommands, each holding a reference to a `Light` (the Receiver) and forwarding the call to the Receiver's real action methods." } },
+        { "type": "bullets", "items": [
+          { "zh": "Invoker(`RemoteControl`):持有 `Command` 物件,透過 `submit()` 呼叫 `execute()`,並將命令存入歷史紀錄 `m_history` 以便復原。", "en": "Invoker (`RemoteControl`): holds a `Command` object, calls `execute()` via `submit()`, and stores commands in `m_history` for later undo." },
+          { "zh": "Command 介面(`Command`):宣告 `execute()` 與 `undo()`,是 Invoker 與 Receiver 之間的抽象層。", "en": "Command interface (`Command`): declares `execute()` and `undo()`, forming the abstraction layer between Invoker and Receiver." },
+          { "zh": "ConcreteCommand(`LightOnCommand`、`LightOffCommand`):實作 Command 介面,將 `execute()`/`undo()` 呼叫轉發給 Receiver 對應的方法。", "en": "ConcreteCommand (`LightOnCommand`, `LightOffCommand`): implements the Command interface, forwarding `execute()`/`undo()` calls to the corresponding Receiver methods." },
+          { "zh": "Receiver(`Light`):真正知道如何執行請求的物件,提供 `on()`/`off()` 等實際動作方法。", "en": "Receiver (`Light`): the object that actually knows how to perform the request, providing real action methods such as `on()`/`off()`." }
+        ] }
+      ] },
+    { "heading": { "zh": "運作流程", "en": "Operation Flow" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "客戶端建立 Receiver,例如 `Light kitchenLight(\"Kitchen\")`。", "en": "The client creates a Receiver, e.g. `Light kitchenLight(\"Kitchen\")`." },
+          { "zh": "建立 ConcreteCommand,例如 `make_shared<LightOnCommand>(kitchenLight)`,將 Receiver 綁定到命令中。", "en": "Create a ConcreteCommand, e.g. `make_shared<LightOnCommand>(kitchenLight)`, binding the Receiver into the command." },
+          { "zh": "呼叫 `remote.submit(onCommand)`;Invoker 呼叫 `command->execute()`,並將命令推入 `m_history`。", "en": "Call `remote.submit(onCommand)`; the Invoker calls `command->execute()` and pushes the command onto `m_history`." },
+          { "zh": "`execute()` 內部呼叫 `m_light.on()`,由 Receiver 真正執行動作。", "en": "Inside `execute()`, `m_light.on()` is called, letting the Receiver actually perform the action." },
+          { "zh": "呼叫 `remote.undoLast()`;取出歷史紀錄中的最後一個命令並呼叫其 `undo()`,還原到先前狀態。", "en": "Call `remote.undoLast()`; the last command is popped from `m_history` and its `undo()` is called to restore the previous state." }
+        ] },
+        { "type": "mermaid", "code": "flowchart LR\n  I[\"RemoteControl\\n(Invoker)\"] -->|\"submit(cmd)\"| C[\"Command\\nexecute()/undo()\"]\n  C -.->|implements| CC[\"LightOnCommand /\\nLightOffCommand\"]\n  CC -->|\"m_light.on()/off()\"| R[\"Light\\n(Receiver)\"]\n  I -->|\"undoLast()\"| H[\"m_history\\n(command log)\"]\n  H -.->|\"undo()\"| CC" }
+      ] },
+    { "heading": { "zh": "UML 結構示意", "en": "UML Structure Diagram" },
+      "blocks": [
+        { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 200\" width=\"420\" height=\"200\"><g font-family=\"sans-serif\" font-size=\"11\"><rect x=\"15\" y=\"25\" width=\"130\" height=\"55\" rx=\"4\" fill=\"#ede9fe\" stroke=\"#6d28d9\" stroke-width=\"1.5\"/><text x=\"80\" y=\"45\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#4c1d95\">RemoteControl</text><line x1=\"15\" y1=\"52\" x2=\"145\" y2=\"52\" stroke=\"#6d28d9\" stroke-width=\"1\"/><text x=\"25\" y=\"68\" font-size=\"10\" fill=\"#374151\">+ submit(cmd)</text><text x=\"25\" y=\"81\" font-size=\"10\" fill=\"#374151\">+ undoLast()</text><rect x=\"235\" y=\"15\" width=\"170\" height=\"80\" rx=\"4\" fill=\"#dbeafe\" stroke=\"#2563eb\" stroke-width=\"1.5\"/><text x=\"320\" y=\"33\" text-anchor=\"middle\" font-weight=\"bold\" font-style=\"italic\" fill=\"#1e3a8a\">Command</text><line x1=\"235\" y1=\"40\" x2=\"405\" y2=\"40\" stroke=\"#2563eb\" stroke-width=\"1\"/><text x=\"245\" y=\"55\" font-size=\"10\" fill=\"#374151\">+ execute() = 0</text><text x=\"245\" y=\"70\" font-size=\"10\" fill=\"#374151\">+ undo() = 0</text><rect x=\"235\" y=\"135\" width=\"170\" height=\"40\" rx=\"4\" fill=\"#dcfce7\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"320\" y=\"153\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#166534\">LightOnCommand /</text><text x=\"320\" y=\"167\" text-anchor=\"middle\" font-size=\"10\" fill=\"#166534\">LightOffCommand</text><rect x=\"15\" y=\"135\" width=\"130\" height=\"40\" rx=\"4\" fill=\"#fef9c3\" stroke=\"#ca8a04\" stroke-width=\"1.5\"/><text x=\"80\" y=\"153\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#92400e\">Light</text><text x=\"80\" y=\"167\" text-anchor=\"middle\" font-size=\"10\" fill=\"#92400e\">(Receiver)</text><line x1=\"145\" y1=\"52\" x2=\"235\" y2=\"52\" stroke=\"#6d28d9\" stroke-width=\"1.5\"/><text x=\"152\" y=\"46\" font-size=\"10\" fill=\"#6d28d9\">uses</text><line x1=\"320\" y1=\"135\" x2=\"320\" y2=\"95\" stroke=\"#64748b\" stroke-width=\"1.5\" stroke-dasharray=\"4,3\"/><line x1=\"235\" y1=\"155\" x2=\"145\" y2=\"155\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"165\" y=\"149\" font-size=\"10\" fill=\"#16a34a\">calls</text></g></svg>" },
+        { "type": "note", "text": { "zh": "虛線箭頭表示「實作(implements)」關係:LightOnCommand/LightOffCommand 實作 Command 抽象介面。RemoteControl(Invoker)僅依賴 Command,完全不知道 Receiver 的存在;ConcreteCommand 才知道 Light(Receiver)並轉發實際呼叫,因此 Invoker 與 Receiver 之間完全解耦。", "en": "The dashed arrow indicates the \"implements\" relationship: LightOnCommand/LightOffCommand implement the abstract Command interface. RemoteControl (the Invoker) depends only on Command and knows nothing about the Receiver; only the ConcreteCommand knows about Light (the Receiver) and forwards the real call, so the Invoker and Receiver are fully decoupled." } }
+      ] },
+    { "heading": { "zh": "模式屬性", "en": "Pattern Properties" },
+      "blocks": [
+        { "type": "table",
+          "headers": [ { "zh": "屬性", "en": "Property" }, { "zh": "說明", "en": "Description" } ],
+          "rows": [
+            [ { "zh": "GoF 分類", "en": "GoF Category" }, { "zh": "Behavioral(行為型)", "en": "Behavioral" } ],
+            [ { "zh": "參與者", "en": "Participants" }, { "zh": "Invoker、Command(介面)、ConcreteCommand、Receiver", "en": "Invoker, Command (interface), ConcreteCommand, Receiver" } ],
+            [ { "zh": "意圖", "en": "Intent" }, { "zh": "將請求封裝為物件,使其可參數化、佇列化、記錄與復原", "en": "Encapsulate a request as an object so it can be parameterized, queued, logged, and undone" } ],
+            [ { "zh": "解耦關係", "en": "Decoupling" }, { "zh": "Invoker 與 Receiver 完全解耦,只透過 Command 介面溝通", "en": "Invoker and Receiver are fully decoupled, communicating only through the Command interface" } ],
+            [ { "zh": "延伸應用", "en": "Extras" }, { "zh": "命令佇列(queue)、操作日誌(log)、復原/重做(undo/redo)", "en": "Command queues, operation logging, undo/redo" } ]
+          ] },
+        { "type": "math", "tex": "\\text{invoker.submit}(cmd) \\equiv cmd\\text{.execute}() \\to \\text{receiver.action}()", "caption": { "zh": "Invoker 呼叫命令的 execute() 實際上等同於委派給 Receiver 執行真正的動作;復原時則反向呼叫 undo(),將 Receiver 還原到先前狀態。", "en": "Calling execute() on a command via the Invoker is equivalent to delegating to the Receiver's real action; undo reverses this by calling undo() to restore the Receiver's previous state." } }
+      ] },
+    { "heading": { "zh": "程式碼", "en": "Source Code" },
+      "blocks": [
+        { "type": "code", "lang": "cpp", "file": "pattern_command.cpp", "code": "// Receiver\nclass Light {\n    string m_name;\npublic:\n    Light(const string& name) : m_name(name) {}\n    void on() const { cout << m_name << \" light is ON\" << endl; }\n    void off() const { cout << m_name << \" light is OFF\" << endl; }\n};\n\n// Command interface\nclass Command {\npublic:\n    virtual ~Command() {}\n    virtual void execute() = 0;\n    virtual void undo() = 0;\n};\n\n// Concrete Command\nclass LightOnCommand : public Command {\n    Light& m_light;\npublic:\n    LightOnCommand(Light& light) : m_light(light) {}\n    void execute() override { m_light.on(); }\n    void undo() override { m_light.off(); }\n};\n\n// Invoker\nclass RemoteControl {\n    vector<shared_ptr<Command>> m_history;\npublic:\n    void submit(shared_ptr<Command> command) {\n        command->execute();\n        m_history.push_back(command);\n    }\n    void undoLast() {\n        if (m_history.empty()) return;\n        m_history.back()->undo();\n        m_history.pop_back();\n    }\n};\n\nint main() {\n    Light kitchenLight(\"Kitchen\");\n    auto onCommand = make_shared<LightOnCommand>(kitchenLight);\n\n    RemoteControl remote;\n    remote.submit(onCommand);  // Kitchen light is ON\n    remote.undoLast();         // Kitchen light is OFF\n}" }
+      ] },
+    { "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "優點:將 Invoker 與具體的 Receiver 邏輯解耦,Invoker 只需認識 Command 介面。", "en": "Pro: decouples the Invoker from concrete Receiver logic — the Invoker only needs to know the Command interface." },
+          { "zh": "優點:命令本身是獨立物件,可排入佇列、記錄日誌,或延遲/非同步執行。", "en": "Pro: commands are first-class objects, so they can be queued, logged, or executed later/asynchronously." },
+          { "zh": "優點:天然支援復原/重做(undo/redo),只需保存命令歷史並反向呼叫 undo()。", "en": "Pro: naturally supports undo/redo by keeping a command history and calling undo() in reverse." },
+          { "zh": "缺點:每個不同動作都需要一個 ConcreteCommand 類別,容易造成類別數量膨脹。", "en": "Con: every distinct action requires its own ConcreteCommand class, which can lead to class-count bloat." },
+          { "zh": "適用:選單/按鈕動作、交易性操作、任務佇列/排程系統,以及需要復原/重做功能的 UI 或巨集系統。", "en": "Use for menu/button actions, transactional operations, task queues/job schedulers, and any UI or macro system that needs undo/redo." }
+        ] }
+      ] },
+    { "heading": { "zh": "小結", "en": "Summary" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "Command 是 Behavioral 模式:將請求封裝為物件,使呼叫者與實際執行者解耦。", "en": "Command is a Behavioral pattern: it encapsulates a request as an object, decoupling the caller from the actual executor." },
+          { "zh": "參與者:Invoker(`RemoteControl`)、Command 介面、ConcreteCommand(`LightOnCommand`/`LightOffCommand`)、Receiver(`Light`)。", "en": "Participants: Invoker (`RemoteControl`), Command interface, ConcreteCommand (`LightOnCommand`/`LightOffCommand`), Receiver (`Light`)." },
+          { "zh": "Invoker 呼叫 `execute()` 而不知道背後細節;命令歷史(`m_history`)使 `undo()`/redo 成為可能。", "en": "The Invoker calls `execute()` without knowing the underlying details; a command history (`m_history`) makes `undo()`/redo possible." },
+          { "zh": "Command 是 GUI 動作、交易系統、任務佇列等場景的常見選擇。", "en": "Command is a common choice for GUI actions, transactional systems, and task queues." }
+        ] }
+      ] }
+  ]
+};
+
 module.exports = SLIDES_DB;
