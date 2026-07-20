@@ -64,6 +64,9 @@ const mappings = {
     'pattern_pubsub.cpp': 'codePatternPubSub',
     'pattern_pipefilter.cpp': 'codePatternPipeFilter',
     'pattern_di.cpp': 'codePatternDI',
+    'pattern_builder.cpp': 'codePatternBuilder',
+    'pattern_composite.cpp': 'codePatternComposite',
+    'pattern_command.cpp': 'codePatternCommand',
     'deque.cpp': 'codeDeque',
     'search_kmp.cpp': 'codeSearchKMP',
     'search_bm.cpp': 'codeSearchBM',
@@ -130,6 +133,12 @@ for (const [file, varName] of Object.entries(mappings)) {
     out += `const ${varName} = \`${content.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;\n\n`;
 }
 
-
+out += 'const CODE_DB = {\n';
+for (const [file, varName] of Object.entries(mappings)) {
+    out += `    ${JSON.stringify(file)}: ${varName},\n`;
+}
+out += '};\n\n';
+out += "if (typeof module !== 'undefined' && module.exports) { module.exports.CODE_DB = CODE_DB; }\n";
+out += "if (typeof window !== 'undefined') { window.CODE_DB = CODE_DB; }\n";
 
 fs.writeFileSync('js/code_db.js', out);
