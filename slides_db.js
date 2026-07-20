@@ -21931,4 +21931,76 @@ SLIDES_DB["pattern-command"] = {
   ]
 };
 
+SLIDES_DB["pattern-composite"] = {
+  "category": "Design Patterns",
+  "title": { "zh": "Composite 模式", "en": "Composite Pattern" },
+  "slides": [
+    { "heading": { "zh": "Composite 模式", "en": "Composite Pattern" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Composite 是一種 Structural 設計模式,將物件組合成樹狀結構以表示「部分-整體」的層級關係,使客戶端能夠以一致的方式處理個別物件(Leaf)與物件組合(Composite)。", "en": "Composite is a Structural design pattern that composes objects into tree structures to represent part-whole hierarchies, letting clients treat individual objects (Leaf) and compositions of objects (Composite) uniformly." } }
+      ] },
+    { "heading": { "zh": "核心概念", "en": "Core Concept" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "`Component` 是 Leaf 與 Composite 共用的抽象介面,宣告 `operation()`。`Leaf` 直接實作 `operation()` 執行實際工作,是遞迴的終止點;`Composite` 持有型別為 `vector<shared_ptr<Component>>` 的 `m_children`,其 `operation()` 會先處理自己,再逐一委派給每個子節點。", "en": "`Component` is the abstract interface shared by Leaf and Composite, declaring `operation()`. `Leaf` implements `operation()` directly to perform the actual work — it is the base case of the recursion. `Composite` holds `m_children` of type `vector<shared_ptr<Component>>`; its `operation()` handles itself first, then delegates to each child in turn." } },
+        { "type": "bullets", "items": [
+          { "zh": "Component(介面):宣告 `operation()`,是 Leaf 與 Composite 的共同型別。", "en": "Component (interface): declares `operation()` and is the common type for Leaf and Composite." },
+          { "zh": "Leaf(`Leaf`):樹狀結構中的葉節點,沒有子節點,`operation()` 直接完成工作。", "en": "Leaf (`Leaf`): a leaf node in the tree with no children; `operation()` performs the work directly." },
+          { "zh": "Composite(`Composite`):可以有子節點,以 `add(child)` 加入,並透過 `m_children` 持有任意數量的 Component。", "en": "Composite (`Composite`): may have children, added via `add(child)`, holding any number of Components in `m_children`." },
+          { "zh": "客戶端(Client)透過 `Component*` 呼叫 `operation()`,不需區分手上拿到的是 Leaf 還是 Composite。", "en": "The Client calls `operation()` through a `Component*`, without needing to distinguish whether it holds a Leaf or a Composite." }
+        ] }
+      ] },
+    { "heading": { "zh": "運作流程", "en": "Operation Flow" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "客戶端建立根節點 `root`(一個 `Composite`),再建立子樹 `branchA`、`branchB`(皆為 `Composite`)。", "en": "The client creates the root node `root` (a `Composite`), then builds subtrees `branchA` and `branchB` (both `Composite`)." },
+          { "zh": "以 `add()` 將 `leaf1`、`leaf2` 加入 `branchA`;將 `leaf3` 加入 `branchB`;再將 `branchA`、`branchB` 與 `leaf4` 加入 `root`。", "en": "`add()` inserts `leaf1` and `leaf2` into `branchA`, `leaf3` into `branchB`, and then `branchA`, `branchB`, and `leaf4` into `root`." },
+          { "zh": "呼叫 `root->operation()`;`Composite::operation()` 先印出自己,再對 `m_children` 中每個節點遞迴呼叫 `operation(depth+1)`。", "en": "Calling `root->operation()` triggers `Composite::operation()`, which prints itself first, then recursively calls `operation(depth+1)` on every node in `m_children`." },
+          { "zh": "遞迴到 `Leaf` 時,`Leaf::operation()` 只印出自己並直接返回,是整個遞迴的終止條件。", "en": "When the recursion reaches a `Leaf`, `Leaf::operation()` simply prints itself and returns — the base case that terminates the recursion." }
+        ] },
+        { "type": "mermaid", "code": "flowchart TD\n  Client -->|\"root->operation()\"| Root[\"Composite: root\"]\n  Root --> BranchA[\"Composite: branchA\"]\n  Root --> BranchB[\"Composite: branchB\"]\n  Root --> Leaf4[\"Leaf: leaf4\"]\n  BranchA --> Leaf1[\"Leaf: leaf1\"]\n  BranchA --> Leaf2[\"Leaf: leaf2\"]\n  BranchB --> Leaf3[\"Leaf: leaf3\"]" }
+      ] },
+    { "heading": { "zh": "UML 結構示意", "en": "UML Structure Diagram" },
+      "blocks": [
+        { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 210\" width=\"420\" height=\"210\"><g font-family=\"sans-serif\" font-size=\"11\"><rect x=\"140\" y=\"10\" width=\"150\" height=\"60\" rx=\"4\" fill=\"#dbeafe\" stroke=\"#2563eb\" stroke-width=\"1.5\"/><text x=\"215\" y=\"28\" text-anchor=\"middle\" font-weight=\"bold\" font-style=\"italic\" fill=\"#1e3a8a\">Component</text><line x1=\"140\" y1=\"35\" x2=\"290\" y2=\"35\" stroke=\"#2563eb\" stroke-width=\"1\"/><text x=\"150\" y=\"50\" font-size=\"10\" fill=\"#374151\">+ operation() = 0</text><rect x=\"15\" y=\"130\" width=\"130\" height=\"45\" rx=\"4\" fill=\"#dcfce7\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#166534\">Leaf</text><text x=\"80\" y=\"165\" text-anchor=\"middle\" font-size=\"10\" fill=\"#374151\">+ operation()</text><rect x=\"255\" y=\"120\" width=\"150\" height=\"75\" rx=\"4\" fill=\"#fef9c3\" stroke=\"#ca8a04\" stroke-width=\"1.5\"/><text x=\"330\" y=\"138\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#92400e\">Composite</text><text x=\"330\" y=\"153\" text-anchor=\"middle\" font-size=\"9\" fill=\"#374151\">- m_children: Component[]</text><text x=\"330\" y=\"168\" text-anchor=\"middle\" font-size=\"10\" fill=\"#374151\">+ add(child)</text><text x=\"330\" y=\"183\" text-anchor=\"middle\" font-size=\"10\" fill=\"#374151\">+ operation()</text><line x1=\"80\" y1=\"130\" x2=\"175\" y2=\"70\" stroke=\"#64748b\" stroke-width=\"1.5\" stroke-dasharray=\"4,3\"/><line x1=\"300\" y1=\"120\" x2=\"255\" y2=\"70\" stroke=\"#64748b\" stroke-width=\"1.5\" stroke-dasharray=\"4,3\"/><line x1=\"370\" y1=\"120\" x2=\"295\" y2=\"45\" stroke=\"#ca8a04\" stroke-width=\"1.5\" marker-end=\"url(#arr)\"/><text x=\"345\" y=\"92\" font-size=\"9\" fill=\"#92400e\">0..* children</text><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L8,3 z\" fill=\"#ca8a04\"/></marker></defs></g></svg>" },
+        { "type": "note", "text": { "zh": "虛線箭頭表示「實作(implements)」關係:Leaf 與 Composite 皆實作 Component 抽象介面。實心箭頭表示 Composite 以聚合(aggregation)方式持有 0 到多個 Component 作為 `m_children`——因為 Component 可能是 Leaf,也可能是另一個 Composite,樹狀結構因而能夠遞迴到任意深度。", "en": "The dashed arrows indicate the \"implements\" relationship: both Leaf and Composite implement the abstract Component interface. The solid arrow shows that Composite aggregates zero or more Components as `m_children` — since a Component may be either a Leaf or another Composite, the tree can recurse to arbitrary depth." } }
+      ] },
+    { "heading": { "zh": "模式屬性", "en": "Pattern Properties" },
+      "blocks": [
+        { "type": "table",
+          "headers": [ { "zh": "屬性", "en": "Property" }, { "zh": "說明", "en": "Description" } ],
+          "rows": [
+            [ { "zh": "GoF 分類", "en": "GoF Category" }, { "zh": "Structural(結構型)", "en": "Structural" } ],
+            [ { "zh": "參與者", "en": "Participants" }, { "zh": "Component(介面)、Leaf、Composite", "en": "Component (interface), Leaf, Composite" } ],
+            [ { "zh": "意圖", "en": "Intent" }, { "zh": "將物件組合成樹狀結構,使客戶端能一致地處理個別物件與物件組合", "en": "Compose objects into tree structures so clients can treat individual objects and compositions uniformly" } ],
+            [ { "zh": "結構", "en": "Structure" }, { "zh": "遞迴樹狀結構——Composite 的子節點可能是 Leaf,也可能是另一個 Composite", "en": "Recursive tree structure — a Composite's children may be Leaves or other Composites" } ],
+            [ { "zh": "一致性", "en": "Uniformity" }, { "zh": "Leaf 與 Composite 皆實作 Component,客戶端呼叫 operation() 時無需判斷型別", "en": "Leaf and Composite both implement Component, so the client calls operation() without checking the concrete type" } ]
+          ] },
+        { "type": "math", "tex": "\\text{Composite.operation}(d) = \\text{print(self)} \\; + \\sum_{c\\,\\in\\,\\text{children}} c.\\text{operation}(d+1)", "caption": { "zh": "Composite 的 operation() 等於先處理自己,再對 m_children 中每個子節點遞迴呼叫 operation();遞迴到 Leaf 時總和項為空,直接終止。", "en": "A Composite's operation() equals handling itself plus recursively calling operation() on every child in m_children; at a Leaf the sum is empty and the recursion terminates." } }
+      ] },
+    { "heading": { "zh": "程式碼", "en": "Source Code" },
+      "blocks": [
+        { "type": "code", "lang": "cpp", "file": "pattern_composite.cpp", "code": "// Component - common interface for leaves and composites\nclass Component {\nprotected:\n    string m_name;\npublic:\n    Component(const string& name) : m_name(name) {}\n    virtual ~Component() {}\n    virtual void operation(int depth = 0) const = 0;\n};\n\n// Leaf - has no children\nclass Leaf : public Component {\npublic:\n    Leaf(const string& name) : Component(name) {}\n    void operation(int depth = 0) const override {\n        cout << string(depth * 2, ' ') << \"Leaf: \" << m_name << endl;\n    }\n};\n\n// Composite - holds children and forwards operations recursively\nclass Composite : public Component {\nprivate:\n    vector<shared_ptr<Component>> m_children;\npublic:\n    Composite(const string& name) : Component(name) {}\n    void add(shared_ptr<Component> child) { m_children.push_back(child); }\n    void operation(int depth = 0) const override {\n        cout << string(depth * 2, ' ') << \"Composite: \" << m_name << endl;\n        for (const auto& child : m_children) {\n            child->operation(depth + 1);\n        }\n    }\n};\n\nint main() {\n    auto root = make_shared<Composite>(\"root\");\n\n    auto branchA = make_shared<Composite>(\"branchA\");\n    branchA->add(make_shared<Leaf>(\"leaf1\"));\n    branchA->add(make_shared<Leaf>(\"leaf2\"));\n\n    auto branchB = make_shared<Composite>(\"branchB\");\n    branchB->add(make_shared<Leaf>(\"leaf3\"));\n\n    root->add(branchA);\n    root->add(branchB);\n    root->add(make_shared<Leaf>(\"leaf4\"));\n\n    root->operation(); // recurses through the whole tree\n}" }
+      ] },
+    { "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "優點:客戶端可以用一致的方式處理 Leaf 與 Composite,不需要寫額外的型別判斷邏輯。", "en": "Pro: the client treats Leaf and Composite uniformly, without extra type-checking logic." },
+          { "zh": "優點:新增新的 Component 型別(新的 Leaf 或 Composite 變體)不需修改既有程式碼,符合 Open/Closed Principle。", "en": "Pro: adding a new Component type (a new Leaf or Composite variant) requires no changes to existing code, following the Open/Closed Principle." },
+          { "zh": "優點:天然適合表示遞迴的層級結構,例如檔案系統、GUI 元件樹、組織架構圖。", "en": "Pro: naturally suited to recursive hierarchical structures such as file systems, GUI widget trees, and organizational charts." },
+          { "zh": "缺點:Component 介面必須對 Leaf 與 Composite 都有意義,有時會被迫加入對 Leaf 沒有意義的方法(例如 `add()`)。", "en": "Con: the Component interface must make sense for both Leaf and Composite, sometimes forcing in methods that are meaningless for a Leaf (e.g. `add()`)." },
+          { "zh": "適用:需要以遞迴樹狀結構表示部分-整體關係,且希望客戶端無差別地操作個別節點與整個子樹時。", "en": "Use when a part-whole hierarchy is naturally recursive and the client should operate on individual nodes and entire subtrees without distinction." }
+        ] }
+      ] },
+    { "heading": { "zh": "小結", "en": "Summary" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "Composite 是 Structural 模式:將物件組合成樹狀結構,表示部分-整體的層級關係。", "en": "Composite is a Structural pattern: it composes objects into tree structures representing part-whole hierarchies." },
+          { "zh": "參與者:Component(共用介面)、Leaf(葉節點,實際工作)、Composite(持有 m_children,遞迴委派)。", "en": "Participants: Component (shared interface), Leaf (leaf node, does the actual work), Composite (holds m_children, delegates recursively)." },
+          { "zh": "`Composite::operation()` 遞迴呼叫每個子節點的 `operation()`,遞迴到 `Leaf` 便終止。", "en": "`Composite::operation()` recursively calls `operation()` on each child, terminating once it reaches a `Leaf`." },
+          { "zh": "核心價值:客戶端透過 Component 介面統一操作,完全不需要區分現在拿到的是單一物件還是整個子樹。", "en": "Core value: the client operates uniformly through the Component interface, with no need to distinguish a single object from an entire subtree." }
+        ] }
+      ] }
+  ]
+};
+
 module.exports = SLIDES_DB;
