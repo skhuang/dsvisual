@@ -21786,5 +21786,221 @@ SLIDES_DB["tree-copy-equal"] = {
       ] }
   ]
 };
+SLIDES_DB["pattern-builder"] = {
+  "category": "Design Patterns",
+  "title": { "zh": "Builder 模式", "en": "Builder Pattern" },
+  "slides": [
+    { "heading": { "zh": "Builder 模式", "en": "Builder Pattern" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Builder 是一種 Creational 設計模式,將複雜物件的建構過程與其最終表示(representation)分離,使同一套建構流程可以產生不同的物件表示。", "en": "Builder is a Creational design pattern that separates the construction of a complex object from its final representation, so the same construction process can produce different representations." } }
+      ] },
+    { "heading": { "zh": "核心概念", "en": "Core Concept" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Director 依照固定順序呼叫 Builder 介面的建構方法,實際的組裝細節則由 ConcreteBuilder 決定;最後透過 `getResult()` 取得完成的 Product。Director 不需要知道 Product 的具體類型。", "en": "The Director calls the Builder interface's construction methods in a fixed order, while the actual assembly details are decided by the ConcreteBuilder; the finished Product is retrieved via `getResult()`. The Director never needs to know the Product's concrete type." } },
+        { "type": "bullets", "items": [
+          { "zh": "Director:掌握建構順序(recipe),依序呼叫 `buildPartA()`、`buildPartB()` 等步驟,不涉入組裝細節。", "en": "Director: owns the construction order (the recipe), calling steps like `buildPartA()` and `buildPartB()` in sequence, without touching assembly details." },
+          { "zh": "Builder(介面):宣告每個建構步驟的抽象方法,以及回傳成品的 `getResult()`。", "en": "Builder (interface): declares abstract methods for each construction step, plus `getResult()` to return the finished product." },
+          { "zh": "ConcreteBuilder:實作 Builder 介面,決定每個步驟具體如何組裝,並持有正在建構中的 Product。", "en": "ConcreteBuilder: implements the Builder interface, deciding how each step is actually assembled, and holds the Product under construction." },
+          { "zh": "Product:被建構的複雜物件,由一系列組裝步驟逐步完成。", "en": "Product: the complex object being built, assembled incrementally through a series of construction steps." }
+        ] }
+      ] },
+    { "heading": { "zh": "運作流程", "en": "Operation Flow" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "客戶端建立一個 ConcreteBuilder,並將其交給 Director。", "en": "The client creates a ConcreteBuilder and hands it to the Director." },
+          { "zh": "Director 依固定順序呼叫 `builder.buildPartA()`、`builder.buildPartB()`。", "en": "The Director calls `builder.buildPartA()` then `builder.buildPartB()` in a fixed order." },
+          { "zh": "所有步驟完成後,Director 呼叫 `builder.getResult()` 取得完成的 Product。", "en": "Once all steps complete, the Director calls `builder.getResult()` to obtain the finished Product." },
+          { "zh": "更換不同的 ConcreteBuilder,同一套 Director 流程即可產生不同的 Product 表示。", "en": "Swapping in a different ConcreteBuilder lets the same Director logic produce a different Product representation." }
+        ] },
+        { "type": "mermaid", "code": "flowchart LR\n  Client -->|\"construct(builder)\"| D[\"Director\"]\n  D -->|\"buildPartA()\"| B[\"Builder\"]\n  D -->|\"buildPartB()\"| B\n  D -->|\"getResult()\"| B\n  B -->|\"returns\"| P[\"Product\"]" }
+      ] },
+    { "heading": { "zh": "UML 結構示意", "en": "UML Structure Diagram" },
+      "blocks": [
+        { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 200\" width=\"420\" height=\"200\"><g font-family=\"sans-serif\" font-size=\"11\"><rect x=\"15\" y=\"25\" width=\"130\" height=\"55\" rx=\"4\" fill=\"#ede9fe\" stroke=\"#6d28d9\" stroke-width=\"1.5\"/><text x=\"80\" y=\"45\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#4c1d95\">Director</text><line x1=\"15\" y1=\"52\" x2=\"145\" y2=\"52\" stroke=\"#6d28d9\" stroke-width=\"1\"/><text x=\"25\" y=\"68\" font-size=\"10\" fill=\"#374151\">+ construct(b): Product</text><rect x=\"235\" y=\"15\" width=\"170\" height=\"80\" rx=\"4\" fill=\"#dbeafe\" stroke=\"#2563eb\" stroke-width=\"1.5\"/><text x=\"320\" y=\"33\" text-anchor=\"middle\" font-weight=\"bold\" font-style=\"italic\" fill=\"#1e3a8a\">Builder</text><line x1=\"235\" y1=\"40\" x2=\"405\" y2=\"40\" stroke=\"#2563eb\" stroke-width=\"1\"/><text x=\"245\" y=\"55\" font-size=\"10\" fill=\"#374151\">+ buildPartA() = 0</text><text x=\"245\" y=\"70\" font-size=\"10\" fill=\"#374151\">+ buildPartB() = 0</text><text x=\"245\" y=\"85\" font-size=\"10\" fill=\"#374151\">+ getResult() = 0</text><rect x=\"235\" y=\"135\" width=\"170\" height=\"40\" rx=\"4\" fill=\"#dcfce7\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"320\" y=\"159\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#166534\">ConcreteBuilder</text><rect x=\"15\" y=\"135\" width=\"130\" height=\"40\" rx=\"4\" fill=\"#fef9c3\" stroke=\"#ca8a04\" stroke-width=\"1.5\"/><text x=\"80\" y=\"159\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#92400e\">Product</text><line x1=\"145\" y1=\"52\" x2=\"235\" y2=\"52\" stroke=\"#6d28d9\" stroke-width=\"1.5\"/><text x=\"152\" y=\"46\" font-size=\"10\" fill=\"#6d28d9\">uses</text><line x1=\"320\" y1=\"135\" x2=\"320\" y2=\"95\" stroke=\"#64748b\" stroke-width=\"1.5\" stroke-dasharray=\"4,3\"/><line x1=\"235\" y1=\"155\" x2=\"145\" y2=\"155\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"165\" y=\"149\" font-size=\"10\" fill=\"#16a34a\">builds</text></g></svg>" },
+        { "type": "note", "text": { "zh": "虛線箭頭表示「實作(implements)」關係:ConcreteBuilder 實作 Builder 抽象介面。Director 僅依賴 Builder,不知道實際建構細節;ConcreteBuilder 逐步組裝並透過 getResult() 回傳 Product。", "en": "The dashed arrow indicates the \"implements\" relationship: ConcreteBuilder implements the abstract Builder interface. The Director depends only on Builder and knows nothing about the actual construction details; the ConcreteBuilder assembles the object step by step and returns the Product via getResult()." } }
+      ] },
+    { "heading": { "zh": "模式屬性", "en": "Pattern Properties" },
+      "blocks": [
+        { "type": "table",
+          "headers": [ { "zh": "屬性", "en": "Property" }, { "zh": "說明", "en": "Description" } ],
+          "rows": [
+            [ { "zh": "GoF 分類", "en": "GoF Category" }, { "zh": "Creational(創建型)", "en": "Creational" } ],
+            [ { "zh": "參與者", "en": "Participants" }, { "zh": "Director、Builder(介面)、ConcreteBuilder、Product", "en": "Director, Builder (interface), ConcreteBuilder, Product" } ],
+            [ { "zh": "意圖", "en": "Intent" }, { "zh": "將複雜物件的建構與其表示分離", "en": "Separate the construction of a complex object from its representation" } ],
+            [ { "zh": "建構方式", "en": "Construction" }, { "zh": "逐步建構(step-by-step),依固定順序呼叫多個建構方法", "en": "Step-by-step construction, invoking multiple build methods in a fixed order" } ],
+            [ { "zh": "設計原則", "en": "Principle" }, { "zh": "組裝職責單一:Director 負責流程,ConcreteBuilder 負責細節(單一職責原則)", "en": "Single responsibility for assembly: the Director owns the process, the ConcreteBuilder owns the details (Single Responsibility Principle)" } ]
+          ] },
+        { "type": "math", "tex": "\\text{Product} = \\text{getResult} \\circ \\text{buildPartB} \\circ \\text{buildPartA}", "caption": { "zh": "Product 是一連串建構步驟依序作用於 Builder 之後的結果:先呼叫 buildPartA,再呼叫 buildPartB,最後以 getResult 取出成品。", "en": "The Product is the result of a sequence of construction steps applied to the Builder: buildPartA runs first, then buildPartB, and finally getResult extracts the finished object." } }
+      ] },
+    { "heading": { "zh": "程式碼", "en": "Source Code" },
+      "blocks": [
+        { "type": "code", "lang": "cpp", "file": "pattern_builder.cpp", "code": "class House {\npublic:\n    void setWalls(const string& w) { m_walls = w; }\n    void setRoof(const string& r) { m_roof = r; }\n    void setInterior(const string& i) { m_interior = i; }\n    void show() const { cout << m_walls << \", \" << m_roof << \", \" << m_interior << endl; }\nprivate:\n    string m_walls, m_roof, m_interior;\n};\n\n// Builder interface\nclass HouseBuilder {\npublic:\n    virtual ~HouseBuilder() {}\n    virtual void buildWalls() = 0;\n    virtual void buildRoof() = 0;\n    virtual void buildInterior() = 0;\n    virtual shared_ptr<House> getResult() = 0;\n};\n\n// Concrete Builder\nclass WoodenHouseBuilder : public HouseBuilder {\npublic:\n    WoodenHouseBuilder() { m_house = make_shared<House>(); }\n    void buildWalls() override { m_house->setWalls(\"Wooden Walls\"); }\n    void buildRoof() override { m_house->setRoof(\"Wooden Shingle Roof\"); }\n    void buildInterior() override { m_house->setInterior(\"Rustic Interior\"); }\n    shared_ptr<House> getResult() override { return m_house; }\nprivate:\n    shared_ptr<House> m_house;\n};\n\n// Director: fixed build order, independent of the concrete builder\nclass Director {\npublic:\n    shared_ptr<House> construct(HouseBuilder& builder) {\n        builder.buildWalls();\n        builder.buildRoof();\n        builder.buildInterior();\n        return builder.getResult();\n    }\n};\n\nint main() {\n    Director director;\n    WoodenHouseBuilder woodenBuilder;\n    auto house = director.construct(woodenBuilder);\n    house->show(); // Wooden Walls, Wooden Shingle Roof, Rustic Interior\n}" }
+      ] },
+    { "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "優點:將複雜的建構邏輯與物件表示分離,建構過程可重複使用於不同的表示。", "en": "Pro: separates complex construction logic from the object's representation; the same construction process is reusable across different representations." },
+          { "zh": "優點:支援逐步建構,可對建構順序與細節有更精細的控制。", "en": "Pro: supports step-by-step construction, giving finer control over build order and detail." },
+          { "zh": "缺點:每一種物件表示都需要一個新的 ConcreteBuilder 子類別,增加類別數量。", "en": "Con: each new representation requires a new ConcreteBuilder subclass, increasing the number of classes." },
+          { "zh": "缺點:Builder 介面必須事先設計好足以涵蓋所有產品變體所需的建構步驟。", "en": "Con: the Builder interface must be designed upfront to cover the construction steps needed by every product variant." },
+          { "zh": "適用:組裝有多個可選部分的複雜物件,例如文件產生器、UI 對話框建構器、SQL/HTML 查詢建構器等。", "en": "Use for assembling complex objects with many optional parts — document generators, UI dialog builders, SQL/HTML query builders, and similar fluent construction APIs." }
+        ] }
+      ] },
+    { "heading": { "zh": "小結", "en": "Summary" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "Builder 是 Creational 模式:將複雜物件的建構過程與其表示分離。", "en": "Builder is a Creational pattern: it separates the construction process of a complex object from its representation." },
+          { "zh": "參與者:Director(流程)、Builder(介面)、ConcreteBuilder(細節)、Product(成品)。", "en": "Participants: Director (process), Builder (interface), ConcreteBuilder (details), Product (result)." },
+          { "zh": "同一個 Director 搭配不同的 ConcreteBuilder,即可產生不同的 Product 表示。", "en": "The same Director paired with different ConcreteBuilders produces different Product representations." },
+          { "zh": "適合用於建構步驟固定、但組裝細節或最終表示需要變化的複雜物件。", "en": "Well suited to complex objects whose construction steps are fixed but whose assembly details or final representation need to vary." }
+        ] }
+      ] }
+  ]
+};
+
+SLIDES_DB["pattern-command"] = {
+  "category": "Design Patterns",
+  "title": { "zh": "Command 模式", "en": "Command Pattern" },
+  "slides": [
+    { "heading": { "zh": "Command 模式", "en": "Command Pattern" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Command 是一種 Behavioral 設計模式,將請求封裝為一個獨立物件,使呼叫者可以參數化不同的請求、將請求排入佇列或記錄下來,並支援復原(undo)操作。", "en": "Command is a Behavioral design pattern that encapsulates a request as a standalone object, allowing clients to parameterize different requests, queue or log them, and support undoable operations." } }
+      ] },
+    { "heading": { "zh": "核心概念", "en": "Core Concept" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "`RemoteControl` 是 Invoker,持有 `Command` 物件並呼叫其 `execute()`,不需知道命令背後實際執行的細節;`LightOnCommand`、`LightOffCommand` 是具體命令(ConcreteCommand),各自持有 `Light`(Receiver)的參考,並將呼叫轉發給 Receiver 的實際動作方法。", "en": "`RemoteControl` is the Invoker — it holds a `Command` object and calls its `execute()` without knowing what actually happens behind it; `LightOnCommand` and `LightOffCommand` are ConcreteCommands, each holding a reference to a `Light` (the Receiver) and forwarding the call to the Receiver's real action methods." } },
+        { "type": "bullets", "items": [
+          { "zh": "Invoker(`RemoteControl`):持有 `Command` 物件,透過 `submit()` 呼叫 `execute()`,並將命令存入歷史紀錄 `m_history` 以便復原。", "en": "Invoker (`RemoteControl`): holds a `Command` object, calls `execute()` via `submit()`, and stores commands in `m_history` for later undo." },
+          { "zh": "Command 介面(`Command`):宣告 `execute()` 與 `undo()`,是 Invoker 與 Receiver 之間的抽象層。", "en": "Command interface (`Command`): declares `execute()` and `undo()`, forming the abstraction layer between Invoker and Receiver." },
+          { "zh": "ConcreteCommand(`LightOnCommand`、`LightOffCommand`):實作 Command 介面,將 `execute()`/`undo()` 呼叫轉發給 Receiver 對應的方法。", "en": "ConcreteCommand (`LightOnCommand`, `LightOffCommand`): implements the Command interface, forwarding `execute()`/`undo()` calls to the corresponding Receiver methods." },
+          { "zh": "Receiver(`Light`):真正知道如何執行請求的物件,提供 `on()`/`off()` 等實際動作方法。", "en": "Receiver (`Light`): the object that actually knows how to perform the request, providing real action methods such as `on()`/`off()`." }
+        ] }
+      ] },
+    { "heading": { "zh": "運作流程", "en": "Operation Flow" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "客戶端建立 Receiver,例如 `Light kitchenLight(\"Kitchen\")`。", "en": "The client creates a Receiver, e.g. `Light kitchenLight(\"Kitchen\")`." },
+          { "zh": "建立 ConcreteCommand,例如 `make_shared<LightOnCommand>(kitchenLight)`,將 Receiver 綁定到命令中。", "en": "Create a ConcreteCommand, e.g. `make_shared<LightOnCommand>(kitchenLight)`, binding the Receiver into the command." },
+          { "zh": "呼叫 `remote.submit(onCommand)`;Invoker 呼叫 `command->execute()`,並將命令推入 `m_history`。", "en": "Call `remote.submit(onCommand)`; the Invoker calls `command->execute()` and pushes the command onto `m_history`." },
+          { "zh": "`execute()` 內部呼叫 `m_light.on()`,由 Receiver 真正執行動作。", "en": "Inside `execute()`, `m_light.on()` is called, letting the Receiver actually perform the action." },
+          { "zh": "呼叫 `remote.undoLast()`;取出歷史紀錄中的最後一個命令並呼叫其 `undo()`,還原到先前狀態。", "en": "Call `remote.undoLast()`; the last command is popped from `m_history` and its `undo()` is called to restore the previous state." }
+        ] },
+        { "type": "mermaid", "code": "flowchart LR\n  I[\"RemoteControl\\n(Invoker)\"] -->|\"submit(cmd)\"| C[\"Command\\nexecute()/undo()\"]\n  C -.->|implements| CC[\"LightOnCommand /\\nLightOffCommand\"]\n  CC -->|\"m_light.on()/off()\"| R[\"Light\\n(Receiver)\"]\n  I -->|\"undoLast()\"| H[\"m_history\\n(command log)\"]\n  H -.->|\"undo()\"| CC" }
+      ] },
+    { "heading": { "zh": "UML 結構示意", "en": "UML Structure Diagram" },
+      "blocks": [
+        { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 200\" width=\"420\" height=\"200\"><g font-family=\"sans-serif\" font-size=\"11\"><rect x=\"15\" y=\"25\" width=\"130\" height=\"55\" rx=\"4\" fill=\"#ede9fe\" stroke=\"#6d28d9\" stroke-width=\"1.5\"/><text x=\"80\" y=\"45\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#4c1d95\">RemoteControl</text><line x1=\"15\" y1=\"52\" x2=\"145\" y2=\"52\" stroke=\"#6d28d9\" stroke-width=\"1\"/><text x=\"25\" y=\"68\" font-size=\"10\" fill=\"#374151\">+ submit(cmd)</text><text x=\"25\" y=\"81\" font-size=\"10\" fill=\"#374151\">+ undoLast()</text><rect x=\"235\" y=\"15\" width=\"170\" height=\"80\" rx=\"4\" fill=\"#dbeafe\" stroke=\"#2563eb\" stroke-width=\"1.5\"/><text x=\"320\" y=\"33\" text-anchor=\"middle\" font-weight=\"bold\" font-style=\"italic\" fill=\"#1e3a8a\">Command</text><line x1=\"235\" y1=\"40\" x2=\"405\" y2=\"40\" stroke=\"#2563eb\" stroke-width=\"1\"/><text x=\"245\" y=\"55\" font-size=\"10\" fill=\"#374151\">+ execute() = 0</text><text x=\"245\" y=\"70\" font-size=\"10\" fill=\"#374151\">+ undo() = 0</text><rect x=\"235\" y=\"135\" width=\"170\" height=\"40\" rx=\"4\" fill=\"#dcfce7\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"320\" y=\"153\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#166534\">LightOnCommand /</text><text x=\"320\" y=\"167\" text-anchor=\"middle\" font-size=\"10\" fill=\"#166534\">LightOffCommand</text><rect x=\"15\" y=\"135\" width=\"130\" height=\"40\" rx=\"4\" fill=\"#fef9c3\" stroke=\"#ca8a04\" stroke-width=\"1.5\"/><text x=\"80\" y=\"153\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#92400e\">Light</text><text x=\"80\" y=\"167\" text-anchor=\"middle\" font-size=\"10\" fill=\"#92400e\">(Receiver)</text><line x1=\"145\" y1=\"52\" x2=\"235\" y2=\"52\" stroke=\"#6d28d9\" stroke-width=\"1.5\"/><text x=\"152\" y=\"46\" font-size=\"10\" fill=\"#6d28d9\">uses</text><line x1=\"320\" y1=\"135\" x2=\"320\" y2=\"95\" stroke=\"#64748b\" stroke-width=\"1.5\" stroke-dasharray=\"4,3\"/><line x1=\"235\" y1=\"155\" x2=\"145\" y2=\"155\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"165\" y=\"149\" font-size=\"10\" fill=\"#16a34a\">calls</text></g></svg>" },
+        { "type": "note", "text": { "zh": "虛線箭頭表示「實作(implements)」關係:LightOnCommand/LightOffCommand 實作 Command 抽象介面。RemoteControl(Invoker)僅依賴 Command,完全不知道 Receiver 的存在;ConcreteCommand 才知道 Light(Receiver)並轉發實際呼叫,因此 Invoker 與 Receiver 之間完全解耦。", "en": "The dashed arrow indicates the \"implements\" relationship: LightOnCommand/LightOffCommand implement the abstract Command interface. RemoteControl (the Invoker) depends only on Command and knows nothing about the Receiver; only the ConcreteCommand knows about Light (the Receiver) and forwards the real call, so the Invoker and Receiver are fully decoupled." } }
+      ] },
+    { "heading": { "zh": "模式屬性", "en": "Pattern Properties" },
+      "blocks": [
+        { "type": "table",
+          "headers": [ { "zh": "屬性", "en": "Property" }, { "zh": "說明", "en": "Description" } ],
+          "rows": [
+            [ { "zh": "GoF 分類", "en": "GoF Category" }, { "zh": "Behavioral(行為型)", "en": "Behavioral" } ],
+            [ { "zh": "參與者", "en": "Participants" }, { "zh": "Invoker、Command(介面)、ConcreteCommand、Receiver", "en": "Invoker, Command (interface), ConcreteCommand, Receiver" } ],
+            [ { "zh": "意圖", "en": "Intent" }, { "zh": "將請求封裝為物件,使其可參數化、佇列化、記錄與復原", "en": "Encapsulate a request as an object so it can be parameterized, queued, logged, and undone" } ],
+            [ { "zh": "解耦關係", "en": "Decoupling" }, { "zh": "Invoker 與 Receiver 完全解耦,只透過 Command 介面溝通", "en": "Invoker and Receiver are fully decoupled, communicating only through the Command interface" } ],
+            [ { "zh": "延伸應用", "en": "Extras" }, { "zh": "命令佇列(queue)、操作日誌(log)、復原/重做(undo/redo)", "en": "Command queues, operation logging, undo/redo" } ]
+          ] },
+        { "type": "math", "tex": "\\text{invoker.submit}(cmd) \\equiv cmd\\text{.execute}() \\to \\text{receiver.action}()", "caption": { "zh": "Invoker 呼叫命令的 execute() 實際上等同於委派給 Receiver 執行真正的動作;復原時則反向呼叫 undo(),將 Receiver 還原到先前狀態。", "en": "Calling execute() on a command via the Invoker is equivalent to delegating to the Receiver's real action; undo reverses this by calling undo() to restore the Receiver's previous state." } }
+      ] },
+    { "heading": { "zh": "程式碼", "en": "Source Code" },
+      "blocks": [
+        { "type": "code", "lang": "cpp", "file": "pattern_command.cpp", "code": "// Receiver\nclass Light {\n    string m_name;\npublic:\n    Light(const string& name) : m_name(name) {}\n    void on() const { cout << m_name << \" light is ON\" << endl; }\n    void off() const { cout << m_name << \" light is OFF\" << endl; }\n};\n\n// Command interface\nclass Command {\npublic:\n    virtual ~Command() {}\n    virtual void execute() = 0;\n    virtual void undo() = 0;\n};\n\n// Concrete Command\nclass LightOnCommand : public Command {\n    Light& m_light;\npublic:\n    LightOnCommand(Light& light) : m_light(light) {}\n    void execute() override { m_light.on(); }\n    void undo() override { m_light.off(); }\n};\n\n// Invoker\nclass RemoteControl {\n    vector<shared_ptr<Command>> m_history;\npublic:\n    void submit(shared_ptr<Command> command) {\n        command->execute();\n        m_history.push_back(command);\n    }\n    void undoLast() {\n        if (m_history.empty()) return;\n        m_history.back()->undo();\n        m_history.pop_back();\n    }\n};\n\nint main() {\n    Light kitchenLight(\"Kitchen\");\n    auto onCommand = make_shared<LightOnCommand>(kitchenLight);\n\n    RemoteControl remote;\n    remote.submit(onCommand);  // Kitchen light is ON\n    remote.undoLast();         // Kitchen light is OFF\n}" }
+      ] },
+    { "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "優點:將 Invoker 與具體的 Receiver 邏輯解耦,Invoker 只需認識 Command 介面。", "en": "Pro: decouples the Invoker from concrete Receiver logic — the Invoker only needs to know the Command interface." },
+          { "zh": "優點:命令本身是獨立物件,可排入佇列、記錄日誌,或延遲/非同步執行。", "en": "Pro: commands are first-class objects, so they can be queued, logged, or executed later/asynchronously." },
+          { "zh": "優點:天然支援復原/重做(undo/redo),只需保存命令歷史並反向呼叫 undo()。", "en": "Pro: naturally supports undo/redo by keeping a command history and calling undo() in reverse." },
+          { "zh": "缺點:每個不同動作都需要一個 ConcreteCommand 類別,容易造成類別數量膨脹。", "en": "Con: every distinct action requires its own ConcreteCommand class, which can lead to class-count bloat." },
+          { "zh": "適用:選單/按鈕動作、交易性操作、任務佇列/排程系統,以及需要復原/重做功能的 UI 或巨集系統。", "en": "Use for menu/button actions, transactional operations, task queues/job schedulers, and any UI or macro system that needs undo/redo." }
+        ] }
+      ] },
+    { "heading": { "zh": "小結", "en": "Summary" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "Command 是 Behavioral 模式:將請求封裝為物件,使呼叫者與實際執行者解耦。", "en": "Command is a Behavioral pattern: it encapsulates a request as an object, decoupling the caller from the actual executor." },
+          { "zh": "參與者:Invoker(`RemoteControl`)、Command 介面、ConcreteCommand(`LightOnCommand`/`LightOffCommand`)、Receiver(`Light`)。", "en": "Participants: Invoker (`RemoteControl`), Command interface, ConcreteCommand (`LightOnCommand`/`LightOffCommand`), Receiver (`Light`)." },
+          { "zh": "Invoker 呼叫 `execute()` 而不知道背後細節;命令歷史(`m_history`)使 `undo()`/redo 成為可能。", "en": "The Invoker calls `execute()` without knowing the underlying details; a command history (`m_history`) makes `undo()`/redo possible." },
+          { "zh": "Command 是 GUI 動作、交易系統、任務佇列等場景的常見選擇。", "en": "Command is a common choice for GUI actions, transactional systems, and task queues." }
+        ] }
+      ] }
+  ]
+};
+
+SLIDES_DB["pattern-composite"] = {
+  "category": "Design Patterns",
+  "title": { "zh": "Composite 模式", "en": "Composite Pattern" },
+  "slides": [
+    { "heading": { "zh": "Composite 模式", "en": "Composite Pattern" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Composite 是一種 Structural 設計模式,將物件組合成樹狀結構以表示「部分-整體」的層級關係,使客戶端能夠以一致的方式處理個別物件(Leaf)與物件組合(Composite)。", "en": "Composite is a Structural design pattern that composes objects into tree structures to represent part-whole hierarchies, letting clients treat individual objects (Leaf) and compositions of objects (Composite) uniformly." } }
+      ] },
+    { "heading": { "zh": "核心概念", "en": "Core Concept" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "`Component` 是 Leaf 與 Composite 共用的抽象介面,宣告 `operation()`。`Leaf` 直接實作 `operation()` 執行實際工作,是遞迴的終止點;`Composite` 持有型別為 `vector<shared_ptr<Component>>` 的 `m_children`,其 `operation()` 會先處理自己,再逐一委派給每個子節點。", "en": "`Component` is the abstract interface shared by Leaf and Composite, declaring `operation()`. `Leaf` implements `operation()` directly to perform the actual work — it is the base case of the recursion. `Composite` holds `m_children` of type `vector<shared_ptr<Component>>`; its `operation()` handles itself first, then delegates to each child in turn." } },
+        { "type": "bullets", "items": [
+          { "zh": "Component(介面):宣告 `operation()`,是 Leaf 與 Composite 的共同型別。", "en": "Component (interface): declares `operation()` and is the common type for Leaf and Composite." },
+          { "zh": "Leaf(`Leaf`):樹狀結構中的葉節點,沒有子節點,`operation()` 直接完成工作。", "en": "Leaf (`Leaf`): a leaf node in the tree with no children; `operation()` performs the work directly." },
+          { "zh": "Composite(`Composite`):可以有子節點,以 `add(child)` 加入,並透過 `m_children` 持有任意數量的 Component。", "en": "Composite (`Composite`): may have children, added via `add(child)`, holding any number of Components in `m_children`." },
+          { "zh": "客戶端(Client)透過 `Component*` 呼叫 `operation()`,不需區分手上拿到的是 Leaf 還是 Composite。", "en": "The Client calls `operation()` through a `Component*`, without needing to distinguish whether it holds a Leaf or a Composite." }
+        ] }
+      ] },
+    { "heading": { "zh": "運作流程", "en": "Operation Flow" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "客戶端建立根節點 `root`(一個 `Composite`),再建立子樹 `branchA`、`branchB`(皆為 `Composite`)。", "en": "The client creates the root node `root` (a `Composite`), then builds subtrees `branchA` and `branchB` (both `Composite`)." },
+          { "zh": "以 `add()` 將 `leaf1`、`leaf2` 加入 `branchA`;將 `leaf3` 加入 `branchB`;再將 `branchA`、`branchB` 與 `leaf4` 加入 `root`。", "en": "`add()` inserts `leaf1` and `leaf2` into `branchA`, `leaf3` into `branchB`, and then `branchA`, `branchB`, and `leaf4` into `root`." },
+          { "zh": "呼叫 `root->operation()`;`Composite::operation()` 先印出自己,再對 `m_children` 中每個節點遞迴呼叫 `operation(depth+1)`。", "en": "Calling `root->operation()` triggers `Composite::operation()`, which prints itself first, then recursively calls `operation(depth+1)` on every node in `m_children`." },
+          { "zh": "遞迴到 `Leaf` 時,`Leaf::operation()` 只印出自己並直接返回,是整個遞迴的終止條件。", "en": "When the recursion reaches a `Leaf`, `Leaf::operation()` simply prints itself and returns — the base case that terminates the recursion." }
+        ] },
+        { "type": "mermaid", "code": "flowchart TD\n  Client -->|\"root->operation()\"| Root[\"Composite: root\"]\n  Root --> BranchA[\"Composite: branchA\"]\n  Root --> BranchB[\"Composite: branchB\"]\n  Root --> Leaf4[\"Leaf: leaf4\"]\n  BranchA --> Leaf1[\"Leaf: leaf1\"]\n  BranchA --> Leaf2[\"Leaf: leaf2\"]\n  BranchB --> Leaf3[\"Leaf: leaf3\"]" }
+      ] },
+    { "heading": { "zh": "UML 結構示意", "en": "UML Structure Diagram" },
+      "blocks": [
+        { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 210\" width=\"420\" height=\"210\"><g font-family=\"sans-serif\" font-size=\"11\"><rect x=\"140\" y=\"10\" width=\"150\" height=\"60\" rx=\"4\" fill=\"#dbeafe\" stroke=\"#2563eb\" stroke-width=\"1.5\"/><text x=\"215\" y=\"28\" text-anchor=\"middle\" font-weight=\"bold\" font-style=\"italic\" fill=\"#1e3a8a\">Component</text><line x1=\"140\" y1=\"35\" x2=\"290\" y2=\"35\" stroke=\"#2563eb\" stroke-width=\"1\"/><text x=\"150\" y=\"50\" font-size=\"10\" fill=\"#374151\">+ operation() = 0</text><rect x=\"15\" y=\"130\" width=\"130\" height=\"45\" rx=\"4\" fill=\"#dcfce7\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"80\" y=\"150\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#166534\">Leaf</text><text x=\"80\" y=\"165\" text-anchor=\"middle\" font-size=\"10\" fill=\"#374151\">+ operation()</text><rect x=\"255\" y=\"120\" width=\"150\" height=\"75\" rx=\"4\" fill=\"#fef9c3\" stroke=\"#ca8a04\" stroke-width=\"1.5\"/><text x=\"330\" y=\"138\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#92400e\">Composite</text><text x=\"330\" y=\"153\" text-anchor=\"middle\" font-size=\"9\" fill=\"#374151\">- m_children: Component[]</text><text x=\"330\" y=\"168\" text-anchor=\"middle\" font-size=\"10\" fill=\"#374151\">+ add(child)</text><text x=\"330\" y=\"183\" text-anchor=\"middle\" font-size=\"10\" fill=\"#374151\">+ operation()</text><line x1=\"80\" y1=\"130\" x2=\"175\" y2=\"70\" stroke=\"#64748b\" stroke-width=\"1.5\" stroke-dasharray=\"4,3\"/><line x1=\"300\" y1=\"120\" x2=\"255\" y2=\"70\" stroke=\"#64748b\" stroke-width=\"1.5\" stroke-dasharray=\"4,3\"/><line x1=\"370\" y1=\"120\" x2=\"295\" y2=\"45\" stroke=\"#ca8a04\" stroke-width=\"1.5\" marker-end=\"url(#arr)\"/><text x=\"345\" y=\"92\" font-size=\"9\" fill=\"#92400e\">0..* children</text><defs><marker id=\"arr\" markerWidth=\"8\" markerHeight=\"8\" refX=\"6\" refY=\"3\" orient=\"auto\"><path d=\"M0,0 L0,6 L8,3 z\" fill=\"#ca8a04\"/></marker></defs></g></svg>" },
+        { "type": "note", "text": { "zh": "虛線箭頭表示「實作(implements)」關係:Leaf 與 Composite 皆實作 Component 抽象介面。實心箭頭表示 Composite 以聚合(aggregation)方式持有 0 到多個 Component 作為 `m_children`——因為 Component 可能是 Leaf,也可能是另一個 Composite,樹狀結構因而能夠遞迴到任意深度。", "en": "The dashed arrows indicate the \"implements\" relationship: both Leaf and Composite implement the abstract Component interface. The solid arrow shows that Composite aggregates zero or more Components as `m_children` — since a Component may be either a Leaf or another Composite, the tree can recurse to arbitrary depth." } }
+      ] },
+    { "heading": { "zh": "模式屬性", "en": "Pattern Properties" },
+      "blocks": [
+        { "type": "table",
+          "headers": [ { "zh": "屬性", "en": "Property" }, { "zh": "說明", "en": "Description" } ],
+          "rows": [
+            [ { "zh": "GoF 分類", "en": "GoF Category" }, { "zh": "Structural(結構型)", "en": "Structural" } ],
+            [ { "zh": "參與者", "en": "Participants" }, { "zh": "Component(介面)、Leaf、Composite", "en": "Component (interface), Leaf, Composite" } ],
+            [ { "zh": "意圖", "en": "Intent" }, { "zh": "將物件組合成樹狀結構,使客戶端能一致地處理個別物件與物件組合", "en": "Compose objects into tree structures so clients can treat individual objects and compositions uniformly" } ],
+            [ { "zh": "結構", "en": "Structure" }, { "zh": "遞迴樹狀結構——Composite 的子節點可能是 Leaf,也可能是另一個 Composite", "en": "Recursive tree structure — a Composite's children may be Leaves or other Composites" } ],
+            [ { "zh": "一致性", "en": "Uniformity" }, { "zh": "Leaf 與 Composite 皆實作 Component,客戶端呼叫 operation() 時無需判斷型別", "en": "Leaf and Composite both implement Component, so the client calls operation() without checking the concrete type" } ]
+          ] },
+        { "type": "math", "tex": "\\text{Composite.operation}(d) = \\text{print(self)} \\; + \\sum_{c\\,\\in\\,\\text{children}} c.\\text{operation}(d+1)", "caption": { "zh": "Composite 的 operation() 等於先處理自己,再對 m_children 中每個子節點遞迴呼叫 operation();遞迴到 Leaf 時總和項為空,直接終止。", "en": "A Composite's operation() equals handling itself plus recursively calling operation() on every child in m_children; at a Leaf the sum is empty and the recursion terminates." } }
+      ] },
+    { "heading": { "zh": "程式碼", "en": "Source Code" },
+      "blocks": [
+        { "type": "code", "lang": "cpp", "file": "pattern_composite.cpp", "code": "// Component - common interface for leaves and composites\nclass Component {\nprotected:\n    string m_name;\npublic:\n    Component(const string& name) : m_name(name) {}\n    virtual ~Component() {}\n    virtual void operation(int depth = 0) const = 0;\n};\n\n// Leaf - has no children\nclass Leaf : public Component {\npublic:\n    Leaf(const string& name) : Component(name) {}\n    void operation(int depth = 0) const override {\n        cout << string(depth * 2, ' ') << \"Leaf: \" << m_name << endl;\n    }\n};\n\n// Composite - holds children and forwards operations recursively\nclass Composite : public Component {\nprivate:\n    vector<shared_ptr<Component>> m_children;\npublic:\n    Composite(const string& name) : Component(name) {}\n    void add(shared_ptr<Component> child) { m_children.push_back(child); }\n    void operation(int depth = 0) const override {\n        cout << string(depth * 2, ' ') << \"Composite: \" << m_name << endl;\n        for (const auto& child : m_children) {\n            child->operation(depth + 1);\n        }\n    }\n};\n\nint main() {\n    auto root = make_shared<Composite>(\"root\");\n\n    auto branchA = make_shared<Composite>(\"branchA\");\n    branchA->add(make_shared<Leaf>(\"leaf1\"));\n    branchA->add(make_shared<Leaf>(\"leaf2\"));\n\n    auto branchB = make_shared<Composite>(\"branchB\");\n    branchB->add(make_shared<Leaf>(\"leaf3\"));\n\n    root->add(branchA);\n    root->add(branchB);\n    root->add(make_shared<Leaf>(\"leaf4\"));\n\n    root->operation(); // recurses through the whole tree\n}" }
+      ] },
+    { "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "優點:客戶端可以用一致的方式處理 Leaf 與 Composite,不需要寫額外的型別判斷邏輯。", "en": "Pro: the client treats Leaf and Composite uniformly, without extra type-checking logic." },
+          { "zh": "優點:新增新的 Component 型別(新的 Leaf 或 Composite 變體)不需修改既有程式碼,符合 Open/Closed Principle。", "en": "Pro: adding a new Component type (a new Leaf or Composite variant) requires no changes to existing code, following the Open/Closed Principle." },
+          { "zh": "優點:天然適合表示遞迴的層級結構,例如檔案系統、GUI 元件樹、組織架構圖。", "en": "Pro: naturally suited to recursive hierarchical structures such as file systems, GUI widget trees, and organizational charts." },
+          { "zh": "缺點:Component 介面必須對 Leaf 與 Composite 都有意義,有時會被迫加入對 Leaf 沒有意義的方法(例如 `add()`)。", "en": "Con: the Component interface must make sense for both Leaf and Composite, sometimes forcing in methods that are meaningless for a Leaf (e.g. `add()`)." },
+          { "zh": "適用:需要以遞迴樹狀結構表示部分-整體關係,且希望客戶端無差別地操作個別節點與整個子樹時。", "en": "Use when a part-whole hierarchy is naturally recursive and the client should operate on individual nodes and entire subtrees without distinction." }
+        ] }
+      ] },
+    { "heading": { "zh": "小結", "en": "Summary" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "Composite 是 Structural 模式:將物件組合成樹狀結構,表示部分-整體的層級關係。", "en": "Composite is a Structural pattern: it composes objects into tree structures representing part-whole hierarchies." },
+          { "zh": "參與者:Component(共用介面)、Leaf(葉節點,實際工作)、Composite(持有 m_children,遞迴委派)。", "en": "Participants: Component (shared interface), Leaf (leaf node, does the actual work), Composite (holds m_children, delegates recursively)." },
+          { "zh": "`Composite::operation()` 遞迴呼叫每個子節點的 `operation()`,遞迴到 `Leaf` 便終止。", "en": "`Composite::operation()` recursively calls `operation()` on each child, terminating once it reaches a `Leaf`." },
+          { "zh": "核心價值:客戶端透過 Component 介面統一操作,完全不需要區分現在拿到的是單一物件還是整個子樹。", "en": "Core value: the client operates uniformly through the Component interface, with no need to distinguish a single object from an entire subtree." }
+        ] }
+      ] }
+  ]
+};
 
 module.exports = SLIDES_DB;
