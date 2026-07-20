@@ -16,3 +16,14 @@ test('patternsByCategory filters', () => {
   assert.ok(P.patternsByCategory('patterns-creational').some((p) => p.id === 'pattern-builder'));
   assert.ok(!P.patternsByCategory('patterns-structural').some((p) => p.id === 'pattern-builder'));
 });
+
+test('registry has all 14 patterns in the right category counts', () => {
+  assert.strictEqual(P.PATTERNS.length, 14);
+  assert.strictEqual(P.patternsByCategory('patterns-creational').length, 3);
+  assert.strictEqual(P.patternsByCategory('patterns-structural').length, 3);
+  assert.strictEqual(P.patternsByCategory('patterns-behavioral').length, 3);
+  assert.strictEqual(P.patternsByCategory('patterns-architectural').length, 5);
+  // migrated patterns use the escape hatch (verbatim move), so each has a render fn
+  ['pattern-singleton','pattern-factory','pattern-adapter','pattern-decorator','pattern-observer','pattern-strategy','pattern-mvc','pattern-layered','pattern-pubsub','pattern-pipefilter','pattern-di']
+    .forEach((id) => { const p = P.getPattern(id); assert.ok(p, id); assert.strictEqual(typeof p.render, 'function', id + ' render'); assert.ok(Array.isArray(p.narration), id + ' narration'); });
+});

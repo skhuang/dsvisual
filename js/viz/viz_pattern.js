@@ -40,6 +40,69 @@
     if (typeof descriptor.render === 'function') descriptor.render(svg);
     else if (descriptor.diagram) drawDiagram(svg, descriptor.diagram);
   }
-  global.PatternVizDraw = { drawDiagram, tree, arrow };
+  // OOP box/line/label helpers copied verbatim from app.js (~lines 2076–2148) so the
+  // architectural pattern descriptors (mvc/layered/pubsub/pipefilter/di) render identically.
+  // The .oop-* CSS classes are global in style.css, so visuals stay unchanged.
+  const OOP_COLORS = {
+      blue: '#1d4ed8',
+      pink: '#be185d',
+      green: '#047857',
+      amber: '#b45309',
+      violet: '#6d28d9',
+      red: '#b91c1c',
+      slate: '#334155',
+      cyan: '#0e7490',
+  };
+
+  function oopSvgEl(tag, attrs) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const k in attrs) el.setAttribute(k, String(attrs[k]));
+      return el;
+  }
+
+  function drawOopBox(svg, opts) {
+      const rect = oopSvgEl('rect', {
+          x: opts.x, y: opts.y, width: opts.w, height: opts.h, rx: opts.rx || 8,
+          class: (opts.className || 'oop-class-rect') + (opts.activeClass || ''),
+      });
+      if (opts.dashed) rect.setAttribute('stroke-dasharray', '6 4');
+      svg.appendChild(rect);
+      const cx = opts.x + opts.w / 2;
+      const title = oopSvgEl('text', {
+          x: cx, y: opts.y + 24, 'text-anchor': 'middle',
+          class: 'oop-member-text oop-title-text' + (opts.activeClass || ''),
+          style: 'fill:' + (opts.titleColor || OOP_COLORS.blue) + ';' + (opts.dashed ? 'font-style:italic;' : ''),
+      });
+      title.textContent = opts.title;
+      svg.appendChild(title);
+      (opts.lines || []).forEach((ln, i) => {
+          const t = oopSvgEl('text', {
+              x: cx, y: opts.y + 48 + i * 18, 'text-anchor': 'middle',
+              class: 'oop-member-text' + (opts.activeClass || ''),
+              style: 'fill:' + (ln.color || OOP_COLORS.slate) + ';',
+          });
+          t.textContent = ln.text;
+          svg.appendChild(t);
+      });
+  }
+
+  function drawOopLabel(svg, x, y, text, color, activeClass) {
+      const t = oopSvgEl('text', {
+          x: x, y: y, 'text-anchor': 'middle',
+          class: 'oop-member-text oop-label-text' + (activeClass || ''),
+          style: 'fill:' + (color || OOP_COLORS.slate) + ';',
+      });
+      t.textContent = text;
+      svg.appendChild(t);
+  }
+
+  function drawOopLine(svg, x1, y1, x2, y2, activeClass) {
+      svg.appendChild(oopSvgEl('line', {
+          x1: x1, y1: y1, x2: x2, y2: y2,
+          class: 'oop-inheritance-line' + (activeClass || ''),
+      }));
+  }
+
+  global.PatternVizDraw = { drawDiagram, tree, arrow, drawOopBox, drawOopLabel, drawOopLine };
   global.PatternViz = { drawDiagram, tree, playNarration, render };
 })(typeof window !== 'undefined' ? window : globalThis);
