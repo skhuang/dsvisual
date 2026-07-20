@@ -19,7 +19,7 @@ class Leaf : public Component {
 public:
     Leaf(const string& name) : Component(name) {}
 
-    void operation(int depth) const override {
+    void operation(int depth = 0) const override {
         cout << string(depth * 2, ' ') << "Leaf: " << m_name << endl;
     }
 };
@@ -38,7 +38,7 @@ public:
         // Remove child from list (implementation omitted for brevity)
     }
 
-    void operation(int depth) const override {
+    void operation(int depth = 0) const override {
         cout << string(depth * 2, ' ') << "Composite: " << m_name << endl;
         for (const auto& child : m_children) {
             child->operation(depth + 1);
