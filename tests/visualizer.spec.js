@@ -434,7 +434,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="pattern-mvc"]');
         await expect(card).toHaveAttribute('data-runtime-state', 'active');
         await expect(card.locator('.code-panel-filename')).toContainText('pattern_mvc.cpp');
-        await expect(card.locator('#pattern-mvc-svg rect')).toHaveCount(3);
+        await expect(card.locator('#pattern-svg rect')).toHaveCount(3);
     });
 
     test('Architectural: Layered renders the 3-layer stack', async ({ page }) => {
@@ -442,7 +442,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="pattern-layered"]');
         await expect(card).toHaveAttribute('data-runtime-state', 'active');
         await expect(card.locator('.code-panel-filename')).toContainText('pattern_layered.cpp');
-        await expect(card.locator('#pattern-layered-svg rect')).toHaveCount(3);
+        await expect(card.locator('#pattern-svg rect')).toHaveCount(3);
     });
 
     test('Architectural: Publish-Subscribe renders publisher, bus, subscribers', async ({ page }) => {
@@ -450,7 +450,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="pattern-pubsub"]');
         await expect(card).toHaveAttribute('data-runtime-state', 'active');
         await expect(card.locator('.code-panel-filename')).toContainText('pattern_pubsub.cpp');
-        await expect(card.locator('#pattern-pubsub-svg rect')).toHaveCount(5);
+        await expect(card.locator('#pattern-svg rect')).toHaveCount(5);
     });
 
     test('Architectural: Pipe-and-Filter renders the filter chain', async ({ page }) => {
@@ -458,7 +458,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="pattern-pipefilter"]');
         await expect(card).toHaveAttribute('data-runtime-state', 'active');
         await expect(card.locator('.code-panel-filename')).toContainText('pattern_pipefilter.cpp');
-        await expect(card.locator('#pattern-pipefilter-svg rect')).toHaveCount(5);
+        await expect(card.locator('#pattern-svg rect')).toHaveCount(5);
     });
 
     test('Architectural: Dependency Injection renders the wiring diagram', async ({ page }) => {
@@ -466,7 +466,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="pattern-di"]');
         await expect(card).toHaveAttribute('data-runtime-state', 'active');
         await expect(card.locator('.code-panel-filename')).toContainText('pattern_di.cpp');
-        await expect(card.locator('#pattern-di-svg rect')).toHaveCount(3);
+        await expect(card.locator('#pattern-svg rect')).toHaveCount(3);
     });
 
     test('Trees: BST renders edges between parent/child after inserts', async ({ page }) => {
