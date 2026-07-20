@@ -1390,7 +1390,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnPatternDemo = document.getElementById('btn-pattern-demo');
     const btnPatternReset = document.getElementById('btn-pattern-reset');
     const patternContainer = document.getElementById('pattern-container');
-    const patternVisualization = document.getElementById('pattern-visualization');
 
     let currentMode = 'stack-array';
     const visualizerRuntime = {
