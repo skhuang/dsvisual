@@ -4,7 +4,8 @@
   const MS_SCENARIO = {
     objects: [
       { id: 0, refs: [2] }, { id: 1, refs: [3, 4] }, { id: 2, refs: [5] },
-      { id: 3, refs: [] }, { id: 4, refs: [2] }, { id: 5, refs: [] }, { id: 6, refs: [] }
+      { id: 3, refs: [] }, { id: 4, refs: [2] }, { id: 5, refs: [] }, { id: 6, refs: [] },
+      { id: 7, refs: [8] }, { id: 8, refs: [7] }   // unreachable garbage cycle
     ],
     roots: [0, 1]
   };
@@ -13,7 +14,7 @@
     const objs = scenario.objects.map((o) => ({ id: o.id, refs: o.refs.slice(), mark: false, free: false }));
     const byId = {}; objs.forEach((o) => { byId[o.id] = o; });
     const frames = [];
-    function snap(phase, active) { return { phase: phase, active: active, heap: objs.map((o) => ({ id: o.id, refs: o.refs.slice(), mark: o.mark, free: o.free })) }; }
+    function snap(phase, active) { return { phase: phase, active: active, roots: scenario.roots.slice(), heap: objs.map((o) => ({ id: o.id, refs: o.refs.slice(), mark: o.mark, free: o.free })) }; }
     frames.push(snap('start', null));
     const stack = scenario.roots.slice();
     while (stack.length) {
