@@ -3980,6 +3980,246 @@ int main() {
 }
 `;
 
+const codePatternBuilder = `#include <iostream>
+#include <memory>
+using namespace std;
+
+// Product
+class House {
+private:
+    string m_walls;
+    string m_roof;
+    string m_interior;
+
+public:
+    void setWalls(const string& walls) { m_walls = walls; }
+    void setRoof(const string& roof) { m_roof = roof; }
+    void setInterior(const string& interior) { m_interior = interior; }
+
+    void show() const {
+        cout << "House [walls=" << m_walls << ", roof=" << m_roof
+             << ", interior=" << m_interior << "]" << endl;
+    }
+};
+
+// Builder interface
+class HouseBuilder {
+public:
+    virtual ~HouseBuilder() {}
+    virtual void buildWalls() = 0;
+    virtual void buildRoof() = 0;
+    virtual void buildInterior() = 0;
+    virtual shared_ptr<House> getResult() = 0;
+};
+
+// Concrete Builder
+class WoodenHouseBuilder : public HouseBuilder {
+private:
+    shared_ptr<House> m_house;
+
+public:
+    WoodenHouseBuilder() { m_house = make_shared<House>(); }
+
+    void buildWalls() override { m_house->setWalls("Wooden Walls"); }
+    void buildRoof() override { m_house->setRoof("Wooden Shingle Roof"); }
+    void buildInterior() override { m_house->setInterior("Rustic Interior"); }
+
+    shared_ptr<House> getResult() override { return m_house; }
+};
+
+class ConcreteHouseBuilder : public HouseBuilder {
+private:
+    shared_ptr<House> m_house;
+
+public:
+    ConcreteHouseBuilder() { m_house = make_shared<House>(); }
+
+    void buildWalls() override { m_house->setWalls("Concrete Walls"); }
+    void buildRoof() override { m_house->setRoof("Flat Concrete Roof"); }
+    void buildInterior() override { m_house->setInterior("Modern Interior"); }
+
+    shared_ptr<House> getResult() override { return m_house; }
+};
+
+// Director - orchestrates the build steps in a fixed order
+class Director {
+public:
+    shared_ptr<House> construct(HouseBuilder& builder) {
+        builder.buildWalls();
+        builder.buildRoof();
+        builder.buildInterior();
+        return builder.getResult();
+    }
+};
+
+int main() {
+    Director director;
+
+    WoodenHouseBuilder woodenBuilder;
+    auto woodenHouse = director.construct(woodenBuilder);
+    cout << "--- Wooden House ---" << endl;
+    woodenHouse->show();
+
+    ConcreteHouseBuilder concreteBuilder;
+    auto concreteHouse = director.construct(concreteBuilder);
+    cout << "--- Concrete House ---" << endl;
+    concreteHouse->show();
+
+    return 0;
+}
+`;
+
+const codePatternComposite = `#include <iostream>
+#include <vector>
+#include <memory>
+using namespace std;
+
+// Component - common interface for leaves and composites
+class Component {
+protected:
+    string m_name;
+
+public:
+    Component(const string& name) : m_name(name) {}
+    virtual ~Component() {}
+    virtual void operation(int depth = 0) const = 0;
+};
+
+// Leaf - has no children
+class Leaf : public Component {
+public:
+    Leaf(const string& name) : Component(name) {}
+
+    void operation(int depth = 0) const override {
+        cout << string(depth * 2, ' ') << "Leaf: " << m_name << endl;
+    }
+};
+
+// Composite - holds children and forwards operations recursively
+class Composite : public Component {
+private:
+    vector<shared_ptr<Component>> m_children;
+
+public:
+    Composite(const string& name) : Component(name) {}
+
+    void add(shared_ptr<Component> child) { m_children.push_back(child); }
+
+    void remove(shared_ptr<Component> child) {
+        // Remove child from list (implementation omitted for brevity)
+    }
+
+    void operation(int depth = 0) const override {
+        cout << string(depth * 2, ' ') << "Composite: " << m_name << endl;
+        for (const auto& child : m_children) {
+            child->operation(depth + 1);
+        }
+    }
+};
+
+int main() {
+    auto root = make_shared<Composite>("root");
+
+    auto branchA = make_shared<Composite>("branchA");
+    branchA->add(make_shared<Leaf>("leaf1"));
+    branchA->add(make_shared<Leaf>("leaf2"));
+
+    auto branchB = make_shared<Composite>("branchB");
+    branchB->add(make_shared<Leaf>("leaf3"));
+
+    root->add(branchA);
+    root->add(branchB);
+    root->add(make_shared<Leaf>("leaf4"));
+
+    root->operation();
+
+    return 0;
+}
+`;
+
+const codePatternCommand = `#include <iostream>
+#include <memory>
+#include <vector>
+using namespace std;
+
+// Receiver - knows how to perform the actual work
+class Light {
+private:
+    string m_name;
+
+public:
+    Light(const string& name) : m_name(name) {}
+
+    void on() const { cout << m_name << " light is ON" << endl; }
+    void off() const { cout << m_name << " light is OFF" << endl; }
+};
+
+// Command interface
+class Command {
+public:
+    virtual ~Command() {}
+    virtual void execute() = 0;
+    virtual void undo() = 0;
+};
+
+// Concrete Commands
+class LightOnCommand : public Command {
+private:
+    Light& m_light;
+
+public:
+    LightOnCommand(Light& light) : m_light(light) {}
+
+    void execute() override { m_light.on(); }
+    void undo() override { m_light.off(); }
+};
+
+class LightOffCommand : public Command {
+private:
+    Light& m_light;
+
+public:
+    LightOffCommand(Light& light) : m_light(light) {}
+
+    void execute() override { m_light.off(); }
+    void undo() override { m_light.on(); }
+};
+
+// Invoker - triggers commands without knowing their concrete type
+class RemoteControl {
+private:
+    vector<shared_ptr<Command>> m_history;
+
+public:
+    void submit(shared_ptr<Command> command) {
+        command->execute();
+        m_history.push_back(command);
+    }
+
+    void undoLast() {
+        if (m_history.empty()) return;
+        m_history.back()->undo();
+        m_history.pop_back();
+    }
+};
+
+int main() {
+    Light kitchenLight("Kitchen");
+
+    auto onCommand = make_shared<LightOnCommand>(kitchenLight);
+    auto offCommand = make_shared<LightOffCommand>(kitchenLight);
+
+    RemoteControl remote;
+    remote.submit(onCommand);
+    remote.submit(offCommand);
+
+    cout << "--- Undo last command ---" << endl;
+    remote.undoLast();
+
+    return 0;
+}
+`;
+
 const codeDeque = `#include <iostream>
 using namespace std;
 
@@ -6745,3 +6985,128 @@ int main() {
 }
 `;
 
+const CODE_DB = {
+    "search_linear.cpp": codeSearchLinear,
+    "search_binary.cpp": codeSearchBinary,
+    "sort_bubble.cpp": codeSortBubble,
+    "sort_selection.cpp": codeSortSelect,
+    "sort_insertion.cpp": codeSortInsert,
+    "sort_quick.cpp": codeSortQuick,
+    "sort_merge.cpp": codeSortMerge,
+    "sort_shell.cpp": codeSortShell,
+    "sort_bucket.cpp": codeSortBucket,
+    "sort_counting.cpp": codeSortCounting,
+    "sort_radix.cpp": codeSortRadix,
+    "sort_heap.cpp": codeSortHeap,
+    "sort_shaker.cpp": codeSortShaker,
+    "tree_bst.cpp": codeTreeBST,
+    "tree_avl.cpp": codeTreeAVL,
+    "tree_rb.cpp": codeTreeRB,
+    "tree_splay.cpp": codeTreeSplay,
+    "tree_dsu.cpp": codeTreeDSU,
+    "stack_array.cpp": codeArray,
+    "stack_linkedlist.cpp": codeLinkedList,
+    "queue.cpp": codeQueue,
+    "graph.cpp": codeGraph,
+    "graph_adjlist.cpp": codeGraphAdjlist,
+    "graph_bfs.cpp": codeGraphBFS,
+    "graph_dfs.cpp": codeGraphDFS,
+    "graph_traversal.cpp": codeGraphTraversal,
+    "graph_kruskal.cpp": codeGraphKruskal,
+    "graph_dijkstra.cpp": codeGraphDijkstra,
+    "graph_topo.cpp": codeGraphTopo,
+    "list_array.cpp": codeListArray,
+    "list_linked.cpp": codeListLinked,
+    "hash_chaining.cpp": codeHashChain,
+    "hash_open_address.cpp": codeHashOpen,
+    "hash_bucket.cpp": codeHashBucket,
+    "heap_binary.cpp": codeHeapBinary,
+    "heap_binomial.cpp": codeHeapBinomial,
+    "heap_fibonacci.cpp": codeHeapFibonacci,
+    "heap_leftist.cpp": codeHeapLeftist,
+    "heap_skew.cpp": codeHeapSkew,
+    "heap_dary.cpp": codeHeapDary,
+    "heap_pairing.cpp": codeHeapPairing,
+    "tree_trie.cpp": codeTreeTrie,
+    "tree_radix.cpp": codeTreeRadix,
+    "tree_ternary.cpp": codeTreeTST,
+    "tree_btree.cpp": codeTreeBTree,
+    "tree_bplus.cpp": codeTreeBPlus,
+    "oop_inheritance.cpp": codeOOPInheritance,
+    "oop_polymorphism.cpp": codeOOPPolymorphism,
+    "oop_encapsulation.cpp": codeOOPEncapsulation,
+    "oop_abstraction.cpp": codeOOPAbstraction,
+    "oop_adhoc.cpp": codeOOPAdhoc,
+    "oop_templates.cpp": codeOOPTemplates,
+    "pattern_singleton.cpp": codePatternSingleton,
+    "pattern_factory.cpp": codePatternFactory,
+    "pattern_adapter.cpp": codePatternAdapter,
+    "pattern_decorator.cpp": codePatternDecorator,
+    "pattern_observer.cpp": codePatternObserver,
+    "pattern_strategy.cpp": codePatternStrategy,
+    "pattern_mvc.cpp": codePatternMVC,
+    "pattern_layered.cpp": codePatternLayered,
+    "pattern_pubsub.cpp": codePatternPubSub,
+    "pattern_pipefilter.cpp": codePatternPipeFilter,
+    "pattern_di.cpp": codePatternDI,
+    "pattern_builder.cpp": codePatternBuilder,
+    "pattern_composite.cpp": codePatternComposite,
+    "pattern_command.cpp": codePatternCommand,
+    "deque.cpp": codeDeque,
+    "search_kmp.cpp": codeSearchKMP,
+    "search_bm.cpp": codeSearchBM,
+    "search_rk.cpp": codeSearchRK,
+    "search_strcompare.cpp": codeSearchStrCompare,
+    "bloom_filter.cpp": codeBloomFilter,
+    "skip_list.cpp": codeSkipList,
+    "count_min_sketch.cpp": codeCountMinSketch,
+    "search_zalgo.cpp": codeSearchZAlgo,
+    "search_aho.cpp": codeSearchAho,
+    "tree_segment.cpp": codeTreeSegment,
+    "tree_fenwick.cpp": codeTreeFenwick,
+    "tree_traversal.cpp": codeTreeTraversal,
+    "huffman.cpp": codeHuffman,
+    "expr_infix_postfix.cpp": codeExprInfixPostfix,
+    "graph_aoe.cpp": codeGraphAoe,
+    "graph_prim.cpp": codeGraphPrim,
+    "graph_bellman_ford.cpp": codeGraphBellmanFord,
+    "graph_floyd_warshall.cpp": codeGraphFloydWarshall,
+    "tree_obst.cpp": codeTreeObst,
+    "sort_external.cpp": codeSortExternal,
+    "sort_polyphase.cpp": codeSortPolyphase,
+    "matrix_sparse.cpp": codeMatrixSparse,
+    "matrix_sparse_list.cpp": codeMatrixSparseList,
+    "poly_padd.cpp": codePolyPadd,
+    "magic_square.cpp": codeMagicSquare,
+    "magic_latin.cpp": codeMagicLatin,
+    "magic_torus.cpp": codeMagicTorus,
+    "magic_formula.cpp": codeMagicFormula,
+    "magic_symmetry.cpp": codeMagicSymmetry,
+    "nano_bpe_encode.cpp": codeNanoBpeEncode,
+    "nano_compute_graph.cpp": codeNanoComputeGraph,
+    "nano_bpe_train.cpp": codeNanoBpeTrain,
+    "nano_ngram_next.cpp": codeNanoNgramNext,
+    "maze_stack.cpp": codeMazeStack,
+    "list_doubly.cpp": codeListDoubly,
+    "list_equivalence.cpp": codeListEquivalence,
+    "search_fibonacci.cpp": codeSearchFibonacci,
+    "search_interpolation.cpp": codeSearchInterpolation,
+    "tree_threaded.cpp": codeTreeThreaded,
+    "tree_mway.cpp": codeTreeMway,
+    "tree_expression.cpp": codeTreeExpression,
+    "tree_general_binary.cpp": codeTreeGeneralBinary,
+    "tree_reconstruct.cpp": codeTreeReconstruct,
+    "tree_array_rep.cpp": codeTreeArrayRep,
+    "tree_catalan.cpp": codeTreeCatalan,
+    "tree_copy_equal.cpp": codeTreeCopyEqual,
+    "decision_tree_coins.cpp": codeDecisionTreeCoins,
+    "game_tree.cpp": codeGameTree,
+    "gc_memory.cpp": codeGcMemory,
+    "file_isam.cpp": codeFileIsam,
+    "file_inverted.cpp": codeFileInverted,
+    "recursion.cpp": codeRecursion,
+    "lru_cache.cpp": codeLruCache,
+};
+
+if (typeof module !== 'undefined' && module.exports) { module.exports.CODE_DB = CODE_DB; }
+if (typeof window !== 'undefined') { window.CODE_DB = CODE_DB; }

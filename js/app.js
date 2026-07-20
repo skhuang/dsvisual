@@ -11,6 +11,32 @@ async function sleep(ms) {
     }
 }
 
+// The 11 migrated patterns keep their pre-refactor display order; any pattern
+// newly added to a category (via PatternsDB, not yet present pre-refactor) is
+// appended after them. This keeps METHOD_GROUPS / the category-scoped
+// pattern-mode-select stable for existing users while new patterns still show up.
+const LEGACY_PATTERN_ORDER = [
+    'pattern-singleton', 'pattern-factory', 'pattern-adapter', 'pattern-decorator',
+    'pattern-observer', 'pattern-strategy', 'pattern-mvc', 'pattern-layered',
+    'pattern-pubsub', 'pattern-pipefilter', 'pattern-di',
+];
+function orderedPatternsByCategory(categoryId) {
+    const db = (typeof window !== 'undefined' && window.PatternsDB) ? window.PatternsDB : null;
+    if (!db) return [];
+    return db.patternsByCategory(categoryId).slice().sort((a, b) => {
+        const ia = LEGACY_PATTERN_ORDER.indexOf(a.id);
+        const ib = LEGACY_PATTERN_ORDER.indexOf(b.id);
+        const ra = ia === -1 ? Infinity : ia;
+        const rb = ib === -1 ? Infinity : ib;
+        return ra - rb;
+    });
+}
+function patternGroupMethods(categoryId) {
+    return orderedPatternsByCategory(categoryId).map((p) => ({
+        id: p.id, title: p.title, file: p.cpp, visualizer: 'pattern', controls: 'pattern',
+    }));
+}
+
 const METHOD_GROUPS = [
     {
         id: 'linear',
@@ -191,43 +217,28 @@ const METHOD_GROUPS = [
         title: 'Creational',
         parent: 'patterns',
         parentTitle: 'Design Patterns',
-        methods: [
-            { id: 'pattern-singleton', title: 'Singleton', file: 'pattern_singleton.cpp', visualizer: 'pattern', controls: 'pattern' },
-            { id: 'pattern-factory', title: 'Factory Method', file: 'pattern_factory.cpp', visualizer: 'pattern', controls: 'pattern' },
-        ],
+        methods: patternGroupMethods('patterns-creational'),
     },
     {
         id: 'patterns-structural',
         title: 'Structural',
         parent: 'patterns',
         parentTitle: 'Design Patterns',
-        methods: [
-            { id: 'pattern-adapter', title: 'Adapter', file: 'pattern_adapter.cpp', visualizer: 'pattern', controls: 'pattern' },
-            { id: 'pattern-decorator', title: 'Decorator', file: 'pattern_decorator.cpp', visualizer: 'pattern', controls: 'pattern' },
-        ],
+        methods: patternGroupMethods('patterns-structural'),
     },
     {
         id: 'patterns-behavioral',
         title: 'Behavioral',
         parent: 'patterns',
         parentTitle: 'Design Patterns',
-        methods: [
-            { id: 'pattern-observer', title: 'Observer', file: 'pattern_observer.cpp', visualizer: 'pattern', controls: 'pattern' },
-            { id: 'pattern-strategy', title: 'Strategy', file: 'pattern_strategy.cpp', visualizer: 'pattern', controls: 'pattern' },
-        ],
+        methods: patternGroupMethods('patterns-behavioral'),
     },
     {
         id: 'patterns-architectural',
         title: 'Architectural',
         parent: 'patterns',
         parentTitle: 'Design Patterns',
-        methods: [
-            { id: 'pattern-mvc', title: 'MVC (Model-View-Controller)', file: 'pattern_mvc.cpp', visualizer: 'pattern', controls: 'pattern' },
-            { id: 'pattern-layered', title: 'Layered Architecture', file: 'pattern_layered.cpp', visualizer: 'pattern', controls: 'pattern' },
-            { id: 'pattern-pubsub', title: 'Publish-Subscribe', file: 'pattern_pubsub.cpp', visualizer: 'pattern', controls: 'pattern' },
-            { id: 'pattern-pipefilter', title: 'Pipe-and-Filter', file: 'pattern_pipefilter.cpp', visualizer: 'pattern', controls: 'pattern' },
-            { id: 'pattern-di', title: 'Dependency Injection', file: 'pattern_di.cpp', visualizer: 'pattern', controls: 'pattern' },
-        ],
+        methods: patternGroupMethods('patterns-architectural'),
     },
     {
         id: 'nano-llm',
@@ -354,17 +365,6 @@ function getCodeForMethod(methodId) {
         'oop-abstraction': codeOOPAbstraction,
         'oop-adhoc': codeOOPAdhoc,
         'oop-templates': codeOOPTemplates,
-        'pattern-singleton': codePatternSingleton,
-        'pattern-factory': codePatternFactory,
-        'pattern-adapter': codePatternAdapter,
-        'pattern-decorator': codePatternDecorator,
-        'pattern-observer': codePatternObserver,
-        'pattern-strategy': codePatternStrategy,
-        'pattern-mvc': codePatternMVC,
-        'pattern-layered': codePatternLayered,
-        'pattern-pubsub': codePatternPubSub,
-        'pattern-pipefilter': codePatternPipeFilter,
-        'pattern-di': codePatternDI,
     };
     return codeByMethod[methodId] || '// Source code pending.';
 }
@@ -1387,12 +1387,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const patternActions = document.getElementById('pattern-actions');
     const patternModeSelect = document.getElementById('pattern-mode-select');
-    const PATTERN_OPTION_LABELS = {};
-    Array.from(patternModeSelect.options).forEach((o) => { PATTERN_OPTION_LABELS[o.value] = o.textContent; });
     const btnPatternDemo = document.getElementById('btn-pattern-demo');
     const btnPatternReset = document.getElementById('btn-pattern-reset');
     const patternContainer = document.getElementById('pattern-container');
-    const patternVisualization = document.getElementById('pattern-visualization');
 
     let currentMode = 'stack-array';
     const visualizerRuntime = {
@@ -1436,9 +1433,6 @@ document.addEventListener('DOMContentLoaded', () => {
             adhoc: 0,
             templates: 0,
         };
-
-        // Design Patterns state variables
-        let patternAnimationState = null;
 
     updateLayout();
 
@@ -1852,82 +1846,15 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode.includes('pattern-')) {
             patternContainer.classList.remove('hidden');
             patternActions.classList.remove('hidden');
-            const views = patternContainer.querySelectorAll('.pattern-view');
-            views.forEach(v => v.classList.add('hidden'));
-            const patGroup = METHOD_GROUPS.find((g) => g.methods.some((m) => m.id === currentMode));
-            if (patGroup) {
-                patternModeSelect.innerHTML = patGroup.methods.map((m) => {
-                    const v = m.id.replace(/^pattern-/, '');
-                    const label = PATTERN_OPTION_LABELS[v] || m.title;
-                    return '<option value="' + v + '">' + label + '</option>';
-                }).join('');
-            }
-
-            if (currentMode === 'pattern-singleton') {
-                codeTitle.textContent = 'pattern_singleton.cpp';
-                codeDisplay.textContent = codePatternSingleton;
-                document.getElementById('pattern-singleton-view').classList.remove('hidden');
-                patternModeSelect.value = 'singleton';
-            }
-            else if (currentMode === 'pattern-factory') {
-                codeTitle.textContent = 'pattern_factory.cpp';
-                codeDisplay.textContent = codePatternFactory;
-                document.getElementById('pattern-factory-view').classList.remove('hidden');
-                patternModeSelect.value = 'factory';
-            }
-            else if (currentMode === 'pattern-adapter') {
-                codeTitle.textContent = 'pattern_adapter.cpp';
-                codeDisplay.textContent = codePatternAdapter;
-                document.getElementById('pattern-adapter-view').classList.remove('hidden');
-                patternModeSelect.value = 'adapter';
-            }
-            else if (currentMode === 'pattern-decorator') {
-                codeTitle.textContent = 'pattern_decorator.cpp';
-                codeDisplay.textContent = codePatternDecorator;
-                document.getElementById('pattern-decorator-view').classList.remove('hidden');
-                patternModeSelect.value = 'decorator';
-            }
-            else if (currentMode === 'pattern-observer') {
-                codeTitle.textContent = 'pattern_observer.cpp';
-                codeDisplay.textContent = codePatternObserver;
-                document.getElementById('pattern-observer-view').classList.remove('hidden');
-                patternModeSelect.value = 'observer';
-            }
-            else if (currentMode === 'pattern-strategy') {
-                codeTitle.textContent = 'pattern_strategy.cpp';
-                codeDisplay.textContent = codePatternStrategy;
-                document.getElementById('pattern-strategy-view').classList.remove('hidden');
-                patternModeSelect.value = 'strategy';
-            }
-            else if (currentMode === 'pattern-mvc') {
-                codeTitle.textContent = 'pattern_mvc.cpp';
-                codeDisplay.textContent = codePatternMVC;
-                document.getElementById('pattern-mvc-view').classList.remove('hidden');
-                patternModeSelect.value = 'mvc';
-            }
-            else if (currentMode === 'pattern-layered') {
-                codeTitle.textContent = 'pattern_layered.cpp';
-                codeDisplay.textContent = codePatternLayered;
-                document.getElementById('pattern-layered-view').classList.remove('hidden');
-                patternModeSelect.value = 'layered';
-            }
-            else if (currentMode === 'pattern-pubsub') {
-                codeTitle.textContent = 'pattern_pubsub.cpp';
-                codeDisplay.textContent = codePatternPubSub;
-                document.getElementById('pattern-pubsub-view').classList.remove('hidden');
-                patternModeSelect.value = 'pubsub';
-            }
-            else if (currentMode === 'pattern-pipefilter') {
-                codeTitle.textContent = 'pattern_pipefilter.cpp';
-                codeDisplay.textContent = codePatternPipeFilter;
-                document.getElementById('pattern-pipefilter-view').classList.remove('hidden');
-                patternModeSelect.value = 'pipefilter';
-            }
-            else if (currentMode === 'pattern-di') {
-                codeTitle.textContent = 'pattern_di.cpp';
-                codeDisplay.textContent = codePatternDI;
-                document.getElementById('pattern-di-view').classList.remove('hidden');
-                patternModeSelect.value = 'di';
+            const p = window.PatternsDB && window.PatternsDB.getPattern(currentMode);
+            if (p) {
+                codeTitle.textContent = p.cpp;
+                codeDisplay.textContent = (window.CODE_DB && window.CODE_DB[p.cpp]) || '';
+                document.getElementById('pattern-title').textContent = p.label;
+                // category-scoped select (from PR #146), now sourced from the registry:
+                patternModeSelect.innerHTML = orderedPatternsByCategory(p.category)
+                    .map((q) => '<option value="' + q.id.replace(/^pattern-/, '') + '">' + q.label + '</option>').join('');
+                patternModeSelect.value = currentMode.replace(/^pattern-/, '');
             }
         }
         if (window.VizCore) window.VizCore.domains().forEach((d) => { if (d.syncChrome) d.syncChrome(); });
@@ -1951,17 +1878,12 @@ document.addEventListener('DOMContentLoaded', () => {
         reg('oop-adhoc', renderOOP, () => codeOOPAdhoc, null);
         reg('oop-templates', renderOOP, () => codeOOPTemplates, null);
         // Design Patterns
-        reg('pattern-singleton', renderPattern, () => codePatternSingleton, null);
-        reg('pattern-factory', renderPattern, () => codePatternFactory, null);
-        reg('pattern-adapter', renderPattern, () => codePatternAdapter, null);
-        reg('pattern-decorator', renderPattern, () => codePatternDecorator, null);
-        reg('pattern-observer', renderPattern, () => codePatternObserver, null);
-        reg('pattern-strategy', renderPattern, () => codePatternStrategy, null);
-        reg('pattern-mvc', renderPattern, () => codePatternMVC, null);
-        reg('pattern-layered', renderPattern, () => codePatternLayered, null);
-        reg('pattern-pubsub', renderPattern, () => codePatternPubSub, null);
-        reg('pattern-pipefilter', renderPattern, () => codePatternPipeFilter, null);
-        reg('pattern-di', renderPattern, () => codePatternDI, null);
+        if (window.PatternsDB) {
+            window.PatternsDB.PATTERNS.forEach((p) => reg(p.id, () => {
+                const svg = document.getElementById('pattern-svg');
+                window.PatternViz.render(svg, p);
+            }, () => window.CODE_DB[p.cpp], null));
+        }
         // nano-LLM
     }
     function renderAll() {
@@ -1969,7 +1891,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const b = window.VizRegistry && window.VizRegistry.behavior(currentMode);
         if (b && b.render) { b.render(); return; }
         if (currentMode.includes('oop-')) renderOOP();
-        else if (currentMode.includes('pattern-')) renderPattern();
     }
 
     function acquireDynamicVizHost() {
@@ -2350,627 +2271,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return visualizeOOPSteps('encapsulation');
     }
 
-    // ========== DESIGN PATTERNS VISUALIZATION ==========
-    function renderPattern() {
-        const mode = currentMode.replace('pattern-', '');
-        if (mode === 'singleton') renderPatternSingleton();
-        else if (mode === 'factory') renderPatternFactory();
-        else if (mode === 'adapter') renderPatternAdapter();
-        else if (mode === 'decorator') renderPatternDecorator();
-        else if (mode === 'observer') renderPatternObserver();
-        else if (mode === 'strategy') renderPatternStrategy();
-        else if (mode === 'mvc') renderPatternMVC();
-        else if (mode === 'layered') renderPatternLayered();
-        else if (mode === 'pubsub') renderPatternPubSub();
-        else if (mode === 'pipefilter') renderPatternPipeFilter();
-        else if (mode === 'di') renderPatternDI();
-    }
-
-    function renderPatternSingleton() {
-        const svg = document.getElementById('pattern-singleton-svg');
-        svg.innerHTML = '';
-        
-        // Singleton box
-        const singletonBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        singletonBox.setAttribute('x', '150'); singletonBox.setAttribute('y', '80');
-        singletonBox.setAttribute('width', '300'); singletonBox.setAttribute('height', '120');
-        singletonBox.setAttribute('fill', '#ec4899'); singletonBox.setAttribute('stroke', '#be185d'); singletonBox.setAttribute('stroke-width', '2');
-        svg.appendChild(singletonBox);
-
-        // Class name
-        const className = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        className.setAttribute('x', '300'); className.setAttribute('y', '105');
-        className.setAttribute('text-anchor', 'middle'); className.setAttribute('font-size', '16'); className.setAttribute('font-weight', 'bold');
-        className.setAttribute('fill', 'white');
-        className.textContent = 'Singleton';
-        svg.appendChild(className);
-
-        // Members
-        const members = ['- static instance', '- private constructor', '+ getInstance()'];
-        members.forEach((m, i) => {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', '165'); text.setAttribute('y', '130 + i*18');
-            text.setAttribute('font-family', 'monospace'); text.setAttribute('font-size', '11'); text.setAttribute('fill', '#fca5a5');
-            text.textContent = m;
-            svg.appendChild(text);
-        });
-
-        // Access arrows
-        const arrow1 = createArrow(svg, '300', '200', '300', '240', '#fbbf24');
-        const label1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label1.setAttribute('x', '310'); label1.setAttribute('y', '225');
-        label1.setAttribute('font-size', '12'); label1.setAttribute('fill', '#fbbf24');
-        label1.textContent = 'Unique Instance';
-        svg.appendChild(label1);
-
-        // Instance box
-        const instBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        instBox.setAttribute('x', '180'); instBox.setAttribute('y', '240');
-        instBox.setAttribute('width', '240'); instBox.setAttribute('height', '40');
-        instBox.setAttribute('fill', '#fef08a'); instBox.setAttribute('stroke', '#eab308'); instBox.setAttribute('stroke-width', '2');
-        svg.appendChild(instBox);
-
-        const instText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        instText.setAttribute('x', '300'); instText.setAttribute('y', '267');
-        instText.setAttribute('text-anchor', 'middle'); instText.setAttribute('font-size', '13'); instText.setAttribute('font-family', 'monospace');
-        instText.setAttribute('fill', '#78350f');
-        instText.textContent = 's1 = Singleton::getInstance()';
-        svg.appendChild(instText);
-    }
-
-    function renderPatternFactory() {
-        const svg = document.getElementById('pattern-factory-svg');
-        svg.innerHTML = '';
-
-        // Factory box
-        const factoryBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        factoryBox.setAttribute('x', '180'); factoryBox.setAttribute('y', '20');
-        factoryBox.setAttribute('width', '240'); factoryBox.setAttribute('height', '60');
-        factoryBox.setAttribute('fill', '#ec4899'); factoryBox.setAttribute('stroke', '#be185d'); factoryBox.setAttribute('stroke-width', '2');
-        svg.appendChild(factoryBox);
-
-        const factoryText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        factoryText.setAttribute('x', '300'); factoryText.setAttribute('y', '55');
-        factoryText.setAttribute('text-anchor', 'middle'); factoryText.setAttribute('font-size', '14'); factoryText.setAttribute('font-weight', 'bold');
-        factoryText.setAttribute('fill', 'white');
-        factoryText.textContent = 'VehicleFactory';
-        svg.appendChild(factoryText);
-
-        // Product interface
-        const prodBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        prodBox.setAttribute('x', '240'); prodBox.setAttribute('y', '120');
-        prodBox.setAttribute('width', '120'); prodBox.setAttribute('height', '50');
-        prodBox.setAttribute('fill', '#60a5fa'); prodBox.setAttribute('stroke', '#1e40af'); prodBox.setAttribute('stroke-width', '2');
-        svg.appendChild(prodBox);
-
-        const prodText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        prodText.setAttribute('x', '300'); prodText.setAttribute('y', '153');
-        prodText.setAttribute('text-anchor', 'middle'); prodText.setAttribute('font-size', '12'); prodText.setAttribute('font-weight', 'bold');
-        prodText.setAttribute('fill', 'white');
-        prodText.textContent = '<<interface>>';
-        svg.appendChild(prodText);
-
-        const prodName = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        prodName.setAttribute('x', '300'); prodName.setAttribute('y', '168');
-        prodName.setAttribute('text-anchor', 'middle'); prodName.setAttribute('font-size', '11');
-        prodName.setAttribute('fill', 'white');
-        prodName.textContent = 'Vehicle';
-        svg.appendChild(prodName);
-
-        // Concrete products
-        const carBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        carBox.setAttribute('x', '100'); carBox.setAttribute('y', '220');
-        carBox.setAttribute('width', '100'); carBox.setAttribute('height', '40');
-        carBox.setAttribute('fill', '#34d399'); carBox.setAttribute('stroke', '#059669'); carBox.setAttribute('stroke-width', '2');
-        svg.appendChild(carBox);
-
-        const carText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        carText.setAttribute('x', '150'); carText.setAttribute('y', '247');
-        carText.setAttribute('text-anchor', 'middle'); carText.setAttribute('font-size', '12');
-        carText.setAttribute('fill', 'white');
-        carText.textContent = 'Car';
-        svg.appendChild(carText);
-
-        const bikeBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        bikeBox.setAttribute('x', '280'); bikeBox.setAttribute('y', '220');
-        bikeBox.setAttribute('width', '100'); bikeBox.setAttribute('height', '40');
-        bikeBox.setAttribute('fill', '#34d399'); bikeBox.setAttribute('stroke', '#059669'); bikeBox.setAttribute('stroke-width', '2');
-        svg.appendChild(bikeBox);
-
-        const bikeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        bikeText.setAttribute('x', '330'); bikeText.setAttribute('y', '247');
-        bikeText.setAttribute('text-anchor', 'middle'); bikeText.setAttribute('font-size', '12');
-        bikeText.setAttribute('fill', 'white');
-        bikeText.textContent = 'Bike';
-        svg.appendChild(bikeText);
-
-        // Factory creates arrow
-        createArrow(svg, '240', '85', '180', '220', '#f59e0b');
-        createArrow(svg, '360', '85', '380', '220', '#f59e0b');
-
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', '280'); label.setAttribute('y', '200');
-        label.setAttribute('font-size', '11'); label.setAttribute('fill', '#f59e0b');
-        label.textContent = 'creates';
-        svg.appendChild(label);
-    }
-
-    function renderPatternAdapter() {
-        const svg = document.getElementById('pattern-adapter-svg');
-        svg.innerHTML = '';
-
-        // Legacy system
-        const legacyBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        legacyBox.setAttribute('x', '50'); legacyBox.setAttribute('y', '100');
-        legacyBox.setAttribute('width', '120'); legacyBox.setAttribute('height', '60');
-        legacyBox.setAttribute('fill', '#fb7185'); legacyBox.setAttribute('stroke', '#be185d'); legacyBox.setAttribute('stroke-width', '2');
-        svg.appendChild(legacyBox);
-
-        const legacyText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        legacyText.setAttribute('x', '110'); legacyText.setAttribute('y', '128');
-        legacyText.setAttribute('text-anchor', 'middle'); legacyText.setAttribute('font-size', '11'); legacyText.setAttribute('font-weight', 'bold');
-        legacyText.setAttribute('fill', 'white');
-        legacyText.textContent = 'Legacy';
-        svg.appendChild(legacyText);
-
-        // Adapter bridge
-        const adapterBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        adapterBox.setAttribute('x', '220'); adapterBox.setAttribute('y', '80');
-        adapterBox.setAttribute('width', '160'); adapterBox.setAttribute('height', '100');
-        adapterBox.setAttribute('fill', '#10b981'); adapterBox.setAttribute('stroke', '#047857'); adapterBox.setAttribute('stroke-width', '2');
-        svg.appendChild(adapterBox);
-
-        const adapterTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        adapterTitle.setAttribute('x', '300'); adapterTitle.setAttribute('y', '100');
-        adapterTitle.setAttribute('text-anchor', 'middle'); adapterTitle.setAttribute('font-size', '12'); adapterTitle.setAttribute('font-weight', 'bold');
-        adapterTitle.setAttribute('fill', 'white');
-        adapterTitle.textContent = 'Adapter';
-        svg.appendChild(adapterTitle);
-
-        const adapterLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        adapterLine.setAttribute('x1', '220'); adapterLine.setAttribute('y1', '115');
-        adapterLine.setAttribute('x2', '380'); adapterLine.setAttribute('y2', '115');
-        adapterLine.setAttribute('stroke', 'rgba(255,255,255,0.3)'); adapterLine.setAttribute('stroke-width', '1');
-        svg.appendChild(adapterLine);
-
-        const adapterContent = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        adapterContent.setAttribute('x', '230'); adapterContent.setAttribute('y', '140');
-        adapterContent.setAttribute('font-size', '10'); adapterContent.setAttribute('fill', '#d1fae5');
-        adapterContent.textContent = '+ fetch()';
-        svg.appendChild(adapterContent);
-
-        const adapterImpl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        adapterImpl.setAttribute('x', '230'); adapterImpl.setAttribute('y', '160');
-        adapterImpl.setAttribute('font-size', '10'); adapterImpl.setAttribute('font-style', 'italic'); adapterImpl.setAttribute('fill', '#a7f3d0');
-        adapterImpl.textContent = 'wraps legacy.getData()';
-        svg.appendChild(adapterImpl);
-
-        // Modern system
-        const modernBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        modernBox.setAttribute('x', '450'); modernBox.setAttribute('y', '100');
-        modernBox.setAttribute('width', '120'); modernBox.setAttribute('height', '60');
-        modernBox.setAttribute('fill', '#60a5fa'); modernBox.setAttribute('stroke', '#1e40af'); modernBox.setAttribute('stroke-width', '2');
-        svg.appendChild(modernBox);
-
-        const modernText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        modernText.setAttribute('x', '510'); modernText.setAttribute('y', '128');
-        modernText.setAttribute('text-anchor', 'middle'); modernText.setAttribute('font-size', '11'); modernText.setAttribute('font-weight', 'bold');
-        modernText.setAttribute('fill', 'white');
-        modernText.textContent = 'Modern';
-        svg.appendChild(modernText);
-
-        // Connections
-        createArrow(svg, '170', '130', '220', '130', '#fbbf24');
-        createArrow(svg, '380', '130', '450', '130', '#fbbf24');
-    }
-
-    function renderPatternDecorator() {
-        const svg = document.getElementById('pattern-decorator-svg');
-        svg.innerHTML = '';
-
-        // Component interface
-        const compBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        compBox.setAttribute('x', '240'); compBox.setAttribute('y', '20');
-        compBox.setAttribute('width', '120'); compBox.setAttribute('height', '50');
-        compBox.setAttribute('fill', '#06b6d4'); compBox.setAttribute('stroke', '#0369a1'); compBox.setAttribute('stroke-width', '2');
-        svg.appendChild(compBox);
-
-        const compText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        compText.setAttribute('x', '300'); compText.setAttribute('y', '52');
-        compText.setAttribute('text-anchor', 'middle'); compBox.setAttribute('font-size', '12'); compText.setAttribute('fill', 'white');
-        compText.textContent = 'Coffee';
-        svg.appendChild(compText);
-
-        // Simple coffee
-        const simpleBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        simpleBox.setAttribute('x', '100'); simpleBox.setAttribute('y', '120');
-        simpleBox.setAttribute('width', '100'); simpleBox.setAttribute('height', '50');
-        simpleBox.setAttribute('fill', '#10b981'); simpleBox.setAttribute('stroke', '#059669'); simpleBox.setAttribute('stroke-width', '2');
-        svg.appendChild(simpleBox);
-
-        const simpleText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        simpleText.setAttribute('x', '150'); simpleText.setAttribute('y', '150');
-        simpleText.setAttribute('text-anchor', 'middle'); simpleText.setAttribute('font-size', '11'); simpleText.setAttribute('fill', 'white');
-        simpleText.textContent = 'SimpleCoffee';
-        svg.appendChild(simpleText);
-
-        // Decorators
-        const decBox1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        decBox1.setAttribute('x', '280'); decBox1.setAttribute('y', '120');
-        decBox1.setAttribute('width', '100'); decBox1.setAttribute('height', '50');
-        decBox1.setAttribute('fill', '#f59e0b'); decBox1.setAttribute('stroke', '#d97706'); decBox1.setAttribute('stroke-width', '2');
-        svg.appendChild(decBox1);
-
-        const decText1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        decText1.setAttribute('x', '330'); decText1.setAttribute('y', '150');
-        decText1.setAttribute('text-anchor', 'middle'); decText1.setAttribute('font-size', '11'); decText1.setAttribute('fill', 'white');
-        decText1.textContent = 'Milk';
-        svg.appendChild(decText1);
-
-        const decBox2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        decBox2.setAttribute('x', '460'); decBox2.setAttribute('y', '120');
-        decBox2.setAttribute('width', '100'); decBox2.setAttribute('height', '50');
-        decBox2.setAttribute('fill', '#f59e0b'); decBox2.setAttribute('stroke', '#d97706'); decBox2.setAttribute('stroke-width', '2');
-        svg.appendChild(decBox2);
-
-        const decText2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        decText2.setAttribute('x', '510'); decText2.setAttribute('y', '150');
-        decText2.setAttribute('text-anchor', 'middle'); decText2.setAttribute('font-size', '11'); decText2.setAttribute('fill', 'white');
-        decText2.textContent = 'Sugar';
-        svg.appendChild(decText2);
-
-        // Inheritance arrows
-        createArrow(svg, '150', '120', '280', '70', '#34d399');
-        createArrow(svg, '330', '120', '300', '70', '#34d399');
-        createArrow(svg, '510', '120', '340', '70', '#34d399');
-
-        // Composition chain
-        createArrow(svg, '200', '147', '280', '147', '#fbbf24');
-        createArrow(svg, '380', '147', '460', '147', '#fbbf24');
-
-        const label1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label1.setAttribute('x', '238'); label1.setAttribute('y', '140');
-        label1.setAttribute('font-size', '10'); label1.setAttribute('fill', '#fbbf24');
-        label1.textContent = 'wraps';
-        svg.appendChild(label1);
-    }
-
-    function renderPatternObserver() {
-        const svg = document.getElementById('pattern-observer-svg');
-        svg.innerHTML = '';
-
-        // Subject
-        const subjectBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        subjectBox.setAttribute('x', '220'); subjectBox.setAttribute('y', '50');
-        subjectBox.setAttribute('width', '160'); subjectBox.setAttribute('height', '70');
-        subjectBox.setAttribute('fill', '#f97316'); subjectBox.setAttribute('stroke', '#c2410c'); subjectBox.setAttribute('stroke-width', '2');
-        svg.appendChild(subjectBox);
-
-        const subText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        subText.setAttribute('x', '300'); subText.setAttribute('y', '75');
-        subText.setAttribute('text-anchor', 'middle'); subText.setAttribute('font-size', '12'); subText.setAttribute('font-weight', 'bold');
-        subText.setAttribute('fill', 'white');
-        subText.textContent = 'Subject';
-        svg.appendChild(subText);
-
-        const subMethod = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        subMethod.setAttribute('x', '230'); subMethod.setAttribute('y', '100');
-        subMethod.setAttribute('font-size', '10'); subMethod.setAttribute('fill', '#fed7aa');
-        subMethod.textContent = '+ notify()';
-        svg.appendChild(subMethod);
-
-        // Observers
-        for (let i = 0; i < 3; i++) {
-            const obsBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            obsBox.setAttribute('x', String(60 + i * 170)); obsBox.setAttribute('y', '180');
-            obsBox.setAttribute('width', '130'); obsBox.setAttribute('height', '50');
-            obsBox.setAttribute('fill', '#06b6d4'); obsBox.setAttribute('stroke', '#0369a1'); obsBox.setAttribute('stroke-width', '2');
-            svg.appendChild(obsBox);
-
-            const obsText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            obsText.setAttribute('x', String(125 + i * 170)); obsText.setAttribute('y', '212');
-            obsText.setAttribute('text-anchor', 'middle'); obsText.setAttribute('font-size', '11');
-            obsText.setAttribute('fill', 'white');
-            obsText.textContent = `Observer${i + 1}`;
-            svg.appendChild(obsText);
-
-            // Notification arrow
-            createArrow(svg, String(280 - 20 * i), '120', String(125 + i * 170), '180', '#34d399');
-        }
-    }
-
-    function renderPatternStrategy() {
-        const svg = document.getElementById('pattern-strategy-svg');
-        svg.innerHTML = '';
-
-        // Context
-        const contextBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        contextBox.setAttribute('x', '50'); contextBox.setAttribute('y', '100');
-        contextBox.setAttribute('width', '140'); contextBox.setAttribute('height', '70');
-        contextBox.setAttribute('fill', '#f97316'); contextBox.setAttribute('stroke', '#c2410c'); contextBox.setAttribute('stroke-width', '2');
-        svg.appendChild(contextBox);
-
-        const contextText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        contextText.setAttribute('x', '120'); contextText.setAttribute('y', '125');
-        contextText.setAttribute('text-anchor', 'middle'); contextText.setAttribute('font-size', '11'); contextText.setAttribute('font-weight', 'bold');
-        contextText.setAttribute('fill', 'white');
-        contextText.textContent = 'Processor';
-        svg.appendChild(contextText);
-
-        const contextMethod = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        contextMethod.setAttribute('x', '60'); contextMethod.setAttribute('y', '150');
-        contextMethod.setAttribute('font-size', '9'); contextMethod.setAttribute('fill', '#fed7aa');
-        contextMethod.textContent = '+ execute()';
-        svg.appendChild(contextMethod);
-
-        // Strategy interface
-        const stratBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        stratBox.setAttribute('x', '280'); stratBox.setAttribute('y', '80');
-        stratBox.setAttribute('width', '120'); stratBox.setAttribute('height', '60');
-        stratBox.setAttribute('fill', '#06b6d4'); stratBox.setAttribute('stroke', '#0369a1'); stratBox.setAttribute('stroke-width', '2');
-        svg.appendChild(stratBox);
-
-        const stratText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        stratText.setAttribute('x', '340'); stratText.setAttribute('y', '100');
-        stratText.setAttribute('text-anchor', 'middle'); stratText.setAttribute('font-size', '11'); stratText.setAttribute('font-weight', 'bold');
-        stratText.setAttribute('fill', 'white');
-        stratText.textContent = '<<interface>>';
-        svg.appendChild(stratText);
-
-        const stratMethod = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        stratMethod.setAttribute('x', '340'); stratMethod.setAttribute('y', '125');
-        stratMethod.setAttribute('text-anchor', 'middle'); stratMethod.setAttribute('font-size', '10');
-        stratMethod.setAttribute('fill', 'white');
-        stratMethod.textContent = 'Strategy';
-        svg.appendChild(stratMethod);
-
-        // Concrete strategies
-        const concreteBg = ['#10b981', '#3b82f6'];
-        const concreteNames = ['CardPayment', 'CryptoPayment'];
-        for (let i = 0; i < 2; i++) {
-            const concBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            concBox.setAttribute('x', String(280 + i * 130)); concBox.setAttribute('y', '190');
-            concBox.setAttribute('width', '120'); concBox.setAttribute('height', '50');
-            concBox.setAttribute('fill', concreteBg[i]); concBox.setAttribute('stroke', '#1f2937'); concBox.setAttribute('stroke-width', '2');
-            svg.appendChild(concBox);
-
-            const concText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            concText.setAttribute('x', String(340 + i * 130)); concText.setAttribute('y', '220');
-            concText.setAttribute('text-anchor', 'middle'); concText.setAttribute('font-size', '10');
-            concText.setAttribute('fill', 'white');
-            concText.textContent = concreteNames[i];
-            svg.appendChild(concText);
-
-            // Inheritance
-            createArrow(svg, String(340 + i * 130), '190', String(340 + i * 25), '140', '#34d399');
-        }
-
-        // Context uses strategy
-        createArrow(svg, '190', '135', '280', '110', '#fbbf24');
-    }
-
-    function renderPatternMVC() {
-        const svg = document.getElementById('pattern-mvc-svg');
-        if (!svg) return;
-        svg.innerHTML = '';
-        drawOopBox(svg, { x: 190, y: 26, w: 140, h: 56, title: 'Controller', titleColor: '#f59e0b',
-            lines: [ { text: 'handles input', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 40, y: 200, w: 140, h: 56, title: 'Model', titleColor: '#34d399',
-            lines: [ { text: 'data + state', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 340, y: 200, w: 140, h: 56, title: 'View', titleColor: '#60a5fa',
-            lines: [ { text: 'renders model', color: '#cbd5e1' } ] });
-        drawOopLine(svg, 225, 82, 120, 200);   // Controller -> Model
-        drawOopLine(svg, 180, 228, 340, 228);  // Model -> View
-        drawOopLine(svg, 400, 200, 295, 82);   // View -> Controller
-        drawOopLabel(svg, 150, 150, 'updates', '#f59e0b');
-        drawOopLabel(svg, 260, 246, 'notifies', '#34d399');
-        drawOopLabel(svg, 372, 150, 'user input', '#60a5fa');
-    }
-
-    function renderPatternLayered() {
-        const svg = document.getElementById('pattern-layered-svg');
-        if (!svg) return;
-        svg.innerHTML = '';
-        drawOopBox(svg, { x: 150, y: 24, w: 200, h: 58, title: 'Presentation', titleColor: '#60a5fa',
-            lines: [ { text: 'formats output', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 150, y: 122, w: 200, h: 58, title: 'Business', titleColor: '#f59e0b',
-            lines: [ { text: 'applies rules', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 150, y: 220, w: 200, h: 58, title: 'Data', titleColor: '#34d399',
-            lines: [ { text: 'raw records', color: '#cbd5e1' } ] });
-        drawOopLine(svg, 250, 82, 250, 122);    // Presentation -> Business
-        drawOopLine(svg, 250, 180, 250, 220);   // Business -> Data
-        drawOopLabel(svg, 320, 106, 'calls', '#94a3b8');
-        drawOopLabel(svg, 320, 204, 'calls', '#94a3b8');
-    }
-
-    function renderPatternPubSub() {
-        const svg = document.getElementById('pattern-pubsub-svg');
-        if (!svg) return;
-        svg.innerHTML = '';
-        drawOopBox(svg, { x: 24, y: 130, w: 120, h: 58, title: 'Publisher', titleColor: '#f59e0b',
-            lines: [ { text: 'emits events', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 196, y: 130, w: 120, h: 58, title: 'EventBus', titleColor: '#a78bfa',
-            lines: [ { text: 'broker', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 372, y: 36, w: 116, h: 50, title: 'Subscriber A', titleColor: '#34d399' });
-        drawOopBox(svg, { x: 372, y: 134, w: 116, h: 50, title: 'Subscriber B', titleColor: '#34d399' });
-        drawOopBox(svg, { x: 372, y: 232, w: 116, h: 50, title: 'Subscriber C', titleColor: '#34d399' });
-        drawOopLine(svg, 144, 159, 196, 159);   // Publisher -> EventBus
-        drawOopLine(svg, 316, 159, 372, 61);    // EventBus -> A
-        drawOopLine(svg, 316, 159, 372, 159);   // EventBus -> B
-        drawOopLine(svg, 316, 159, 372, 257);   // EventBus -> C
-        drawOopLabel(svg, 170, 150, 'publish', '#f59e0b');
-        drawOopLabel(svg, 344, 110, 'notify', '#34d399');
-    }
-
-    function renderPatternPipeFilter() {
-        const svg = document.getElementById('pattern-pipefilter-svg');
-        if (!svg) return;
-        svg.innerHTML = '';
-        const stages = [
-            { x: 12, title: 'Input', color: '#94a3b8' },
-            { x: 110, title: 'Trim', color: '#34d399' },
-            { x: 208, title: 'Upper', color: '#34d399' },
-            { x: 306, title: 'Exclaim', color: '#34d399' },
-            { x: 404, title: 'Output', color: '#60a5fa' },
-        ];
-        stages.forEach((s) => {
-            drawOopBox(svg, { x: s.x, y: 132, w: 80, h: 56, title: s.title, titleColor: s.color });
-        });
-        for (let i = 0; i < stages.length - 1; i++) {
-            drawOopLine(svg, stages[i].x + 80, 160, stages[i + 1].x, 160);
-        }
-        drawOopLabel(svg, 250, 220, 'data flows through each filter via pipes', '#94a3b8');
-    }
-
-    function renderPatternDI() {
-        const svg = document.getElementById('pattern-di-svg');
-        if (!svg) return;
-        svg.innerHTML = '';
-        drawOopBox(svg, { x: 150, y: 24, w: 210, h: 56, title: 'Composition Root', titleColor: '#ec4899',
-            lines: [ { text: 'wires dependencies', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 50, y: 192, w: 180, h: 70, title: 'ConsoleService', titleColor: '#34d399',
-            lines: [ { text: 'concrete Service', color: '#cbd5e1' } ] });
-        drawOopBox(svg, { x: 290, y: 192, w: 180, h: 70, title: 'Consumer', titleColor: '#60a5fa',
-            lines: [ { text: 'depends on Service', color: '#cbd5e1' }, { text: 'never calls new', color: '#cbd5e1' } ] });
-        drawOopLine(svg, 210, 80, 140, 192);   // Composition Root -> Service
-        drawOopLine(svg, 300, 80, 380, 192);   // Composition Root -> Consumer
-        drawOopLine(svg, 230, 227, 290, 227);  // Service injected -> Consumer
-        drawOopLabel(svg, 150, 150, 'creates', '#34d399');
-        drawOopLabel(svg, 360, 150, 'injects', '#60a5fa');
-        drawOopLabel(svg, 260, 248, 'inject', '#ec4899');
-    }
-
-    function createArrow(svg, x1, y1, x2, y2, color) {
-        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-        line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-        line.setAttribute('stroke', color); line.setAttribute('stroke-width', '2');
-        line.setAttribute('marker-end', 'url(#arrowhead-' + color.substring(1) + ')');
-        svg.appendChild(line);
-    }
 
     // Event listeners for Pattern actions
     btnPatternDemo.addEventListener('click', () => {
-        const mode = patternModeSelect.value;
-        executeAnimWrapper(async () => await visualizePattern(mode));
+        const p = window.PatternsDB && window.PatternsDB.getPattern(currentMode);
+        if (p) window.PatternViz.playNarration(p.narration);
     });
 
     btnPatternReset.addEventListener('click', () => {
-        patternAnimationState = null;
-        renderPattern();
+        renderAll();
         showStatus('Pattern visualization reset.', '#6366f1');
     });
-
-    async function visualizePattern(mode) {
-        if (mode === 'singleton') {
-            showStatus('Creating Singleton instance...', '#ec4899');
-            await sleep(600);
-            showStatus('getInstance() called - checks static instance', '#ec4899');
-            await sleep(600);
-            showStatus('Instance is null, creating new Singleton()', '#fbbf24');
-            await sleep(600);
-            showStatus('Singleton created and stored in static variable', '#34d399');
-            await sleep(600);
-            showStatus('All subsequent getInstance() calls return same instance', '#ec4899');
-        } else if (mode === 'factory') {
-            showStatus('Using Factory to create objects...', '#ec4899');
-            await sleep(600);
-            showStatus('VehicleFactory::createVehicle("car") called', '#f59e0b');
-            await sleep(600);
-            showStatus('Factory returns new Car() instance', '#34d399');
-            await sleep(600);
-            showStatus('VehicleFactory::createVehicle("bike") called', '#f59e0b');
-            await sleep(600);
-            showStatus('Factory returns new Bike() instance', '#34d399');
-            await sleep(600);
-            showStatus('Client code depends on interface, not concrete classes', '#10b981');
-        } else if (mode === 'adapter') {
-            showStatus('Adapting legacy interface to modern interface...', '#ec4899');
-            await sleep(600);
-            showStatus('Legacy system uses getData()', '#fb7185');
-            await sleep(600);
-            showStatus('Adapter wraps legacy object', '#10b981');
-            await sleep(600);
-            showStatus('fetch() calls legacy.getData() internally', '#34d399');
-            await sleep(600);
-            showStatus('Modern code calls adapter.fetch()', '#60a5fa');
-            await sleep(600);
-            showStatus('Incompatible interfaces now work together!', '#34d399');
-        } else if (mode === 'decorator') {
-            showStatus('Decorating SimpleCoffee with features...', '#ec4899');
-            await sleep(600);
-            showStatus('Create SimpleCoffee: $2.00', '#34d399');
-            await sleep(600);
-            showStatus('Add Milk decorator: +$0.50', '#f59e0b');
-            await sleep(600);
-            showStatus('Compose: new Milk(coffee)', '#34d399');
-            await sleep(600);
-            showStatus('Result: Coffee with Milk - $2.50', '#fbbf24');
-            await sleep(600);
-            showStatus('Each decorator adds behavior/cost without subclassing', '#34d399');
-        } else if (mode === 'observer') {
-            showStatus('Setting up Observer pattern...', '#ec4899');
-            await sleep(600);
-            showStatus('Create Subject and register Observers', '#f59e0b');
-            await sleep(600);
-            showStatus('Observer1, Observer2, Observer3 attached', '#34d399');
-            await sleep(600);
-            showStatus('Subject state changes: notify() called', '#fbbf24');
-            await sleep(600);
-            showStatus('All observers receive update notification', '#34d399');
-            await sleep(600);
-            showStatus('Loose coupling: Subject knows only Observer interface', '#06b6d4');
-        } else if (mode === 'strategy') {
-            showStatus('Using Strategy pattern for flexible algorithms...', '#ec4899');
-            await sleep(600);
-            showStatus('PaymentProcessor created', '#f59e0b');
-            await sleep(600);
-            showStatus('setStrategy(CreditCardPayment)', '#34d399');
-            await sleep(600);
-            showStatus('processPayment(100): Credit Card payment', '#fbbf24');
-            await sleep(600);
-            showStatus('setStrategy(CryptoCurrencyPayment)', '#34d399');
-            await sleep(600);
-            showStatus('processPayment(0.005): Crypto payment', '#fbbf24');
-            await sleep(600);
-            showStatus('Algorithm can be changed at runtime!', '#34d399');
-        }
-        else if (mode === 'mvc') {
-            showStatus('User input arrives at the Controller...', '#f59e0b');
-            await sleep(700);
-            showStatus('Controller updates the Model (data + state)', '#34d399');
-            await sleep(700);
-            showStatus('Model change notifies the View, which re-renders', '#60a5fa');
-        }
-        else if (mode === 'layered') {
-            showStatus('Presentation layer formats a request...', '#60a5fa');
-            await sleep(700);
-            showStatus('Business layer applies rules, calls the layer below', '#f59e0b');
-            await sleep(700);
-            showStatus('Data layer returns raw records — each layer calls only downward', '#34d399');
-        }
-        else if (mode === 'pubsub') {
-            showStatus('Publisher emits an event to the EventBus...', '#f59e0b');
-            await sleep(700);
-            showStatus('EventBus fans the event out to every subscriber', '#a78bfa');
-            await sleep(700);
-            showStatus('Subscribers A, B, C all receive it — fully decoupled', '#34d399');
-        }
-        else if (mode === 'pipefilter') {
-            showStatus('Input enters the pipeline...', '#94a3b8');
-            await sleep(700);
-            showStatus('Each filter transforms the data and passes it on', '#34d399');
-            await sleep(700);
-            showStatus('Trim -> Upper -> Exclaim -> Output', '#60a5fa');
-        }
-        else if (mode === 'di') {
-            showStatus('Composition root creates the concrete ConsoleService...', '#34d399');
-            await sleep(700);
-            showStatus('Service is injected into the Consumer constructor', '#60a5fa');
-            await sleep(700);
-            showStatus('Consumer depends only on the Service abstraction — easy to test', '#ec4899');
-        }
-    }
 
     applyHashRoute();
 });
