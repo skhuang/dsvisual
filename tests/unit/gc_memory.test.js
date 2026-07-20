@@ -2,12 +2,16 @@ const test = require('node:test');
 const assert = require('node:assert');
 const V = require('../../js/gc_memory_viz.js');
 
-test('mark-sweep frees only unreachable objects', () => {
+test('mark-sweep frees unreachable objects incl. a garbage cycle; frames carry roots', () => {
   const { frames } = V.markSweepFrames();
   const last = frames[frames.length - 1];
   const byId = {}; last.heap.forEach((o) => { byId[o.id] = o; });
-  assert.strictEqual(byId[6].free, true);
+  // reachable from roots {0,1}: 0,1,2,3,4,5 kept
   [0, 1, 2, 3, 4, 5].forEach((id) => assert.strictEqual(byId[id].free, false, 'id ' + id + ' kept'));
+  // garbage: isolated 6 AND the unreachable cycle 7<->8 all freed
+  [6, 7, 8].forEach((id) => assert.strictEqual(byId[id].free, true, 'id ' + id + ' freed'));
+  // every frame carries the root set for the renderer
+  assert.ok(frames.every((f) => Array.isArray(f.roots) && f.roots.length === 2 && f.roots.includes(0) && f.roots.includes(1)));
   assert.ok(frames.some((f) => f.phase === 'mark'));
   assert.ok(frames.some((f) => f.phase && f.phase.indexOf('sweep') === 0));
 });
