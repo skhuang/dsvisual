@@ -5,6 +5,7 @@
 
     function renderObjectGraph(stage, opts) {
         const mode = opts.mode, nodes = opts.nodes, roots = opts.roots || [], activeId = opts.activeId;
+        if (!nodes.length) return;
         const byId = {}; nodes.forEach((n) => { byId[n.id] = n; });
         const rootSet = new Set(roots);
         const NODE_W = 74, NODE_H = 46, COL_GAP = 66, ROW_GAP = 22;
@@ -89,7 +90,7 @@
         legend.className = 'gc-legend';
         const items = (mode === 'mark-sweep')
             ? [['gc-root', 'root'], ['gc-mark', 'reachable'], ['', 'unmarked'], ['gc-free', 'freed']]
-            : [['', 'alive (rc>0)'], ['gc-free', 'freed (rc=0)']];
+            : [['', 'alive (rc>0)'], ['gc-free', 'freed (rc=0)'], ['', 'leaked cycle stays alive']];
         legend.innerHTML = items.map((it) => '<span class="gc-legend-item"><span class="gc-swatch ' + it[0] + '"></span>' + it[1] + '</span>').join('');
         stage.appendChild(legend);
     }
