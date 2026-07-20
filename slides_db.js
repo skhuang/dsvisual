@@ -21786,5 +21786,76 @@ SLIDES_DB["tree-copy-equal"] = {
       ] }
   ]
 };
+SLIDES_DB["pattern-builder"] = {
+  "category": "Design Patterns",
+  "title": { "zh": "Builder 模式", "en": "Builder Pattern" },
+  "slides": [
+    { "heading": { "zh": "Builder 模式", "en": "Builder Pattern" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Builder 是一種 Creational 設計模式,將複雜物件的建構過程與其最終表示(representation)分離,使同一套建構流程可以產生不同的物件表示。", "en": "Builder is a Creational design pattern that separates the construction of a complex object from its final representation, so the same construction process can produce different representations." } }
+      ] },
+    { "heading": { "zh": "核心概念", "en": "Core Concept" },
+      "blocks": [
+        { "type": "paragraph", "text": { "zh": "Director 依照固定順序呼叫 Builder 介面的建構方法,實際的組裝細節則由 ConcreteBuilder 決定;最後透過 `getResult()` 取得完成的 Product。Director 不需要知道 Product 的具體類型。", "en": "The Director calls the Builder interface's construction methods in a fixed order, while the actual assembly details are decided by the ConcreteBuilder; the finished Product is retrieved via `getResult()`. The Director never needs to know the Product's concrete type." } },
+        { "type": "bullets", "items": [
+          { "zh": "Director:掌握建構順序(recipe),依序呼叫 `buildPartA()`、`buildPartB()` 等步驟,不涉入組裝細節。", "en": "Director: owns the construction order (the recipe), calling steps like `buildPartA()` and `buildPartB()` in sequence, without touching assembly details." },
+          { "zh": "Builder(介面):宣告每個建構步驟的抽象方法,以及回傳成品的 `getResult()`。", "en": "Builder (interface): declares abstract methods for each construction step, plus `getResult()` to return the finished product." },
+          { "zh": "ConcreteBuilder:實作 Builder 介面,決定每個步驟具體如何組裝,並持有正在建構中的 Product。", "en": "ConcreteBuilder: implements the Builder interface, deciding how each step is actually assembled, and holds the Product under construction." },
+          { "zh": "Product:被建構的複雜物件,由一系列組裝步驟逐步完成。", "en": "Product: the complex object being built, assembled incrementally through a series of construction steps." }
+        ] }
+      ] },
+    { "heading": { "zh": "運作流程", "en": "Operation Flow" },
+      "blocks": [
+        { "type": "steps", "items": [
+          { "zh": "客戶端建立一個 ConcreteBuilder,並將其交給 Director。", "en": "The client creates a ConcreteBuilder and hands it to the Director." },
+          { "zh": "Director 依固定順序呼叫 `builder.buildPartA()`、`builder.buildPartB()`。", "en": "The Director calls `builder.buildPartA()` then `builder.buildPartB()` in a fixed order." },
+          { "zh": "所有步驟完成後,Director 呼叫 `builder.getResult()` 取得完成的 Product。", "en": "Once all steps complete, the Director calls `builder.getResult()` to obtain the finished Product." },
+          { "zh": "更換不同的 ConcreteBuilder,同一套 Director 流程即可產生不同的 Product 表示。", "en": "Swapping in a different ConcreteBuilder lets the same Director logic produce a different Product representation." }
+        ] },
+        { "type": "mermaid", "code": "flowchart LR\n  Client -->|\"construct(builder)\"| D[\"Director\"]\n  D -->|\"buildPartA()\"| B[\"Builder\"]\n  D -->|\"buildPartB()\"| B\n  D -->|\"getResult()\"| B\n  B -->|\"returns\"| P[\"Product\"]" }
+      ] },
+    { "heading": { "zh": "UML 結構示意", "en": "UML Structure Diagram" },
+      "blocks": [
+        { "type": "svg", "svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 420 200\" width=\"420\" height=\"200\"><g font-family=\"sans-serif\" font-size=\"11\"><rect x=\"15\" y=\"25\" width=\"130\" height=\"55\" rx=\"4\" fill=\"#ede9fe\" stroke=\"#6d28d9\" stroke-width=\"1.5\"/><text x=\"80\" y=\"45\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#4c1d95\">Director</text><line x1=\"15\" y1=\"52\" x2=\"145\" y2=\"52\" stroke=\"#6d28d9\" stroke-width=\"1\"/><text x=\"25\" y=\"68\" font-size=\"10\" fill=\"#374151\">+ construct(b): Product</text><rect x=\"235\" y=\"15\" width=\"170\" height=\"80\" rx=\"4\" fill=\"#dbeafe\" stroke=\"#2563eb\" stroke-width=\"1.5\"/><text x=\"320\" y=\"33\" text-anchor=\"middle\" font-weight=\"bold\" font-style=\"italic\" fill=\"#1e3a8a\">Builder</text><line x1=\"235\" y1=\"40\" x2=\"405\" y2=\"40\" stroke=\"#2563eb\" stroke-width=\"1\"/><text x=\"245\" y=\"55\" font-size=\"10\" fill=\"#374151\">+ buildPartA() = 0</text><text x=\"245\" y=\"70\" font-size=\"10\" fill=\"#374151\">+ buildPartB() = 0</text><text x=\"245\" y=\"85\" font-size=\"10\" fill=\"#374151\">+ getResult() = 0</text><rect x=\"235\" y=\"135\" width=\"170\" height=\"40\" rx=\"4\" fill=\"#dcfce7\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"320\" y=\"159\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#166534\">ConcreteBuilder</text><rect x=\"15\" y=\"135\" width=\"130\" height=\"40\" rx=\"4\" fill=\"#fef9c3\" stroke=\"#ca8a04\" stroke-width=\"1.5\"/><text x=\"80\" y=\"159\" text-anchor=\"middle\" font-weight=\"bold\" fill=\"#92400e\">Product</text><line x1=\"145\" y1=\"52\" x2=\"235\" y2=\"52\" stroke=\"#6d28d9\" stroke-width=\"1.5\"/><text x=\"152\" y=\"46\" font-size=\"10\" fill=\"#6d28d9\">uses</text><line x1=\"320\" y1=\"135\" x2=\"320\" y2=\"95\" stroke=\"#64748b\" stroke-width=\"1.5\" stroke-dasharray=\"4,3\"/><line x1=\"235\" y1=\"155\" x2=\"145\" y2=\"155\" stroke=\"#16a34a\" stroke-width=\"1.5\"/><text x=\"165\" y=\"149\" font-size=\"10\" fill=\"#16a34a\">builds</text></g></svg>" },
+        { "type": "note", "text": { "zh": "虛線箭頭表示「實作(implements)」關係:ConcreteBuilder 實作 Builder 抽象介面。Director 僅依賴 Builder,不知道實際建構細節;ConcreteBuilder 逐步組裝並透過 getResult() 回傳 Product。", "en": "The dashed arrow indicates the \"implements\" relationship: ConcreteBuilder implements the abstract Builder interface. The Director depends only on Builder and knows nothing about the actual construction details; the ConcreteBuilder assembles the object step by step and returns the Product via getResult()." } }
+      ] },
+    { "heading": { "zh": "模式屬性", "en": "Pattern Properties" },
+      "blocks": [
+        { "type": "table",
+          "headers": [ { "zh": "屬性", "en": "Property" }, { "zh": "說明", "en": "Description" } ],
+          "rows": [
+            [ { "zh": "GoF 分類", "en": "GoF Category" }, { "zh": "Creational(創建型)", "en": "Creational" } ],
+            [ { "zh": "參與者", "en": "Participants" }, { "zh": "Director、Builder(介面)、ConcreteBuilder、Product", "en": "Director, Builder (interface), ConcreteBuilder, Product" } ],
+            [ { "zh": "意圖", "en": "Intent" }, { "zh": "將複雜物件的建構與其表示分離", "en": "Separate the construction of a complex object from its representation" } ],
+            [ { "zh": "建構方式", "en": "Construction" }, { "zh": "逐步建構(step-by-step),依固定順序呼叫多個建構方法", "en": "Step-by-step construction, invoking multiple build methods in a fixed order" } ],
+            [ { "zh": "設計原則", "en": "Principle" }, { "zh": "組裝職責單一:Director 負責流程,ConcreteBuilder 負責細節(單一職責原則)", "en": "Single responsibility for assembly: the Director owns the process, the ConcreteBuilder owns the details (Single Responsibility Principle)" } ]
+          ] },
+        { "type": "math", "tex": "\\text{Product} = \\text{getResult} \\circ \\text{buildPartB} \\circ \\text{buildPartA}", "caption": { "zh": "Product 是一連串建構步驟依序作用於 Builder 之後的結果:先呼叫 buildPartA,再呼叫 buildPartB,最後以 getResult 取出成品。", "en": "The Product is the result of a sequence of construction steps applied to the Builder: buildPartA runs first, then buildPartB, and finally getResult extracts the finished object." } }
+      ] },
+    { "heading": { "zh": "程式碼", "en": "Source Code" },
+      "blocks": [
+        { "type": "code", "lang": "cpp", "file": "pattern_builder.cpp", "code": "class House {\npublic:\n    void setWalls(const string& w) { m_walls = w; }\n    void setRoof(const string& r) { m_roof = r; }\n    void setInterior(const string& i) { m_interior = i; }\n    void show() const { cout << m_walls << \", \" << m_roof << \", \" << m_interior << endl; }\nprivate:\n    string m_walls, m_roof, m_interior;\n};\n\n// Builder interface\nclass HouseBuilder {\npublic:\n    virtual ~HouseBuilder() {}\n    virtual void buildWalls() = 0;\n    virtual void buildRoof() = 0;\n    virtual void buildInterior() = 0;\n    virtual shared_ptr<House> getResult() = 0;\n};\n\n// Concrete Builder\nclass WoodenHouseBuilder : public HouseBuilder {\npublic:\n    WoodenHouseBuilder() { m_house = make_shared<House>(); }\n    void buildWalls() override { m_house->setWalls(\"Wooden Walls\"); }\n    void buildRoof() override { m_house->setRoof(\"Wooden Shingle Roof\"); }\n    void buildInterior() override { m_house->setInterior(\"Rustic Interior\"); }\n    shared_ptr<House> getResult() override { return m_house; }\nprivate:\n    shared_ptr<House> m_house;\n};\n\n// Director: fixed build order, independent of the concrete builder\nclass Director {\npublic:\n    shared_ptr<House> construct(HouseBuilder& builder) {\n        builder.buildWalls();\n        builder.buildRoof();\n        builder.buildInterior();\n        return builder.getResult();\n    }\n};\n\nint main() {\n    Director director;\n    WoodenHouseBuilder woodenBuilder;\n    auto house = director.construct(woodenBuilder);\n    house->show(); // Wooden Walls, Wooden Shingle Roof, Rustic Interior\n}" }
+      ] },
+    { "heading": { "zh": "優缺點與使用時機", "en": "Pros, Cons & When to Use" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "優點:將複雜的建構邏輯與物件表示分離,建構過程可重複使用於不同的表示。", "en": "Pro: separates complex construction logic from the object's representation; the same construction process is reusable across different representations." },
+          { "zh": "優點:支援逐步建構,可對建構順序與細節有更精細的控制。", "en": "Pro: supports step-by-step construction, giving finer control over build order and detail." },
+          { "zh": "缺點:每一種物件表示都需要一個新的 ConcreteBuilder 子類別,增加類別數量。", "en": "Con: each new representation requires a new ConcreteBuilder subclass, increasing the number of classes." },
+          { "zh": "缺點:Builder 介面必須事先設計好足以涵蓋所有產品變體所需的建構步驟。", "en": "Con: the Builder interface must be designed upfront to cover the construction steps needed by every product variant." },
+          { "zh": "適用:組裝有多個可選部分的複雜物件,例如文件產生器、UI 對話框建構器、SQL/HTML 查詢建構器等。", "en": "Use for assembling complex objects with many optional parts — document generators, UI dialog builders, SQL/HTML query builders, and similar fluent construction APIs." }
+        ] }
+      ] },
+    { "heading": { "zh": "小結", "en": "Summary" },
+      "blocks": [
+        { "type": "bullets", "items": [
+          { "zh": "Builder 是 Creational 模式:將複雜物件的建構過程與其表示分離。", "en": "Builder is a Creational pattern: it separates the construction process of a complex object from its representation." },
+          { "zh": "參與者:Director(流程)、Builder(介面)、ConcreteBuilder(細節)、Product(成品)。", "en": "Participants: Director (process), Builder (interface), ConcreteBuilder (details), Product (result)." },
+          { "zh": "同一個 Director 搭配不同的 ConcreteBuilder,即可產生不同的 Product 表示。", "en": "The same Director paired with different ConcreteBuilders produces different Product representations." },
+          { "zh": "適合用於建構步驟固定、但組裝細節或最終表示需要變化的複雜物件。", "en": "Well suited to complex objects whose construction steps are fixed but whose assembly details or final representation need to vary." }
+        ] }
+      ] }
+  ]
+};
 
 module.exports = SLIDES_DB;
