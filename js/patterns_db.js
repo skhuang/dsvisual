@@ -32,23 +32,25 @@
       render:null },
     { id:'pattern-composite', category:'patterns-structural', title:'Composite',
       label:'Composite - Tree of parts & wholes', cpp:'pattern_composite.cpp',
-      diagram:null,
-      narration:[
-        {text:'Client treats leaves and composites uniformly…', color:'#6366f1'},
-        {text:'Composite.operation() recurses into children', color:'#ec4899'},
-        {text:'Leaf.operation() does the work', color:'#eab308'},
-        {text:'Whole-part hierarchy via one Component interface', color:'#10b981'}
+      diagram:{ nodes:[
+        {id:'root',x:185,y:15,w:140,h:50,label:'Composite',color:'#ec4899',active:[0,3]},
+        {id:'leaf1',x:30,y:120,w:130,h:50,label:'Leaf',color:'#eab308',active:[1,2,3]},
+        {id:'comp2',x:270,y:120,w:180,h:50,label:'Composite',color:'#ec4899',active:[1,3]},
+        {id:'leaf2',x:250,y:230,w:110,h:50,label:'Leaf',color:'#eab308',active:[1,2,3]},
+        {id:'leaf3',x:390,y:230,w:100,h:50,label:'Leaf',color:'#eab308',active:[1,2,3]}
+      ], edges:[
+        {from:'root',to:'leaf1',active:[1,3]},
+        {from:'root',to:'comp2',active:[1,3]},
+        {from:'comp2',to:'leaf2',active:[1,3]},
+        {from:'comp2',to:'leaf3',active:[1,3]}
       ],
-      render: function (svg) {
-        // Escape hatch: a small component tree (Composite → {Leaf, Composite → {Leaf, Leaf}}).
-        PatternVizDraw.tree(svg, {
-          label:'Composite', color:'#ec4899', children:[
-            { label:'Leaf', color:'#eab308' },
-            { label:'Composite', color:'#ec4899', children:[
-              { label:'Leaf', color:'#eab308' }, { label:'Leaf', color:'#eab308' } ] }
-          ]
-        });
-      } },
+      steps:[
+        {caption:{en:'Client calls operation() on the root Composite, unaware whether a leaf or a subtree lies beneath…', zh:'用戶端呼叫根節點 Composite 的 operation()，並不在意底下是葉節點還是子樹…'}},
+        {caption:{en:'Composite.operation() recurses into every child, walking down the whole tree', zh:'Composite.operation() 遞迴呼叫每個子節點的 operation()，一路走遍整棵樹'}},
+        {caption:{en:'Leaf.operation() finally does the real work at the bottom of the recursion', zh:'Leaf.operation() 在遞迴的最底層真正執行工作'}},
+        {caption:{en:'Whole and part share one Component interface — the client treats them uniformly', zh:'整體與部分共用同一個 Component 介面——用戶端對兩者一視同仁'}}
+      ] },
+      render:null },
     { id:'pattern-singleton', category:'patterns-creational', title:'Singleton',
       label:'Singleton - Unique Instance', cpp:'pattern_singleton.cpp', diagram:null,
       narration:[
