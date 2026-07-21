@@ -4,17 +4,18 @@
     { id:'pattern-builder', category:'patterns-creational', title:'Builder',
       label:'Builder - Step-by-step construction', cpp:'pattern_builder.cpp',
       diagram:{ nodes:[
-        {id:'dir',x:40,y:40,w:150,h:70,label:'Director',members:['construct()'],color:'#6366f1'},
-        {id:'bld',x:250,y:40,w:170,h:90,label:'Builder',members:['buildPartA()','buildPartB()','getResult()'],color:'#ec4899'},
-        {id:'prod',x:250,y:200,w:170,h:60,label:'Product',members:['parts…'],color:'#eab308'}
-      ], edges:[ {from:'dir',to:'bld',label:'uses'}, {from:'bld',to:'prod',label:'builds'} ] },
-      narration:[
-        {text:'Director drives step-by-step construction…', color:'#6366f1'},
-        {text:'builder.buildPartA()', color:'#ec4899'},
-        {text:'builder.buildPartB()', color:'#ec4899'},
-        {text:'product = builder.getResult()', color:'#34d399'},
-        {text:'Same steps, different builders → different products', color:'#10b981'}
-      ], render:null },
+        {id:'dir',x:40,y:40,w:150,h:70,label:'Director',members:['construct()'],color:'#6366f1',active:[0,4]},
+        {id:'bld',x:250,y:40,w:170,h:90,label:'Builder',members:['buildPartA()','buildPartB()','getResult()'],color:'#ec4899',active:[1,2,3]},
+        {id:'prod',x:250,y:200,w:170,h:60,label:'Product',members:['parts…'],color:'#eab308',active:[3,4]}
+      ], edges:[ {from:'dir',to:'bld',label:'uses',active:[0,4]}, {from:'bld',to:'prod',label:'builds',active:[0,3,4]} ],
+      steps:[
+        {caption:{en:'Director drives step-by-step construction…', zh:'指挥者（Director）逐步驱动建造流程…'}},
+        {caption:{en:'builder.buildPartA()', zh:'builder.buildPartA()：建造者建造零件 A'}},
+        {caption:{en:'builder.buildPartB()', zh:'builder.buildPartB()：建造者建造零件 B'}},
+        {caption:{en:'product = builder.getResult()', zh:'product = builder.getResult()：取得建造完成的产品'}},
+        {caption:{en:'Same steps, different builders → different products', zh:'相同的步骤，换一个建造者 → 得到不同的产品'}}
+      ] },
+      render:null },
     { id:'pattern-command', category:'patterns-behavioral', title:'Command',
       label:'Command - Encapsulate a request', cpp:'pattern_command.cpp',
       diagram:{ nodes:[

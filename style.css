@@ -3118,3 +3118,8 @@ ul.dc-tree, ul.dc-tree ul { list-style: none; margin: 0; padding-left: 18px; }
 .ce-verdict { margin-top: 8px; font-weight: bold; }
 .ce-verdict.ce-ok { color: #16a34a; }
 .ce-verdict.ce-err { color: #dc2626; }
+
+/* pattern step-able diagrams */
+.pattern-step-active { opacity: 1; }
+.pattern-step-dim { opacity: 0.3; }
+.pattern-step-controls { margin-top: 10px; display: flex; justify-content: center; }
