@@ -7,9 +7,14 @@ test('registry exposes the 3 new patterns grouped by category', () => {
   assert.strictEqual(P.getPattern('pattern-builder').category, 'patterns-creational');
   assert.strictEqual(P.getPattern('pattern-composite').category, 'patterns-structural');
   assert.strictEqual(P.getPattern('pattern-command').category, 'patterns-behavioral');
-  // Composite uses the escape hatch; Builder/Command are declarative
-  assert.strictEqual(typeof P.getPattern('pattern-composite').render, 'function');
-  assert.ok(P.getPattern('pattern-builder').diagram && P.getPattern('pattern-builder').diagram.nodes.length > 0);
+  // Builder/Command/Composite are now stepped declarative diagrams (step-viz feature):
+  // each has diagram.nodes + a diagram.steps array (Composite was converted from its
+  // former escape-hatch render to a declarative stepped diagram).
+  ['pattern-builder', 'pattern-command', 'pattern-composite'].forEach((id) => {
+    const d = P.getPattern(id);
+    assert.ok(d.diagram && d.diagram.nodes.length > 0, id + ' has diagram nodes');
+    assert.ok(Array.isArray(d.diagram.steps) && d.diagram.steps.length > 0, id + ' has steps');
+  });
 });
 
 test('patternsByCategory filters', () => {
