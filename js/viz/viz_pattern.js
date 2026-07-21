@@ -35,8 +35,51 @@
   function playNarration(steps) {
     return K().executeAnimWrapper(async () => { for (const s of steps) { K().showStatus(s.text, s.color); await sleep(600); } });
   }
+  const STEP_ACTIVE = 'pattern-step-active', STEP_DIM = 'pattern-step-dim';
+  function stepCls(active, step) { return (!active || active.indexOf(step) !== -1) ? STEP_ACTIVE : STEP_DIM; }
+  function drawSteppedDiagram(svg, diagram, step) {
+    svg.innerHTML = ''; defsArrow(svg);
+    const byId = {}; (diagram.nodes || []).forEach((n) => { byId[n.id] = n; });
+    (diagram.edges || []).forEach((e) => {
+      const a = byId[e.from], b = byId[e.to]; if (!a || !b) return;
+      const cls = stepCls(e.active, step);
+      const x1 = a.x + a.w / 2, y1 = a.y + a.h / 2, x2 = b.x + b.w / 2, y2 = b.y + b.h / 2;
+      svg.appendChild(el('line', { x1, y1, x2, y2, class: cls, stroke: '#94a3b8', 'stroke-width': 2, 'marker-end': 'url(#pattern-arrow)' }));
+      if (e.label) { const t = el('text', { x: (x1 + x2) / 2, y: (y1 + y2) / 2 - 4, 'font-size': 11, fill: '#cbd5e1', 'text-anchor': 'middle', class: cls }); t.textContent = e.label; svg.appendChild(t); }
+    });
+    (diagram.nodes || []).forEach((n) => {
+      const cls = stepCls(n.active, step);
+      svg.appendChild(el('rect', { x: n.x, y: n.y, width: n.w, height: n.h, rx: 8, fill: n.color || '#334155', stroke: '#0f172a', 'stroke-width': 2, class: cls }));
+      const title = el('text', { x: n.x + n.w / 2, y: n.y + 20, 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 'bold', fill: 'white', class: cls }); title.textContent = n.label; svg.appendChild(title);
+      (n.members || []).forEach((m, i) => { const t = el('text', { x: n.x + 10, y: n.y + 40 + i * 16, 'font-family': 'monospace', 'font-size': 11, fill: 'rgba(255,255,255,0.85)', class: cls }); t.textContent = m; svg.appendChild(t); });
+    });
+    const steps = diagram.steps || [];
+    const badge = el('text', { x: 12, y: 18, 'font-size': 12, 'font-weight': 'bold', fill: '#94a3b8', class: 'pattern-step-badge' });
+    badge.textContent = 'Step ' + (step + 1) + '/' + steps.length; svg.appendChild(badge);
+    const cap = el('text', { x: 250, y: 308, 'text-anchor': 'middle', 'font-size': 12, fill: '#cbd5e1', class: 'pattern-step-caption' });
+    cap.textContent = steps[step] ? K().langOf(steps[step].caption) : ''; svg.appendChild(cap);
+  }
+  let _step = 0, _stepFor = null;
+  function renderStepped(svg, descriptor) {
+    if (_stepFor !== descriptor.id) { _step = 0; _stepFor = descriptor.id; }
+    const steps = descriptor.diagram.steps || [];
+    if (_step > steps.length - 1) _step = 0;
+    function paint() { drawSteppedDiagram(svg, descriptor.diagram, _step); }
+    paint();
+    const host = svg.parentNode; if (!host) return;
+    let slot = host.querySelector('.pattern-step-controls'); if (slot) slot.remove();
+    slot = document.createElement('div'); slot.className = 'pattern-step-controls';
+    slot.appendChild(K().buildStepControls(
+      () => { if (_step < steps.length - 1) { _step++; paint(); K().showStatus(K().langOf(steps[_step].caption), '#6366f1'); return _step < steps.length - 1; } return false; },
+      () => { _step = 0; paint(); K().showStatus(K().langOf(steps[0].caption), '#6366f1'); },
+      900));
+    host.appendChild(slot);
+  }
   function render(svg, descriptor) {
     if (!descriptor) return;
+    const host = svg.parentNode;
+    if (descriptor.diagram && descriptor.diagram.steps) { renderStepped(svg, descriptor); return; }
+    if (host) { const slot = host.querySelector('.pattern-step-controls'); if (slot) slot.remove(); }
     if (typeof descriptor.render === 'function') descriptor.render(svg);
     else if (descriptor.diagram) drawDiagram(svg, descriptor.diagram);
   }
@@ -104,5 +147,5 @@
   }
 
   global.PatternVizDraw = { drawDiagram, tree, arrow, drawOopBox, drawOopLabel, drawOopLine };
-  global.PatternViz = { drawDiagram, tree, playNarration, render };
+  global.PatternViz = { drawDiagram, drawSteppedDiagram, tree, playNarration, render };
 })(typeof window !== 'undefined' ? window : globalThis);
