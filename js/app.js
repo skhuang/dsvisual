@@ -1853,7 +1853,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('pattern-title').textContent = p.label;
                 const stepped = !!(p.diagram && p.diagram.steps);
                 btnPatternDemo.style.display = stepped ? 'none' : '';
-                if (typeof btnPatternReset !== 'undefined' && btnPatternReset) btnPatternReset.style.display = stepped ? 'none' : '';
+                btnPatternReset.style.display = stepped ? 'none' : '';
                 // category-scoped select (from PR #146), now sourced from the registry:
                 patternModeSelect.innerHTML = orderedPatternsByCategory(p.category)
                     .map((q) => '<option value="' + q.id.replace(/^pattern-/, '') + '">' + q.label + '</option>').join('');

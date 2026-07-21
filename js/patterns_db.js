@@ -6,8 +6,8 @@
       diagram:{ nodes:[
         {id:'dir',x:40,y:40,w:150,h:70,label:'Director',members:['construct()'],color:'#6366f1',active:[0,4]},
         {id:'bld',x:250,y:40,w:170,h:90,label:'Builder',members:['buildPartA()','buildPartB()','getResult()'],color:'#ec4899',active:[1,2,3]},
-        {id:'prod',x:250,y:200,w:170,h:60,label:'Product',members:['parts…'],color:'#eab308',active:[3,4]}
-      ], edges:[ {from:'dir',to:'bld',label:'uses',active:[0,4]}, {from:'bld',to:'prod',label:'builds',active:[0,3,4]} ],
+        {id:'prod',x:230,y:200,w:170,h:60,label:'Product',members:['parts…'],color:'#eab308',active:[3,4]}
+      ], edges:[ {from:'dir',to:'bld',label:'uses',active:[0,4]}, {from:'bld',to:'prod',label:'builds',active:[3]} ],
       steps:[
         {caption:{en:'Director drives step-by-step construction…', zh:'指挥者（Director）逐步驱动建造流程…'}},
         {caption:{en:'builder.buildPartA()', zh:'builder.buildPartA()：建造者建造零件 A'}},
