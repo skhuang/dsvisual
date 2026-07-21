@@ -19,16 +19,17 @@
     { id:'pattern-command', category:'patterns-behavioral', title:'Command',
       label:'Command - Encapsulate a request', cpp:'pattern_command.cpp',
       diagram:{ nodes:[
-        {id:'inv',x:40,y:60,w:150,h:70,label:'Invoker',members:['setCommand()','run()'],color:'#6366f1'},
-        {id:'cmd',x:250,y:60,w:160,h:70,label:'Command',members:['execute()'],color:'#ec4899'},
-        {id:'rcv',x:460,y:60,w:150,h:70,label:'Receiver',members:['action()'],color:'#eab308'}
-      ], edges:[ {from:'inv',to:'cmd',label:'holds'}, {from:'cmd',to:'rcv',label:'calls'} ] },
-      narration:[
-        {text:'Invoker holds a Command, not a Receiver…', color:'#6366f1'},
-        {text:'invoker.run() → command.execute()', color:'#ec4899'},
-        {text:'command.execute() → receiver.action()', color:'#eab308'},
-        {text:'Request is encapsulated as an object (queue/undo-able)', color:'#10b981'}
-      ], render:null },
+        {id:'inv',x:40,y:60,w:150,h:70,label:'Invoker',members:['setCommand()','run()'],color:'#6366f1',active:[0,1]},
+        {id:'cmd',x:250,y:40,w:160,h:70,label:'Command',members:['execute()'],color:'#ec4899',active:[0,1,2,3]},
+        {id:'rcv',x:460,y:60,w:150,h:70,label:'Receiver',members:['action()'],color:'#eab308',active:[2]}
+      ], edges:[ {from:'inv',to:'cmd',label:'holds',active:[0,1]}, {from:'cmd',to:'rcv',label:'calls',active:[2]} ],
+      steps:[
+        {caption:{en:'Invoker holds a Command, not a Receiver…', zh:'調用者（Invoker）持有一個 Command，而非直接持有 Receiver…'}},
+        {caption:{en:'invoker.run() → command.execute()', zh:'invoker.run() → command.execute()：呼叫者觸發指令執行'}},
+        {caption:{en:'command.execute() → receiver.action()', zh:'command.execute() → receiver.action()：指令呼叫接收者實際執行動作'}},
+        {caption:{en:'Request is encapsulated as an object (queue/undo-able)', zh:'請求被封裝為一個物件（可排入佇列、可復原）'}}
+      ] },
+      render:null },
     { id:'pattern-composite', category:'patterns-structural', title:'Composite',
       label:'Composite - Tree of parts & wholes', cpp:'pattern_composite.cpp',
       diagram:null,
