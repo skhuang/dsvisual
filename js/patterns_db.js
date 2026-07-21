@@ -9,11 +9,11 @@
         {id:'prod',x:230,y:200,w:170,h:60,label:'Product',members:['parts…'],color:'#eab308',active:[3,4]}
       ], edges:[ {from:'dir',to:'bld',label:'uses',active:[0,4]}, {from:'bld',to:'prod',label:'builds',active:[3]} ],
       steps:[
-        {caption:{en:'Director drives step-by-step construction…', zh:'指挥者（Director）逐步驱动建造流程…'}},
+        {caption:{en:'Director drives step-by-step construction…', zh:'指揮者（Director）逐步驅動建造流程…'}},
         {caption:{en:'builder.buildPartA()', zh:'builder.buildPartA()：建造者建造零件 A'}},
         {caption:{en:'builder.buildPartB()', zh:'builder.buildPartB()：建造者建造零件 B'}},
-        {caption:{en:'product = builder.getResult()', zh:'product = builder.getResult()：取得建造完成的产品'}},
-        {caption:{en:'Same steps, different builders → different products', zh:'相同的步骤，换一个建造者 → 得到不同的产品'}}
+        {caption:{en:'product = builder.getResult()', zh:'product = builder.getResult()：取得建造完成的產品'}},
+        {caption:{en:'Same steps, different builders → different products', zh:'相同的步驟，換一個建造者 → 得到不同的產品'}}
       ] },
       render:null },
     { id:'pattern-command', category:'patterns-behavioral', title:'Command',
