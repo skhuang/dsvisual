@@ -110,9 +110,9 @@
         {id:'decA',x:300,y:160,w:170,h:90,label:'MilkDecorator',members:['wraps Component','cost() = wrapped+$0.5'],color:'#f59e0b',active:[1,2,3]},
         {id:'decB',x:490,y:200,w:180,h:110,label:'SugarDecorator',members:['wraps Component','cost() = wrapped+$0.25'],color:'#fb923c',active:[2,3]}
       ], edges:[
-        {from:'base',to:'component',label:'implements',active:[0]},
-        {from:'decA',to:'component',label:'implements',active:[1]},
-        {from:'decB',to:'component',label:'implements',active:[2]},
+        {from:'component',to:'base',label:'implements',active:[0]},
+        {from:'component',to:'decA',label:'implements',active:[1]},
+        {from:'component',to:'decB',label:'implements',active:[2]},
         {from:'base',to:'decA',label:'wraps',active:[1,3]},
         {from:'decA',to:'decB',label:'wraps',active:[2,3]}
       ],
