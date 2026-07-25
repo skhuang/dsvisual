@@ -116,6 +116,7 @@ const METHOD_GROUPS = [
             { id: 'graph-floyd-warshall', title: 'Floyd-Warshall', file: 'graph_floyd_warshall.cpp', visualizer: 'matrix', controls: 'matrix' },
             { id: 'graph-aoe', title: 'AOE / Critical Path', file: 'graph_aoe.cpp', visualizer: 'aoe', controls: 'aoe' },
             { id: 'graph-matrix', title: 'Adjacency Matrix', file: 'graph_matrix.cpp', visualizer: 'graph-matrix', controls: 'graph-matrix', codeDrawer: true },
+            { id: 'graph-components', title: 'Connected Components', file: 'graph_components.cpp', visualizer: 'graph-components', controls: 'graph-components', codeDrawer: true },
         ],
     },
     {
