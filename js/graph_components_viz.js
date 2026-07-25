@@ -48,8 +48,8 @@
         const msg = isSeed
           ? { zh: '頂點 ' + v + ' 開啟新的連通分量（第 ' + (k + 1) + ' 個）' + zhLbl,
               en: 'Vertex ' + v + ' starts a new component (#' + (k + 1) + ').' + enLbl }
-          : { zh: '處理頂點 ' + v + '（連通分量 ' + k + '）' + zhLbl,
-              en: 'Process vertex ' + v + ' (component ' + k + ').' + enLbl };
+          : { zh: '處理頂點 ' + v + '（第 ' + (k + 1) + ' 個連通分量）' + zhLbl,
+              en: 'Process vertex ' + v + ' (component #' + (k + 1) + ').' + enLbl };
         frames.push({ comp: copy(), current: v, frontier: queue.slice(), newly, k: k + 1, seed: isSeed, done: false, msg });
         isSeed = false;
       }
