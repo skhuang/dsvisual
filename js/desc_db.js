@@ -223,6 +223,22 @@ const descDB = {
             <span class="badge space">Space: O(V)</span>
         </div>
     `,
+    'graph-matrix': `
+        <h3>Adjacency Matrix</h3>
+        <p>An <strong>Adjacency Matrix</strong> represents a graph as an <code>n &times; n</code> table where entry <code>adj[u][v]</code> records the edge (or weight) from vertex <code>u</code> to vertex <code>v</code>, and 0 (or another sentinel) marks "no edge".</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism:</strong> <code>addEdge(u, v, w, directed)</code> sets <code>adj[u][v] = w</code>; when the graph is undirected it also mirrors <code>adj[v][u] = w</code>, so the matrix is symmetric across its diagonal.</li>
+            <li><strong>Weighted vs. Unweighted:</strong> An unweighted graph stores a flag (1/0) at each cell; a weighted graph stores the actual edge weight, with 0 still meaning "no edge".</li>
+            <li><strong>Degree from the Matrix:</strong> Out-degree of vertex <code>i</code> is the count of nonzero entries in row <code>i</code>; in-degree of vertex <code>j</code> is the count of nonzero entries in column <code>j</code>. For undirected graphs, row sums equal column sums (out-degree = in-degree = degree).</li>
+            <li><strong>Trade-off:</strong> Edge lookup and edge insertion/removal are O(1), but the matrix always costs <code>O(n&sup2;)</code> space, even for sparse graphs, versus an adjacency list's <code>O(n + e)</code> space.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Edge Lookup: O(1)</span>
+            <span class="badge time">Iterate Neighbors: O(n)</span>
+            <span class="badge space">Space: O(n&sup2;)</span>
+        </div>
+    `,
     'tree-bst': `
         <h3>Binary Search Tree (Standard)</h3>
         <p>An elegant hierarchical associative routing structure.</p>
