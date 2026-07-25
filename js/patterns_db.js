@@ -124,136 +124,47 @@
       ] },
       render:null },
     { id:'pattern-observer', category:'patterns-behavioral', title:'Observer',
-      label:'Observer - Event Notification', cpp:'pattern_observer.cpp', diagram:null,
-      narration:[
-        {text:'Setting up Observer pattern...', color:'#ec4899'},
-        {text:'Create Subject and register Observers', color:'#f59e0b'},
-        {text:'Observer1, Observer2, Observer3 attached', color:'#34d399'},
-        {text:'Subject state changes: notify() called', color:'#fbbf24'},
-        {text:'All observers receive update notification', color:'#34d399'},
-        {text:'Loose coupling: Subject knows only Observer interface', color:'#06b6d4'}
+      label:'Observer - Event Notification', cpp:'pattern_observer.cpp',
+      diagram:{ nodes:[
+        {id:'subject',x:250,y:30,w:180,h:90,label:'Subject',members:['- state','+ attach(observer)','+ notify()'],color:'#f97316',active:[1,2,4]},
+        {id:'obs1',x:40,y:220,w:140,h:60,label:'Observer1',members:['+ update()'],color:'#06b6d4',active:[0,3,4]},
+        {id:'obs2',x:230,y:240,w:140,h:60,label:'Observer2',members:['+ update()'],color:'#06b6d4',active:[0,3,4]},
+        {id:'obs3',x:470,y:220,w:140,h:60,label:'Observer3',members:['+ update()'],color:'#06b6d4',active:[0,3,4]}
+      ], edges:[
+        {from:'obs1',to:'subject',label:'attach()',active:[0,4]},
+        {from:'obs2',to:'subject',label:'attach()',active:[0,4]},
+        {from:'obs3',to:'subject',label:'attach()',active:[0,4]},
+        {from:'subject',to:'obs1',label:'notify()',active:[2,3,4]},
+        {from:'subject',to:'obs2',label:'notify()',active:[2,3,4]},
+        {from:'subject',to:'obs3',label:'notify()',active:[2,3,4]}
       ],
-      render: function (svg) {
-        svg.innerHTML = '';
-
-        // Subject
-        const subjectBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        subjectBox.setAttribute('x', '220'); subjectBox.setAttribute('y', '50');
-        subjectBox.setAttribute('width', '160'); subjectBox.setAttribute('height', '70');
-        subjectBox.setAttribute('fill', '#f97316'); subjectBox.setAttribute('stroke', '#c2410c'); subjectBox.setAttribute('stroke-width', '2');
-        svg.appendChild(subjectBox);
-
-        const subText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        subText.setAttribute('x', '300'); subText.setAttribute('y', '75');
-        subText.setAttribute('text-anchor', 'middle'); subText.setAttribute('font-size', '12'); subText.setAttribute('font-weight', 'bold');
-        subText.setAttribute('fill', 'white');
-        subText.textContent = 'Subject';
-        svg.appendChild(subText);
-
-        const subMethod = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        subMethod.setAttribute('x', '230'); subMethod.setAttribute('y', '100');
-        subMethod.setAttribute('font-size', '10'); subMethod.setAttribute('fill', '#fed7aa');
-        subMethod.textContent = '+ notify()';
-        svg.appendChild(subMethod);
-
-        // Observers
-        for (let i = 0; i < 3; i++) {
-            const obsBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            obsBox.setAttribute('x', String(60 + i * 170)); obsBox.setAttribute('y', '180');
-            obsBox.setAttribute('width', '130'); obsBox.setAttribute('height', '50');
-            obsBox.setAttribute('fill', '#06b6d4'); obsBox.setAttribute('stroke', '#0369a1'); obsBox.setAttribute('stroke-width', '2');
-            svg.appendChild(obsBox);
-
-            const obsText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            obsText.setAttribute('x', String(125 + i * 170)); obsText.setAttribute('y', '212');
-            obsText.setAttribute('text-anchor', 'middle'); obsText.setAttribute('font-size', '11');
-            obsText.setAttribute('fill', 'white');
-            obsText.textContent = `Observer${i + 1}`;
-            svg.appendChild(obsText);
-
-            // Notification arrow
-            PatternVizDraw.arrow(svg, String(280 - 20 * i), '120', String(125 + i * 170), '180', '#34d399');
-        }
-      } },
+      steps:[
+        {caption:{en:'Observer1, Observer2, and Observer3 each attach() themselves to the Subject', zh:'Observer1、Observer2、Observer3 各自呼叫 attach() 訂閱 Subject'}},
+        {caption:{en:"The Subject's internal state changes", zh:'Subject 的內部狀態發生變化'}},
+        {caption:{en:'subject.notify() is called, iterating over every attached observer', zh:'subject.notify() 被呼叫，依序走訪每一個已訂閱的 Observer'}},
+        {caption:{en:"Each observer's update() runs, reading the new state off the Subject", zh:'每個 Observer 的 update() 執行，從 Subject 讀取最新狀態'}},
+        {caption:{en:'The Subject depends only on the Observer interface — loose coupling', zh:'Subject 只依賴 Observer 介面——彼此鬆散耦合'}}
+      ] },
+      render:null },
     { id:'pattern-strategy', category:'patterns-behavioral', title:'Strategy',
-      label:'Strategy - Algorithm Encapsulation', cpp:'pattern_strategy.cpp', diagram:null,
-      narration:[
-        {text:'Using Strategy pattern for flexible algorithms...', color:'#ec4899'},
-        {text:'PaymentProcessor created', color:'#f59e0b'},
-        {text:'setStrategy(CreditCardPayment)', color:'#34d399'},
-        {text:'processPayment(100): Credit Card payment', color:'#fbbf24'},
-        {text:'setStrategy(CryptoCurrencyPayment)', color:'#34d399'},
-        {text:'processPayment(0.005): Crypto payment', color:'#fbbf24'},
-        {text:'Algorithm can be changed at runtime!', color:'#34d399'}
+      label:'Strategy - Algorithm Encapsulation', cpp:'pattern_strategy.cpp',
+      diagram:{ nodes:[
+        {id:'context',x:40,y:140,w:160,h:80,label:'PaymentProcessor',members:['+ setStrategy(s)','+ processPayment(amount)'],color:'#f97316',active:[0,1,2,3]},
+        {id:'strategy',x:280,y:30,w:180,h:70,label:'Strategy',members:['<<interface>>','+ execute(amount)'],color:'#06b6d4',active:[0,1,2,3]},
+        {id:'card',x:250,y:200,w:150,h:60,label:'CardPayment',members:['+ execute(amount)'],color:'#10b981',active:[0,1]},
+        {id:'crypto',x:460,y:200,w:170,h:60,label:'CryptoPayment',members:['+ execute(amount)'],color:'#3b82f6',active:[2,3]}
+      ], edges:[
+        {from:'context',to:'strategy',label:'delegates to',active:[0,1,2,3]},
+        {from:'strategy',to:'card',label:'implements',active:[0,1]},
+        {from:'strategy',to:'crypto',label:'implements',active:[2,3]}
       ],
-      render: function (svg) {
-        svg.innerHTML = '';
-
-        // Context
-        const contextBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        contextBox.setAttribute('x', '50'); contextBox.setAttribute('y', '100');
-        contextBox.setAttribute('width', '140'); contextBox.setAttribute('height', '70');
-        contextBox.setAttribute('fill', '#f97316'); contextBox.setAttribute('stroke', '#c2410c'); contextBox.setAttribute('stroke-width', '2');
-        svg.appendChild(contextBox);
-
-        const contextText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        contextText.setAttribute('x', '120'); contextText.setAttribute('y', '125');
-        contextText.setAttribute('text-anchor', 'middle'); contextText.setAttribute('font-size', '11'); contextText.setAttribute('font-weight', 'bold');
-        contextText.setAttribute('fill', 'white');
-        contextText.textContent = 'Processor';
-        svg.appendChild(contextText);
-
-        const contextMethod = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        contextMethod.setAttribute('x', '60'); contextMethod.setAttribute('y', '150');
-        contextMethod.setAttribute('font-size', '9'); contextMethod.setAttribute('fill', '#fed7aa');
-        contextMethod.textContent = '+ execute()';
-        svg.appendChild(contextMethod);
-
-        // Strategy interface
-        const stratBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        stratBox.setAttribute('x', '280'); stratBox.setAttribute('y', '80');
-        stratBox.setAttribute('width', '120'); stratBox.setAttribute('height', '60');
-        stratBox.setAttribute('fill', '#06b6d4'); stratBox.setAttribute('stroke', '#0369a1'); stratBox.setAttribute('stroke-width', '2');
-        svg.appendChild(stratBox);
-
-        const stratText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        stratText.setAttribute('x', '340'); stratText.setAttribute('y', '100');
-        stratText.setAttribute('text-anchor', 'middle'); stratText.setAttribute('font-size', '11'); stratText.setAttribute('font-weight', 'bold');
-        stratText.setAttribute('fill', 'white');
-        stratText.textContent = '<<interface>>';
-        svg.appendChild(stratText);
-
-        const stratMethod = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        stratMethod.setAttribute('x', '340'); stratMethod.setAttribute('y', '125');
-        stratMethod.setAttribute('text-anchor', 'middle'); stratMethod.setAttribute('font-size', '10');
-        stratMethod.setAttribute('fill', 'white');
-        stratMethod.textContent = 'Strategy';
-        svg.appendChild(stratMethod);
-
-        // Concrete strategies
-        const concreteBg = ['#10b981', '#3b82f6'];
-        const concreteNames = ['CardPayment', 'CryptoPayment'];
-        for (let i = 0; i < 2; i++) {
-            const concBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            concBox.setAttribute('x', String(280 + i * 130)); concBox.setAttribute('y', '190');
-            concBox.setAttribute('width', '120'); concBox.setAttribute('height', '50');
-            concBox.setAttribute('fill', concreteBg[i]); concBox.setAttribute('stroke', '#1f2937'); concBox.setAttribute('stroke-width', '2');
-            svg.appendChild(concBox);
-
-            const concText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            concText.setAttribute('x', String(340 + i * 130)); concText.setAttribute('y', '220');
-            concText.setAttribute('text-anchor', 'middle'); concText.setAttribute('font-size', '10');
-            concText.setAttribute('fill', 'white');
-            concText.textContent = concreteNames[i];
-            svg.appendChild(concText);
-
-            // Inheritance
-            PatternVizDraw.arrow(svg, String(340 + i * 130), '190', String(340 + i * 25), '140', '#34d399');
-        }
-
-        // Context uses strategy
-        PatternVizDraw.arrow(svg, '190', '135', '280', '110', '#fbbf24');
-      } },
+      steps:[
+        {caption:{en:'context.setStrategy(CardPayment) — the Context now holds CardPayment through the Strategy interface', zh:'context.setStrategy(CardPayment)：Context 透過 Strategy 介面持有 CardPayment 策略'}},
+        {caption:{en:'context.processPayment(100) → strategy.execute(100) — the call is delegated to the current strategy, running the card algorithm', zh:'context.processPayment(100) → strategy.execute(100)：委派給目前的策略，執行信用卡付款演算法'}},
+        {caption:{en:'context.setStrategy(CryptoPayment) — swap the strategy at runtime', zh:'context.setStrategy(CryptoPayment)：在執行期切換為 CryptoPayment 策略'}},
+        {caption:{en:'context.processPayment(0.005) → strategy.execute(0.005) — same call, now running the crypto algorithm instead', zh:'context.processPayment(0.005) → strategy.execute(0.005)：同樣的呼叫，改為執行加密貨幣付款演算法'}}
+      ] },
+      render:null },
     { id:'pattern-mvc', category:'patterns-architectural', title:'MVC (Model-View-Controller)',
       label:'MVC (Model-View-Controller)', cpp:'pattern_mvc.cpp', diagram:null,
       narration:[
