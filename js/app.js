@@ -115,6 +115,7 @@ const METHOD_GROUPS = [
             { id: 'graph-bellman-ford', title: 'Bellman-Ford', file: 'graph_bellman_ford.cpp', visualizer: 'graph-step', controls: 'graph-step' },
             { id: 'graph-floyd-warshall', title: 'Floyd-Warshall', file: 'graph_floyd_warshall.cpp', visualizer: 'matrix', controls: 'matrix' },
             { id: 'graph-aoe', title: 'AOE / Critical Path', file: 'graph_aoe.cpp', visualizer: 'aoe', controls: 'aoe' },
+            { id: 'graph-matrix', title: 'Adjacency Matrix', file: 'graph_matrix.cpp', visualizer: 'graph-matrix', controls: 'graph-matrix', codeDrawer: true },
         ],
     },
     {

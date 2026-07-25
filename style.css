@@ -1938,6 +1938,30 @@ pre.code-panel-body[class*="language-"] {
 .floyd-cell.floyd-changed { background: #bbf7d0; border-color: #22c55e; font-weight: 700; }
 .floyd-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
 
+/* Graph-Matrix (Adjacency Matrix) — stepped build, node-link + matrix */
+.gm-wrap { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.gm-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 13px; color: #475569; }
+.gm-controls label { display: flex; align-items: center; gap: 4px; }
+.gm-controls input[type="text"] { width: 90px; font-family: monospace; }
+.gm-scroll { overflow: auto; max-height: 420px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.gm-graph { display: flex; justify-content: center; padding: 4px 0; }
+.gm-svg { max-width: 240px; }
+.gm-node { fill: #f8fafc; stroke: #1e40af; stroke-width: 2; }
+.gm-node-label { font-size: 12px; font-weight: 700; fill: #1e293b; }
+.gm-edge { stroke: #94a3b8; stroke-width: 2; }
+.gm-edge-active { stroke: #f59e0b; stroke-width: 3; }
+text.gm-edge-active, .gm-edge-label { font-size: 10px; fill: #475569; }
+text.gm-edge-label.gm-edge-active { fill: #b45309; font-weight: 700; }
+.gm-grid { display: grid; gap: 3px; }
+.gm-hcell { height: 32px; display: flex; align-items: center; justify-content: center;
+  font-family: monospace; font-weight: 700; font-size: 12px; color: #64748b; }
+.gm-cell { height: 32px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #cbd5e1; border-radius: 3px; background: #f8fafc; font-family: monospace; font-size: 12px; }
+.gm-cell.gm-zero { color: #cbd5e1; }
+.gm-cell.gm-added { background: #dcfce7; border-color: #4ade80; font-weight: 700; }
+.gm-cell.gm-degree, .gm-hcell.gm-degree { color: #2563eb; font-weight: 600; background: #eff6ff; }
+.gm-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
+
 /* ----- Header actions + language hover menu ----- */
 .app-header__actions {
     position: absolute;
