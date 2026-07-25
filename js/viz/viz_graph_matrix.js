@@ -2,8 +2,47 @@
   'use strict';
   const K = () => global.VizKit; // resolved at call time (VizKit set at startup)
 
-  // Module state seeded from GraphMatrixViz.SAMPLE. Task 3 wires the n/edges
-  // Apply flow + examples select; for now only directed/weighted are live.
+  // NOTE: loadExamples/saveExample/buildExamplesSelect are stateless helpers
+  // (pure wrappers around the global ExamplesStore + localStorage, keyed by
+  // methodId). Duplicated from js/viz/viz_list_equivalence.js per the
+  // extraction recipe (also copied into viz_matrix_sparse_list.js) — do not
+  // refactor into a shared module.
+  function loadExamples(methodId) { try { return ExamplesStore.load(localStorage, methodId); } catch (e) { return []; } }
+  function saveExample(methodId, text, defaultText) { try { ExamplesStore.save(localStorage, methodId, text, defaultText); } catch (e) { /* ignore */ } }
+  function buildExamplesSelect(methodId, defaultText) {
+    const lang = (global.I18N && I18N.getCurrentLanguage) ? I18N.getCurrentLanguage() : 'en';
+    const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+    const escText = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    const trunc = (s) => { s = String(s); return s.length > 24 ? s.slice(0, 24) + '…' : s; };
+    const placeholder = lang === 'zh' ? '範例…' : 'Examples…';
+    const defLabel = lang === 'zh' ? '預設' : 'Default';
+    let h = '<select class="ex-select" data-method="' + escAttr(methodId) + '">';
+    h += '<option value="">' + placeholder + '</option>';
+    h += '<option value="' + escAttr(defaultText) + '">' + defLabel + '</option>';
+    loadExamples(methodId).forEach((e) => {
+      if (e.text === defaultText) return;
+      h += '<option value="' + escAttr(e.text) + '">' + escText(trunc(e.text)) + '</option>';
+    });
+    h += '</select>';
+    return h;
+  }
+
+  // Serialize/deserialize _st as `n|directed|weighted|u-v:w,u-v:w,...` so it
+  // round-trips through the examples select's <option value>.
+  function serialize(st) {
+    return st.n + '|' + (st.directed ? 1 : 0) + '|' + (st.weighted ? 1 : 0) + '|' +
+      st.edges.map((e) => e.u + '-' + e.v + ':' + e.w).join(',');
+  }
+  function deserialize(text) {
+    const parts = String(text).split('|');
+    const nStr = parts[0], directedFlag = parts[1], weightedFlag = parts[2];
+    const edgesStr = parts.slice(3).join('|');
+    const parsed = global.GraphMatrixViz.parseInput(nStr, edgesStr);
+    return { n: parsed.n, edges: parsed.edges, directed: directedFlag === '1', weighted: weightedFlag === '1' };
+  }
+  const DEFAULT_SERIALIZED = serialize(global.GraphMatrixViz.SAMPLE);
+
+  // Module state seeded from GraphMatrixViz.SAMPLE.
   const _st = {
     n: global.GraphMatrixViz.SAMPLE.n,
     edges: global.GraphMatrixViz.SAMPLE.edges.slice(),
@@ -41,11 +80,12 @@
       const x1 = a.x + ux * NR, y1 = a.y + uy * NR;
       const x2 = b.x - ux * pad, y2 = b.y - uy * pad;
       svg += '<line class="gm-edge' + (isActive ? ' gm-edge-active' : '') + '" ' +
+             'data-u="' + e.u + '" data-v="' + e.v + '" ' +
              'x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '"' +
              (directed ? ' marker-end="url(#gm-arrow)"' : '') + '/>';
       if (weighted) {
         const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-        svg += '<text class="gm-edge-label' + (isActive ? ' gm-edge-active' : '') + '" x="' + mx + '" y="' + my + '" text-anchor="middle">' + e.w + '</text>';
+        svg += '<text class="gm-edge-label' + (isActive ? ' gm-edge-active' : '') + '" data-u="' + e.u + '" data-v="' + e.v + '" x="' + mx + '" y="' + my + '" text-anchor="middle">' + e.w + '</text>';
       }
     });
     pos.forEach((p, i) => {
@@ -63,7 +103,16 @@
   // per column) so it reads correctly at every step, not only once `done`.
   function gmMatrixHtml(frame, n) {
     const M = frame.matrix;
-    const addedSet = new Set((frame.added || []).map((c) => c.i + ',' + c.j));
+    // Mid-build, only the cell(s) the current step just filled are
+    // highlighted. Once the build is `done`, keep every filled cell
+    // highlighted (there's no longer a "just added" cell) — this also
+    // doubles as the set of cells the hover correspondence wiring targets.
+    const addedSet = new Set();
+    if (frame.done) {
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (M[i][j]) addedSet.add(i + ',' + j);
+    } else {
+      (frame.added || []).forEach((c) => addedSet.add(c.i + ',' + c.j));
+    }
     const cols = n + 2; // row-header + n data cols + degree col
     let html = '<div class="gm-grid" style="grid-template-columns: repeat(' + cols + ', 40px);">';
     html += '<div class="gm-hcell"></div>';
@@ -76,7 +125,7 @@
         const v = M[i][j];
         if (v) rowSum++;
         const cls = 'gm-cell' + (addedSet.has(i + ',' + j) ? ' gm-added' : '') + (!v ? ' gm-zero' : '');
-        html += '<div class="' + cls + '">' + (v || 0) + '</div>';
+        html += '<div class="' + cls + '" data-i="' + i + '" data-j="' + j + '">' + (v || 0) + '</div>';
       }
       html += '<div class="gm-cell gm-degree">' + rowSum + '</div>';
     }
@@ -96,8 +145,10 @@
     host.innerHTML =
       '<div class="gm-wrap">' +
         '<div class="gm-controls">' +
-          '<label>n <input type="text" class="gm-n" value="' + _st.n + '" readonly></label>' +
-          '<label>edges <input type="text" class="gm-edges" value="' + edgesToStr(_st.edges) + '" readonly></label>' +
+          '<label>n <input type="text" class="gm-n" value="' + _st.n + '"></label>' +
+          '<label>edges <input type="text" class="gm-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
+          '<button type="button" class="gm-apply">套用 Apply</button>' +
+          buildExamplesSelect('graph-matrix', DEFAULT_SERIALIZED) +
           '<label><input type="checkbox" class="gm-directed"' + (_st.directed ? ' checked' : '') + '> 有向 Directed</label>' +
           '<label><input type="checkbox" class="gm-weighted"' + (_st.weighted ? ' checked' : '') + '> 加權 Weighted</label>' +
         '</div>' +
@@ -116,11 +167,47 @@
     const frames = global.GraphMatrixViz.matrixFrames(_st).frames;
     if (_st.idx >= frames.length) _st.idx = frames.length - 1;
 
+    // Hover correspondence, wired only once the build has fully completed
+    // (the final `done` frame — see gmMatrixHtml's addedSet, which at that
+    // point marks every filled cell, not just the last step's). Hovering a
+    // matrix cell [i][j] highlights the matching edge in the node-link SVG;
+    // hovering an edge highlights cell [i][j] (and [j][i] for undirected).
+    function clearHoverClasses() {
+      graphEl.querySelectorAll('.gm-edge-hover').forEach((el) => el.classList.remove('gm-edge-hover'));
+      matrixEl.querySelectorAll('.gm-cell-hover').forEach((el) => el.classList.remove('gm-cell-hover'));
+    }
+    function wireHover() {
+      matrixEl.querySelectorAll('.gm-cell[data-i]').forEach((cell) => {
+        const i = +cell.getAttribute('data-i'), j = +cell.getAttribute('data-j');
+        cell.addEventListener('mouseenter', () => {
+          graphEl.querySelectorAll('[data-u]').forEach((el) => {
+            const eu = +el.getAttribute('data-u'), ev = +el.getAttribute('data-v');
+            if ((eu === i && ev === j) || (!_st.directed && eu === j && ev === i)) el.classList.add('gm-edge-hover');
+          });
+        });
+        cell.addEventListener('mouseleave', clearHoverClasses);
+      });
+      graphEl.querySelectorAll('[data-u]').forEach((el) => {
+        const u = +el.getAttribute('data-u'), v = +el.getAttribute('data-v');
+        el.addEventListener('mouseenter', () => {
+          el.classList.add('gm-edge-hover');
+          const cellUV = matrixEl.querySelector('.gm-cell[data-i="' + u + '"][data-j="' + v + '"]');
+          if (cellUV) cellUV.classList.add('gm-cell-hover');
+          if (!_st.directed) {
+            const cellVU = matrixEl.querySelector('.gm-cell[data-i="' + v + '"][data-j="' + u + '"]');
+            if (cellVU) cellVU.classList.add('gm-cell-hover');
+          }
+        });
+        el.addEventListener('mouseleave', clearHoverClasses);
+      });
+    }
+
     function paint() {
       const f = frames[_st.idx];
       graphEl.innerHTML = gmGraphSvg(_st.n, _st.edges, _st.directed, _st.weighted, f.edge);
       matrixEl.innerHTML = gmMatrixHtml(f, _st.n);
       msgEl.textContent = K().langOf(f.msg);
+      if (f.done) wireHover();
     }
     function step() {
       if (_st.idx >= frames.length - 1) return false;
@@ -144,6 +231,28 @@
     });
     wrap.querySelector('.gm-weighted').addEventListener('change', function () {
       _st.weighted = this.checked;
+      _st.idx = 0;
+      renderGraphMatrix();
+    });
+    wrap.querySelector('.gm-apply').addEventListener('click', function () {
+      const nVal = wrap.querySelector('.gm-n').value;
+      const edgesVal = wrap.querySelector('.gm-edges').value;
+      const parsed = global.GraphMatrixViz.parseInput(nVal, edgesVal);
+      _st.n = parsed.n;
+      _st.edges = parsed.edges;
+      _st.idx = 0;
+      saveExample('graph-matrix', serialize(_st), DEFAULT_SERIALIZED);
+      renderGraphMatrix();
+    });
+    const exSelect = wrap.querySelector('.ex-select');
+    if (exSelect) exSelect.addEventListener('change', function (ev) {
+      const v = ev.target.value;
+      if (!v) return;
+      const parsed = deserialize(v);
+      _st.n = parsed.n;
+      _st.edges = parsed.edges;
+      _st.directed = parsed.directed;
+      _st.weighted = parsed.weighted;
       _st.idx = 0;
       renderGraphMatrix();
     });
