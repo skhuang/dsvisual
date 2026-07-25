@@ -52,149 +52,37 @@
       ] },
       render:null },
     { id:'pattern-singleton', category:'patterns-creational', title:'Singleton',
-      label:'Singleton - Unique Instance', cpp:'pattern_singleton.cpp', diagram:null,
-      narration:[
-        {text:'Creating Singleton instance...', color:'#ec4899'},
-        {text:'getInstance() called - checks static instance', color:'#ec4899'},
-        {text:'Instance is null, creating new Singleton()', color:'#fbbf24'},
-        {text:'Singleton created and stored in static variable', color:'#34d399'},
-        {text:'All subsequent getInstance() calls return same instance', color:'#ec4899'}
-      ],
-      render: function (svg) {
-        svg.innerHTML = '';
-
-        // Singleton box
-        const singletonBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        singletonBox.setAttribute('x', '150'); singletonBox.setAttribute('y', '80');
-        singletonBox.setAttribute('width', '300'); singletonBox.setAttribute('height', '120');
-        singletonBox.setAttribute('fill', '#ec4899'); singletonBox.setAttribute('stroke', '#be185d'); singletonBox.setAttribute('stroke-width', '2');
-        svg.appendChild(singletonBox);
-
-        // Class name
-        const className = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        className.setAttribute('x', '300'); className.setAttribute('y', '105');
-        className.setAttribute('text-anchor', 'middle'); className.setAttribute('font-size', '16'); className.setAttribute('font-weight', 'bold');
-        className.setAttribute('fill', 'white');
-        className.textContent = 'Singleton';
-        svg.appendChild(className);
-
-        // Members
-        const members = ['- static instance', '- private constructor', '+ getInstance()'];
-        members.forEach((m, i) => {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', '165'); text.setAttribute('y', '130 + i*18');
-            text.setAttribute('font-family', 'monospace'); text.setAttribute('font-size', '11'); text.setAttribute('fill', '#fca5a5');
-            text.textContent = m;
-            svg.appendChild(text);
-        });
-
-        // Access arrows
-        const arrow1 = PatternVizDraw.arrow(svg, '300', '200', '300', '240', '#fbbf24');
-        const label1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label1.setAttribute('x', '310'); label1.setAttribute('y', '225');
-        label1.setAttribute('font-size', '12'); label1.setAttribute('fill', '#fbbf24');
-        label1.textContent = 'Unique Instance';
-        svg.appendChild(label1);
-
-        // Instance box
-        const instBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        instBox.setAttribute('x', '180'); instBox.setAttribute('y', '240');
-        instBox.setAttribute('width', '240'); instBox.setAttribute('height', '40');
-        instBox.setAttribute('fill', '#fef08a'); instBox.setAttribute('stroke', '#eab308'); instBox.setAttribute('stroke-width', '2');
-        svg.appendChild(instBox);
-
-        const instText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        instText.setAttribute('x', '300'); instText.setAttribute('y', '267');
-        instText.setAttribute('text-anchor', 'middle'); instText.setAttribute('font-size', '13'); instText.setAttribute('font-family', 'monospace');
-        instText.setAttribute('fill', '#78350f');
-        instText.textContent = 's1 = Singleton::getInstance()';
-        svg.appendChild(instText);
-      } },
+      label:'Singleton - Unique Instance', cpp:'pattern_singleton.cpp',
+      diagram:{ nodes:[
+        {id:'cls',x:150,y:40,w:300,h:130,label:'Singleton',members:['- static instance','- private ctor()','+ getInstance()'],color:'#ec4899',active:[0,1,2,3]},
+        {id:'inst',x:190,y:240,w:260,h:60,label:'Instance',members:['s1 = Singleton::getInstance()'],color:'#eab308',active:[2,3]}
+      ], edges:[ {from:'cls',to:'inst',label:'creates',active:[2,3]} ],
+      steps:[
+        {caption:{en:'getInstance() called — checks the static instance', zh:'getInstance() 被呼叫，檢查靜態成員 instance 是否存在'}},
+        {caption:{en:'instance is null, so a new Singleton() is constructed', zh:'instance 為 null，於是建構一個新的 Singleton()'}},
+        {caption:{en:'The new object is stored in the static member instance', zh:'新建立的物件被儲存於靜態成員 instance 中'}},
+        {caption:{en:'Every later getInstance() call returns that same instance', zh:'之後每次呼叫 getInstance() 都回傳同一個 instance'}}
+      ] },
+      render:null },
     { id:'pattern-factory', category:'patterns-creational', title:'Factory Method',
-      label:'Factory - Object Creation', cpp:'pattern_factory.cpp', diagram:null,
-      narration:[
-        {text:'Using Factory to create objects...', color:'#ec4899'},
-        {text:'VehicleFactory::createVehicle("car") called', color:'#f59e0b'},
-        {text:'Factory returns new Car() instance', color:'#34d399'},
-        {text:'VehicleFactory::createVehicle("bike") called', color:'#f59e0b'},
-        {text:'Factory returns new Bike() instance', color:'#34d399'},
-        {text:'Client code depends on interface, not concrete classes', color:'#10b981'}
+      label:'Factory - Object Creation', cpp:'pattern_factory.cpp',
+      diagram:{ nodes:[
+        {id:'fact',x:180,y:20,w:240,h:60,label:'VehicleFactory',members:['+ createVehicle(type)'],color:'#ec4899',active:[0,1]},
+        {id:'prod',x:200,y:120,w:160,h:70,label:'Vehicle',members:['<<interface>>'],color:'#60a5fa',active:[2]},
+        {id:'car',x:80,y:230,w:120,h:50,label:'Car',color:'#34d399',active:[0,2]},
+        {id:'bike',x:340,y:230,w:120,h:50,label:'Bike',color:'#34d399',active:[1,2]}
+      ], edges:[
+        {from:'fact',to:'car',label:'creates',active:[0]},
+        {from:'fact',to:'bike',label:'creates',active:[1]},
+        {from:'prod',to:'car',label:'implements',active:[2]},
+        {from:'prod',to:'bike',label:'implements',active:[2]}
       ],
-      render: function (svg) {
-        svg.innerHTML = '';
-
-        // Factory box
-        const factoryBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        factoryBox.setAttribute('x', '180'); factoryBox.setAttribute('y', '20');
-        factoryBox.setAttribute('width', '240'); factoryBox.setAttribute('height', '60');
-        factoryBox.setAttribute('fill', '#ec4899'); factoryBox.setAttribute('stroke', '#be185d'); factoryBox.setAttribute('stroke-width', '2');
-        svg.appendChild(factoryBox);
-
-        const factoryText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        factoryText.setAttribute('x', '300'); factoryText.setAttribute('y', '55');
-        factoryText.setAttribute('text-anchor', 'middle'); factoryText.setAttribute('font-size', '14'); factoryText.setAttribute('font-weight', 'bold');
-        factoryText.setAttribute('fill', 'white');
-        factoryText.textContent = 'VehicleFactory';
-        svg.appendChild(factoryText);
-
-        // Product interface
-        const prodBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        prodBox.setAttribute('x', '240'); prodBox.setAttribute('y', '120');
-        prodBox.setAttribute('width', '120'); prodBox.setAttribute('height', '50');
-        prodBox.setAttribute('fill', '#60a5fa'); prodBox.setAttribute('stroke', '#1e40af'); prodBox.setAttribute('stroke-width', '2');
-        svg.appendChild(prodBox);
-
-        const prodText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        prodText.setAttribute('x', '300'); prodText.setAttribute('y', '153');
-        prodText.setAttribute('text-anchor', 'middle'); prodText.setAttribute('font-size', '12'); prodText.setAttribute('font-weight', 'bold');
-        prodText.setAttribute('fill', 'white');
-        prodText.textContent = '<<interface>>';
-        svg.appendChild(prodText);
-
-        const prodName = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        prodName.setAttribute('x', '300'); prodName.setAttribute('y', '168');
-        prodName.setAttribute('text-anchor', 'middle'); prodName.setAttribute('font-size', '11');
-        prodName.setAttribute('fill', 'white');
-        prodName.textContent = 'Vehicle';
-        svg.appendChild(prodName);
-
-        // Concrete products
-        const carBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        carBox.setAttribute('x', '100'); carBox.setAttribute('y', '220');
-        carBox.setAttribute('width', '100'); carBox.setAttribute('height', '40');
-        carBox.setAttribute('fill', '#34d399'); carBox.setAttribute('stroke', '#059669'); carBox.setAttribute('stroke-width', '2');
-        svg.appendChild(carBox);
-
-        const carText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        carText.setAttribute('x', '150'); carText.setAttribute('y', '247');
-        carText.setAttribute('text-anchor', 'middle'); carText.setAttribute('font-size', '12');
-        carText.setAttribute('fill', 'white');
-        carText.textContent = 'Car';
-        svg.appendChild(carText);
-
-        const bikeBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        bikeBox.setAttribute('x', '280'); bikeBox.setAttribute('y', '220');
-        bikeBox.setAttribute('width', '100'); bikeBox.setAttribute('height', '40');
-        bikeBox.setAttribute('fill', '#34d399'); bikeBox.setAttribute('stroke', '#059669'); bikeBox.setAttribute('stroke-width', '2');
-        svg.appendChild(bikeBox);
-
-        const bikeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        bikeText.setAttribute('x', '330'); bikeText.setAttribute('y', '247');
-        bikeText.setAttribute('text-anchor', 'middle'); bikeText.setAttribute('font-size', '12');
-        bikeText.setAttribute('fill', 'white');
-        bikeText.textContent = 'Bike';
-        svg.appendChild(bikeText);
-
-        // Factory creates arrow
-        PatternVizDraw.arrow(svg, '240', '85', '180', '220', '#f59e0b');
-        PatternVizDraw.arrow(svg, '360', '85', '380', '220', '#f59e0b');
-
-        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label.setAttribute('x', '280'); label.setAttribute('y', '200');
-        label.setAttribute('font-size', '11'); label.setAttribute('fill', '#f59e0b');
-        label.textContent = 'creates';
-        svg.appendChild(label);
-      } },
+      steps:[
+        {caption:{en:'client.createVehicle("car") → factory returns a new Car()', zh:'client.createVehicle("car") → 工廠回傳一個新建的 Car()'}},
+        {caption:{en:'client.createVehicle("bike") → factory returns a new Bike()', zh:'client.createVehicle("bike") → 工廠回傳一個新建的 Bike()'}},
+        {caption:{en:'Client code depends only on the Vehicle interface, never on Car/Bike directly', zh:'用戶端程式碼只依賴 Vehicle 介面，從不直接依賴 Car 或 Bike'}}
+      ] },
+      render:null },
     { id:'pattern-adapter', category:'patterns-structural', title:'Adapter',
       label:'Adapter - Interface Bridge', cpp:'pattern_adapter.cpp', diagram:null,
       narration:[

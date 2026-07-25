@@ -11,12 +11,7 @@ test('every pattern (11 migrated + 3 new) loads and renders an svg', async ({ pa
     await expect(page.locator('#pattern-svg')).toBeVisible();
     await expect.poll(() => page.locator('#pattern-svg *').count()).toBeGreaterThan(0);
   }
-  // pattern-singleton's escape-hatch render() was migrated verbatim (Task 2) and carries a
-  // pre-existing bug — `text.setAttribute('y', '130 + i*18')` sets a literal string instead of
-  // a computed number — already called out and excluded from tests/smoke_modes.spec.js's MODES
-  // list for the same reason. Not fixed here; only the known message is tolerated.
-  const unexpected = errors.filter((e) => !e.includes('attribute y: Expected length, "130 + i*18"'));
-  expect(unexpected).toEqual([]);
+  expect(errors).toEqual([]);
 });
 
 test('new patterns appear in the category-scoped menu', async ({ page }) => {
