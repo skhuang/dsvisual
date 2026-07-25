@@ -166,121 +166,104 @@
       ] },
       render:null },
     { id:'pattern-mvc', category:'patterns-architectural', title:'MVC (Model-View-Controller)',
-      label:'MVC (Model-View-Controller)', cpp:'pattern_mvc.cpp', diagram:null,
-      narration:[
-        {text:'User input arrives at the Controller...', color:'#f59e0b'},
-        {text:'Controller updates the Model (data + state)', color:'#34d399'},
-        {text:'Model change notifies the View, which re-renders', color:'#60a5fa'}
+      label:'MVC (Model-View-Controller)', cpp:'pattern_mvc.cpp',
+      diagram:{ nodes:[
+        {id:'user',x:20,y:20,w:140,h:56,label:'User Input',color:'#94a3b8',active:[0]},
+        {id:'ctrl',x:280,y:110,w:170,h:64,label:'Controller',members:['handles input'],color:'#f59e0b',active:[0,1]},
+        {id:'model',x:60,y:210,w:180,h:70,label:'Model',members:['data + state'],color:'#34d399',active:[1,2,3]},
+        {id:'view',x:420,y:230,w:190,h:70,label:'View',members:['renders model'],color:'#60a5fa',active:[2,3]}
+      ], edges:[
+        {from:'user',to:'ctrl',label:'input',active:[0]},
+        {from:'ctrl',to:'model',label:'updates',active:[1]},
+        {from:'model',to:'view',label:'notifies',active:[2]},
+        {from:'view',to:'model',label:'reads',active:[3]}
       ],
-      render: function (svg) {
-        if (!svg) return;
-        svg.innerHTML = '';
-        PatternVizDraw.drawOopBox(svg, { x: 190, y: 26, w: 140, h: 56, title: 'Controller', titleColor: '#f59e0b',
-            lines: [ { text: 'handles input', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopBox(svg, { x: 40, y: 200, w: 140, h: 56, title: 'Model', titleColor: '#34d399',
-            lines: [ { text: 'data + state', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopBox(svg, { x: 340, y: 200, w: 140, h: 56, title: 'View', titleColor: '#60a5fa',
-            lines: [ { text: 'renders model', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopLine(svg, 225, 82, 120, 200);   // Controller -> Model
-        PatternVizDraw.drawOopLine(svg, 180, 228, 340, 228);  // Model -> View
-        PatternVizDraw.drawOopLine(svg, 400, 200, 295, 82);   // View -> Controller
-        PatternVizDraw.drawOopLabel(svg, 150, 150, 'updates', '#f59e0b');
-        PatternVizDraw.drawOopLabel(svg, 260, 246, 'notifies', '#34d399');
-        PatternVizDraw.drawOopLabel(svg, 372, 150, 'user input', '#60a5fa');
-      } },
+      steps:[
+        {caption:{en:'User input arrives at the Controller', zh:'使用者輸入抵達 Controller（控制器）'}},
+        {caption:{en:'The Controller updates the Model (business logic + state)', zh:'Controller 更新 Model（商業邏輯與狀態）'}},
+        {caption:{en:'The Model change notifies the View', zh:'Model 狀態改變後通知 View'}},
+        {caption:{en:'The View reads the Model and re-renders the UI', zh:'View 從 Model 讀取資料並重新渲染畫面'}}
+      ] },
+      render:null },
     { id:'pattern-layered', category:'patterns-architectural', title:'Layered Architecture',
-      label:'Layered Architecture', cpp:'pattern_layered.cpp', diagram:null,
-      narration:[
-        {text:'Presentation layer formats a request...', color:'#60a5fa'},
-        {text:'Business layer applies rules, calls the layer below', color:'#f59e0b'},
-        {text:'Data layer returns raw records — each layer calls only downward', color:'#34d399'}
+      label:'Layered Architecture', cpp:'pattern_layered.cpp',
+      diagram:{ nodes:[
+        {id:'presentation',x:120,y:25,w:220,h:64,label:'Presentation',members:['formats output'],color:'#60a5fa',active:[0,1]},
+        {id:'business',x:180,y:140,w:220,h:64,label:'Business',members:['applies rules'],color:'#f59e0b',active:[1,2]},
+        {id:'data',x:120,y:245,w:220,h:64,label:'Data',members:['raw records'],color:'#34d399',active:[2]}
+      ], edges:[
+        {from:'presentation',to:'business',label:'calls',active:[1]},
+        {from:'business',to:'data',label:'calls',active:[2]}
       ],
-      render: function (svg) {
-        if (!svg) return;
-        svg.innerHTML = '';
-        PatternVizDraw.drawOopBox(svg, { x: 150, y: 24, w: 200, h: 58, title: 'Presentation', titleColor: '#60a5fa',
-            lines: [ { text: 'formats output', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopBox(svg, { x: 150, y: 122, w: 200, h: 58, title: 'Business', titleColor: '#f59e0b',
-            lines: [ { text: 'applies rules', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopBox(svg, { x: 150, y: 220, w: 200, h: 58, title: 'Data', titleColor: '#34d399',
-            lines: [ { text: 'raw records', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopLine(svg, 250, 82, 250, 122);    // Presentation -> Business
-        PatternVizDraw.drawOopLine(svg, 250, 180, 250, 220);   // Business -> Data
-        PatternVizDraw.drawOopLabel(svg, 320, 106, 'calls', '#94a3b8');
-        PatternVizDraw.drawOopLabel(svg, 320, 204, 'calls', '#94a3b8');
-      } },
+      steps:[
+        {caption:{en:'A request enters the Presentation layer, which formats it', zh:'請求進入 Presentation（展示層），並將其格式化'}},
+        {caption:{en:'Presentation calls down into the Business layer, which applies rules', zh:'Presentation 向下呼叫 Business（商業邏輯層），套用商業規則'}},
+        {caption:{en:'Business calls down into the Data layer, which returns raw records', zh:'Business 向下呼叫 Data（資料層），取得原始資料紀錄'}}
+      ] },
+      render:null },
     { id:'pattern-pubsub', category:'patterns-architectural', title:'Publish-Subscribe',
-      label:'Publish-Subscribe', cpp:'pattern_pubsub.cpp', diagram:null,
-      narration:[
-        {text:'Publisher emits an event to the EventBus...', color:'#f59e0b'},
-        {text:'EventBus fans the event out to every subscriber', color:'#a78bfa'},
-        {text:'Subscribers A, B, C all receive it — fully decoupled', color:'#34d399'}
+      label:'Publish-Subscribe', cpp:'pattern_pubsub.cpp',
+      diagram:{ nodes:[
+        {id:'publisher',x:20,y:150,w:140,h:60,label:'Publisher',members:['emits events'],color:'#f59e0b',active:[0]},
+        {id:'bus',x:230,y:110,w:140,h:60,label:'EventBus',members:['broker'],color:'#a78bfa',active:[0,1,2,3]},
+        {id:'subA',x:460,y:20,w:140,h:56,label:'Subscriber A',color:'#34d399',active:[1]},
+        {id:'subB',x:460,y:150,w:140,h:56,label:'Subscriber B',color:'#34d399',active:[2]},
+        {id:'subC',x:460,y:250,w:140,h:56,label:'Subscriber C',color:'#34d399',active:[3]}
+      ], edges:[
+        {from:'publisher',to:'bus',label:'publish',active:[0]},
+        {from:'bus',to:'subA',label:'notify',active:[1]},
+        {from:'bus',to:'subB',label:'notify',active:[2]},
+        {from:'bus',to:'subC',label:'notify',active:[3]}
       ],
-      render: function (svg) {
-        if (!svg) return;
-        svg.innerHTML = '';
-        PatternVizDraw.drawOopBox(svg, { x: 24, y: 130, w: 120, h: 58, title: 'Publisher', titleColor: '#f59e0b',
-            lines: [ { text: 'emits events', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopBox(svg, { x: 196, y: 130, w: 120, h: 58, title: 'EventBus', titleColor: '#a78bfa',
-            lines: [ { text: 'broker', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopBox(svg, { x: 372, y: 36, w: 116, h: 50, title: 'Subscriber A', titleColor: '#34d399' });
-        PatternVizDraw.drawOopBox(svg, { x: 372, y: 134, w: 116, h: 50, title: 'Subscriber B', titleColor: '#34d399' });
-        PatternVizDraw.drawOopBox(svg, { x: 372, y: 232, w: 116, h: 50, title: 'Subscriber C', titleColor: '#34d399' });
-        PatternVizDraw.drawOopLine(svg, 144, 159, 196, 159);   // Publisher -> EventBus
-        PatternVizDraw.drawOopLine(svg, 316, 159, 372, 61);    // EventBus -> A
-        PatternVizDraw.drawOopLine(svg, 316, 159, 372, 159);   // EventBus -> B
-        PatternVizDraw.drawOopLine(svg, 316, 159, 372, 257);   // EventBus -> C
-        PatternVizDraw.drawOopLabel(svg, 170, 150, 'publish', '#f59e0b');
-        PatternVizDraw.drawOopLabel(svg, 344, 110, 'notify', '#34d399');
-      } },
+      steps:[
+        {caption:{en:'Publisher publishes an event to the EventBus', zh:'Publisher（發布者）將事件發布到 EventBus'}},
+        {caption:{en:'The EventBus forwards the event to Subscriber A', zh:'EventBus 將事件轉發給 Subscriber A'}},
+        {caption:{en:'The EventBus forwards the event to Subscriber B', zh:'EventBus 將事件轉發給 Subscriber B'}},
+        {caption:{en:'The EventBus forwards the event to Subscriber C — all three are fully decoupled from the Publisher', zh:'EventBus 將事件轉發給 Subscriber C——三者皆與 Publisher 完全解耦'}}
+      ] },
+      render:null },
     { id:'pattern-pipefilter', category:'patterns-architectural', title:'Pipe-and-Filter',
-      label:'Pipe-and-Filter', cpp:'pattern_pipefilter.cpp', diagram:null,
-      narration:[
-        {text:'Input enters the pipeline...', color:'#94a3b8'},
-        {text:'Each filter transforms the data and passes it on', color:'#34d399'},
-        {text:'Trim -> Upper -> Exclaim -> Output', color:'#60a5fa'}
+      label:'Pipe-and-Filter', cpp:'pattern_pipefilter.cpp',
+      diagram:{ nodes:[
+        {id:'input',x:20,y:140,w:110,h:60,label:'Input',color:'#94a3b8',active:[0,1]},
+        {id:'trim',x:160,y:90,w:110,h:60,label:'Trim',color:'#34d399',active:[1,2]},
+        {id:'upper',x:300,y:140,w:110,h:60,label:'Upper',color:'#34d399',active:[2,3]},
+        {id:'exclaim',x:440,y:90,w:110,h:60,label:'Exclaim',color:'#34d399',active:[3,4]},
+        {id:'output',x:580,y:140,w:110,h:60,label:'Output',color:'#60a5fa',active:[4]}
+      ], edges:[
+        {from:'input',to:'trim',active:[1]},
+        {from:'trim',to:'upper',active:[2]},
+        {from:'upper',to:'exclaim',active:[3]},
+        {from:'exclaim',to:'output',active:[4]}
       ],
-      render: function (svg) {
-        if (!svg) return;
-        svg.innerHTML = '';
-        const stages = [
-            { x: 12, title: 'Input', color: '#94a3b8' },
-            { x: 110, title: 'Trim', color: '#34d399' },
-            { x: 208, title: 'Upper', color: '#34d399' },
-            { x: 306, title: 'Exclaim', color: '#34d399' },
-            { x: 404, title: 'Output', color: '#60a5fa' },
-        ];
-        stages.forEach((s) => {
-            PatternVizDraw.drawOopBox(svg, { x: s.x, y: 132, w: 80, h: 56, title: s.title, titleColor: s.color });
-        });
-        for (let i = 0; i < stages.length - 1; i++) {
-            PatternVizDraw.drawOopLine(svg, stages[i].x + 80, 160, stages[i + 1].x, 160);
-        }
-        PatternVizDraw.drawOopLabel(svg, 250, 220, 'data flows through each filter via pipes', '#94a3b8');
-      } },
+      steps:[
+        {caption:{en:'Data enters the pipeline at Input', zh:'資料從 Input（輸入端）進入管線'}},
+        {caption:{en:'The Trim filter removes surrounding whitespace and passes the result on', zh:'Trim 過濾器移除前後空白字元，並將結果往下傳遞'}},
+        {caption:{en:'The Upper filter converts the text to uppercase', zh:'Upper 過濾器將文字轉換為大寫'}},
+        {caption:{en:'The Exclaim filter appends an exclamation mark', zh:'Exclaim 過濾器在文字尾端加上驚嘆號'}},
+        {caption:{en:'The transformed data arrives at Output — each filter only knows the one before and after it', zh:'轉換後的資料到達 Output（輸出端）——每個過濾器只需知道前後相鄰的過濾器'}}
+      ] },
+      render:null },
     { id:'pattern-di', category:'patterns-architectural', title:'Dependency Injection',
-      label:'Dependency Injection', cpp:'pattern_di.cpp', diagram:null,
-      narration:[
-        {text:'Composition root creates the concrete ConsoleService...', color:'#34d399'},
-        {text:'Service is injected into the Consumer constructor', color:'#60a5fa'},
-        {text:'Consumer depends only on the Service abstraction — easy to test', color:'#ec4899'}
+      label:'Dependency Injection', cpp:'pattern_di.cpp',
+      diagram:{ nodes:[
+        {id:'root',x:260,y:20,w:200,h:60,label:'Composition Root',members:['wires dependencies'],color:'#ec4899',active:[0,1]},
+        {id:'iface',x:260,y:130,w:200,h:60,label:'IService',members:['<<interface>>'],color:'#60a5fa',active:[2,3]},
+        {id:'concrete',x:40,y:230,w:190,h:70,label:'ConsoleService',members:['implements IService'],color:'#34d399',active:[0,1,2]},
+        {id:'consumer',x:480,y:230,w:190,h:70,label:'Consumer',members:['depends on IService only','never calls new'],color:'#818cf8',active:[1,3]}
+      ], edges:[
+        {from:'root',to:'concrete',label:'creates',active:[0]},
+        {from:'root',to:'consumer',label:'injects',active:[1]},
+        {from:'iface',to:'concrete',label:'implements',active:[2]},
+        {from:'consumer',to:'iface',label:'depends on',active:[3]}
       ],
-      render: function (svg) {
-        if (!svg) return;
-        svg.innerHTML = '';
-        PatternVizDraw.drawOopBox(svg, { x: 150, y: 24, w: 210, h: 56, title: 'Composition Root', titleColor: '#ec4899',
-            lines: [ { text: 'wires dependencies', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopBox(svg, { x: 50, y: 192, w: 180, h: 70, title: 'ConsoleService', titleColor: '#34d399',
-            lines: [ { text: 'concrete Service', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopBox(svg, { x: 290, y: 192, w: 180, h: 70, title: 'Consumer', titleColor: '#60a5fa',
-            lines: [ { text: 'depends on Service', color: '#cbd5e1' }, { text: 'never calls new', color: '#cbd5e1' } ] });
-        PatternVizDraw.drawOopLine(svg, 210, 80, 140, 192);   // Composition Root -> Service
-        PatternVizDraw.drawOopLine(svg, 300, 80, 380, 192);   // Composition Root -> Consumer
-        PatternVizDraw.drawOopLine(svg, 230, 227, 290, 227);  // Service injected -> Consumer
-        PatternVizDraw.drawOopLabel(svg, 150, 150, 'creates', '#34d399');
-        PatternVizDraw.drawOopLabel(svg, 360, 150, 'injects', '#60a5fa');
-        PatternVizDraw.drawOopLabel(svg, 260, 248, 'inject', '#ec4899');
-      } }
+      steps:[
+        {caption:{en:'The Composition Root constructs the concrete ConsoleService', zh:'Composition Root（組合根）建立具體的 ConsoleService 物件'}},
+        {caption:{en:"The Composition Root injects the Service into the Consumer's constructor", zh:'Composition Root 將 Service 注入 Consumer 的建構函式'}},
+        {caption:{en:'ConsoleService implements the IService interface', zh:'ConsoleService 實作 IService 介面'}},
+        {caption:{en:'Consumer depends only on the IService abstraction, never the concrete class — easy to swap or test', zh:'Consumer 只依賴 IService 抽象介面，而非具體類別——易於替換與測試'}}
+      ] },
+      render:null }
   ];
   const byId = {}; PATTERNS.forEach((p) => { byId[p.id] = p; });
   const api = {
