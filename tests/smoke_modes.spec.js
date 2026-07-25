@@ -8,11 +8,10 @@ const MODES = [
   'stack-array', 'list-array', 'matrix-sparse', 'tree-bst', 'tree-trie',
   'graph', 'graph-prim', 'hash-chain', 'cache-lru', 'heap-binary',
   'sort-bubble', 'search-binary', 'file-isam', 'gc-memory', 'recursion',
-  'oop-inheritance',
-  // 'pattern-singleton' excluded: on current (pre-refactor) code it already logs
-  // a console error — `<text> attribute y: Expected length, "130 + i*18".` —
-  // from an unevaluated SVG y-coordinate expression. Not fixed here; this net
-  // is a baseline regression guard, not a bug-fix vehicle.
+  'oop-inheritance', 'pattern-singleton',
+  // (pattern-singleton was previously excluded for an SVG-attribute console error in its
+  // old escape-hatch render; that render is gone — it's now a stepped declarative diagram —
+  // so it's back in the smoke net.)
 ];
 
 for (const id of MODES) {

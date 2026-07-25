@@ -434,7 +434,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="pattern-mvc"]');
         await expect(card).toHaveAttribute('data-runtime-state', 'active');
         await expect(card.locator('.code-panel-filename')).toContainText('pattern_mvc.cpp');
-        await expect(card.locator('#pattern-svg rect')).toHaveCount(3);
+        await expect(card.locator('#pattern-svg rect')).toHaveCount(4);
     });
 
     test('Architectural: Layered renders the 3-layer stack', async ({ page }) => {
@@ -466,7 +466,7 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="pattern-di"]');
         await expect(card).toHaveAttribute('data-runtime-state', 'active');
         await expect(card.locator('.code-panel-filename')).toContainText('pattern_di.cpp');
-        await expect(card.locator('#pattern-svg rect')).toHaveCount(3);
+        await expect(card.locator('#pattern-svg rect')).toHaveCount(4);
     });
 
     test('Trees: BST renders edges between parent/child after inserts', async ({ page }) => {
