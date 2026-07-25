@@ -32,6 +32,20 @@ PR #142; `.overview-category` unchanged — `graphs` category already exists). O
 bilingual `slides_db.js` explainer deck per viz (as the tree viz got) for the Slides button +
 ds2026 deck-wiring.
 
+## Program-wide UI conventions (all 7 viz)
+
+- **Hidden code drawer (rb-tree style):** set `codeDrawer: true` on each viz's `METHOD_GROUPS`
+  row — app.js (~lines 603–670) then renders the C++ in a collapsed side drawer with a
+  `.code-drawer-toggle` button (hidden by default; shown on demand). No always-on code panel.
+- **Saveable examples (list-equivalence style):** where a viz takes user input (e.g. a
+  user-defined graph), provide an `.ex-select` dropdown backed by `ExamplesStore`
+  (`js/examples_store.js`: `load/save(localStorage, methodId, text, defaultText, cap=8)`,
+  dedups, caps 8) + the `loadExamples`/`saveExample`/`buildExamplesSelect` helper trio
+  (currently duplicated in `viz_list_equivalence.js`/`viz_matrix_sparse_list.js` — match the
+  convention; don't refactor mid-program). Save the serialized input on apply; restore on select.
+- **Scroll when oversized:** the viz host/container gets `overflow:auto` (both axes) so large
+  matrices/graphs pan up/down/left/right within the panel.
+
 ## Phase 1 — cheap, high-value core (do first, in order)
 
 1. **`graph-matrix` — Adjacency Matrix.** Represent a graph as an n×n adjacency matrix;
