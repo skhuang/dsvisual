@@ -65,7 +65,11 @@ test.describe('graph-matrix', () => {
       await page.locator('.stepctl [data-action="step"]').click();
     }
 
-    const cell = page.locator('.gm-matrix .gm-cell.gm-added').first();
+    // Target the [0][1] cell directly by data-i/data-j: with edges 0-1,1-2
+    // it's a known-filled cell, independent of which step last set .gm-added
+    // (that class only ever marks the current step's cell(s), not "every
+    // filled cell" — see gmMatrixHtml).
+    const cell = page.locator('.gm-matrix .gm-cell[data-i="0"][data-j="1"]');
     await expect(cell).toBeVisible();
     await cell.hover();
     await expect(page.locator('.gm-graph .gm-edge.gm-edge-hover')).toHaveCount(1);

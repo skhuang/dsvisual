@@ -103,16 +103,7 @@
   // per column) so it reads correctly at every step, not only once `done`.
   function gmMatrixHtml(frame, n) {
     const M = frame.matrix;
-    // Mid-build, only the cell(s) the current step just filled are
-    // highlighted. Once the build is `done`, keep every filled cell
-    // highlighted (there's no longer a "just added" cell) — this also
-    // doubles as the set of cells the hover correspondence wiring targets.
-    const addedSet = new Set();
-    if (frame.done) {
-      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (M[i][j]) addedSet.add(i + ',' + j);
-    } else {
-      (frame.added || []).forEach((c) => addedSet.add(c.i + ',' + c.j));
-    }
+    const addedSet = new Set((frame.added || []).map((c) => c.i + ',' + c.j));
     const cols = n + 2; // row-header + n data cols + degree col
     let html = '<div class="gm-grid" style="grid-template-columns: repeat(' + cols + ', 40px);">';
     html += '<div class="gm-hcell"></div>';
