@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 const path = require('path');
 const FILE_URI = 'file://' + path.resolve(__dirname, '../index.html');
-const STEPPED = ['pattern-builder', 'pattern-command', 'pattern-composite', 'pattern-singleton', 'pattern-factory'];
+const STEPPED = ['pattern-builder', 'pattern-command', 'pattern-composite', 'pattern-singleton', 'pattern-factory', 'pattern-adapter', 'pattern-decorator'];
 for (const id of STEPPED) {
   test(`${id} is step-able with visual highlighting`, async ({ page }) => {
     await page.goto(FILE_URI + '#m=' + id);

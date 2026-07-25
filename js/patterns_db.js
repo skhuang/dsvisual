@@ -84,161 +84,45 @@
       ] },
       render:null },
     { id:'pattern-adapter', category:'patterns-structural', title:'Adapter',
-      label:'Adapter - Interface Bridge', cpp:'pattern_adapter.cpp', diagram:null,
-      narration:[
-        {text:'Adapting legacy interface to modern interface...', color:'#ec4899'},
-        {text:'Legacy system uses getData()', color:'#fb7185'},
-        {text:'Adapter wraps legacy object', color:'#10b981'},
-        {text:'fetch() calls legacy.getData() internally', color:'#34d399'},
-        {text:'Modern code calls adapter.fetch()', color:'#60a5fa'},
-        {text:'Incompatible interfaces now work together!', color:'#34d399'}
+      label:'Adapter - Interface Bridge', cpp:'pattern_adapter.cpp',
+      diagram:{ nodes:[
+        {id:'client',x:40,y:30,w:160,h:70,label:'Client',color:'#6366f1',active:[0,3]},
+        {id:'target',x:280,y:60,w:200,h:70,label:'Target',members:['<<interface>>','+ request()'],color:'#60a5fa',active:[0,1,3]},
+        {id:'adapter',x:250,y:180,w:200,h:100,label:'Adapter',members:['+ request()'],color:'#10b981',active:[1,2,3]},
+        {id:'adaptee',x:40,y:170,w:170,h:70,label:'Adaptee (Legacy)',members:['+ specificRequest()'],color:'#fb7185',active:[1,2,3]}
+      ], edges:[
+        {from:'client',to:'target',label:'calls',active:[0,3]},
+        {from:'target',to:'adapter',label:'implements',active:[1,3]},
+        {from:'adapter',to:'adaptee',label:'wraps',active:[1,2,3]}
       ],
-      render: function (svg) {
-        svg.innerHTML = '';
-
-        // Legacy system
-        const legacyBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        legacyBox.setAttribute('x', '50'); legacyBox.setAttribute('y', '100');
-        legacyBox.setAttribute('width', '120'); legacyBox.setAttribute('height', '60');
-        legacyBox.setAttribute('fill', '#fb7185'); legacyBox.setAttribute('stroke', '#be185d'); legacyBox.setAttribute('stroke-width', '2');
-        svg.appendChild(legacyBox);
-
-        const legacyText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        legacyText.setAttribute('x', '110'); legacyText.setAttribute('y', '128');
-        legacyText.setAttribute('text-anchor', 'middle'); legacyText.setAttribute('font-size', '11'); legacyText.setAttribute('font-weight', 'bold');
-        legacyText.setAttribute('fill', 'white');
-        legacyText.textContent = 'Legacy';
-        svg.appendChild(legacyText);
-
-        // Adapter bridge
-        const adapterBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        adapterBox.setAttribute('x', '220'); adapterBox.setAttribute('y', '80');
-        adapterBox.setAttribute('width', '160'); adapterBox.setAttribute('height', '100');
-        adapterBox.setAttribute('fill', '#10b981'); adapterBox.setAttribute('stroke', '#047857'); adapterBox.setAttribute('stroke-width', '2');
-        svg.appendChild(adapterBox);
-
-        const adapterTitle = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        adapterTitle.setAttribute('x', '300'); adapterTitle.setAttribute('y', '100');
-        adapterTitle.setAttribute('text-anchor', 'middle'); adapterTitle.setAttribute('font-size', '12'); adapterTitle.setAttribute('font-weight', 'bold');
-        adapterTitle.setAttribute('fill', 'white');
-        adapterTitle.textContent = 'Adapter';
-        svg.appendChild(adapterTitle);
-
-        const adapterLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        adapterLine.setAttribute('x1', '220'); adapterLine.setAttribute('y1', '115');
-        adapterLine.setAttribute('x2', '380'); adapterLine.setAttribute('y2', '115');
-        adapterLine.setAttribute('stroke', 'rgba(255,255,255,0.3)'); adapterLine.setAttribute('stroke-width', '1');
-        svg.appendChild(adapterLine);
-
-        const adapterContent = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        adapterContent.setAttribute('x', '230'); adapterContent.setAttribute('y', '140');
-        adapterContent.setAttribute('font-size', '10'); adapterContent.setAttribute('fill', '#d1fae5');
-        adapterContent.textContent = '+ fetch()';
-        svg.appendChild(adapterContent);
-
-        const adapterImpl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        adapterImpl.setAttribute('x', '230'); adapterImpl.setAttribute('y', '160');
-        adapterImpl.setAttribute('font-size', '10'); adapterImpl.setAttribute('font-style', 'italic'); adapterImpl.setAttribute('fill', '#a7f3d0');
-        adapterImpl.textContent = 'wraps legacy.getData()';
-        svg.appendChild(adapterImpl);
-
-        // Modern system
-        const modernBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        modernBox.setAttribute('x', '450'); modernBox.setAttribute('y', '100');
-        modernBox.setAttribute('width', '120'); modernBox.setAttribute('height', '60');
-        modernBox.setAttribute('fill', '#60a5fa'); modernBox.setAttribute('stroke', '#1e40af'); modernBox.setAttribute('stroke-width', '2');
-        svg.appendChild(modernBox);
-
-        const modernText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        modernText.setAttribute('x', '510'); modernText.setAttribute('y', '128');
-        modernText.setAttribute('text-anchor', 'middle'); modernText.setAttribute('font-size', '11'); modernText.setAttribute('font-weight', 'bold');
-        modernText.setAttribute('fill', 'white');
-        modernText.textContent = 'Modern';
-        svg.appendChild(modernText);
-
-        // Connections
-        PatternVizDraw.arrow(svg, '170', '130', '220', '130', '#fbbf24');
-        PatternVizDraw.arrow(svg, '380', '130', '450', '130', '#fbbf24');
-      } },
+      steps:[
+        {caption:{en:'Client calls target.request() through the Target interface', zh:'用戶端透過 Target 介面呼叫 target.request()'}},
+        {caption:{en:'The Adapter implements Target and wraps the legacy Adaptee object', zh:'轉接器（Adapter）實作 Target 介面，並包裝舊有的 Adaptee 物件'}},
+        {caption:{en:'adapter.request() internally calls adaptee.specificRequest()', zh:'adapter.request() 內部呼叫 adaptee.specificRequest()'}},
+        {caption:{en:'Incompatible interfaces now interoperate', zh:'原本不相容的介面，現在得以協同運作'}}
+      ] },
+      render:null },
     { id:'pattern-decorator', category:'patterns-structural', title:'Decorator',
-      label:'Decorator - Dynamic Behavior', cpp:'pattern_decorator.cpp', diagram:null,
-      narration:[
-        {text:'Decorating SimpleCoffee with features...', color:'#ec4899'},
-        {text:'Create SimpleCoffee: $2.00', color:'#34d399'},
-        {text:'Add Milk decorator: +$0.50', color:'#f59e0b'},
-        {text:'Compose: new Milk(coffee)', color:'#34d399'},
-        {text:'Result: Coffee with Milk - $2.50', color:'#fbbf24'},
-        {text:'Each decorator adds behavior/cost without subclassing', color:'#34d399'}
+      label:'Decorator - Dynamic Behavior', cpp:'pattern_decorator.cpp',
+      diagram:{ nodes:[
+        {id:'component',x:260,y:20,w:200,h:70,label:'Component',members:['<<interface>>','+ cost()'],color:'#06b6d4',active:[0,1,2,3]},
+        {id:'base',x:40,y:140,w:160,h:70,label:'SimpleCoffee',members:['cost() = $2.00'],color:'#10b981',active:[0,1,3]},
+        {id:'decA',x:300,y:160,w:170,h:90,label:'MilkDecorator',members:['wraps Component','cost() = wrapped+$0.5'],color:'#f59e0b',active:[1,2,3]},
+        {id:'decB',x:490,y:200,w:180,h:110,label:'SugarDecorator',members:['wraps Component','cost() = wrapped+$0.25'],color:'#fb923c',active:[2,3]}
+      ], edges:[
+        {from:'base',to:'component',label:'implements',active:[0]},
+        {from:'decA',to:'component',label:'implements',active:[1]},
+        {from:'decB',to:'component',label:'implements',active:[2]},
+        {from:'base',to:'decA',label:'wraps',active:[1,3]},
+        {from:'decA',to:'decB',label:'wraps',active:[2,3]}
       ],
-      render: function (svg) {
-        svg.innerHTML = '';
-
-        // Component interface
-        const compBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        compBox.setAttribute('x', '240'); compBox.setAttribute('y', '20');
-        compBox.setAttribute('width', '120'); compBox.setAttribute('height', '50');
-        compBox.setAttribute('fill', '#06b6d4'); compBox.setAttribute('stroke', '#0369a1'); compBox.setAttribute('stroke-width', '2');
-        svg.appendChild(compBox);
-
-        const compText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        compText.setAttribute('x', '300'); compText.setAttribute('y', '52');
-        compText.setAttribute('text-anchor', 'middle'); compBox.setAttribute('font-size', '12'); compText.setAttribute('fill', 'white');
-        compText.textContent = 'Coffee';
-        svg.appendChild(compText);
-
-        // Simple coffee
-        const simpleBox = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        simpleBox.setAttribute('x', '100'); simpleBox.setAttribute('y', '120');
-        simpleBox.setAttribute('width', '100'); simpleBox.setAttribute('height', '50');
-        simpleBox.setAttribute('fill', '#10b981'); simpleBox.setAttribute('stroke', '#059669'); simpleBox.setAttribute('stroke-width', '2');
-        svg.appendChild(simpleBox);
-
-        const simpleText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        simpleText.setAttribute('x', '150'); simpleText.setAttribute('y', '150');
-        simpleText.setAttribute('text-anchor', 'middle'); simpleText.setAttribute('font-size', '11'); simpleText.setAttribute('fill', 'white');
-        simpleText.textContent = 'SimpleCoffee';
-        svg.appendChild(simpleText);
-
-        // Decorators
-        const decBox1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        decBox1.setAttribute('x', '280'); decBox1.setAttribute('y', '120');
-        decBox1.setAttribute('width', '100'); decBox1.setAttribute('height', '50');
-        decBox1.setAttribute('fill', '#f59e0b'); decBox1.setAttribute('stroke', '#d97706'); decBox1.setAttribute('stroke-width', '2');
-        svg.appendChild(decBox1);
-
-        const decText1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        decText1.setAttribute('x', '330'); decText1.setAttribute('y', '150');
-        decText1.setAttribute('text-anchor', 'middle'); decText1.setAttribute('font-size', '11'); decText1.setAttribute('fill', 'white');
-        decText1.textContent = 'Milk';
-        svg.appendChild(decText1);
-
-        const decBox2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        decBox2.setAttribute('x', '460'); decBox2.setAttribute('y', '120');
-        decBox2.setAttribute('width', '100'); decBox2.setAttribute('height', '50');
-        decBox2.setAttribute('fill', '#f59e0b'); decBox2.setAttribute('stroke', '#d97706'); decBox2.setAttribute('stroke-width', '2');
-        svg.appendChild(decBox2);
-
-        const decText2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        decText2.setAttribute('x', '510'); decText2.setAttribute('y', '150');
-        decText2.setAttribute('text-anchor', 'middle'); decText2.setAttribute('font-size', '11'); decText2.setAttribute('fill', 'white');
-        decText2.textContent = 'Sugar';
-        svg.appendChild(decText2);
-
-        // Inheritance arrows
-        PatternVizDraw.arrow(svg, '150', '120', '280', '70', '#34d399');
-        PatternVizDraw.arrow(svg, '330', '120', '300', '70', '#34d399');
-        PatternVizDraw.arrow(svg, '510', '120', '340', '70', '#34d399');
-
-        // Composition chain
-        PatternVizDraw.arrow(svg, '200', '147', '280', '147', '#fbbf24');
-        PatternVizDraw.arrow(svg, '380', '147', '460', '147', '#fbbf24');
-
-        const label1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        label1.setAttribute('x', '238'); label1.setAttribute('y', '140');
-        label1.setAttribute('font-size', '10'); label1.setAttribute('fill', '#fbbf24');
-        label1.textContent = 'wraps';
-        svg.appendChild(label1);
-      } },
+      steps:[
+        {caption:{en:'SimpleCoffee (ConcreteComponent) implements Component directly — cost() = $2.00', zh:'SimpleCoffee（具體元件）直接實作 Component 介面，cost() = $2.00'}},
+        {caption:{en:'Wrap with a Milk decorator: new Milk(coffee) — Milk also implements Component and holds the wrapped object', zh:'包上 Milk 裝飾器：new Milk(coffee)——Milk 同樣實作 Component 介面，並持有被包裝的物件'}},
+        {caption:{en:'Wrap again with Sugar: new Sugar(milk) — Sugar wraps the Milk decorator', zh:'再包上 Sugar 裝飾器：new Sugar(milk)——Sugar 包裝了 Milk 裝飾器'}},
+        {caption:{en:'A call to cost() chains through every wrapper down to the base SimpleCoffee', zh:'呼叫 cost() 會一路穿過每一層裝飾器，往下傳遞到最底層的 SimpleCoffee'}}
+      ] },
+      render:null },
     { id:'pattern-observer', category:'patterns-behavioral', title:'Observer',
       label:'Observer - Event Notification', cpp:'pattern_observer.cpp', diagram:null,
       narration:[
