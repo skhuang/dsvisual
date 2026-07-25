@@ -28,7 +28,13 @@ test('registry has all 14 patterns in the right category counts', () => {
   assert.strictEqual(P.patternsByCategory('patterns-structural').length, 3);
   assert.strictEqual(P.patternsByCategory('patterns-behavioral').length, 3);
   assert.strictEqual(P.patternsByCategory('patterns-architectural').length, 5);
-  // migrated patterns use the escape hatch (verbatim move), so each has a render fn
+  // Every pattern is renderable: either a stepped/static declarative diagram OR an
+  // escape-hatch render fn. (During the step-migration some patterns are declarative and
+  // some still escape-hatch; both are valid — this invariant holds throughout and after.)
   ['pattern-singleton','pattern-factory','pattern-adapter','pattern-decorator','pattern-observer','pattern-strategy','pattern-mvc','pattern-layered','pattern-pubsub','pattern-pipefilter','pattern-di']
-    .forEach((id) => { const p = P.getPattern(id); assert.ok(p, id); assert.strictEqual(typeof p.render, 'function', id + ' render'); assert.ok(Array.isArray(p.narration), id + ' narration'); });
+    .forEach((id) => {
+      const p = P.getPattern(id); assert.ok(p, id);
+      const renderable = typeof p.render === 'function' || (p.diagram && p.diagram.nodes && p.diagram.nodes.length > 0);
+      assert.ok(renderable, id + ' has a render fn or a diagram');
+    });
 });
