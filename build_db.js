@@ -31,6 +31,7 @@ const mappings = {
     'graph_dijkstra.cpp': 'codeGraphDijkstra',
     'graph_topo.cpp': 'codeGraphTopo',
     'graph_matrix.cpp': 'codeGraphMatrix',
+    'graph_components.cpp': 'codeGraphComponents',
     'list_array.cpp': 'codeListArray',
     'list_linked.cpp': 'codeListLinked',
     'hash_chaining.cpp': 'codeHashChain',

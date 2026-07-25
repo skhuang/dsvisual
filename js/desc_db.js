@@ -239,6 +239,21 @@ const descDB = {
             <span class="badge space">Space: O(n&sup2;)</span>
         </div>
     `,
+    'graph-components': `
+        <h3>Connected Components</h3>
+        <p>A <strong>connected component</strong> of an undirected graph is a maximal set of vertices that can all reach one another. The whole graph splits uniquely into such components; an isolated vertex is a component by itself.</p>
+        <hr>
+        <ul>
+            <li><strong>COMP procedure:</strong> scan vertices in order; at the first <em>unlabelled</em> vertex, start a new component and flood-fill everything reachable from it, then continue scanning for the next unlabelled vertex.</li>
+            <li><strong>BFS flood-fill:</strong> seed a queue with the starting vertex; repeatedly dequeue a vertex and enqueue its still-unlabelled neighbours, tagging each with the current component id. (DFS works identically.)</li>
+            <li><strong>Frontier:</strong> the vertices already enqueued but not yet processed — the flood's advancing edge.</li>
+            <li><strong>Count &amp; uses:</strong> the number of components tells you whether the graph is connected (exactly 1) and underlies percolation, image region-labelling, and network-partition checks.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(n + e)</span>
+            <span class="badge space">Space: O(n + e)</span>
+        </div>
+    `,
     'tree-bst': `
         <h3>Binary Search Tree (Standard)</h3>
         <p>An elegant hierarchical associative routing structure.</p>
