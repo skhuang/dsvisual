@@ -66,6 +66,7 @@
             // Methods — Graphs
             'method.graph':                 'Undirected Graph',
             'method.graph-adjlist':         'Adjacency List',
+            'method.graph-matrix':          'Adjacency Matrix',
             'method.graph-traversal':       'BFS vs DFS (Dual-Pane)',
             'method.graph-bfs':             'Breadth-First Search',
             'method.graph-dfs':             'Depth-First Search',
@@ -310,6 +311,7 @@
             // Methods — Graphs
             'method.graph':                 '無向圖',
             'method.graph-adjlist':         '鄰接串列',
+            'method.graph-matrix':          '鄰接矩陣',
             'method.graph-traversal':       'BFS vs DFS（並排對照）',
             'method.graph-bfs':             '廣度優先搜尋',
             'method.graph-dfs':             '深度優先搜尋',

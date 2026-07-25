@@ -23,9 +23,10 @@
       if (done) return { zh: '矩陣建立完成；每列之和為出分支度、每行之和為入分支度。', en: 'Matrix complete; row sums = out-degree, column sums = in-degree.' };
       if (!edge) return { zh: '從空的相鄰矩陣開始（全部為 0）。', en: 'Start from an empty adjacency matrix (all zeros).' };
       const val = weighted ? edge.w : 1;
-      const cells = added.map((c) => '[' + c.i + '][' + c.j + ']=' + val).join('、');
-      return { zh: '加入邊 ' + edge.u + (directed ? '→' : '—') + edge.v + '，填入 ' + cells + (directed ? '' : '（對稱）') + '。',
-               en: 'Add edge ' + edge.u + (directed ? '→' : '—') + edge.v + ' → set ' + cells + (directed ? '' : ' (symmetric)') + '.' };
+      const cellStrs = added.map((c) => '[' + c.i + '][' + c.j + ']=' + val);
+      const zhCells = cellStrs.join('、'), enCells = cellStrs.join(', ');
+      return { zh: '加入邊 ' + edge.u + (directed ? '→' : '—') + edge.v + '，填入 ' + zhCells + (directed ? '' : '（對稱）') + '。',
+               en: 'Add edge ' + edge.u + (directed ? '→' : '—') + edge.v + ' → set ' + enCells + (directed ? '' : ' (symmetric)') + '.' };
     }
     function snap(added, edge, done) { return { matrix: M.map((r) => r.slice()), added: added, edge: edge, done: !!done, msg: msgFor(edge, added, done) }; }
     frames.push(snap([], null, false));
