@@ -64,15 +64,18 @@
     if (_stepFor !== descriptor.id) { _step = 0; _stepFor = descriptor.id; }
     const steps = descriptor.diagram.steps || [];
     if (_step > steps.length - 1) _step = 0;
-    function paint() { drawSteppedDiagram(svg, descriptor.diagram, _step); }
-    paint();
+    function paint(step, i) {
+      drawSteppedDiagram(svg, descriptor.diagram, i);
+      K().showStatus(K().langOf(step.caption), '#6366f1');
+    }
     const host = svg.parentNode; if (!host) return;
     let slot = host.querySelector('.pattern-step-controls'); if (slot) slot.remove();
     slot = document.createElement('div'); slot.className = 'pattern-step-controls';
-    slot.appendChild(K().buildStepControls(
-      () => { if (_step < steps.length - 1) { _step++; paint(); K().showStatus(K().langOf(steps[_step].caption), '#6366f1'); return _step < steps.length - 1; } return false; },
-      () => { _step = 0; paint(); K().showStatus(K().langOf(steps[0].caption), '#6366f1'); },
-      900));
+    slot.appendChild(K().buildFrameControls(steps, paint, {
+      runIntervalMs: 900,
+      initialIndex: _step,
+      onIndexChange: (i) => { _step = i; _stepFor = descriptor.id; },
+    }));
     host.appendChild(slot);
   }
   function render(svg, descriptor) {

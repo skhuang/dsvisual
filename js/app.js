@@ -2151,19 +2151,21 @@ document.addEventListener('DOMContentLoaded', () => {
         slot = document.createElement('div');
         slot.setAttribute('data-oop-step-controls', '');
         slot.setAttribute('data-oop-step-mode', mode);
-        slot.appendChild(buildStepControls(() => {
-            const next = oopStep(mode) + 1;
-            if (next >= OOP_STEPS[mode].length) return false;
-            setOopStep(mode, next);
-            renderOOP();
-            showStatus(OOP_STEPS[mode][oopStep(mode)], '#2563eb');
-            return true;
-        }, () => {
-            setOopStep(mode, 0);
-            renderOOP();
-            showStatus('OOP visualization reset.', '#6366f1');
-        }, 900));
+        // Append the (empty) slot BEFORE building the frame controls: buildFrameControls
+        // paints frame 0 synchronously during construction, and that paint calls renderOOP(),
+        // which calls back into syncOopStepControls(). Appending early means that reentrant
+        // call finds this slot already in the DOM with a matching mode and no-ops, instead of
+        // recursing (buildStepControls never painted synchronously, so this never came up before).
         oopActions.appendChild(slot);
+        slot.appendChild(buildFrameControls(OOP_STEPS[mode], (frame, i) => {
+            setOopStep(mode, i);
+            renderOOP();
+            showStatus(OOP_STEPS[mode][i], '#2563eb');
+        }, {
+            runIntervalMs: 900,
+            initialIndex: oopStep(mode),
+            onIndexChange: (i) => setOopStep(mode, i),
+        }));
     }
 
     function renderOOP() {

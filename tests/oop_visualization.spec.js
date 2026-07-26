@@ -41,15 +41,15 @@ test.describe('OOP concepts visualization', () => {
             el.value = '600';
             el.dispatchEvent(new Event('input', { bubbles: true }));
         });
-        await expect(runBtn).toHaveText('Run');
+        await expect(runBtn).toHaveText('▶');
         await runBtn.click();
-        await expect(runBtn).toHaveText('Pause');
+        await expect(runBtn).toHaveText('⏸');
         await expect.poll(async () => {
             const text = await badge.textContent();
             return text !== 'Step 1/4';
         }, { timeout: 1000 }).toBe(true);
 
         await runBtn.click();
-        await expect(runBtn).toHaveText(/Run|Resume/);
+        await expect(runBtn).toHaveText('▶');
     });
 });
