@@ -312,31 +312,38 @@ git commit -m "refactor(dsvisual): migrate graph-matrix & graph-components to bu
 
 ---
 
-### Tasks 3–7: Migrate the CLEAN consumers (mechanical, Recipe)
+> **Tasks 3–7 shared method (CLEAN batches):** apply the Migration Recipe to every `buildStepControls` call in the task's listed files (Shape A unless marked **B**), carrying each file's existing `runIntervalMs` verbatim; then run the FULL suite and commit. No new tests — the existing per-viz specs (which click `data-action="step"/"run"/"reset"`) are the coverage and must stay green. Keep any one-time static scaffolding OUTSIDE `paint` (esp. `viz_tree_traversal.js` draws edges once). For **B** files use the `i` arg throughout (Recipe Shape B).
 
-Each task: apply the Recipe to every `buildStepControls` call in the listed files (Shape A unless marked **B**), carrying the file's existing `runIntervalMs` verbatim; then run the FULL suite and commit. No new tests — the existing per-viz specs (which click `data-action="step"/"run"/"reset"`) are the coverage and must stay green.
+### Task 3: CLEAN batch 1 — trees & structures (8 files)
 
-Per-file note: keep any one-time static scaffolding outside `paint` (esp. `viz_tree_traversal.js` draws edges once). For **B** files use the `i` arg throughout (see Recipe Shape B).
+**Files (Shape A):** `js/viz/viz_tree_array_rep.js:105` (runIntervalMs 700), `js/viz/viz_tree_catalan.js:63` (800), `js/viz/viz_tree_copy_equal.js:86` (800), `js/viz/viz_tree_reconstruct.js:107` (700), `js/viz/viz_tree_traversal.js:96` (700, **static edges drawn one-time — keep outside paint**), `js/viz/viz_threaded.js:59` (700), `js/viz/viz_mway.js:66` (700), `js/viz/viz_tgb.js:142` (700).
 
-- [ ] **Task 3 — trees & structures (8 files):**
-  `viz_tree_array_rep.js:105` (700), `viz_tree_catalan.js:63` (800), `viz_tree_copy_equal.js:86` (800), `viz_tree_reconstruct.js:107` (700), `viz_tree_traversal.js:96` (700, static edges one-time), `viz_threaded.js:59` (700), `viz_mway.js:66` (700), `viz_tgb.js:142` (700).
-  Verify: `npm test` green. Commit `refactor(dsvisual): migrate tree/structure viz to buildFrameControls (batch 1)` staging only these 8 files.
+- [ ] Apply the Recipe (Shape A) to all 8. Run `npm test` (FULL) → green. Commit `refactor(dsvisual): migrate tree/structure viz to buildFrameControls (batch 1)` staging ONLY these 8 files.
 
-- [ ] **Task 4 — expr / search / sort (8 files):**
-  `viz_expr_tree.js:158` (700), `viz_expr.js:50` (700), `viz_search_fib.js:40` (600), `viz_search_interp.js:43` (700), `viz_sort_external.js:59` (600), `viz_polyphase.js:44` (700), `viz_fenwick.js:79` (600), `viz_segment.js:131` (600).
-  Verify: `npm test`. Commit `…(batch 2)` staging only these 8.
+### Task 4: CLEAN batch 2 — expr / search / sort (8 files)
 
-- [ ] **Task 5 — lists / matrix / cache / maze (8 files):**
-  `viz_list_doubly.js:39` (600), `viz_list_equivalence.js:145` (700), `viz_lru.js:50` (700), `viz_gc.js:192` (700), `viz_matrix_sparse_list.js:155` (700), `viz_sparse.js:103` (700), `viz_maze.js:55` (500), `viz_obst.js:72` (600).
-  Verify: `npm test`. Commit `…(batch 3)` staging only these 8.
+**Files (Shape A):** `js/viz/viz_expr_tree.js:158` (700), `js/viz/viz_expr.js:50` (700), `js/viz/viz_search_fib.js:40` (600), `js/viz/viz_search_interp.js:43` (700), `js/viz/viz_sort_external.js:59` (600), `js/viz/viz_polyphase.js:44` (700), `js/viz/viz_fenwick.js:79` (600, frames built inline via snapshot()), `js/viz/viz_segment.js:131` (600, frames built inline via snapshot()).
 
-- [ ] **Task 6 — magic squares & nano (9 files):**
-  `viz_magic.js:139` (500), `viz_magic_latin.js:115` (500), `viz_magic_symmetry.js:111` (500), `viz_magic_torus.js:142` (400), `viz_nano_bpe_encode.js:35` (600), `viz_nano_bpe_train.js:31` (800), `viz_nano_compute_graph.js:34` (700), `viz_nano_ngram.js:37` (700), `viz_decision_tree_coins.js:83` (900).
-  Verify: `npm test`. Commit `…(batch 4)` staging only these 9.
+- [ ] Apply the Recipe (Shape A) to all 8. Run `npm test` → green. Commit `refactor(dsvisual): migrate expr/search/sort viz to buildFrameControls (batch 2)` staging ONLY these 8 files.
 
-- [ ] **Task 7 — cumulative painters & files (8 files):**
-  **B:** `js/domains/graph.js:296` renderPrim (700), `js/domains/graph.js:372` renderBellmanFord (400), `js/domains/graph.js:445` renderFloydWarshall (800), `viz_recursion.js:200` (700). Shape A: `viz_game_tree.js:116` (700), `viz_huffman.js:98` (800), `viz_file_inverted.js:68` (700), `viz_file_isam.js:93` (700).
-  Verify: `npm test`. Commit `…(batch 5, cumulative)` staging only these files (`js/domains/graph.js` + the 4 viz).
+### Task 5: CLEAN batch 3 — lists / matrix / cache / maze (8 files)
+
+**Files (Shape A):** `js/viz/viz_list_doubly.js:39` (600), `js/viz/viz_list_equivalence.js:145` (700), `js/viz/viz_lru.js:50` (700), `js/viz/viz_gc.js:192` (700), `js/viz/viz_matrix_sparse_list.js:155` (700), `js/viz/viz_sparse.js:103` (700), `js/viz/viz_maze.js:55` (500), `js/viz/viz_obst.js:72` (600).
+
+- [ ] Apply the Recipe (Shape A) to all 8. Run `npm test` → green. Commit `refactor(dsvisual): migrate list/matrix/cache/maze viz to buildFrameControls (batch 3)` staging ONLY these 8 files.
+
+### Task 6: CLEAN batch 4 — magic squares & nano (9 files)
+
+**Files (Shape A):** `js/viz/viz_magic.js:139` (500), `js/viz/viz_magic_latin.js:115` (500), `js/viz/viz_magic_symmetry.js:111` (500), `js/viz/viz_magic_torus.js:142` (400), `js/viz/viz_nano_bpe_encode.js:35` (600), `js/viz/viz_nano_bpe_train.js:31` (800), `js/viz/viz_nano_compute_graph.js:34` (700), `js/viz/viz_nano_ngram.js:37` (700), `js/viz/viz_decision_tree_coins.js:83` (900).
+
+- [ ] Apply the Recipe (Shape A) to all 9. Run `npm test` → green. Commit `refactor(dsvisual): migrate magic/nano viz to buildFrameControls (batch 4)` staging ONLY these 9 files.
+
+### Task 7: CLEAN batch 5 — cumulative painters & files (8 sites)
+
+**Files — Shape B (use the `i` arg; draw iterates `frames[0..i]` / references `frames[i]`):** `js/domains/graph.js:296` `renderPrim` (700), `js/domains/graph.js:372` `renderBellmanFord` (400), `js/domains/graph.js:445` `renderFloydWarshall` (800), `js/viz/viz_recursion.js:200` (700).
+**Files — Shape A:** `js/viz/viz_game_tree.js:116` (700), `js/viz/viz_huffman.js:98` (800), `js/viz/viz_file_inverted.js:68` (700), `js/viz/viz_file_isam.js:93` (700).
+
+- [ ] Apply the Recipe (Shape B for the 3 graph.js sites + recursion; Shape A for the 4 viz). Run `npm test` → green. Commit `refactor(dsvisual): migrate cumulative-painter viz to buildFrameControls (batch 5)` staging ONLY `js/domains/graph.js` + the 4 viz files.
 
 ---
 
