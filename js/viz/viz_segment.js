@@ -78,8 +78,6 @@
             8: [40, 220], 9: [114, 220], 10: [188, 220], 11: [262, 220],
             12: [336, 220], 13: [410, 220], 14: [484, 220], 15: [558, 220],
         };
-        let idx = 0;
-
         const wrap = document.createElement('div');
         wrap.className = 'segtree-wrap';
         wrap.innerHTML =
@@ -91,8 +89,7 @@
         const phaseEl = wrap.querySelector('.segtree-phase');
         const msgEl = wrap.querySelector('.segtree-msg');
 
-        function draw() {
-            const f = frames[idx];
+        function draw(f) {
             let svg = '<svg class="segtree-svg" viewBox="0 0 600 252" width="100%" ' +
                       'xmlns="http://www.w3.org/2000/svg">';
             for (let node = 2; node <= 15; node++) {
@@ -121,15 +118,7 @@
             phaseEl.textContent = f.phase;
             msgEl.textContent = f.msg;
         }
-        function step() {
-            if (idx >= frames.length - 1) return false;
-            idx++;
-            draw();
-            return idx < frames.length - 1;
-        }
-        function reset() { idx = 0; draw(); }
-        wrap.appendChild(K().buildStepControls(step, reset, 600));
-        draw();
+        wrap.appendChild(K().buildFrameControls(frames, draw, { runIntervalMs: 600 }));
     }
 
     global.VizRegistry.attach('tree-segment', {

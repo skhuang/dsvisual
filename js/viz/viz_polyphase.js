@@ -8,7 +8,6 @@
         const st = _polyphaseState;
         const res = SortPolyphaseViz.polyphaseFrames(st.data);
         const frames = res.frames;
-        let idx = 0;
 
         const labels = ['Tape 1', 'Tape 2', 'Output'];
 
@@ -25,8 +24,7 @@
             return '<span class="pf-chip">[' + run.join(',') + ']</span>';
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             const stage = host.querySelector('.pf-stage');
             if (!stage) return;
             // The output row is the tape just written to during a merge frame.
@@ -38,11 +36,7 @@
             const badge = { distribute: 'Distribute', merge: 'Merge', done: 'Done' }[fr.phase] || fr.phase;
             host.querySelector('.pf-phase').innerHTML = '<span class="pf-badge pf-' + fr.phase + '">' + badge + '</span>';
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.pf-apply').onclick = () => {
             try {

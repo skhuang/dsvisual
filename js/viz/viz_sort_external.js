@@ -9,7 +9,6 @@
         const langOf = K().langOf;
         const res = ExtSortViz.buildExternalSortFrames(st.data, st.M);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="ext-controls">' +
@@ -25,8 +24,7 @@
 
         function cells(arr, cls) { return arr.map((v) => '<span class="ext-cell ' + (cls || '') + '">' + v + '</span>').join(' '); }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.ext-runs')) return;
             host.querySelector('.ext-runs').innerHTML = fr.runs.map((r, i) =>
                 '<div class="ext-run"><span class="ext-run-label">run ' + (i + 1) + (i === fr.current ? ' ★' : '') + '</span> ' + cells(r) + '</div>').join('');
@@ -53,11 +51,7 @@
             host.querySelector('.ext-out-cells').innerHTML = cells(fr.output, 'out');
             host.querySelector('.ext-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 600));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 600 }));
         host.querySelector('.ext-apply').onclick = () => {
             const d = host.querySelector('.ext-data').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             const m = parseInt(host.querySelector('.ext-m').value, 10);

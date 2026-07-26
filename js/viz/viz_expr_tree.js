@@ -53,7 +53,6 @@
             const res = ExprTreeViz.buildExprTreeFrames(ExprTreeViz.tokenizePostfix(st.text));
             frames = res.frames; root = res.root;
         }
-        let idx = 0;
 
         const inputVal = bool ? st.boolText : st.text;
         const hint = bool
@@ -132,8 +131,7 @@
             return h;
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.et-stage')) return;
             if (fr.forest) {
                 paintForest(fr.forest, null);
@@ -152,11 +150,7 @@
             }
             host.querySelector('.et-phase').textContent = (fr.token ? '[' + fr.token + '] ' : '') + langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelectorAll('.et-mode-btn').forEach((b) => {
             b.onclick = () => { const m = b.getAttribute('data-mode'); if (m !== st.mode) { st.mode = m; renderTreeExpression(); } };

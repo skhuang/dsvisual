@@ -9,7 +9,6 @@
         const langOf = K().langOf;
         const res = FibSearchViz.buildFibSearchFrames(st.arr, st.target);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="ss-controls">' +
@@ -24,8 +23,7 @@
             '<div class="ss-result"></div>' +
             '<div class="ss-phase"></div>';
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.ss-cells')) return;
             const inRange = (i) => fr.range && i >= fr.range[0] && i <= fr.range[1];
             host.querySelector('.ss-cells').innerHTML = st.arr.map((v, i) =>
@@ -34,11 +32,7 @@
             host.querySelector('.ss-result').textContent = fr.found >= 0 ? ('✓ found at index ' + fr.found) : '';
             host.querySelector('.ss-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 600));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 600 }));
         host.querySelector('.ss-apply').onclick = () => {
             const arr = host.querySelector('.ss-arr').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite).sort((a, b) => a - b);
             const target = parseInt(host.querySelector('.ss-target').value, 10);

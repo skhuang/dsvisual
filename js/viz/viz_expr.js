@@ -22,8 +22,6 @@
             host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
             return;
         }
-        let idx = 0;
-
         host.innerHTML =
             '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="expr-apply">Apply</button></div>' +
             '<div class="expr-phasebadge"></div>' +
@@ -32,8 +30,7 @@
             '<div class="expr-phase"></div>';
         host.querySelector('.expr-input').value = st.text;
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.expr-stack-cells')) return;
             host.querySelector('.expr-phasebadge').textContent = fr.phase === 'convert'
                 ? 'Phase 1 — Convert (postfix: ' + postfix.join(' ') + ')'
@@ -44,11 +41,7 @@
             host.querySelector('.expr-out-cells').innerHTML = outArr.map((v) => '<span class="expr-cell out">' + v + '</span>').join('');
             host.querySelector('.expr-phase').textContent = (fr.token ? '[' + fr.token + '] ' : '') + langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
         host.querySelector('.expr-apply').onclick = () => { st.text = host.querySelector('.expr-input').value; renderExprInfixPostfix(); };
         host.querySelector('.rand-btn').onclick = () => {
             const inp = window.RandomInput && RandomInput.randomInputFor('expr-infix-postfix', K().getInputDifficulty());
