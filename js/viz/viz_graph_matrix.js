@@ -48,7 +48,6 @@
     edges: global.GraphMatrixViz.SAMPLE.edges.slice(),
     directed: global.GraphMatrixViz.SAMPLE.directed,
     weighted: global.GraphMatrixViz.SAMPLE.weighted,
-    idx: 0,
   };
 
   function edgesToStr(edges) {
@@ -156,7 +155,6 @@
     const msgEl = wrap.querySelector('.gm-msg');
 
     const frames = global.GraphMatrixViz.matrixFrames(_st).frames;
-    if (_st.idx >= frames.length) _st.idx = frames.length - 1;
 
     // Hover correspondence, wired only once the build has fully completed
     // (the final `done` frame — see gmMatrixHtml's addedSet, which at that
@@ -193,36 +191,22 @@
       });
     }
 
-    function paint() {
-      const f = frames[_st.idx];
+    function paint(f, i) {
       graphEl.innerHTML = gmGraphSvg(_st.n, _st.edges, _st.directed, _st.weighted, f.edge);
       matrixEl.innerHTML = gmMatrixHtml(f, _st.n);
       msgEl.textContent = K().langOf(f.msg);
+      K().showStatus(K().langOf(f.msg), f.done ? '#34d399' : '#60a5fa');
       if (f.done) wireHover();
     }
-    function step() {
-      if (_st.idx >= frames.length - 1) return false;
-      _st.idx++;
-      paint();
-      K().showStatus(K().langOf(frames[_st.idx].msg), frames[_st.idx].done ? '#34d399' : '#60a5fa');
-      return _st.idx < frames.length - 1;
-    }
-    function reset() {
-      _st.idx = 0;
-      paint();
-    }
 
-    wrap.appendChild(K().buildStepControls(step, reset, 800));
-    paint();
+    wrap.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
 
     wrap.querySelector('.gm-directed').addEventListener('change', function () {
       _st.directed = this.checked;
-      _st.idx = 0;
       renderGraphMatrix();
     });
     wrap.querySelector('.gm-weighted').addEventListener('change', function () {
       _st.weighted = this.checked;
-      _st.idx = 0;
       renderGraphMatrix();
     });
     wrap.querySelector('.gm-apply').addEventListener('click', function () {
@@ -231,7 +215,6 @@
       const parsed = global.GraphMatrixViz.parseInput(nVal, edgesVal);
       _st.n = parsed.n;
       _st.edges = parsed.edges;
-      _st.idx = 0;
       saveExample('graph-matrix', serialize(_st), DEFAULT_SERIALIZED);
       renderGraphMatrix();
     });
@@ -244,7 +227,6 @@
       _st.edges = parsed.edges;
       _st.directed = parsed.directed;
       _st.weighted = parsed.weighted;
-      _st.idx = 0;
       renderGraphMatrix();
     });
   }

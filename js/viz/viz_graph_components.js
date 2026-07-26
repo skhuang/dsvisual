@@ -42,7 +42,6 @@
   const _st = {
     n: global.GraphComponentsViz.SAMPLE.n,
     edges: global.GraphComponentsViz.SAMPLE.edges.slice(),
-    idx: 0,
   };
 
   // Compact self-contained node-link SVG: n nodes on a circle, undirected edges
@@ -98,33 +97,23 @@
     const msgEl = wrap.querySelector('.gc2-msg');
 
     const frames = global.GraphComponentsViz.componentsFrames(_st).frames;
-    if (_st.idx >= frames.length) _st.idx = frames.length - 1;
 
     function countText(k) {
       const lang = (global.I18N && I18N.getCurrentLanguage) ? I18N.getCurrentLanguage() : 'en';
       return lang === 'zh' ? ('連通分量：' + k) : ('Components: ' + k);
     }
-    function paint() {
-      const f = frames[_st.idx];
+    function paint(f, i) {
       graphEl.innerHTML = gcGraphSvg(_st.n, _st.edges, f);
       countEl.textContent = countText(f.k);
       msgEl.textContent = K().langOf(f.msg);
+      K().showStatus(K().langOf(f.msg), f.done ? '#34d399' : '#60a5fa');
     }
-    function step() {
-      if (_st.idx >= frames.length - 1) return false;
-      _st.idx++;
-      paint();
-      K().showStatus(K().langOf(frames[_st.idx].msg), frames[_st.idx].done ? '#34d399' : '#60a5fa');
-      return _st.idx < frames.length - 1;
-    }
-    function reset() { _st.idx = 0; paint(); }
 
-    wrap.appendChild(K().buildStepControls(step, reset, 800));
-    paint();
+    wrap.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
 
     wrap.querySelector('.gc2-apply').addEventListener('click', function () {
       const parsed = global.GraphComponentsViz.parseInput(wrap.querySelector('.gc2-n').value, wrap.querySelector('.gc2-edges').value);
-      _st.n = parsed.n; _st.edges = parsed.edges; _st.idx = 0;
+      _st.n = parsed.n; _st.edges = parsed.edges;
       saveExample('graph-components', serialize(_st), DEFAULT_SERIALIZED);
       renderGraphComponents();
     });
@@ -132,7 +121,7 @@
     if (exSelect) exSelect.addEventListener('change', function (ev) {
       const v = ev.target.value; if (!v) return;
       const parsed = deserialize(v);
-      _st.n = parsed.n; _st.edges = parsed.edges; _st.idx = 0;
+      _st.n = parsed.n; _st.edges = parsed.edges;
       renderGraphComponents();
     });
   }
