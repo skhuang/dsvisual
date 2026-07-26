@@ -7,7 +7,6 @@
         const net = AoeViz.AOE_PRESET;
         const built = AoeViz.buildAoeFrames(net.nodes, net.edges);
         const frames = built.frames;
-        let idx = 0;
         const nodeById = (id) => net.nodes.find((n) => n.id === id);
 
         host.innerHTML =
@@ -21,9 +20,8 @@
         const edgesG = host.querySelector('.aoe-edges');
         const nodesG = host.querySelector('.aoe-nodes');
 
-        function paint() {
+        function paint(fr) {
             if (!host.querySelector('.aoe-table')) return; // host wiped (method switched) — ignore stale tick
-            const fr = frames[idx];
             const crit = new Set((fr.criticalEdges || []).map((e) => e.u + '-' + e.v));
             edgesG.innerHTML = net.edges.map((e) => {
                 const a = nodeById(e.u), b = nodeById(e.v);
@@ -46,11 +44,7 @@
             host.querySelector('.aoe-table').innerHTML = '<table class="aoe-tbl"><thead><tr><th>v</th><th>ee</th><th>le</th></tr></thead><tbody>' + rows + '</tbody></table>';
             host.querySelector('.aoe-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 800));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
     }
 
     global.VizRegistry.attach('graph-aoe', {

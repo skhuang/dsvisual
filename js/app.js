@@ -1409,6 +1409,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.VizKit = {
         acquireDynamicVizHost,
         buildStepControls,
+        buildFrameControls,
         getInputDifficulty,
         langOf: (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en,
         t,
@@ -1954,6 +1955,67 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state === 'running') startTimer(); // live re-apply new speed
         });
         setBtn();
+        return strip;
+    }
+
+    function buildFrameControls(frames, paint, opts) {
+        opts = opts || {};
+        const last = Math.max(0, frames.length - 1);
+        const mode = (typeof currentMode !== 'undefined' && currentMode) ? currentMode : 'default';
+        const storeKey = 'dsvisual.stepSpeed.' + mode;
+        const clampV = (v) => Math.max(10, Math.min(600, v));
+        let sliderVal = clampV(610 - (opts.runIntervalMs || 500));
+        try { const s = localStorage.getItem(storeKey); if (s !== null && s !== '') { const n = parseInt(s, 10); if (Number.isFinite(n)) sliderVal = clampV(n); } } catch (e) { /* ignore */ }
+        const L = (zh, en) => { try { return (typeof I18N !== 'undefined' && I18N.getCurrentLanguage && I18N.getCurrentLanguage() === 'zh') ? zh : en; } catch (e) { return en; } };
+
+        let idx = Math.max(0, Math.min(opts.initialIndex || 0, last));
+        let timer = null, playing = false;
+
+        const strip = document.createElement('div');
+        strip.className = 'stepctl';
+        strip.innerHTML =
+            '<button type="button" class="tbtn" data-action="reset" title="' + L('回到開頭', 'To start') + '">⏮</button>' +
+            '<button type="button" class="tbtn" data-action="back" title="' + L('上一步', 'Previous step') + '">◀</button>' +
+            '<button type="button" class="tbtn play" data-action="run" title="' + L('播放 / 暫停', 'Play / Pause') + '">▶</button>' +
+            '<button type="button" class="tbtn" data-action="step" title="' + L('下一步', 'Next step') + '">▶︎</button>' +
+            '<input type="range" class="stepctl-scrubber" min="0" max="' + last + '" value="' + idx + '" title="' + L('步驟位置', 'Step position') + '">' +
+            '<label class="stepctl-speed-wrap">' + L('速度', 'Speed') + ' <input type="range" class="stepctl-speed" min="10" max="600" value="' + sliderVal + '"></label>' +
+            '<span class="stepctl-count"></span>';
+
+        const runBtn = strip.querySelector('[data-action="run"]');
+        const scrub = strip.querySelector('.stepctl-scrubber');
+        const speed = strip.querySelector('.stepctl-speed');
+        const cnt = strip.querySelector('.stepctl-count');
+        const delay = () => 610 - parseInt(speed.value, 10);
+
+        function render() {
+            paint(frames[idx], idx);
+            scrub.value = idx;
+            cnt.textContent = L('步 ', 'Step ') + idx + ' / ' + last;
+            runBtn.textContent = playing ? '⏸' : '▶';
+            if (opts.onIndexChange) opts.onIndexChange(idx);
+        }
+        function goTo(i) { idx = Math.max(0, Math.min(i, last)); render(); }
+        function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+        function pause() { stopTimer(); playing = false; runBtn.textContent = '▶'; }
+        function play() {
+            if (idx >= last) goTo(0);
+            playing = true; runBtn.textContent = '⏸';
+            stopTimer();
+            timer = setInterval(() => { if (idx >= last) { pause(); return; } goTo(idx + 1); }, delay());
+        }
+
+        strip.querySelector('[data-action="reset"]').onclick = () => { pause(); goTo(0); };
+        strip.querySelector('[data-action="back"]').onclick = () => { pause(); goTo(idx - 1); };
+        strip.querySelector('[data-action="step"]').onclick = () => { pause(); goTo(idx + 1); };
+        runBtn.onclick = () => { if (playing) pause(); else play(); };
+        scrub.addEventListener('input', () => { pause(); goTo(+scrub.value); });
+        speed.addEventListener('input', () => {
+            try { localStorage.setItem(storeKey, String(speed.value)); } catch (e) { /* ignore */ }
+            if (playing) play(); // re-apply new speed live
+        });
+
+        render();
         return strip;
     }
 

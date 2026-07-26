@@ -1776,7 +1776,12 @@ pre.code-panel-body[class*="language-"] {
 .bloom-controls { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
 
 /* Spec 3 — shared step controls */
-.stepctl { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-top: 6px; }
+.stepctl { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; align-items: center; margin-top: 6px; }
+.stepctl .tbtn { border: 1px solid var(--card-border, #cbd5e1); background: var(--surface-muted, #f1f5f9); color: var(--text-main, #1e293b); cursor: pointer; width: 38px; height: 34px; border-radius: 6px; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; }
+.stepctl .tbtn:hover { border-color: var(--primary-color, #2563eb); }
+.stepctl .tbtn.play { background: var(--primary-color, #2563eb); border-color: var(--primary-color, #2563eb); color: #fff; width: 44px; }
+.stepctl .stepctl-scrubber { flex: 1; min-width: 120px; max-width: 240px; accent-color: var(--primary-color, #2563eb); vertical-align: middle; }
+.stepctl .stepctl-count { font-size: 12px; color: var(--text-subtle, #64748b); min-width: 86px; text-align: right; font-variant-numeric: tabular-nums; }
 
 /* Spec 3 — Skip List */
 .skiplist-wrap { display: flex; flex-direction: column; gap: 10px; }
@@ -2509,7 +2514,6 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 
 .stepctl-speed-wrap { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; font-size: 13px; color: #475569; }
 .stepctl-speed { width: 110px; vertical-align: middle; }
-.stepctl [data-action="run"] { min-width: 64px; }
 
 .obst-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
 .obst-tbl { border-collapse: collapse; margin: 6px 0; }
