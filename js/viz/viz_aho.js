@@ -33,8 +33,17 @@
             { node: 3, matches: [] },
             { node: 4, matches: ['hers@2'] },
         ];
-        const TOTAL = failSteps.length + 1 + scanSteps.length;
-        let idx = 0;
+        // Concatenate the two precomputed phase arrays into ONE materialized,
+        // phase-tagged frames array so the VCR control can random-access any
+        // position. The old composite cursor `idx` ran 0..TOTAL-1 where
+        // idx <= failSteps.length was "build" phase (idx frames: 0 = nothing
+        // built yet, 1..failSteps.length = after building step k) and
+        // idx > failSteps.length was "scan" phase. frames[i] lines up 1:1
+        // with the old `idx === i`; paint(fr, i) recomputes cumulatively over
+        // i exactly as the old draw() did over idx (Shape B).
+        const frames = [];
+        for (let k = 0; k <= failSteps.length; k++) frames.push({ phase: 'fail', k: k });
+        for (let k = 0; k < scanSteps.length; k++) frames.push({ phase: 'scan', k: k });
 
         const wrap = document.createElement('div');
         wrap.className = 'aho-wrap';
@@ -51,13 +60,13 @@
 
         function nodeById(id) { return nodes.find((n) => n.id === id); }
 
-        function draw() {
-            const inBuild = idx <= failSteps.length;
-            const builtCount = inBuild ? idx : failSteps.length;
+        function paint(fr, i) {
+            const inBuild = i <= failSteps.length;
+            const builtCount = inBuild ? i : failSteps.length;
             let curScanNode = -1;
             let allMatches = [];
             if (!inBuild) {
-                const sIdx = idx - failSteps.length - 1;
+                const sIdx = i - failSteps.length - 1;
                 for (let k = 0; k <= sIdx && k < scanSteps.length; k++) {
                     curScanNode = scanSteps[k].node;
                     allMatches = allMatches.concat(scanSteps[k].matches);
@@ -78,7 +87,7 @@
                        '" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 3"/>';
             }
             for (const n of nodes) {
-                const isBuildCur = inBuild && failSteps[idx] && n.id === failSteps[idx].node;
+                const isBuildCur = inBuild && failSteps[i] && n.id === failSteps[i].node;
                 const isCur = (!inBuild && n.id === curScanNode) || isBuildCur;
                 const hasOut = output[n.id] !== undefined;
                 svg += '<circle cx="' + n.x + '" cy="' + n.y + '" r="16" fill="' +
@@ -89,7 +98,7 @@
             }
             svgEl.innerHTML = svg;
 
-            const scanPos = inBuild ? -1 : (idx - failSteps.length - 1);
+            const scanPos = inBuild ? -1 : (i - failSteps.length - 1);
             let tr = '';
             for (let k = 0; k < text.length; k++) {
                 tr += '<span class="aho-char' + (k === scanPos ? ' aho-char-cur' : '') + '">' + text[k] + '</span>';
@@ -98,18 +107,10 @@
 
             phaseEl.textContent = inBuild
                 ? 'Phase 1: Building failure links (' + builtCount + '/' + failSteps.length + ')'
-                : 'Phase 2: Scanning text (' + (idx - failSteps.length) + '/' + text.length + ')';
+                : 'Phase 2: Scanning text (' + (i - failSteps.length) + '/' + text.length + ')';
             matchesEl.textContent = '[' + allMatches.join(', ') + ']';
         }
-        function step() {
-            if (idx >= TOTAL) return false;
-            idx++;
-            draw();
-            return idx < TOTAL;
-        }
-        function reset() { idx = 0; draw(); }
-        wrap.appendChild(K().buildStepControls(step, reset, 500));
-        draw();
+        wrap.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 500 }));
     }
 
     global.VizRegistry.attach('search-aho', {

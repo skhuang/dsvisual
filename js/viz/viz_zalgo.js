@@ -19,7 +19,15 @@
             }
         })();
 
-        let cur = 1;  // next index to reveal
+        // Materialize a frames array so the VCR control can random-access any
+        // position. Old code tracked a single cursor `cur` (starting at 1,
+        // meaning "next index to reveal") and derived `box` from
+        // `trace[cur - 1]` (or {l:0,r:0} before anything was computed).
+        // frames[i] === the `box` that old draw() used when `cur === i + 1`;
+        // frames[0] reproduces the old cur=1 state (nothing computed yet —
+        // already a valid pre-scan frame, no synthesis needed).
+        const frames = [{ l: 0, r: 0 }];
+        for (let i = 1; i < n; i++) frames.push(trace[i]);
 
         const wrap = document.createElement('div');
         wrap.className = 'zalgo-wrap';
@@ -32,8 +40,9 @@
         const countEl = wrap.querySelector('.zalgo-count');
         const matchesEl = wrap.querySelector('.zalgo-matches');
 
-        function draw() {
-            const box = cur > 1 ? trace[cur - 1] : { l: 0, r: 0 };
+        function paint(fr, i) {
+            const cur = i + 1; // old cursor equivalent
+            const box = fr;
             let chr = '<div class="zalgo-row zalgo-chr">';
             let zr = '<div class="zalgo-row zalgo-z">';
             const matches = [];
@@ -57,15 +66,7 @@
             countEl.textContent = Math.max(0, cur - 1);
             matchesEl.textContent = '[' + matches.join(',') + ']';
         }
-        function step() {
-            if (cur >= n) return false;
-            cur++;
-            draw();
-            return cur < n;
-        }
-        function reset() { cur = 1; draw(); }
-        wrap.appendChild(K().buildStepControls(step, reset, 350));
-        draw();
+        wrap.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 350 }));
     }
 
     global.VizRegistry.attach('search-zalgo', {
