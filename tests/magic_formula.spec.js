@@ -47,4 +47,27 @@ test.describe('magic-formula', () => {
         await expect(sec.locator('[data-testid="mf-readout"]')).toContainText('25 / 25');
         await expect(sec.locator('[data-testid="mf-callout"]')).toContainText('O(1)');
     });
+
+    test('Run then swapping to a new query does not let the orphaned timer corrupt the new display (regression)', async ({ page }) => {
+        await loadMethod(page, 'magic-formula');
+        const sec = page.locator('[data-method-section="magic-formula"]');
+        const grid = sec.locator('[data-testid="mf-grid"]');
+
+        // Start a query on one cell, then set it running.
+        await grid.locator('[data-cell="1-2"]').click();
+        await sec.locator('.stepctl [data-action="run"]').click();
+        await page.waitForTimeout(700); // let the running control's timer tick at least once
+
+        // Swap to a brand-new query on a DIFFERENT cell while the old control's timer may still be scheduled —
+        // this is the frames-array swap that rebuilds the control (mountControls() replaces the strip).
+        await grid.locator('[data-cell="2-2"]').click();
+        await expect(grid.locator('.mf-cell.current')).toHaveCount(1);
+        await expect(grid.locator('.mf-cell.current')).toHaveAttribute('data-cell', '2-2');
+
+        // Wait past another tick of the OLD (now-orphaned) timer's interval — it must self-stop on detach
+        // instead of repainting the stale old-query frame over the freshly-mounted new-query display.
+        await page.waitForTimeout(700);
+        await expect(grid.locator('.mf-cell.current')).toHaveCount(1);
+        await expect(grid.locator('.mf-cell.current')).toHaveAttribute('data-cell', '2-2');
+    });
 });

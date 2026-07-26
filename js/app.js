@@ -2002,7 +2002,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (idx >= last) goTo(0);
             playing = true; runBtn.textContent = '⏸';
             stopTimer();
-            timer = setInterval(() => { if (idx >= last) { pause(); return; } goTo(idx + 1); }, delay());
+            timer = setInterval(() => {
+                if (!strip.isConnected) { stopTimer(); return; } // orphaned (swapped out / re-rendered) — stop, no more repaints
+                if (idx >= last) { pause(); return; }
+                goTo(idx + 1);
+            }, delay());
         }
 
         strip.querySelector('[data-action="reset"]').onclick = () => { pause(); goTo(0); };

@@ -591,6 +591,29 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(card.locator('[data-testid="skiplist-status"]')).toContainText('level');
     });
 
+    test('Probabilistic: Skip List — Run then Reset stops the orphaned search timer (regression)', async ({ page }) => {
+        await loadMethod(page, 'skip-list');
+        const card = page.locator('[data-method-section="skip-list"]');
+
+        // Start a search (builds the real frame control) and set it running.
+        await card.locator('[data-skiplist-search]').fill('12');
+        await card.locator('[data-action="step"]').click();
+        await card.locator('[data-action="run"]').click();
+        await page.waitForTimeout(700); // let the running control's timer tick at least once
+
+        // Reset tears the real control back down to the placeholder — the capture-phase listener
+        // stopPropagation()'s this click, so the real control's own onclick (which would otherwise
+        // clear its timer) never runs; only the isConnected guard in the timer itself can stop it.
+        await card.locator('[data-action="reset"]').click();
+        await page.waitForTimeout(700); // past another tick of the (should-be-stopped) orphaned timer
+
+        // Settled to the reset/placeholder state: nothing highlighted, status blank — not overwritten
+        // by a stale search step from the orphaned timer.
+        await expect(card.locator('.skiplist-active')).toHaveCount(0);
+        const statusText = await card.locator('[data-testid="skiplist-status"]').innerText();
+        expect(statusText.trim()).toBe('');
+    });
+
     test('Probabilistic: Count-Min Sketch renders a 3x8 grid and estimates frequency', async ({ page }) => {
         await loadMethod(page, 'count-min-sketch');
         const card = page.locator('[data-method-section="count-min-sketch"]');
