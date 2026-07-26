@@ -7,7 +7,6 @@
         const host = K().acquireDynamicVizHost();
         const { root } = GameTreeViz.buildGameTree(_gameState.leaves, 2);
         const { frames } = GameTreeViz.minimaxFrames(root, _gameState.useAB);
-        let idx = 0;
 
         // ---- Layout: leaves left-to-right, parents centered over children ----
         const meta = {}; // id -> {x,y,node}
@@ -65,14 +64,14 @@
             nodesEl.appendChild(d);
         });
 
-        function paint() {
-            // Cumulative state up to idx
+        function paint(fr, i) {
+            // Cumulative state up to i
             const pruned = new Set();
             const returned = {}; // id -> value
             const abText = {};   // id -> {alpha,beta,value}
             let current = null;
-            for (let i = 0; i <= idx && i < frames.length; i++) {
-                const f = frames[i];
+            for (let s = 0; s <= i && s < frames.length; s++) {
+                const f = frames[s];
                 if (f.type === 'prune') (f.pruned || []).forEach((p) => pruned.add(p));
                 if (f.type === 'return' || f.type === 'leaf') returned[f.id] = f.value;
                 if (f.type === 'enter' || f.type === 'update') {
@@ -97,7 +96,6 @@
                 if (nid === current) el.classList.add('active');
             });
 
-            const fr = frames[idx];
             let info = '';
             if (fr) {
                 const ab = abText[fr.id];
@@ -110,11 +108,8 @@
             }
             host.querySelector('.gt-info').textContent = info;
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
 
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.gt-build').onclick = () => {
             try {

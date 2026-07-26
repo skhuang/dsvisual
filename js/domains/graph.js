@@ -259,8 +259,6 @@
       total += best.w;
       steps.push({ node: best.to, edge: [best.from, best.to], total: total });
     }
-    let idx = 0;
-
     const wrap = document.createElement('div');
     wrap.className = 'prim-wrap';
     wrap.innerHTML = buildWeightedGraphSvg(nodes, primEdges, false) +
@@ -269,11 +267,11 @@
     host.appendChild(wrap);
     const weightEl = wrap.querySelector('.prim-weight');
 
-    function draw() {
+    function draw(_fr, i) {
       wrap.querySelectorAll('.wgraph-node').forEach((c) => c.classList.remove('wgraph-in'));
       wrap.querySelectorAll('.wgraph-edge').forEach((l) =>
           l.classList.remove('wgraph-in', 'wgraph-cur'));
-      for (let s = 0; s <= idx; s++) {
+      for (let s = 0; s <= i; s++) {
         const st = steps[s];
         const nodeEl = wrap.querySelector('.wgraph-node[data-node="' + st.node + '"]');
         if (nodeEl) nodeEl.classList.add('wgraph-in');
@@ -281,20 +279,12 @@
           const eEl = wrap.querySelector(
               '.wgraph-edge[data-edge="' + st.edge[0] + '-' + st.edge[1] + '"], ' +
               '.wgraph-edge[data-edge="' + st.edge[1] + '-' + st.edge[0] + '"]');
-          if (eEl) eEl.classList.add(s === idx ? 'wgraph-cur' : 'wgraph-in');
+          if (eEl) eEl.classList.add(s === i ? 'wgraph-cur' : 'wgraph-in');
         }
       }
-      weightEl.textContent = steps[idx].total;
+      weightEl.textContent = steps[i].total;
     }
-    function step() {
-      if (idx >= steps.length - 1) return false;
-      idx++;
-      draw();
-      return idx < steps.length - 1;
-    }
-    function reset() { idx = 0; draw(); }
-    wrap.appendChild(K().buildStepControls(step, reset, 700));
-    draw();
+    wrap.appendChild(K().buildFrameControls(steps, draw, { runIntervalMs: 700 }));
   }
 
   function renderBellmanFord() {
@@ -333,8 +323,6 @@
       }
       if (!changed) break;
     }
-    let idx = 0;
-
     const wrap = document.createElement('div');
     wrap.className = 'bellman-wrap';
     wrap.innerHTML = buildWeightedGraphSvg(nodes, bfEdges, true) +
@@ -344,8 +332,7 @@
     const darrEl = wrap.querySelector('.bellman-darr');
     const msgEl = wrap.querySelector('.bellman-msg');
 
-    function draw() {
-      const f = frames[idx];
+    function draw(f) {
       wrap.querySelectorAll('.wgraph-edge').forEach((l) => l.classList.remove('wgraph-cur'));
       if (f.edge) {
         const eEl = wrap.querySelector('.wgraph-edge[data-edge="' + f.edge[0] + '-' + f.edge[1] + '"]');
@@ -362,15 +349,7 @@
       darrEl.innerHTML = html;
       msgEl.textContent = f.msg;
     }
-    function step() {
-      if (idx >= frames.length - 1) return false;
-      idx++;
-      draw();
-      return idx < frames.length - 1;
-    }
-    function reset() { idx = 0; draw(); }
-    wrap.appendChild(K().buildStepControls(step, reset, 400));
-    draw();
+    wrap.appendChild(K().buildFrameControls(frames, draw, { runIntervalMs: 400 }));
   }
 
   function renderFloydWarshall() {
@@ -403,8 +382,6 @@
           msg: 'k = ' + k + '  (' + labels[k] + ' as intermediate) — ' +
                changed.length + ' cell(s) improved' });
     }
-    let idx = 0;
-
     const wrap = document.createElement('div');
     wrap.className = 'floyd-wrap';
     wrap.innerHTML =
@@ -414,8 +391,7 @@
     const gridEl = wrap.querySelector('.floyd-grid');
     const msgEl = wrap.querySelector('.floyd-msg');
 
-    function draw() {
-      const f = frames[idx];
+    function draw(f) {
       let html = '<div class="floyd-hcell"></div>';
       for (let j = 0; j < V; j++) {
         html += '<div class="floyd-hcell' + (j === f.k ? ' floyd-pivot' : '') + '">' +
@@ -435,15 +411,7 @@
       gridEl.innerHTML = html;
       msgEl.textContent = f.msg;
     }
-    function step() {
-      if (idx >= frames.length - 1) return false;
-      idx++;
-      draw();
-      return idx < frames.length - 1;
-    }
-    function reset() { idx = 0; draw(); }
-    wrap.appendChild(K().buildStepControls(step, reset, 800));
-    draw();
+    wrap.appendChild(K().buildFrameControls(frames, draw, { runIntervalMs: 800 }));
   }
 
   function renderGraph() {

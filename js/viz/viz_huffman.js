@@ -22,7 +22,6 @@
         const freqs = HuffmanViz.computeFrequencies(st.text);
         const result = HuffmanViz.buildHuffmanFrames(freqs);
         const frames = result.frames, nodes = result.nodes, codes = result.codes;
-        let idx = 0;
         const langOf = K().langOf;
 
         host.innerHTML =
@@ -54,10 +53,9 @@
             return meta;
         }
 
-        function paint() {
+        function paint(fr) {
             const pqEl = host.querySelector('.hf-pq-list');
             if (!pqEl) return;
-            const fr = frames[idx];
             pqEl.innerHTML = fr.pq.map(p =>
                 '<span class="hf-pq-card">' + (p.sym !== null ? escapeHtml(p.sym) + ':' : '') + p.freq + '</span>').join('');
             const meta = layoutForest(fr.forestRoots);
@@ -92,11 +90,8 @@
             }
             host.querySelector('.hf-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
 
-        host.appendChild(K().buildStepControls(step, reset, 800));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
 
         host.querySelector('.hf-apply').onclick = () => {
             const v = host.querySelector('.hf-input').value;

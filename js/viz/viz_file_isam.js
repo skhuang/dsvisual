@@ -7,7 +7,6 @@
         const host = K().acquireDynamicVizHost();
         const isam = FileIsamViz.buildIsam(_isamState.keys, _isamState.blockSize);
         const { frames } = FileIsamViz.searchFrames(isam, _isamState.key);
-        let idx = 0;
 
         host.innerHTML =
             '<div class="isam-controls">' +
@@ -20,8 +19,7 @@
         const stage = host.querySelector('.isam-stage');
         const badge = host.querySelector('.isam-badge');
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             stage.innerHTML = '';
 
             const idxRow = document.createElement('div');
@@ -87,11 +85,8 @@
 
             badge.textContent = 'phase: ' + fr.phase + '  (key ' + fr.key + ')';
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
 
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.isam-search').onclick = function () {
             try {

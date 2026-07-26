@@ -11,7 +11,6 @@
         const qPostings = q.postings;
         const qSet = {};
         qPostings.forEach((d) => { qSet[d] = true; });
-        let idx = 0;
 
         host.innerHTML =
             '<div class="inv-controls">' +
@@ -28,8 +27,7 @@
         const idxPane = host.querySelector('.inv-index');
         const qLine = host.querySelector('.inv-query-line');
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             const active = fr.active;
 
             docsPane.innerHTML = '<div class="inv-pane-title">Documents</div>';
@@ -62,11 +60,8 @@
 
             qLine.textContent = 'query: ' + qTerm + ' → [' + qPostings.join(', ') + ']';
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
 
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.inv-query-btn').onclick = function () {
             try {

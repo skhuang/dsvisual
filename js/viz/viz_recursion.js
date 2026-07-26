@@ -117,23 +117,21 @@
         edgesEl.style.width = (maxX + padX) + 'px';
         edgesEl.style.height = (maxY + padY) + 'px';
 
-        let idx = 0;
-
         const fmtResult = (r) => {
             if (Array.isArray(r)) return '[' + r.join(', ') + ']';
             return String(r);
         };
 
-        function paint() {
+        function paint(_fr, i) {
             // Which node ids are revealed (called) and which have returned by now
             const revealed = {};
             const returnedVal = {};
-            for (let k = 0; k <= idx && k < frames.length; k++) {
+            for (let k = 0; k <= i && k < frames.length; k++) {
                 const f = frames[k];
                 if (f.event === 'call') revealed[f.id] = true;
                 if (f.event === 'return') returnedVal[f.id] = f.value;
             }
-            const cur = frames[idx];
+            const cur = frames[i];
 
             // Edges (only where both endpoints revealed)
             let edgeSvg = '';
@@ -187,17 +185,13 @@
                 info = (cur.event === 'call' ? 'Call ' : 'Return ') + nodes[cur.id].label;
                 if (cur.event === 'return') info += ' → ' + fmtResult(cur.value);
             }
-            if (idx === frames.length - 1) {
+            if (i === frames.length - 1) {
                 info += (info ? '  |  ' : '') + 'Result: ' + fmtResult(result);
             }
             infoEl.textContent = info;
         }
 
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return true; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        paint();
-        host.appendChild(K().buildStepControls(step, reset, 700));
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
     }
 
     global.VizRegistry.attach('recursion', {
