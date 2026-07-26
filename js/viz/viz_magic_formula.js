@@ -16,7 +16,6 @@
                 msg: { en: 'Click a cell to query it by the O(1) formula, or "Fill all by formula".',
                        zh: '點擊一個格子以用 O(1) 公式查詢,或按下「用公式填滿」。' } }],
         };
-        let idx = 0;
 
         host.innerHTML =
             '<div class="mf-wrap">' +
@@ -40,8 +39,7 @@
         const order = host.querySelector('.mf-order');
         const grid = host.querySelector('[data-testid="mf-grid"]');
 
-        function paint() {
-            const fr = story.frames[idx];
+        function paint(fr) {
             let gridHtml = '';
             for (let i = 0; i < n; i++) {
                 for (let j = 0; j < n; j++) {
@@ -86,39 +84,34 @@
             });
         }
 
+        // `story.frames` is swapped at runtime (idle -> query -> fill), and buildFrameControls
+        // owns a fixed frames array for its lifetime — so each swap rebuilds a fresh control and
+        // replaces the previous one in the DOM, in place.
+        let strip = null;
+        function mountControls() {
+            const newStrip = K().buildFrameControls(story.frames, paint, { runIntervalMs: 500 });
+            if (strip) strip.replaceWith(newStrip);
+            else host.querySelector('.mf-wrap').appendChild(newStrip);
+            strip = newStrip;
+        }
+
         function startQuery(i, j) {
             const res = MagicFormulaViz.buildFrames(n, i, j);
             story = { kind: 'query', frames: res.frames };
-            idx = 0;
-            paint();
+            mountControls();
         }
         function startFillAll() {
             const res = MagicFormulaViz.fillAllFrames(n);
             story = { kind: 'fill', frames: res.frames };
-            idx = 0;
-            paint();
+            mountControls();
         }
 
-        function step() {
-            if (idx < story.frames.length - 1) {
-                idx++;
-                paint();
-                return idx < story.frames.length - 1;
-            }
-            return false;
-        }
-        function reset() {
-            idx = 0;
-            paint();
-        }
-
-        host.querySelector('.mf-wrap').appendChild(K().buildStepControls(step, reset, 500));
+        mountControls();
         host.querySelector('.mf-apply').onclick = () => {
             const val = parseInt(order.value, 10);
             if ([3, 5, 7].indexOf(val) >= 0) { _magicFormulaState.n = val; renderMagicFormula(); }
         };
         host.querySelector('.mf-fillall').onclick = () => startFillAll();
-        paint();
     }
 
     global.VizRegistry.attach('magic-formula', {

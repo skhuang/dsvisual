@@ -53,7 +53,7 @@
             return path;
         }
 
-        let searchPath = null, searchStep = 0, searchTarget = null;
+        let searchPath = null, searchTarget = null;
 
         const wrap = document.createElement('div');
         wrap.className = 'skiplist-wrap';
@@ -70,12 +70,10 @@
         const gridEl = wrap.querySelector('.skiplist-grid');
         const statusEl = wrap.querySelector('.skiplist-status');
 
-        function activeStep() {
-            if (!searchPath || searchStep === 0) return null;
-            return searchPath[searchStep - 1];
-        }
-        function draw() {
-            const act = activeStep();
+        // `act` is the step to highlight (or null before any search is active) — passed in
+        // directly rather than derived from a closure cursor, since buildFrameControls owns
+        // the cursor once a search's frames array exists.
+        function draw(act) {
             let html = '';
             for (let L = MAXLVL - 1; L >= 0; L--) {
                 html += '<div class="skiplist-level" data-level="' + L + '">';
@@ -99,30 +97,59 @@
             }
             gridEl.innerHTML = html;
         }
-        function resetSearch() {
+
+        // `fr` is the search-path entry for this frame (or null for the "no active search"
+        // placeholder frame). frames[i] === searchPath[i] directly — no off-by-one, since the
+        // control's own index IS the step number (unlike the old searchStep-1 indirection).
+        function paint(fr) {
+            draw(fr);
+            if (!fr) { statusEl.innerHTML = '&nbsp;'; return; }
+            if (fr.kind === 'found') statusEl.textContent = 'Found ' + searchTarget;
+            else if (fr.kind === 'notfound') statusEl.textContent = searchTarget + ' not found';
+            else statusEl.textContent = 'level ' + fr.level + ': move ' + fr.kind;
+        }
+
+        // The search frames (`searchPath`) don't exist until a search key is entered — there is
+        // no stable frames array at render time. So: mount a one-frame placeholder control (frame
+        // = null, i.e. "no active step", matching the pre-search UI) up front, and on the first
+        // step/run click compute the path and swap in a fresh buildFrameControls(searchPath, ...)
+        // in its place. Reset always tears the real control back down to the placeholder (mirrors
+        // the old resetSearch(), and is what lets a later search target be entered).
+        let strip = null;
+        function mountPlaceholder() {
             searchPath = null;
-            searchStep = 0;
             searchTarget = null;
-            statusEl.innerHTML = '&nbsp;';
-            draw();
+            const newStrip = K().buildFrameControls([null], paint, { runIntervalMs: 500 });
+            if (strip) strip.replaceWith(newStrip); else wrap.appendChild(newStrip);
+            strip = newStrip;
         }
-        function stepSearch() {
-            if (!searchPath) {
-                const t = parseInt(wrap.querySelector('[data-skiplist-search]').value, 10);
-                if (Number.isNaN(t)) { showStatus('Enter a search key', '#f87171'); return false; }
-                searchTarget = t;
-                searchPath = computePath(t);
-                searchStep = 0;
+        function mountSearch(autoRun) {
+            const t = parseInt(wrap.querySelector('[data-skiplist-search]').value, 10);
+            if (Number.isNaN(t)) { showStatus('Enter a search key', '#f87171'); return; }
+            searchTarget = t;
+            searchPath = computePath(t);
+            const newStrip = K().buildFrameControls(searchPath, paint, { runIntervalMs: 500 });
+            strip.replaceWith(newStrip);
+            strip = newStrip;
+            if (autoRun) { const runBtn = newStrip.querySelector('[data-action="run"]'); if (runBtn) runBtn.click(); }
+        }
+        // Delegate: intercept the very first step/run click (before a path exists) to compute
+        // it and swap in the real control; intercept reset always, to fully clear the search
+        // back to the placeholder. Capture phase on an ancestor of the control fires before the
+        // control's own (target-phase) click handler, so stopPropagation() here prevents it from
+        // also firing against the strip we just replaced.
+        wrap.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn || !wrap.contains(btn)) return;
+            const action = btn.getAttribute('data-action');
+            if (action === 'reset') {
+                e.stopPropagation();
+                mountPlaceholder();
+            } else if ((action === 'step' || action === 'run') && !searchPath) {
+                e.stopPropagation();
+                mountSearch(action === 'run');
             }
-            if (searchStep >= searchPath.length) return false;
-            const s = searchPath[searchStep];
-            searchStep++;
-            draw();
-            if (s.kind === 'found') statusEl.textContent = 'Found ' + searchTarget;
-            else if (s.kind === 'notfound') statusEl.textContent = searchTarget + ' not found';
-            else statusEl.textContent = 'level ' + s.level + ': move ' + s.kind;
-            return searchStep < searchPath.length;
-        }
+        }, true);
 
         wrap.querySelector('[data-action="skiplist-insert"]').onclick = () => {
             const v = parseInt(wrap.querySelector('[data-skiplist-val]').value, 10);
@@ -143,8 +170,7 @@
             renderSkipList();
         };
 
-        wrap.appendChild(K().buildStepControls(stepSearch, resetSearch, 500));
-        draw();
+        mountPlaceholder();
     }
 
     global.VizRegistry.attach('skip-list', {
