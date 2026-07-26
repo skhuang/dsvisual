@@ -54,8 +54,6 @@
         const findEl = host.querySelector('.eq-find');
         const statusEl = host.querySelector('.eq-status');
 
-        let idx = 0;
-
         function chainHtml(chain, highlightSet) {
             if (!chain.length) return '<span class="eq-null">&empty;</span>';
             return chain.map((v) =>
@@ -128,8 +126,7 @@
             findEl.innerHTML = html;
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             paintAdj(fr);
             paintFind(fr);
             let status = 'Phase: ' + fr.phase;
@@ -138,11 +135,7 @@
             statusEl.textContent = status;
         }
 
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return true; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        paint();
-        host.appendChild(K().buildStepControls(step, reset, 700));
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.eq-build').onclick = () => {
             try {

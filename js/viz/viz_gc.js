@@ -99,7 +99,6 @@
         if (!_gcState) _gcState = { mode: 'mark-sweep' };
         const host = K().acquireDynamicVizHost();
         const { frames } = GcMemoryViz.gcMemoryFrames(_gcState.mode);
-        let idx = 0;
 
         const modes = [
             ['mark-sweep', 'Mark-Sweep'],
@@ -120,8 +119,7 @@
         const stage = host.querySelector('.gc-stage');
         const badge = host.querySelector('.gc-badge');
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             stage.innerHTML = '';
             if (_gcState.mode === 'mark-sweep') {
                 badge.textContent = 'phase: ' + fr.phase + (fr.active != null ? '  (obj ' + fr.active + ')' : '');
@@ -186,11 +184,7 @@
                 stage.appendChild(bar);
             }
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.gc-mode').onchange = function () {
             _gcState.mode = this.value;

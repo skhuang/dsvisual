@@ -22,7 +22,6 @@
         const n = st.keys.length;
         const res = ObstViz.buildObstFrames(st.keys, st.freqs);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="obst-controls">' +
@@ -35,8 +34,7 @@
             '<div class="obst-tree-stage"><svg class="obst-edges"></svg><div class="obst-nodes"></div></div>' +
             '<div class="obst-phase"></div>';
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.obst-grid')) return;
             let html = '<table class="obst-tbl"><tr><th>i\\j</th>';
             for (let j = 0; j < n; j++) html += '<th>' + st.keys[j] + '</th>';
@@ -66,11 +64,7 @@
             } else { nodesEl.innerHTML = ''; edgesEl.innerHTML = ''; }
             host.querySelector('.obst-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 600));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 600 }));
         host.querySelector('.obst-apply').onclick = () => {
             const ks = host.querySelector('.obst-keys').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             const fs = host.querySelector('.obst-freqs').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);

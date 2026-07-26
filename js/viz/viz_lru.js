@@ -9,7 +9,6 @@
         const langOf = K().langOf;
         const res = LruViz.buildFrames(st.capacity, st.keys);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="lru-controls">' +
@@ -22,8 +21,7 @@
             '<div class="lru-stats" data-testid="lru-stats"></div>' +
             '<div class="lru-phase"></div>';
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             const stage = host.querySelector('.lru-stage');
             if (!stage) return;
             const last = fr.order.length - 1;
@@ -44,11 +42,7 @@
                 'hits ' + fr.hits + ' · misses ' + fr.misses + ' · cap ' + fr.capacity;
             host.querySelector('.lru-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
         host.querySelector('.lru-apply').onclick = () => {
             const cap = parseInt(host.querySelector('.lru-cap').value, 10);
             const keys = host.querySelector('.lru-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);

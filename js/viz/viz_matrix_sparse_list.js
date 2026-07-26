@@ -58,16 +58,13 @@
         const edgesEl = host.querySelector('.msl-edges');
         const labelEl = host.querySelector('.msl-label');
 
-        let idx = 0;
-
         const cellW = 64, cellH = 48, headW = 46, headH = 34, pad = 20;
         const colX = (c) => headW + c * cellW + cellW / 2;
         const rowY = (r) => headH + r * cellH + cellH / 2;
         const colHeaderY = headH / 2;
         const rowHeaderX = headW / 2;
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             const revealed = fr.nodes || [];
             const byId = {};
             const revealedIds = {};
@@ -148,11 +145,7 @@
             });
         }
 
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        paint();
-        host.appendChild(K().buildStepControls(step, reset, 700));
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.msl-build').onclick = () => {
             try {

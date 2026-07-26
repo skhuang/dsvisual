@@ -9,7 +9,6 @@
         const langOf = K().langOf;
         const res = DoublyViz.buildDoublyFrames(st.vals, st.circular);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="dl-controls">' +
@@ -21,8 +20,7 @@
             '<div class="dl-row' + (st.circular ? ' dl-circular-on' : '') + '"></div>' +
             '<div class="dl-phase"></div>';
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.dl-row')) return;
             host.querySelector('.dl-row').innerHTML = fr.nodes.map((n, i) =>
                 '<span class="dl-node' + (i === fr.current ? ' cur' : '') + '">' +
@@ -33,11 +31,7 @@
             ).join('') + (fr.circular ? '<span class="dl-wrap">↩ circular</span>' : '');
             host.querySelector('.dl-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 600));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 600 }));
         host.querySelector('.dl-apply').onclick = () => {
             const vals = host.querySelector('.dl-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             const circular = host.querySelector('.dl-circular').checked;

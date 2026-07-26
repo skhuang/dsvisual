@@ -30,7 +30,6 @@
         const rows = parsed.rows, cols = parsed.cols;
         const res = SparseViz.buildFastTransposeFrames(matrix);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="sm-controls"><input type="text" class="sm-input" value="' + st.text + '">' +
@@ -79,8 +78,7 @@
                 '<tr><th>v</th>' + vRow + '</tr></table></div>';
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.sm-dense')) return;
             host.querySelector('.sm-dense').innerHTML = gridHtml(matrix, langOf({ zh: '原矩陣', en: 'Original' }));
             let tr = '<div class="sm-grid-title">' + langOf({ zh: '三元組 (列,欄,值)', en: 'Triples (r,c,v)' }) + '</div><table class="sm-triple-tbl"><tr><th>r</th><th>c</th><th>v</th></tr>';
@@ -97,11 +95,7 @@
             host.querySelector('.sm-arrays').innerHTML = a;
             host.querySelector('.sm-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
         host.querySelector('.sm-apply').onclick = () => {
             const v = host.querySelector('.sm-input').value.trim();
             const p = SparseViz.parseMatrix(v);
