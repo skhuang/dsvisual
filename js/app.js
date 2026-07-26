@@ -1408,7 +1408,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderMethodSections(getMethodGroupForMode(currentMode).id);
     window.VizKit = {
         acquireDynamicVizHost,
-        buildStepControls,
         buildFrameControls,
         getInputDifficulty,
         langOf: (m) => (window.I18N && window.I18N.getCurrentLanguage() === 'zh') ? m.zh : m.en,
@@ -1914,50 +1913,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return host;
     }
 
-    function buildStepControls(onStep, onReset, runIntervalMs) {
-        const mode = (typeof currentMode !== 'undefined' && currentMode) ? currentMode : 'default';
-        const storeKey = 'dsvisual.stepSpeed.' + mode;
-        const clampV = (v) => Math.max(10, Math.min(600, v));
-        let sliderVal = clampV(610 - (runIntervalMs || 500));
-        try {
-            const saved = localStorage.getItem(storeKey);
-            if (saved !== null && saved !== '') { const n = parseInt(saved, 10); if (Number.isFinite(n)) sliderVal = clampV(n); }
-        } catch (e) { /* localStorage unavailable — use default */ }
-
-        const strip = document.createElement('div');
-        strip.className = 'stepctl';
-        strip.innerHTML =
-            '<button type="button" data-action="step">Step</button>' +
-            '<button type="button" data-action="run">Run</button>' +
-            '<button type="button" data-action="reset">Reset</button>' +
-            '<label class="stepctl-speed-wrap">Speed <input type="range" class="stepctl-speed" min="10" max="600" value="' + sliderVal + '"></label>';
-
-        const runBtn = strip.querySelector('[data-action="run"]');
-        const slider = strip.querySelector('.stepctl-speed');
-        let timer = null;
-        let state = 'idle'; // 'idle' | 'running' | 'paused'
-        const delay = () => 610 - parseInt(slider.value, 10);
-
-        function setBtn() { runBtn.textContent = (state === 'running') ? 'Pause' : (state === 'paused' ? 'Resume' : 'Run'); }
-        function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
-        function startTimer() {
-            stopTimer();
-            timer = setInterval(() => { const more = onStep(); if (more === false) { stopTimer(); state = 'idle'; setBtn(); } }, delay());
-        }
-        function run() { state = 'running'; setBtn(); startTimer(); }
-        function pause() { stopTimer(); state = 'paused'; setBtn(); }
-
-        strip.querySelector('[data-action="step"]').onclick = () => { if (state === 'running') pause(); onStep(); };
-        runBtn.onclick = () => { if (state === 'running') pause(); else run(); };
-        strip.querySelector('[data-action="reset"]').onclick = () => { stopTimer(); state = 'idle'; setBtn(); onReset(); };
-        slider.addEventListener('input', () => {
-            try { localStorage.setItem(storeKey, String(slider.value)); } catch (e) { /* ignore */ }
-            if (state === 'running') startTimer(); // live re-apply new speed
-        });
-        setBtn();
-        return strip;
-    }
-
     function buildFrameControls(frames, paint, opts) {
         opts = opts || {};
         const last = Math.max(0, frames.length - 1);
@@ -2159,7 +2114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // paints frame 0 synchronously during construction, and that paint calls renderOOP(),
         // which calls back into syncOopStepControls(). Appending early means that reentrant
         // call finds this slot already in the DOM with a matching mode and no-ops, instead of
-        // recursing (buildStepControls never painted synchronously, so this never came up before).
+        // recursing (early stepped-viz controls never painted synchronously, so this never came up before).
         oopActions.appendChild(slot);
         slot.appendChild(buildFrameControls(OOP_STEPS[mode], (frame, i) => {
             setOopStep(mode, i);

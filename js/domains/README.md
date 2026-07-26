@@ -22,7 +22,7 @@ Three small globals, attached by `js/core/registry.js` and `js/core/domains.js`
   A domain module never touches `currentMode` directly — always through
   `C().getMode()`.
 - **`window.VizKit`** — grab-bag of app.js primitives a domain module needs:
-  `acquireDynamicVizHost`, `buildStepControls`, `getInputDifficulty`,
+  `acquireDynamicVizHost`, `buildFrameControls`, `getInputDifficulty`,
   `langOf(m)`, `t(key, vars)`, `showStatus(msg, color)`,
   `executeAnimWrapper(fn)` (runs `fn` under the shared animation
   start/stop/pause state machine used by the Run/Pause/Step controls).
