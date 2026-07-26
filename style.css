@@ -1987,6 +1987,23 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 .gc2-node-label { font-size: 12px; font-weight: 700; fill: #0f172a; }
 .gc2-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
 
+.gbp-wrap { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.gbp-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 13px; color: #475569; }
+.gbp-controls label { display: flex; align-items: center; gap: 4px; }
+.gbp-controls input[type="text"] { width: 120px; font-family: monospace; }
+.gbp-verdict { font-family: monospace; font-size: 14px; font-weight: 700; color: #1e293b; text-align: center; min-height: 1.2em; }
+.gbp-scroll { overflow: auto; max-height: 420px; width: 100%; display: flex; justify-content: center; }
+.gbp-graph { display: flex; justify-content: center; padding: 4px 0; }
+.gbp-svg { max-width: 260px; }
+.gbp-edge { stroke: #94a3b8; stroke-width: 2; }
+.gbp-edge-conflict { stroke: #dc2626; stroke-width: 4; }
+.gbp-node { fill: #f8fafc; stroke: #1e293b; stroke-width: 2; }
+.gbp-node-uncolored { fill: #e5e7eb; }
+.gbp-node-current { stroke: #0f172a; stroke-width: 4; }
+.gbp-node-frontier { stroke: #f59e0b; stroke-width: 3; stroke-dasharray: 4 3; }
+.gbp-node-label { font-size: 12px; font-weight: 700; fill: #0f172a; }
+.gbp-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
+
 /* ----- Header actions + language hover menu ----- */
 .app-header__actions {
     position: absolute;
