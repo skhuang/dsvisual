@@ -17,7 +17,6 @@
         const square = res.square;
         const path = res.path;
         const runs = res.runs;
-        let idx = 0;
 
         const CS = 22; // cell size (SVG user units); viewBox scales it responsively
         const planeCells = 3 * n;
@@ -52,8 +51,9 @@
             return el;
         }
 
-        function paint() {
-            const fr = frames[idx];
+        let lastFrame = frames[0];
+        function paint(fr) {
+            lastFrame = fr;
             const revealed = fr.phase === 'fill' ? fr.index + 1 : (fr.phase === 'done' ? n * n : 0);
             const showGhosts = ghostCb.checked;
             while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -126,20 +126,7 @@
             host.querySelector('[data-testid="mt-readout"]').textContent = readout;
         }
 
-        function step() {
-            if (idx < frames.length - 1) {
-                idx++;
-                paint();
-                return idx < frames.length - 1;
-            }
-            return false;
-        }
-        function reset() {
-            idx = 0;
-            paint();
-        }
-
-        host.querySelector('.mt-wrap').appendChild(K().buildStepControls(step, reset, 400));
+        host.querySelector('.mt-wrap').appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 400 }));
         order.onchange = () => {
             const val = parseInt(order.value, 10);
             if ([3, 5, 7].indexOf(val) >= 0) { _magicTorusState.n = val; renderMagicTorus(); }
@@ -148,8 +135,7 @@
             const val = parseInt(order.value, 10);
             if ([3, 5, 7].indexOf(val) >= 0) { _magicTorusState.n = val; renderMagicTorus(); }
         };
-        ghostCb.onchange = () => { _magicTorusState.ghosts = ghostCb.checked; paint(); };
-        paint();
+        ghostCb.onchange = () => { _magicTorusState.ghosts = ghostCb.checked; paint(lastFrame); };
     }
 
     global.VizRegistry.attach('magic-torus', {

@@ -12,13 +12,11 @@
         const langOf = K().langOf;
         const frames = NanoComputeGraphViz.buildFrames(presets[_cgState.preset]).frames;
         const nodes = presets[_cgState.preset].nodes;
-        let idx = 0;
         host.innerHTML =
             '<div class="cg-nodes" data-testid="cg-nodes"></div>' +
             '<div class="cg-order" data-testid="cg-order"></div>' +
             '<div class="ss-phase cg-phase"></div>';
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             host.querySelector('.cg-nodes').innerHTML = nodes.map((n) => {
                 let cls = 'cg-node';
                 if (fr.evaluated.indexOf(n.id) >= 0) cls += ' done';
@@ -29,10 +27,7 @@
             host.querySelector('.cg-order').textContent = 'topo: ' + fr.order.join(' → ');
             host.querySelector('.cg-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
     }
 
     global.VizRegistry.attach('nano-compute-graph', {

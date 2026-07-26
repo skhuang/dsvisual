@@ -18,7 +18,6 @@
         const a = res.a;
         const b = res.b;
         const magicSum = res.magicSum;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="ml-wrap">' +
@@ -49,8 +48,7 @@
             return false;
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             const revealed = fr.phase === 'split' ? fr.count : n * n;
             const squareGrid = host.querySelector('[data-testid="ml-grid-square"]');
             const aGrid = host.querySelector('[data-testid="ml-grid-a"]');
@@ -99,25 +97,11 @@
             host.querySelector('.ml-readout').textContent = readout;
         }
 
-        function step() {
-            if (idx < frames.length - 1) {
-                idx++;
-                paint();
-                return idx < frames.length - 1;
-            }
-            return false;
-        }
-        function reset() {
-            idx = 0;
-            paint();
-        }
-
-        host.querySelector('.ml-wrap').appendChild(K().buildStepControls(step, reset, 500));
+        host.querySelector('.ml-wrap').appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 500 }));
         host.querySelector('.ml-apply').onclick = () => {
             const val = parseInt(order.value, 10);
             if ([3, 5, 7, 9].indexOf(val) >= 0) { _magicLatinState.n = val; renderMagicLatin(); }
         };
-        paint();
     }
 
     global.VizRegistry.attach('magic-latin', {

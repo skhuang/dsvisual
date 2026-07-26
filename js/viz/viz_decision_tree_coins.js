@@ -46,7 +46,6 @@
         const res = V().buildCoinsFrames({ fake: st.fake, heavy: st.heavy });
         const frames = res.frames;
         const tree = V().buildDecisionTree();
-        let idx = 0;
 
         const coinBtns = COINS.map((c, i) => '<button type="button" class="dc-coin' + (i === st.fake ? ' active' : '') + '" data-coin="' + i + '">' + c + '</button>').join('');
         host.innerHTML =
@@ -66,8 +65,7 @@
             '<div class="dc-treewrap"><div class="dc-treetitle">' + langOf({ zh: '決策樹(< = > 為秤重結果)', en: 'decision tree (< = > = weighing outcome)' }) + '</div><ul class="dc-tree"></ul></div>' +
             '<div class="et-phase"></div>';
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.dc-treewrap')) return;
             host.querySelector('.dc-balancewrap').innerHTML = balanceSVG(fr.left, fr.right, fr.outcome, langOf);
             const active = activeKeys(fr.nodeKey);
@@ -77,11 +75,7 @@
             else { v.className = 'dc-verdict'; v.textContent = ''; }
             host.querySelector('.et-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 900));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 900 }));
 
         host.querySelectorAll('.dc-coin').forEach((b) => { b.onclick = () => { st.fake = parseInt(b.getAttribute('data-coin'), 10); renderDecisionTreeCoins(); }; });
         host.querySelectorAll('.dc-hl').forEach((b) => { b.onclick = () => { st.heavy = b.getAttribute('data-heavy') === '1'; renderDecisionTreeCoins(); }; });

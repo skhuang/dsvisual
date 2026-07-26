@@ -9,7 +9,6 @@
         const langOf = K().langOf;
         const corpus = st.corpus.split(',').map((s) => s.trim()).filter(Boolean);
         const frames = NanoBpeTrainViz.buildFrames(corpus, st.merges).frames;
-        let idx = 0;
         host.innerHTML =
             '<div class="ss-controls">' +
               'corpus <input type="text" class="bt-corpus" value="' + st.corpus + '">' +
@@ -19,17 +18,13 @@
             '<div class="bt-symbols" data-testid="bt-symbols"></div>' +
             '<div class="bt-pairs" data-testid="bt-pairs"></div>' +
             '<div class="ss-phase bt-phase"></div>';
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             host.querySelector('.bt-symbols').innerHTML = fr.symbols.map((s) => '<span class="bt-sym">' + s + '</span>').join('');
             host.querySelector('.bt-pairs').innerHTML = (fr.pairCounts || []).slice(0, 8).map(([p, c]) =>
                 '<span class="bt-pair' + (p === fr.top ? ' top' : '') + '">' + p + ' ×' + c + '</span>').join('');
             host.querySelector('.bt-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-        host.appendChild(K().buildStepControls(step, reset, 800));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
         host.querySelector('.bt-apply').onclick = () => {
             const c = host.querySelector('.bt-corpus').value;
             const m = parseInt(host.querySelector('.bt-merges').value, 10);

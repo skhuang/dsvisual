@@ -15,7 +15,6 @@
         const original = res.original;
         const magicSum = res.magicSum;
         const orbitInfo = MagicSymmetryViz.orbit(n);
-        let idx = 0;
 
         host.innerHTML =
             '<div class="sym-wrap">' +
@@ -49,8 +48,7 @@
             return false;
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             const originalGrid = host.querySelector('[data-testid="sym-grid-original"]');
             const resultGrid = host.querySelector('[data-testid="sym-grid"]');
             if (!originalGrid || !resultGrid) return;
@@ -95,20 +93,7 @@
             host.querySelector('[data-testid="sym-readout"]').textContent = readout;
         }
 
-        function step() {
-            if (idx < frames.length - 1) {
-                idx++;
-                paint();
-                return idx < frames.length - 1;
-            }
-            return false;
-        }
-        function reset() {
-            idx = 0;
-            paint();
-        }
-
-        host.querySelector('.sym-wrap').appendChild(K().buildStepControls(step, reset, 500));
+        host.querySelector('.sym-wrap').appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 500 }));
         host.querySelector('.sym-apply').onclick = () => {
             const val = parseInt(order.value, 10);
             if ([3, 5, 7].indexOf(val) >= 0) { _magicSymmetryState.n = val; _magicSymmetryState.seen = new Set(); renderMagicSymmetry(); }
@@ -119,7 +104,6 @@
                 renderMagicSymmetry();
             };
         });
-        paint();
     }
 
     global.VizRegistry.attach('magic-symmetry', {

@@ -8,7 +8,6 @@
         const st = _bpeEncState;
         const langOf = K().langOf;
         const frames = NanoBpeEncodeViz.buildFrames(st.vocab, st.input).frames;
-        let idx = 0;
         host.innerHTML =
             '<div class="ss-controls">' +
               'vocab <input type="text" class="be-vocab" value="' + st.vocab.join(',') + '">' +
@@ -18,8 +17,7 @@
             '<div class="be-input-row" data-testid="be-input"></div>' +
             '<div class="be-tokens" data-testid="be-tokens"></div>' +
             '<div class="ss-phase be-phase"></div>';
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             host.querySelector('.be-input-row').innerHTML = st.input.split('').map((ch, i) => {
                 let cls = 'be-ch';
                 if (i >= fr.matchStart && i < fr.matchEnd) cls += ' match';
@@ -30,10 +28,7 @@
                 '<span class="be-token">' + t + '</span>').join('');
             host.querySelector('.be-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-        host.appendChild(K().buildStepControls(step, reset, 600));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 600 }));
         host.querySelector('.be-apply').onclick = () => {
             const vocab = host.querySelector('.be-vocab').value.split(',').map((s) => s.trim()).filter(Boolean);
             const input = host.querySelector('.be-input').value.trim();

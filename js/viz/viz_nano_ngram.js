@@ -10,7 +10,6 @@
         const cand = st.cand.split(',').map((p) => { const [t, c] = p.split(':'); return [t.trim(), parseInt(c, 10)]; })
                         .filter(([t, c]) => t && Number.isFinite(c));
         const frames = NanoNgramNextViz.buildFrames(cand, st.r).frames;
-        let idx = 0;
         host.innerHTML =
             '<div class="ss-controls">' +
               'dist <input type="text" class="ng-cand" value="' + st.cand + '">' +
@@ -20,8 +19,7 @@
             '<div class="ng-bars" data-testid="ng-bars"></div>' +
             '<div class="ng-cum" data-testid="ng-cum"></div>' +
             '<div class="ss-phase ng-phase"></div>';
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             host.querySelector('.ng-bars').innerHTML = fr.candidates.map(([t, c], i) =>
                 '<span class="ng-bar' + (fr.picked === t ? ' picked' : '') + '" style="height:' + (10 + c * 12) + 'px">' + t + ':' + c + '</span>').join('');
             host.querySelector('.ng-cum').innerHTML = (fr.cumulative || []).map((v, i) => {
@@ -32,10 +30,7 @@
             }).join('') + (fr.draw ? '<span class="ng-draw">draw=' + fr.draw.toFixed(2) + '</span>' : '');
             host.querySelector('.ng-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
         host.querySelector('.ng-apply').onclick = () => {
             const c = host.querySelector('.ng-cand').value;
             const r = parseFloat(host.querySelector('.ng-r').value);

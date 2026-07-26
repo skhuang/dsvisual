@@ -61,7 +61,6 @@
         const n = st.n;
         const frames = buildMagicSquareFrames(n);
         const magicSum = n * (n * n + 1) / 2;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="magic-wrap">' +
@@ -101,8 +100,7 @@
                 '<div><strong>Diag</strong> ' + diagA + ', ' + diagB + '</div>';
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr, i) {
             const board = host.querySelector('.magic-board');
             if (!board) return;
             let html = '';
@@ -113,7 +111,7 @@
                 }
             }
             board.innerHTML = html;
-            host.querySelector('.magic-step').textContent = 'Step ' + idx + ' / ' + (frames.length - 1);
+            host.querySelector('.magic-step').textContent = 'Step ' + i + ' / ' + (frames.length - 1);
             host.querySelector('.magic-rule').textContent = langOf(fr.msg);
             const detail = fr.done
                 ? 'n = ' + n + ', magic sum = ' + magicSum
@@ -123,25 +121,11 @@
             host.querySelector('.magic-readout').innerHTML = '<div>' + detail + '</div>' + sumsHtml(fr);
         }
 
-        function step() {
-            if (idx < frames.length - 1) {
-                idx++;
-                paint();
-                return idx < frames.length - 1;
-            }
-            return false;
-        }
-        function reset() {
-            idx = 0;
-            paint();
-        }
-
-        host.querySelector('.magic-wrap').appendChild(K().buildStepControls(step, reset, 500));
+        host.querySelector('.magic-wrap').appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 500 }));
         order.onchange = () => {
             _magicSquareState.n = parseInt(order.value, 10);
             renderMagicSquare();
         };
-        paint();
     }
 
     global.VizRegistry.attach('magic-square', {
