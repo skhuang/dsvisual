@@ -11,7 +11,6 @@
         const B = PolyViz.parsePoly(st.b);
         const res = PolyViz.buildPaddFrames(A, B);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="pp-controls">' +
@@ -30,19 +29,15 @@
             return poly.map((t, k) => '<span class="pp-term' + (k === ptr ? ' pp-cur' : '') + '">' + PolyViz.formatPoly([t]) + '</span>').join('');
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.pp-a-terms')) return;
             host.querySelector('.pp-a-terms').innerHTML = termCells(A, fr.i);
             host.querySelector('.pp-b-terms').innerHTML = termCells(B, fr.j);
             host.querySelector('.pp-result').innerHTML = (fr.result || []).map((t) => '<span class="pp-term out">' + PolyViz.formatPoly([t]) + '</span>').join('') || '<span class="pp-term out">0</span>';
             host.querySelector('.pp-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
 
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
         host.querySelector('.pp-apply').onclick = () => {
             const a = host.querySelector('.pp-a').value.trim();
             const b = host.querySelector('.pp-b').value.trim();
