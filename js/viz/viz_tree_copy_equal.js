@@ -20,7 +20,6 @@
         const copy = st.mode === 'copy';
         const frames = copy ? V().buildCopyFrames(V().tokenize(st.src)).frames
                             : V().buildEqualFrames(V().tokenize(st.a), V().tokenize(st.b)).frames;
-        let idx = 0;
 
         const modeBtn = (m, label) => '<button type="button" class="ce-mode-btn' + (st.mode === m ? ' active' : '') + '" data-mode="' + m + '">' + label + '</button>';
         const inputs = copy
@@ -58,8 +57,7 @@
             }).join('');
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.ce-panels')) return;
             const verdictEl = host.querySelector('.ce-verdict');
             if (copy) {
@@ -80,11 +78,7 @@
             }
             host.querySelector('.et-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 800));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
 
         host.querySelectorAll('.ce-mode-btn').forEach((b) => { b.onclick = () => { const m = b.getAttribute('data-mode'); if (m !== st.mode) { st.mode = m; renderTreeCopyEqual(); } }; });
         host.querySelector('.ce-apply').onclick = () => {

@@ -21,7 +21,6 @@
         const st = _ttState;
         const root = TreeTraversalViz.buildTreeFromValues(st.values);
         const frames = TreeTraversalViz.buildTraversalFrames(root, st.order, st.mode);
-        let idx = 0;
         const langOf = K().langOf;
 
         host.innerHTML =
@@ -72,8 +71,7 @@
             nodesEl.appendChild(d);
         });
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             const seqEl = host.querySelector('.tt-seq');
             if (!seqEl) return;
             nodesMeta.forEach(m => {
@@ -90,11 +88,7 @@
                 fr.aux.items.map(v => '<span class="tt-aux-cell">' + v + '</span>').join('');
             host.querySelector('.tt-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         function rebuild() {
             st.order = host.querySelector('.tt-order').value;

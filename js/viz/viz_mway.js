@@ -9,7 +9,6 @@
         const langOf = K().langOf;
         const res = MwayViz.buildMwayFrames(st.keys, st.m);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="mw-controls">' +
@@ -37,8 +36,7 @@
             return { pos, xOf };
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.mw-nodes')) return;
             const nodesEl = host.querySelector('.mw-nodes');
             const edgesEl = host.querySelector('.mw-edges');
@@ -60,11 +58,7 @@
             }).join('');
             host.querySelector('.mw-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
         host.querySelector('.mw-apply').onclick = () => {
             const keys = host.querySelector('.mw-keys').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             const m = parseInt(host.querySelector('.mw-m').value, 10);

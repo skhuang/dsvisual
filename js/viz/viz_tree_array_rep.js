@@ -34,7 +34,6 @@
         const frames = res.frames;
         const size = res.size;
         const slots = res.slots;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="ar-controls">' +
@@ -60,8 +59,7 @@
             mark(2 * i, 'ar-hl-child'); mark(2 * i + 1, 'ar-hl-child');
         }
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.et-stage')) return;
             const stageEl = host.querySelector('.et-stage'); const W = stageEl.clientWidth || 720;
             const meta = []; let svg = '';
@@ -99,11 +97,7 @@
                 el.onclick = () => highlightArithmetic(parseInt(el.getAttribute('data-i'), 10));
             });
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.ar-apply').onclick = () => { const v = host.querySelector('.ar-input').value.trim(); if (v) { st.text = v; renderTreeArrayRep(); } };
         host.querySelectorAll('.ar-preset').forEach((b) => { b.onclick = () => { st.text = PRESETS[b.getAttribute('data-p')]; renderTreeArrayRep(); }; });

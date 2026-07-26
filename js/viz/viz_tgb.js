@@ -8,7 +8,6 @@
         const gen = TreeGeneralBinaryViz.parseGeneralTree(_tgbState.text);
         const bin = TreeGeneralBinaryViz.toBinary(gen);
         const { frames } = TreeGeneralBinaryViz.convertFrames(gen);
-        let idx = 0;
 
         host.innerHTML =
             '<div class="tt-controls">' +
@@ -92,8 +91,8 @@
                    '" stroke="' + color + '" stroke-width="' + width + '"/>';
         }
 
-        function paint() {
-            const fr = frames[idx] || frames[frames.length - 1] || { links: [], active: null };
+        function paint(fr) {
+            fr = fr || frames[frames.length - 1] || { links: [], active: null };
             const active = fr.active;
             const isActive = (l) => active && l.from === active.from && l.to === active.to && l.kind === active.kind;
 
@@ -136,11 +135,7 @@
                 if (ba) ba.classList.add('active');
             }
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelector('.tgb-build').onclick = () => {
             try {

@@ -22,7 +22,6 @@
         const root = ThreadedViz.buildTreeFromValues(st.vals);
         const res = ThreadedViz.buildThreadedFrames(root);
         const frames = res.frames;
-        let idx = 0;
 
         host.innerHTML =
             '<div class="th-controls"><input type="text" class="th-input" value="' + st.vals.join(',') + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="th-build">Build</button>' +
@@ -36,8 +35,7 @@
         const byId = {}; meta.forEach((m) => { byId[m.id] = m; });
         const nodesEl = host.querySelector('.th-nodes');
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.th-edges')) return;
             const edgesEl = host.querySelector('.th-edges');
             let svg = '';
@@ -53,11 +51,7 @@
             host.querySelector('.th-seq').textContent = fr.visited.join(', ');
             host.querySelector('.th-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
         host.querySelector('.th-build').onclick = () => {
             const vals = host.querySelector('.th-input').value.split(',').map((s) => parseInt(s.trim(), 10)).filter(Number.isFinite);
             if (vals.length) { st.vals = vals; renderTreeThreaded(); }

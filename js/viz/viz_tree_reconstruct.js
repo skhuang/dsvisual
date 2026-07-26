@@ -42,7 +42,6 @@
         const m = MODES[st.mode];
         const res = TreeReconstructViz.buildReconstructFrames(st.seq1, st.seq2, st.mode);
         const frames = res.frames;
-        let idx = 0;
 
         const modeBtn = (id, label) => '<button type="button" class="rc-mode-btn' + (st.mode === id ? ' active' : '') + '" data-mode="' + id + '">' + label + '</button>';
         host.innerHTML =
@@ -88,8 +87,7 @@
         host.querySelector('.rc-strip1').setAttribute('data-label', langOf(m.s1));
         host.querySelector('.rc-strip2').setAttribute('data-label', langOf(m.s2));
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr) {
             if (!host.querySelector('.et-stage')) return;
             paintTree(fr.tree, fr.created);
             // seq1 shows the driving-sequence root highlight; seq2 shows the split subrange
@@ -101,11 +99,7 @@
             else { verdictEl.className = 'rc-verdict'; verdictEl.textContent = ''; }
             host.querySelector('.et-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 700));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
 
         host.querySelectorAll('.rc-mode-btn').forEach((b) => {
             b.onclick = () => { const mm = b.getAttribute('data-mode'); if (mm !== st.mode) { st.mode = mm; st.seq1 = MODES[mm].d1; st.seq2 = MODES[mm].d2; renderTreeReconstruct(); } };

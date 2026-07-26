@@ -27,7 +27,6 @@
         const res = TreeCatalanViz.buildCatalanFrames(st.n);
         const frames = res.frames;
         const seq = TreeCatalanViz.catalanSequence(10);
-        let idx = 0;
 
         const nBtns = [0, 1, 2, 3, 4].map((k) => '<button type="button" class="cat-nbtn' + (k === st.n ? ' active' : '') + '" data-n="' + k + '">n=' + k + '</button>').join('');
         const seqRows = seq.map((r) => '<tr class="cat-seq-row" data-n="' + r.n + '"><td>C' + r.n + '</td><td>' + r.recurrence + '</td><td>' + r.closed + '</td><td>' + (r.recurrence === r.closed ? '✓' : '✗') + '</td></tr>').join('');
@@ -42,10 +41,9 @@
               '<table class="cat-seq"><thead><tr><th>n</th><th>' + langOf({ zh: '遞迴', en: 'recur.' }) + '</th><th>' + langOf({ zh: '封閉形', en: 'closed' }) + '</th><th>=</th></tr></thead><tbody>' + seqRows + '</tbody></table></div>' +
             '<div class="et-phase"></div>';
 
-        function paint() {
-            const fr = frames[idx];
+        function paint(fr, i) {
             if (!host.querySelector('.cat-groups')) return;
-            const shown = frames.slice(0, idx + 1).filter((f) => f.action === 'group');
+            const shown = frames.slice(0, i + 1).filter((f) => f.action === 'group');
             host.querySelector('.cat-groups').innerHTML = shown.map((g) =>
                 '<div class="cat-group"><div class="cat-ghead">' +
                     (g.n === 0 ? langOf({ zh: '空樹', en: 'empty tree' })
@@ -57,11 +55,7 @@
             else { v.className = 'cat-verdict'; v.textContent = ''; }
             host.querySelector('.et-phase').textContent = langOf(fr.msg);
         }
-        function step() { if (idx < frames.length - 1) { idx++; paint(); return idx < frames.length - 1; } return false; }
-        function reset() { idx = 0; paint(); }
-
-        host.appendChild(K().buildStepControls(step, reset, 800));
-        paint();
+        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
 
         host.querySelectorAll('.cat-nbtn').forEach((b) => { b.onclick = () => { const k = parseInt(b.getAttribute('data-n'), 10); if (k !== st.n) { st.n = k; renderTreeCatalan(); } }; });
     }
