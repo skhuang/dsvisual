@@ -254,6 +254,21 @@ const descDB = {
             <span class="badge space">Space: O(n + e)</span>
         </div>
     `,
+    'graph-bipartite': `
+        <h3>Bipartite Check (2-Colouring)</h3>
+        <p>A graph is <strong>bipartite</strong> if its vertices split into two disjoint sets <code>V&#8321;</code> and <code>V&#8322;</code> such that every edge joins a vertex in <code>V&#8321;</code> to one in <code>V&#8322;</code> — no edge lies within a set.</p>
+        <hr>
+        <ul>
+            <li><strong>Odd-cycle theorem:</strong> a graph is bipartite <em>iff</em> it contains no odd-length cycle. Every tree and every even cycle is bipartite; a triangle (or any odd cycle) is not.</li>
+            <li><strong>BFS 2-colouring:</strong> colour the start vertex A, then colour every neighbour the opposite colour level by level. If a vertex ever meets an already-coloured neighbour of the <em>same</em> colour, that edge closes an odd cycle → not bipartite.</li>
+            <li><strong>Disconnected graphs:</strong> run the colouring from each uncoloured vertex; the whole graph is bipartite only if every component is.</li>
+            <li><strong>Uses:</strong> bipartite matching (jobs&#8596;machines, students&#8596;courses), scheduling, and two-sided network models.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(n + e)</span>
+            <span class="badge space">Space: O(n + e)</span>
+        </div>
+    `,
     'tree-bst': `
         <h3>Binary Search Tree (Standard)</h3>
         <p>An elegant hierarchical associative routing structure.</p>

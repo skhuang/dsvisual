@@ -6,7 +6,7 @@ const FILE = 'file://' + path.resolve(__dirname, '../index.html');
 // One representative method per group — the load+dispatch path we must not regress.
 const MODES = [
   'stack-array', 'list-array', 'matrix-sparse', 'tree-bst', 'tree-trie',
-  'graph', 'graph-prim', 'graph-matrix', 'graph-components', 'hash-chain', 'cache-lru', 'heap-binary',
+  'graph', 'graph-prim', 'graph-matrix', 'graph-components', 'graph-bipartite', 'hash-chain', 'cache-lru', 'heap-binary',
   'sort-bubble', 'search-binary', 'file-isam', 'gc-memory', 'recursion',
   'oop-inheritance', 'pattern-singleton',
   // (pattern-singleton was previously excluded for an SVG-attribute console error in its
