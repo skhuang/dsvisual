@@ -1971,7 +1971,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrub.addEventListener('input', () => { pause(); goTo(+scrub.value); });
         speed.addEventListener('input', () => {
             try { localStorage.setItem(storeKey, String(speed.value)); } catch (e) { /* ignore */ }
-            if (playing) play(); // re-apply new speed live
+            if (playing && idx < last) play(); // re-apply new speed live (skip at last frame — about to auto-pause)
         });
 
         render();
