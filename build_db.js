@@ -33,6 +33,7 @@ const mappings = {
     'graph_matrix.cpp': 'codeGraphMatrix',
     'graph_components.cpp': 'codeGraphComponents',
     'graph_bipartite.cpp': 'codeGraphBipartite',
+    'graph_closure.cpp': 'codeGraphClosure',
     'list_array.cpp': 'codeListArray',
     'list_linked.cpp': 'codeListLinked',
     'hash_chaining.cpp': 'codeHashChain',
