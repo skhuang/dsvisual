@@ -23,4 +23,34 @@ test.describe('viz fullscreen focus mode', () => {
     await expect(page.locator('.app-header')).toBeVisible();
     await expect(page.locator('#viz-focus-exit')).toBeHidden();
   });
+
+  test('toggle button enters focus mode; exit button restores', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=graph-scc');
+    const toggle = page.locator('.method-section-card.active .viz-focus-toggle');
+    await expect(toggle).toBeVisible();
+    await expect(page.locator('body')).not.toHaveClass(/viz-focus/);
+
+    await toggle.click();
+    await expect(page.locator('body')).toHaveClass(/viz-focus/);
+    await expect(page.locator('.app-header')).toBeHidden();
+    await expect(page.locator('#viz-focus-exit')).toBeVisible();
+    await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+
+    await page.locator('#viz-focus-exit').click();
+    await expect(page.locator('body')).not.toHaveClass(/viz-focus/);
+    await expect(page.locator('.app-header')).toBeVisible();
+    await expect(page.locator('#viz-focus-exit')).toBeHidden();
+  });
+
+  test('Escape exits focus mode', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=graph-scc');
+    const toggle = page.locator('.method-section-card.active .viz-focus-toggle');
+    await toggle.click();
+    await expect(page.locator('body')).toHaveClass(/viz-focus/);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('body')).not.toHaveClass(/viz-focus/);
+    await expect(page.locator('.app-header')).toBeVisible();
+  });
 });

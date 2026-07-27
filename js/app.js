@@ -631,6 +631,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
                     </div>
                     ${useCodeDrawer ? `<button type="button" class="btn secondary code-drawer-toggle" data-testid="code-drawer-toggle" aria-expanded="false" aria-haspopup="dialog">&lt;/&gt; ${method.file}</button>` : ''}
+                    <button type="button" class="btn secondary viz-focus-toggle" data-testid="viz-focus-toggle" aria-pressed="false" data-i18n-aria-label="aria.fullscreen-toggle" aria-label="Toggle fullscreen focus mode" title="${t('btn.fullscreen')}">⛶ ${t('btn.fullscreen')}</button>
                     <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
                 </div>
             </div>
@@ -1425,6 +1426,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     registerBehaviors();
     bindDifficultySelect();
+    initVizFocus();
 
         // OOP state variables
         let oopInheritanceAnimationState = null;
@@ -1452,6 +1454,50 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.toggle('is-current-method', mid === currentMode);
         });
         if(currentMode === 'tree-splay') btnTreeSearch.classList.remove('hidden'); else btnTreeSearch.classList.add('hidden');
+    }
+
+    function initVizFocus() {
+        const body = document.body;
+        const exitBtn = document.getElementById('viz-focus-exit');
+        const fsElement = () => document.fullscreenElement || document.webkitFullscreenElement || null;
+        const fsRequest = (el) => {
+            const fn = el.requestFullscreen || el.webkitRequestFullscreen;
+            return fn ? fn.call(el) : null;
+        };
+        const fsExit = () => {
+            const fn = document.exitFullscreen || document.webkitExitFullscreen;
+            if (fn) fn.call(document);
+        };
+        const setPressed = (on) => {
+            const btn = document.querySelector('.method-section-card.active .viz-focus-toggle');
+            if (btn) btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        };
+        const onKeydown = (e) => { if (e.key === 'Escape') exitFocus(); };
+        function enterFocus() {
+            if (body.classList.contains('viz-focus')) return;
+            body.classList.add('viz-focus');
+            setPressed(true);
+            document.addEventListener('keydown', onKeydown);
+            try { const p = fsRequest(document.documentElement); if (p && p.catch) p.catch(() => {}); } catch (_) {}
+        }
+        function exitFocus() {
+            if (!body.classList.contains('viz-focus')) return;
+            body.classList.remove('viz-focus');
+            setPressed(false);
+            document.removeEventListener('keydown', onKeydown);
+            if (fsElement()) { try { fsExit(); } catch (_) {} }
+        }
+        const onFsChange = () => {
+            if (!fsElement() && body.classList.contains('viz-focus')) exitFocus();
+        };
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.closest && e.target.closest('.viz-focus-toggle')) {
+                if (body.classList.contains('viz-focus')) exitFocus(); else enterFocus();
+            }
+        });
+        if (exitBtn) exitBtn.addEventListener('click', exitFocus);
+        document.addEventListener('fullscreenchange', onFsChange);
+        document.addEventListener('webkitfullscreenchange', onFsChange);
     }
 
     // ----------- LOGIC & RENDER OMITTED -----------
