@@ -62,4 +62,42 @@ test.describe('viz fullscreen focus mode', () => {
     await page.evaluate(() => document.body.classList.add('viz-focus'));
     await expect(page.locator('.method-section-card.active .code-panel')).toBeHidden();
   });
+
+  test('exit button anchors bottom-right (clears the top control bar)', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=graph-scc');
+    await page.locator('.method-section-card.active .viz-focus-toggle').click();
+    const exit = page.locator('#viz-focus-exit');
+    await expect(exit).toBeVisible();
+    const box = await exit.boundingBox();
+    const vp = page.viewportSize();
+    // Bottom-right: sits in the lower and right portion of the viewport, away
+    // from the viz control bar which lives at the top.
+    expect(box.y + box.height).toBeGreaterThan(vp.height * 0.6);
+    expect(box.x + box.width).toBeGreaterThan(vp.width * 0.6);
+  });
+
+  test('exit button is draggable; a drag repositions it without exiting focus', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=graph-scc');
+    await page.locator('.method-section-card.active .viz-focus-toggle').click();
+    const exit = page.locator('#viz-focus-exit');
+    const before = await exit.boundingBox();
+
+    // Drag it toward the top-left.
+    await page.mouse.move(before.x + before.width / 2, before.y + before.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(before.x - 120, before.y - 200, { steps: 8 });
+    await page.mouse.up();
+
+    // Still in focus mode (the drag must not trigger the exit click) ...
+    await expect(page.locator('body')).toHaveClass(/viz-focus/);
+    // ... and the button actually moved.
+    const after = await exit.boundingBox();
+    expect(Math.abs(after.x - before.x) + Math.abs(after.y - before.y)).toBeGreaterThan(40);
+
+    // A plain click (no drag) still exits.
+    await exit.click();
+    await expect(page.locator('body')).not.toHaveClass(/viz-focus/);
+  });
 });

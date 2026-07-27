@@ -3275,10 +3275,16 @@ body.viz-focus .method-section-card.active .method-section-visual {
     cursor: pointer;
 }
 .viz-focus-exit:hover { background: rgba(30, 41, 59, 0.95); }
+/* Default anchor is bottom-right so it clears the viz control bar at the top.
+   Draggable at runtime (js/app.js sets inline left/top, clearing right/bottom). */
 body.viz-focus .viz-focus-exit {
     display: inline-flex;
     position: fixed;
-    top: 12px;
+    bottom: 12px;
     right: 12px;
     z-index: 2100;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
 }
+body.viz-focus .viz-focus-exit:active { cursor: grabbing; }

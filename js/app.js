@@ -1477,6 +1477,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (body.classList.contains('viz-focus')) return;
             body.classList.add('viz-focus');
             setPressed(true);
+            // Reset any dragged position so the button starts at its CSS default
+            // (bottom-right) on each entry.
+            if (exitBtn) { exitBtn.style.left = ''; exitBtn.style.top = ''; exitBtn.style.right = ''; exitBtn.style.bottom = ''; }
             document.addEventListener('keydown', onKeydown);
             try {
                 const p = fsRequest(document.documentElement);
@@ -1503,9 +1506,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (body.classList.contains('viz-focus')) exitFocus(); else enterFocus();
             }
         });
-        if (exitBtn) exitBtn.addEventListener('click', exitFocus);
+        if (exitBtn) {
+            // Click exits — unless the click concludes a drag (guard flag below).
+            exitBtn.addEventListener('click', () => {
+                if (exitBtn.dataset.dragged === '1') { delete exitBtn.dataset.dragged; return; }
+                exitFocus();
+            });
+            makeExitDraggable(exitBtn);
+        }
         document.addEventListener('fullscreenchange', onFsChange);
         document.addEventListener('webkitfullscreenchange', onFsChange);
+    }
+
+    // Lets the fullscreen exit button be dragged anywhere so it never blocks a
+    // viz's controls. Uses pointer events (mouse + touch); a move past a small
+    // threshold sets data-dragged so the trailing click does NOT exit focus.
+    function makeExitDraggable(el) {
+        let dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+        el.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            dragging = true; moved = false;
+            const r = el.getBoundingClientRect();
+            ox = r.left; oy = r.top; sx = e.clientX; sy = e.clientY;
+            try { el.setPointerCapture(e.pointerId); } catch (_) {}
+        });
+        el.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            const dx = e.clientX - sx, dy = e.clientY - sy;
+            if (!moved && Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+            moved = true;
+            const w = el.offsetWidth, h = el.offsetHeight;
+            const nx = Math.max(0, Math.min(window.innerWidth - w, ox + dx));
+            const ny = Math.max(0, Math.min(window.innerHeight - h, oy + dy));
+            el.style.left = nx + 'px'; el.style.top = ny + 'px';
+            el.style.right = 'auto'; el.style.bottom = 'auto';
+        });
+        const end = (e) => {
+            if (!dragging) return;
+            dragging = false;
+            try { el.releasePointerCapture(e.pointerId); } catch (_) {}
+            if (moved) el.dataset.dragged = '1';   // suppress the trailing click's exit
+        };
+        el.addEventListener('pointerup', end);
+        el.addEventListener('pointercancel', end);
     }
 
     // ----------- LOGIC & RENDER OMITTED -----------
