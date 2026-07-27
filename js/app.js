@@ -118,6 +118,7 @@ const METHOD_GROUPS = [
             { id: 'graph-matrix', title: 'Adjacency Matrix', file: 'graph_matrix.cpp', visualizer: 'graph-matrix', controls: 'graph-matrix', codeDrawer: true },
             { id: 'graph-components', title: 'Connected Components', file: 'graph_components.cpp', visualizer: 'graph-components', controls: 'graph-components', codeDrawer: true },
             { id: 'graph-bipartite', title: 'Bipartite Check', file: 'graph_bipartite.cpp', visualizer: 'graph-bipartite', controls: 'graph-bipartite', codeDrawer: true },
+            { id: 'graph-closure', title: 'Transitive Closure', file: 'graph_closure.cpp', visualizer: 'graph-closure', controls: 'graph-closure', codeDrawer: true },
         ],
     },
     {
