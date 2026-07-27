@@ -277,7 +277,7 @@ const descDB = {
             <li><strong>Warshall's algorithm:</strong> start with <code>R</code> = the adjacency matrix, then for each intermediate vertex <code>k</code> set <code>R[i][j] |= R[i][k] &amp; R[k][j]</code> — if <code>i</code> reaches <code>k</code> and <code>k</code> reaches <code>j</code>, then <code>i</code> reaches <code>j</code>.</li>
             <li><strong>Pivot order matters not:</strong> after all <code>n</code> pivots, <code>R</code> is the full closure regardless of order.</li>
             <li><strong>Diagonal &amp; cycles:</strong> <code>R[i][i]</code> becomes 1 exactly when vertex <code>i</code> lies on a directed cycle.</li>
-            <li><strong>Relation to Floyd-Warshall:</strong> the same triple loop; Floyd-Warshall replaces boolean OR/AND with min/＋ over edge weights to get shortest paths.</li>
+            <li><strong>Relation to Floyd-Warshall:</strong> the same triple loop; Floyd-Warshall replaces boolean OR/AND with min/+ over edge weights to get shortest paths.</li>
         </ul>
         <div class="complexities">
             <span class="badge time">Time: O(n&sup3;)</span>

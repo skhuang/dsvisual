@@ -39,7 +39,6 @@
     const CX = 130, CY = 130, R = 100, NR = 16;
     const pos = [];
     for (let i = 0; i < n; i++) { const a = -Math.PI/2 + i*2*Math.PI/Math.max(n,1); pos.push({ x: CX + R*Math.cos(a), y: CY + R*Math.sin(a) }); }
-    const origSet = new Set(origEdges.map((e) => e.u + '>' + e.v));
     const cur = frame.cur;
     let svg = '<svg viewBox="0 0 260 260" width="260" height="260" class="gcl-svg">' +
       '<defs><marker id="gcl-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>' +
