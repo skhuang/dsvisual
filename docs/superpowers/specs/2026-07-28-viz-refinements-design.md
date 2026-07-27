@@ -97,26 +97,34 @@ viz that has an examples select — NO per-viz renderer edits. Because viz re-re
 - Add `difficulty.follow-global`: en `Follow global`, zh `跟隨全域`.
 - (Existing `difficulty.normal|special|edge|large` reused.)
 
-## 3. Fullscreen auto-fit (all viz)
+## 3. Fullscreen auto-fit (RB-tree pattern)
 
-`.viz-body-scaled` currently: `transform: scale(var(--viz-zoom, 1)); transform-origin: top left;`.
+The RB tree viz (`js/tree_rb_viz.js:414-424`) already fits its drawing to the container: it computes
+the natural drawing size `W,H`, reads `host.clientWidth/clientHeight`, `scale = min(hostW/W, hostH/H,
+cap)` clamped, and sets the SVG `viewBox="0 0 W H"` + `width=W*scale` / `height=H*scale`. So when the
+host grows (fullscreen) the SVG fills it **crisply** (viewBox, not a blurry CSS transform). Adopt the
+same mechanism (drop the earlier `--viz-fit` transform idea — no `.viz-body-scaled` change):
 
-- `style.css`: change to `transform: scale(calc(var(--viz-fit, 1) * var(--viz-zoom, 1)));`
-  (keep `transform-origin: top left`). With `--viz-fit` defaulting to 1, non-focus behaviour is
-  identical (scale == `--viz-zoom`).
-- `js/app.js` `initVizFocus`: add a fit computer that runs only in focus mode:
-  - `computeFit()`: find the active card's `.method-section-visual` (host, fixed `inset:0`) and its
-    `.viz-body-scaled` (content). `cw = scaled.scrollWidth`, `ch = scaled.scrollHeight` (layout
-    sizes, unaffected by the transform → no feedback loop). `fit = min(host.clientWidth/cw,
-    host.clientHeight/ch)`, clamped to `[0.2, 4]`. Set `scaled.style.setProperty('--viz-fit', fit)`.
-    Guard: only when `body.viz-focus` and cw/ch/avail are non-zero.
-  - On `enterFocus`: `requestAnimationFrame(computeFit)` (let layout settle), add a `window`
-    `resize` listener → `computeFit`, and a `ResizeObserver(computeFit)` observing the content
-    (fires on viz re-renders / frame-size changes; transform changes don't alter the observed border
-    box, so no loop).
-  - On `exitFocus`: disconnect the observer, remove the resize listener, and
-    `scaled.style.removeProperty('--viz-fit')` on the (re-queried) scaled element.
-  - Manual zoom (`--viz-zoom`) still multiplies the fit, so zooming inside focus mode works.
+- **Trie renderer (`js/viz/viz_trie.js`)** — size the SVG to the host in `paint()` instead of using
+  the fixed `layout.width`/`layout.height`. Let `natW = layout.width`, `natH = layout.height`; read
+  the available box from the scroll host (`scrollEl.clientWidth`/`clientHeight`, i.e. `.trie-scroll`);
+  `scale = clamp(min(hostW/natW, hostH/natH), 0.5, 2.5)`; emit the SVG with
+  `viewBox="0 0 natW natH"`, `width=Math.round(natW*scale)`, `height=Math.round(natH*scale)`. Every
+  paint fits the current host; `.trie-scroll { overflow:auto }` still covers the clamp-floor case.
+- **Generic re-fit trigger (`buildFrameControls`, `js/app.js`)** — add a `window` `resize` handler
+  that **repaints the current frame** (`paint(frames[idx], idx)` at the current index — no cursor
+  change), coalesced via `requestAnimationFrame`, and self-removes when the control detaches (reuse
+  the existing `isConnected` guard that already stops the play timer). This lets every frame-based
+  viz re-fit on resize **without resetting its VCR cursor**.
+- **Focus dispatches resize (`js/app.js` `initVizFocus`)** — on `enterFocus` and `exitFocus`,
+  `requestAnimationFrame(() => window.dispatchEvent(new Event('resize')))`, so the host-size change
+  from entering/leaving focus triggers the re-fit. (The viz's manual zoom transform on
+  `.viz-body-scaled` still applies on top of the viewBox fit.)
+
+Scope note: this delivers crisp host-fit for viz that size their SVG to the host — RB tree already,
+and the trie now. The resize→repaint + focus→resize-dispatch infra is generic (all `buildFrameControls`
+viz get a cursor-safe repaint on resize); viz with fixed-size drawings are visually unchanged, and can
+adopt host-fit incrementally.
 
 ## Tests
 
@@ -134,12 +142,15 @@ viz that has an examples select — NO per-viz renderer edits. Because viz re-re
      still `large` (independent). (Assert via the selects' values + localStorage keys.)
   3. **Trie random:** capture `.trie-words` value; click `.trie-random` (🎲); `.trie-words` changes
      to a valid A–Z word list and the trie re-renders (`.trie-node` count > 1).
-  4. **Fullscreen fit:** load any viz (e.g. `#m=tree-trie`); enter focus via `.viz-focus-toggle`;
-     `.method-section-card.active .viz-body-scaled` has a non-empty `--viz-fit` custom property
-     (parseFloat > 0); exit → `--viz-fit` cleared/removed.
+  4. **Fullscreen fit (RB-style):** load `#m=tree-trie`; step to a mid frame and record the
+     `.trie-svg` `width` attribute + the `步 i/N` count; enter focus via `.viz-focus-toggle`; after a
+     rAF the `.trie-svg` `width` attribute **increases** (SVG fits the enlarged host) and the step
+     count is **unchanged** (cursor preserved — resize repaints, doesn't reset); exit focus → the
+     `.trie-svg` `width` returns to the smaller value. Assert width grows/shrinks numerically, not
+     pixel-exact.
 - Existing `tests/trie.spec.js`, `tests/viz_fullscreen.spec.js`, `tests/zoom_gesture.spec.js`, and
-  the difficulty-consuming viz specs must stay green (the `--viz-fit` default keeps non-focus
-  transform identical; `getInputDifficulty()` signature unchanged).
+  the difficulty-consuming viz specs must stay green (`buildFrameControls` resize-repaint is a no-op
+  cursor-wise; `getInputDifficulty()` signature unchanged).
 
 ## Verification
 
@@ -162,8 +173,9 @@ other viz (scale up small, scale down large) + resize + manual zoom still multip
 - Per-viz difficulty for viz without an examples select (they stay global-only — no examples select
   to anchor the inline control).
 - Random-input buttons for other viz that lack one (only trie gains one here).
-- Persisting/animating the fullscreen fit beyond enter/resize/re-render recompute; a "fit vs 100%"
-  toggle (manual zoom already composes with fit).
+- Converting every viz to host-fit its drawing (only trie does so here; RB tree already did). The
+  generic resize→repaint + focus→resize infra is in place for others to adopt incrementally.
+- A "fit vs 100%" toggle (manual zoom already composes with the viewBox fit).
 
 ## Success criteria
 
