@@ -631,7 +631,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
                     </div>
                     ${useCodeDrawer ? `<button type="button" class="btn secondary code-drawer-toggle" data-testid="code-drawer-toggle" aria-expanded="false" aria-haspopup="dialog">&lt;/&gt; ${method.file}</button>` : ''}
-                    <button type="button" class="btn secondary viz-focus-toggle" data-testid="viz-focus-toggle" aria-pressed="false" data-i18n-aria-label="aria.fullscreen-toggle" aria-label="Toggle fullscreen focus mode" title="${t('btn.fullscreen')}">⛶ ${t('btn.fullscreen')}</button>
+                    <button type="button" class="btn secondary viz-focus-toggle" data-testid="viz-focus-toggle" aria-pressed="${document.body.classList.contains('viz-focus') ? 'true' : 'false'}" data-i18n-aria-label="aria.fullscreen-toggle" aria-label="Toggle fullscreen focus mode" title="${t('btn.fullscreen')}">⛶ ${t('btn.fullscreen')}</button>
                     <button type="button" class="btn secondary method-slides-btn" data-method="${method.id}">Slides</button>
                 </div>
             </div>
@@ -1478,7 +1478,15 @@ document.addEventListener('DOMContentLoaded', () => {
             body.classList.add('viz-focus');
             setPressed(true);
             document.addEventListener('keydown', onKeydown);
-            try { const p = fsRequest(document.documentElement); if (p && p.catch) p.catch(() => {}); } catch (_) {}
+            try {
+                const p = fsRequest(document.documentElement);
+                if (p && p.then) {
+                    p.then(function () {
+                        // If focus was exited before fullscreen engaged, undo it now.
+                        if (!body.classList.contains('viz-focus') && fsElement()) { try { fsExit(); } catch (_) {} }
+                    }, function () {});
+                }
+            } catch (_) {}
         }
         function exitFocus() {
             if (!body.classList.contains('viz-focus')) return;

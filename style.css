@@ -3248,6 +3248,7 @@ body.viz-focus .method-sections-heading,
 body.viz-focus .method-section-header,
 body.viz-focus .code-drawer,
 body.viz-focus .method-section-code,
+body.viz-focus .method-section-card.active .code-panel,
 body.viz-focus .method-section-card:not(.active) {
     display: none !important;
 }

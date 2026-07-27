@@ -53,4 +53,13 @@ test.describe('viz fullscreen focus mode', () => {
     await expect(page.locator('body')).not.toHaveClass(/viz-focus/);
     await expect(page.locator('.app-header')).toBeVisible();
   });
+
+  test('CSS layer: focus mode hides the source code panel for a non-drawer method', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=stack-array');
+    await expect(page.locator('.method-section-card.active .code-panel')).toBeVisible();
+
+    await page.evaluate(() => document.body.classList.add('viz-focus'));
+    await expect(page.locator('.method-section-card.active .code-panel')).toBeHidden();
+  });
 });
