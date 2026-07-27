@@ -7,7 +7,6 @@
   let bstRoot = null;
   let treeDrawLoop = null;
 
-  let trieRoot = { children: {}, endOfWord: false };
   let radixRoot = { edges: {} };
   let tstRoot = null;
   let btreeData = []; let bplusData = [];
@@ -113,22 +112,7 @@
           }
       }
 
-      if(currentMode === 'tree-trie') {
-          function drawTrie(node, x, y, dx) {
-              const el = document.createElement('div'); el.className = 'tree-node' + (node.endOfWord ? ' trie-end' : '');
-              el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = '20px'; el.style.height = '20px';
-              if(node.endOfWord) el.style.backgroundColor = '#ec4899';
-              advTreeContainer.appendChild(el);
-              let keys = Object.keys(node.children);
-              if(keys.length === 0) return;
-              let startX = x - (keys.length-1)*dx/2;
-              keys.forEach((k, i) => {
-                  let nx = startX + i*dx; let ny = y + 60;
-                  drawLine(x, y, nx, ny, k); drawTrie(node.children[k], nx, ny, dx/1.5);
-              });
-          }
-          drawTrie(trieRoot, cx, cy, 150);
-      } else if (currentMode === 'tree-radix') {
+      if (currentMode === 'tree-radix') {
           function drawRadix(node, x, y, dx) {
               const el = document.createElement('div'); el.className = 'tree-node' + (node.endOfWord ? ' trie-end' : '');
               el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.width = '20px'; el.style.height = '20px';
@@ -298,7 +282,7 @@
   function onModeSwitch(mode) {
       if (_rbState) _rbState.hist.pause(); // stop RB playback when leaving/re-entering the mode
       bstRoot = null;
-      trieRoot = { children: {}, endOfWord: false }; radixRoot = { edges: {} }; tstRoot = null; btreeData = []; bplusData = [];
+      radixRoot = { edges: {} }; tstRoot = null; btreeData = []; bplusData = [];
       // This used to be cancelled unconditionally at the top of app.js's
       // updateLayout() (called right after onModeSwitch on every mode
       // switch) — moved here since treeDrawLoop is now domain-private state.
@@ -344,10 +328,7 @@
           if(!str) return showStatus('Enter a word!', '#f87171');
           K().executeAnimWrapper(async () => {
               const currentMode = C().getMode();
-              if(currentMode === 'tree-trie') {
-                  let curr = trieRoot; for(let char of str) { if(!curr.children[char]) curr.children[char] = { children: {}, endOfWord: false }; curr = curr.children[char]; }
-                  curr.endOfWord = true; renderAdvTrees(); showStatus("Trie Inserted: " + str, "#34d399");
-              } else if (currentMode === 'tree-radix') {
+              if (currentMode === 'tree-radix') {
                   radixRoot.edges[str] = { edges: {}, endOfWord: true }; renderAdvTrees(); showStatus("Radix Block Inserted: " + str, "#34d399");
               } else if (currentMode === 'tree-ternary') {
                   function ins(node, word, depth) {
@@ -377,7 +358,6 @@
   R().attach('tree-avl', { render: renderTree, code: () => codeTreeAVL, layout: null });
   R().attach('tree-rb', { render: renderTreeRB, code: () => codeTreeRB, layout: { host: 'dynamic' } });
   R().attach('tree-splay', { render: renderTree, code: () => codeTreeSplay, layout: null });
-  R().attach('tree-trie', { render: renderAdvTrees, code: () => codeTreeTrie, layout: null });
   R().attach('tree-radix', { render: renderAdvTrees, code: () => codeTreeRadix, layout: null });
   R().attach('tree-ternary', { render: renderAdvTrees, code: () => codeTreeTST, layout: null });
   R().attach('tree-btree', { render: renderAdvTrees, code: () => codeTreeBTree, layout: null });

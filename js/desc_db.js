@@ -537,12 +537,7 @@ const descDB = {
     `,
     'tree-trie': `
         <h3>Trie (Prefix Tree)</h3>
-        <p>A specialized massive 26-ary tree mapped strictly to the alphabet, dominating Prefix Search.</p>
-        <hr>
-        <ul>
-            <li><strong>Core Mechanism:</strong> Nodes do NOT store characters directly! The character is implicitly defined by the <em>Edge</em> (the pointer index 0-25) chosen to traverse to the next Node. A boolean flag marks a Node as a valid <strong>Word End</strong>.</li>
-            <li><strong>Advantage:</strong> Finding a string or all autocomplete prefixes strictly takes time exactly equal to the length of the string, completely independent of how many millions of words exist in the dictionary.</li>
-        </ul>
+        <p>A trie (prefix tree) stores strings along paths of single-character edges, so words that share a prefix share a path. Insertion walks the word character by character, creating a node where none exists and marking the final node as end-of-word. Search descends the same way: a hit ends on an end-of-word node, a matched path with no end-of-word mark is a prefix only, and a missing edge means the word is absent. Each insert or search is O(L) in the word length L.</p>
         <div class="complexities">
             <span class="badge time">Search Time: O(L) [L = Word Length]</span>
             <span class="badge exception">Space: O(N·L) nodes (N strings, length L)</span>

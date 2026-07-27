@@ -3288,3 +3288,18 @@ body.viz-focus .viz-focus-exit {
     user-select: none;
 }
 body.viz-focus .viz-focus-exit:active { cursor: grabbing; }
+
+/* ---- Trie viz (tree-trie, VCR stepping) ----------------------------- */
+.trie-wrap { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.trie-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.trie-controls input[type="text"] { text-transform: uppercase; }
+.trie-scroll { overflow: auto; max-height: 520px; border: 1px solid var(--card-border); border-radius: 8px; background: var(--surface-muted); }
+.trie-svg { display: block; }
+.trie-edge { stroke: #94a3b8; stroke-width: 2; }
+.trie-edge-cur { stroke: #f59e0b; stroke-width: 3.5; }
+.trie-edge-label { fill: #cbd5e1; font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
+.trie-node { fill: #1e293b; stroke: #64748b; stroke-width: 2; }
+.trie-node-end { fill: #ec4899; stroke: #f472b6; }
+.trie-node-cur { stroke: #f59e0b; stroke-width: 4; }
+.trie-banner { font-weight: 800; color: var(--text-main); }
+.trie-msg { color: var(--text-subtle); font-size: 0.85rem; }

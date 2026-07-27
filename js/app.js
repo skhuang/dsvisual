@@ -76,7 +76,7 @@ const METHOD_GROUPS = [
             { id: 'tree-avl', title: 'AVL Tree', file: 'tree_avl.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'tree-rb', title: 'Red-Black Tree', file: 'tree_rb.cpp', visualizer: 'rbtree', controls: 'rbtree', codeDrawer: true },
             { id: 'tree-splay', title: 'Splay Tree', file: 'tree_splay.cpp', visualizer: 'tree', controls: 'tree' },
-            { id: 'tree-trie', title: 'Trie', file: 'tree_trie.cpp', visualizer: 'text-tree', controls: 'text-tree' },
+            { id: 'tree-trie', title: 'Trie', file: 'tree_trie.cpp', visualizer: 'trie', controls: 'trie', codeDrawer: true },
             { id: 'tree-radix', title: 'Radix Tree', file: 'tree_radix.cpp', visualizer: 'text-tree', controls: 'text-tree' },
             { id: 'tree-ternary', title: 'Ternary Search Tree', file: 'tree_ternary.cpp', visualizer: 'text-tree', controls: 'text-tree' },
             { id: 'tree-btree', title: 'B-Tree', file: 'tree_btree.cpp', visualizer: 'advanced-tree', controls: 'tree' },
@@ -1681,11 +1681,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // Rendered by renderTreeRB() into the dynamic viz host.
             codeTitle.textContent = 'tree_rb.cpp'; codeDisplay.textContent = codeTreeRB;
         }
-        else if (['tree-trie', 'tree-radix', 'tree-ternary'].includes(currentMode)) {
+        else if (['tree-radix', 'tree-ternary'].includes(currentMode)) {
             advTreeContainer.classList.remove('hidden'); textTreeActions.classList.remove('hidden');
-            if(currentMode === 'tree-trie') { codeTitle.textContent = 'tree_trie.cpp'; codeDisplay.textContent = codeTreeTrie; }
             if(currentMode === 'tree-radix') { codeTitle.textContent = 'tree_radix.cpp'; codeDisplay.textContent = codeTreeRadix; }
             if(currentMode === 'tree-ternary') { codeTitle.textContent = 'tree_ternary.cpp'; codeDisplay.textContent = codeTreeTST; }
+        }
+        else if (currentMode === 'tree-trie') {
+            // Rendered by viz_trie.js into the dynamic viz host.
         }
         else if (['tree-btree', 'tree-bplus'].includes(currentMode)) {
             advTreeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden');
