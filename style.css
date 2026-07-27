@@ -3297,7 +3297,7 @@ body.viz-focus .viz-focus-exit:active { cursor: grabbing; }
 .trie-svg { display: block; }
 .trie-edge { stroke: #94a3b8; stroke-width: 2; }
 .trie-edge-cur { stroke: #f59e0b; stroke-width: 3.5; }
-.trie-edge-label { fill: #cbd5e1; font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
+.trie-edge-label { fill: #1e293b; font-size: 12px; font-weight: 800; text-anchor: middle; dominant-baseline: middle; paint-order: stroke; stroke: #ffffff; stroke-width: 3px; stroke-linejoin: round; }
 .trie-node { fill: #1e293b; stroke: #64748b; stroke-width: 2; }
 .trie-node-end { fill: #ec4899; stroke: #f472b6; }
 .trie-node-cur { stroke: #f59e0b; stroke-width: 4; }
