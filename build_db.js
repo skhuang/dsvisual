@@ -34,6 +34,7 @@ const mappings = {
     'graph_components.cpp': 'codeGraphComponents',
     'graph_bipartite.cpp': 'codeGraphBipartite',
     'graph_closure.cpp': 'codeGraphClosure',
+    'graph_scc.cpp': 'codeGraphScc',
     'list_array.cpp': 'codeListArray',
     'list_linked.cpp': 'codeListLinked',
     'hash_chaining.cpp': 'codeHashChain',

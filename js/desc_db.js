@@ -284,6 +284,21 @@ const descDB = {
             <span class="badge space">Space: O(n&sup2;)</span>
         </div>
     `,
+    'graph-scc': `
+        <h3>Strongly Connected Components (Kosaraju)</h3>
+        <p>In a directed graph, a <strong>strongly connected component (SCC)</strong> is a maximal set of vertices where every pair is <em>mutually reachable</em> (a path each way).</p>
+        <hr>
+        <ul>
+            <li><strong>Kosaraju's algorithm (O(n + e)):</strong> (1) run DFS on <code>G</code>, pushing each vertex onto a stack as its DFS <em>finishes</em>; (2) build the transpose <code>G&#7488;</code> by reversing every edge; (3) pop vertices from the stack and DFS on <code>G&#7488;</code> — each DFS tree is one SCC.</li>
+            <li><strong>Topological order:</strong> Kosaraju discovers SCCs in the topological order of the condensation (source components first).</li>
+            <li><strong>Condensation:</strong> collapsing each SCC to a single super-node yields a DAG.</li>
+            <li><strong>Applications:</strong> 2-SAT solving, dataflow analysis, deadlock detection.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(n + e)</span>
+            <span class="badge space">Space: O(n + e)</span>
+        </div>
+    `,
     'tree-bst': `
         <h3>Binary Search Tree (Standard)</h3>
         <p>An elegant hierarchical associative routing structure.</p>
