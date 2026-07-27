@@ -59,3 +59,22 @@ test('parseWords/parseQuery normalize + clamp', () => {
   assert.ok(T.parseWords(Array(30).fill('AB').join(',')).length <= 12);  // count clamp
   assert.strictEqual(T.parseQuery('  car dog '), 'CAR');         // first token
 });
+
+test('randomInput respects bounds and round-trips through parse', () => {
+  for (const d of ['normal', 'special', 'edge', 'large']) {
+    for (let i = 0; i < 5; i++) {
+      const r = T.randomInput(d);
+      assert.ok(Array.isArray(r.words) && r.words.length >= 1 && r.words.length <= 12, d + ' word count');
+      for (const w of r.words) assert.ok(/^[A-Z]{1,8}$/.test(w), d + ' word "' + w + '"');
+      assert.strictEqual(typeof r.query, 'string');
+      assert.deepStrictEqual(T.parseWords(r.words.join(',')), r.words);   // clamps already applied
+      assert.strictEqual(T.parseQuery(r.query), r.query);
+    }
+  }
+});
+
+test('special difficulty words share a common prefix', () => {
+  const r = T.randomInput('special');
+  const p = r.words[0].slice(0, 2);
+  for (const w of r.words) assert.ok(w.startsWith(p), 'word "' + w + '" starts with "' + p + '"');
+});

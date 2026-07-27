@@ -41,4 +41,17 @@ test.describe('viz refinements', () => {
     expect(store.g).toBe('large');                           // global unchanged
     expect(store.v).toBe('edge');                            // per-viz override independent
   });
+
+  test('trie random button generates a valid word set', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=tree-trie');
+    await page.click('.trie-random');
+    const words = await page.locator('.trie-words').inputValue();
+    expect(words).toMatch(/^[A-Z]+(,[A-Z]+)*$/);             // valid A–Z word list
+    const scrub = page.locator('.stepctl .stepctl-scrubber');
+    await scrub.evaluate((el) => { el.value = el.max; el.dispatchEvent(new Event('input', { bubbles: true })); });
+    await expect(page.locator('.trie-svg .trie-node').first()).toBeVisible();
+    const n = await page.locator('.trie-svg .trie-node').count();
+    expect(n).toBeGreaterThan(1);                            // a trie was built
+  });
 });

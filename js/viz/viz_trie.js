@@ -87,6 +87,7 @@
             '<option value="search"' + (_st.mode === 'search' ? ' selected' : '') + '>' + (lang === 'zh' ? '搜尋 Search' : 'Search') + '</option>' +
           '</select>' +
           '<button type="button" class="trie-apply">' + (lang === 'zh' ? '套用 Apply' : 'Apply') + '</button>' +
+          '<button type="button" class="trie-random" title="' + (lang === 'zh' ? '隨機輸入' : 'Random input') + '">🎲</button>' +
           buildExamplesSelect('tree-trie', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="trie-banner" data-testid="trie-banner">&nbsp;</div>' +
@@ -134,6 +135,13 @@
     wrap.querySelector('.trie-apply').addEventListener('click', function () {
       _st.words = global.TrieViz.parseWords(wrap.querySelector('.trie-words').value);
       _st.query = global.TrieViz.parseQuery(wrap.querySelector('.trie-query').value);
+      saveExample('tree-trie', serialize(_st), DEFAULT_SERIALIZED);
+      render();
+    });
+    wrap.querySelector('.trie-random').addEventListener('click', function () {
+      var d = (K().getInputDifficulty && K().getInputDifficulty()) || 'normal';
+      var r = global.TrieViz.randomInput(d);
+      _st.words = r.words; _st.query = r.query;
       saveExample('tree-trie', serialize(_st), DEFAULT_SERIALIZED);
       render();
     });

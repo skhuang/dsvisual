@@ -114,7 +114,39 @@
     return { frames: frames };
   }
 
-  var api = { SAMPLE: SAMPLE, parseWords: parseWords, parseQuery: parseQuery, buildTrie: buildTrie, buildFrames: buildFrames };
+  function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function randWord(minL, maxL, alphabet) {
+    var n = randInt(minL, maxL), w = '';
+    for (var i = 0; i < n; i++) w += alphabet.charAt(randInt(0, alphabet.length - 1));
+    return w;
+  }
+  function randomInput(difficulty) {
+    var d = difficulty || 'normal';
+    var words = [];
+    if (d === 'large') {
+      var nL = randInt(10, 12);
+      for (var i = 0; i < nL; i++) words.push(randWord(4, 8, 'ABCDEFGH'));
+    } else if (d === 'edge') {
+      words.push(randWord(1, 1, 'ABCDE'));
+      words.push(randWord(1, 1, 'ABCDE'));
+      words.push(randWord(8, 8, 'ABCDE'));
+      var dup = randWord(3, 4, 'ABCDE'); words.push(dup); words.push(dup);   // duplicate insert
+    } else if (d === 'special') {
+      var stem = randWord(2, 3, 'ABCDEF'), nS = randInt(4, 6);
+      for (var j = 0; j < nS; j++) words.push((stem + randWord(1, 3, 'ABCDEF')).slice(0, 8));
+    } else {
+      var nN = randInt(4, 6);
+      for (var k = 0; k < nN; k++) words.push(randWord(3, 5, 'ABCDEF'));
+    }
+    words = words.slice(0, 12).map(function (w) { return w.slice(0, 8); });
+    var r = Math.random(), query;
+    if (r < 0.34 && words.length) { query = words[randInt(0, words.length - 1)]; }
+    else if (r < 0.67 && words.length) { var w0 = words[randInt(0, words.length - 1)]; query = w0.slice(0, Math.max(1, w0.length - 1)); }
+    else { query = randWord(2, 4, 'ABCDEFGH'); }
+    return { words: words, query: query };
+  }
+
+  var api = { SAMPLE: SAMPLE, parseWords: parseWords, parseQuery: parseQuery, buildTrie: buildTrie, buildFrames: buildFrames, randomInput: randomInput };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.TrieViz = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
