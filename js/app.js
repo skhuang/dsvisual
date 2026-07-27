@@ -1037,39 +1037,83 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const DENSITY_STORAGE_KEY = 'dsvisual.codeDensity';
-    const DIFFICULTY_KEY_PREFIX = 'dsvisual.inputDifficulty.';
     const DIFFICULTY_VALUES = ['normal', 'special', 'edge', 'large'];
+    const DIFFICULTY_GLOBAL_KEY = 'dsvisual.inputDifficulty.global';
+    const DIFFICULTY_VIZ_PREFIX = 'dsvisual.inputDifficulty.viz.';
 
-    function getInputDifficulty() {
-        const gid = getMethodGroupForMode(currentMode).id;
+    function getGlobalDifficulty() {
         let v = null;
-        try { v = localStorage.getItem(DIFFICULTY_KEY_PREFIX + gid); } catch (e) { v = null; }
+        try { v = localStorage.getItem(DIFFICULTY_GLOBAL_KEY); } catch (e) { v = null; }
         return DIFFICULTY_VALUES.indexOf(v) === -1 ? 'normal' : v;
     }
-
-    function setInputDifficulty(groupId, value) {
+    function getVizOverride(methodId) {
+        let v = null;
+        try { v = localStorage.getItem(DIFFICULTY_VIZ_PREFIX + methodId); } catch (e) { v = null; }
+        return DIFFICULTY_VALUES.indexOf(v) === -1 ? null : v;
+    }
+    function getInputDifficulty() {
+        return getVizOverride(currentMode) || getGlobalDifficulty();
+    }
+    function setGlobalDifficulty(value) {
         if (DIFFICULTY_VALUES.indexOf(value) === -1) return;
-        try { localStorage.setItem(DIFFICULTY_KEY_PREFIX + groupId, value); } catch (e) { /* ignore */ }
+        try { localStorage.setItem(DIFFICULTY_GLOBAL_KEY, value); } catch (e) { /* ignore */ }
+    }
+    function setVizOverride(methodId, value) {
+        try {
+            if (value && DIFFICULTY_VALUES.indexOf(value) !== -1) localStorage.setItem(DIFFICULTY_VIZ_PREFIX + methodId, value);
+            else localStorage.removeItem(DIFFICULTY_VIZ_PREFIX + methodId);
+        } catch (e) { /* ignore */ }
     }
 
     function syncDifficultySelect() {
         const sel = document.getElementById('input-difficulty');
         if (!sel) return;
-        sel.value = getInputDifficulty();
+        sel.value = getGlobalDifficulty();
         const cap = document.getElementById('input-difficulty-cat');
-        if (cap) {
-            const g = getMethodGroupForMode(currentMode);
-            cap.textContent = (typeof t === 'function' ? t('group.' + g.id) : g.id) || g.id;
-        }
+        if (cap) cap.textContent = (typeof t === 'function' ? t('difficulty.follow-global') : '') || '';
     }
 
     function bindDifficultySelect() {
         const sel = document.getElementById('input-difficulty');
         if (!sel) return;
-        sel.addEventListener('change', () => {
-            setInputDifficulty(getMethodGroupForMode(currentMode).id, sel.value);
-        });
+        sel.addEventListener('change', () => { setGlobalDifficulty(sel.value); });
         syncDifficultySelect();
+    }
+
+    function buildInlineDifficultySelect() {
+        const sel = document.createElement('select');
+        sel.className = 'viz-difficulty';
+        sel.setAttribute('data-testid', 'viz-difficulty');
+        sel.setAttribute('aria-label', (typeof t === 'function' ? t('settings.difficulty') : 'Random input difficulty'));
+        const follow = document.createElement('option');
+        follow.value = '';
+        follow.textContent = (typeof t === 'function' ? t('difficulty.follow-global') : 'Follow global');
+        sel.appendChild(follow);
+        DIFFICULTY_VALUES.forEach((v) => {
+            const o = document.createElement('option');
+            o.value = v;
+            o.textContent = (typeof t === 'function' ? t('difficulty.' + v) : v);
+            sel.appendChild(o);
+        });
+        sel.value = getVizOverride(currentMode) || '';
+        sel.addEventListener('change', () => { setVizOverride(currentMode, sel.value); });
+        return sel;
+    }
+
+    function injectInlineDifficulty(root) {
+        const scope = root || document;
+        scope.querySelectorAll('.ex-select').forEach((ex) => {
+            const next = ex.nextElementSibling;
+            if (next && next.classList.contains('viz-difficulty')) return;
+            ex.insertAdjacentElement('afterend', buildInlineDifficultySelect());
+        });
+    }
+
+    function initInlineDifficulty() {
+        if (!runtimeVisualizer) return;
+        injectInlineDifficulty(runtimeVisualizer);
+        const obs = new MutationObserver(() => injectInlineDifficulty(runtimeVisualizer));
+        obs.observe(runtimeVisualizer, { childList: true, subtree: true });
     }
 
     function applySavedDensity() {
@@ -1426,6 +1470,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     registerBehaviors();
     bindDifficultySelect();
+    initInlineDifficulty();
     initVizFocus();
 
         // OOP state variables

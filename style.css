@@ -3303,3 +3303,6 @@ body.viz-focus .viz-focus-exit:active { cursor: grabbing; }
 .trie-node-cur { stroke: #f59e0b; stroke-width: 4; }
 .trie-banner { font-weight: 800; color: var(--text-main); }
 .trie-msg { color: var(--text-subtle); font-size: 0.85rem; }
+
+/* Inline per-viz difficulty override — mirrors the examples select look. */
+.viz-difficulty { max-width: 160px; padding: 2px 4px; border: 1px solid var(--card-border, #cbd5e1); border-radius: 6px; background: var(--card-bg, #fff); font-size: 0.85rem; color: var(--text-main, #1e293b); }
