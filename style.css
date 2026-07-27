@@ -3237,3 +3237,47 @@ ul.dc-tree, ul.dc-tree ul { list-style: none; margin: 0; padding-left: 18px; }
 .pattern-step-active { opacity: 1; }
 .pattern-step-dim { opacity: 0.3; }
 .pattern-step-controls { margin-top: 10px; display: flex; justify-content: center; }
+
+/* ---- Fullscreen / focus mode ---------------------------------------- */
+/* Toggled by body.viz-focus (js/app.js). Hides all chrome, expands the   */
+/* active visualization window to fill the viewport. Paired with a real   */
+/* requestFullscreen() at the JS layer, but this layer stands alone.      */
+body.viz-focus .app-header,
+body.viz-focus .app-category-nav,
+body.viz-focus .method-sections-heading,
+body.viz-focus .method-section-header,
+body.viz-focus .code-drawer,
+body.viz-focus .method-section-code,
+body.viz-focus .method-section-card:not(.active) {
+    display: none !important;
+}
+body.viz-focus .method-section-card.active .method-section-visual {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    margin: 0;
+    border-radius: 0;
+    max-height: none;
+    overflow: auto;
+}
+.viz-focus-exit {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--card-border);
+    border-radius: var(--app-radius-md);
+    background: rgba(15, 23, 42, 0.85);
+    color: #e2e8f0;
+    font-weight: 800;
+    font-size: 0.86rem;
+    cursor: pointer;
+}
+.viz-focus-exit:hover { background: rgba(30, 41, 59, 0.95); }
+body.viz-focus .viz-focus-exit {
+    display: inline-flex;
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 2100;
+}
