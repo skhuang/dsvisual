@@ -3346,7 +3346,7 @@ body.viz-focus .viz-zoom-controls { position: fixed; top: 12px; left: 12px; z-in
 .gt-svg { display: block; }
 .gt-edge { stroke: #94a3b8; stroke-width: 2; }
 .gt-node { fill: #1e293b; stroke: #64748b; stroke-width: 2; }
-.gt-node.active { fill: #f59e0b; stroke: #b45309; }
 .gt-node.visited { fill: #2563eb; stroke: #1e40af; }
 .gt-node.gt-pruned { fill: #cbd5e1; stroke: #94a3b8; opacity: 0.5; }
+.gt-node.active { fill: #f59e0b; stroke: #b45309; }
 .gt-node-label { fill: #ffffff; font-size: 12px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
