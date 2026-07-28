@@ -48,7 +48,23 @@
     return { frames: frames, value: value };
   }
 
-  const api = { buildGameTree: buildGameTree, minimaxFrames: minimaxFrames, SAMPLE_LEAVES: [3, 5, 6, 9, 1, 2, 0, -1] };
+  function randomInput(difficulty) {
+    var d = difficulty || 'normal';
+    function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+    var n, lo, hi;
+    if (d === 'large') { n = 16; lo = -9; hi = 9; }
+    else if (d === 'edge') { n = 4; lo = -5; hi = 9; }
+    else { n = 8; lo = -5; hi = 9; }   // normal, special
+    var leaves = [];
+    for (var i = 0; i < n; i++) leaves.push(randInt(lo, hi));
+    if (d === 'special') {   // bias toward alpha-beta pruning: strong values first
+      var head = leaves.slice(0, n / 2).sort(function (a, b) { return b - a; });
+      leaves = head.concat(leaves.slice(n / 2));
+    }
+    return { leaves: leaves };
+  }
+
+  const api = { buildGameTree: buildGameTree, minimaxFrames: minimaxFrames, SAMPLE_LEAVES: [3, 5, 6, 9, 1, 2, 0, -1], randomInput: randomInput };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.GameTreeViz = api;
 })(typeof window !== 'undefined' ? window : globalThis);
