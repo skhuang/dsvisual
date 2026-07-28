@@ -168,9 +168,11 @@
         K().markFocusFit(host);   // viz-fit path (no {svg}) — bounded + fullscreen-expand + wrapper zoom
 
         host.querySelector('.tgb-build').onclick = () => {
-            _tgbState.text = host.querySelector('.tgb-input').value;
-            saveExample('tree-general-binary', _tgbState.text, TreeGeneralBinaryViz.SAMPLE);
-            renderTreeGeneralBinary();
+            try {
+                _tgbState.text = host.querySelector('.tgb-input').value;
+                saveExample('tree-general-binary', _tgbState.text, TreeGeneralBinaryViz.SAMPLE);
+                renderTreeGeneralBinary();
+            } catch (e) { /* ignore malformed input */ }
         };
         host.querySelector('.tgb-random').onclick = () => {
             const dfc = (K().getInputDifficulty && K().getInputDifficulty()) || 'normal';
