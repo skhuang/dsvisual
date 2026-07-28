@@ -2900,9 +2900,14 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 .ss-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
 .th-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
 .th-controls .th-input { flex: 1; min-width: 200px; }
-.th-stage { position: relative; height: 320px; overflow: hidden; }
-.th-stage .th-edges { position: absolute; inset: 0; width: 100%; height: 100%; }
-.th-stage .th-nodes { position: absolute; inset: 0; }
+.th-wrap { width: 100%; }
+.th-svg { display: block; }
+.th-edge { stroke: #94a3b8; stroke-width: 2; }
+.th-thread { fill: none; stroke: #a855f7; stroke-width: 2; stroke-dasharray: 5 4; }
+.th-node { fill: #1e293b; stroke: #64748b; stroke-width: 2; }
+.th-node.active { fill: #f59e0b; stroke: #b45309; }
+.th-node.visited { fill: #2563eb; stroke: #1e40af; }
+.th-node-label { fill: #ffffff; font-size: 13px; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
 .th-output { margin: 6px 0; }
 .th-phase { margin-top: 6px; color: #1e40af; font-style: italic; }
 .mw-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
