@@ -1465,6 +1465,9 @@ document.addEventListener('DOMContentLoaded', () => {
         showStatus,
         executeAnimWrapper,
         getDelay,
+        markFocusFit,
+        observeFocusFit,
+        fitFocusSize,
     };
     if (window.VizCore) {
         window.VizCore.bindMode(() => currentMode, (m) => { currentMode = m; });
@@ -2134,6 +2137,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         render();
         return strip;
+    }
+
+    // --- vizfit: shared fullscreen fit/zoom + bounded-scroll mechanism (see docs vizfit spec) ---
+    let _vizfitObs = null;
+    function _vizfitReadZoom(scrollEl) {
+        const el = scrollEl && scrollEl.closest ? scrollEl.closest('.viz-body-scaled') : null;
+        const v = el ? parseFloat(getComputedStyle(el).getPropertyValue('--viz-zoom')) : 1;
+        return (v && isFinite(v) && v > 0) ? v : 1;
+    }
+    function fitFocusSize(scrollEl, natW, natH) {
+        if (!scrollEl || !document.body.classList.contains('viz-focus')) return { w: natW, h: natH };
+        const availW = Math.max(scrollEl.clientWidth - 6, 120);
+        let below = 0;
+        for (let sib = scrollEl.nextElementSibling; sib; sib = sib.nextElementSibling) below += sib.getBoundingClientRect().height;
+        const availH = Math.max(window.innerHeight - scrollEl.getBoundingClientRect().top - below - 8, 120);
+        let fit = Math.min(availW / natW, availH / natH);
+        fit = Math.max(0.3, Math.min(fit, 3));
+        const zoom = _vizfitReadZoom(scrollEl);
+        return { w: Math.round(natW * fit * zoom), h: Math.round(natH * fit * zoom) };
+    }
+    function observeFocusFit(scrollEl) {
+        if (_vizfitObs) { try { _vizfitObs.disconnect(); } catch (e) { /* ignore */ } _vizfitObs = null; }
+        if (!scrollEl || typeof ResizeObserver === 'undefined') return;
+        let raf = 0;
+        _vizfitObs = new ResizeObserver(function () {
+            if (raf) cancelAnimationFrame(raf);
+            raf = requestAnimationFrame(function () { raf = 0; window.dispatchEvent(new Event('resize')); });
+        });
+        _vizfitObs.observe(scrollEl);
+    }
+    function markFocusFit(hostOrEl, opts) {
+        opts = opts || {};
+        const card = hostOrEl && hostOrEl.closest ? hostOrEl.closest('.method-section-card') : null;
+        if (card) { card.classList.add('viz-fit'); if (opts.svg) card.classList.add('viz-fit-svg'); }
+        const scrollEl = hostOrEl && hostOrEl.querySelector ? hostOrEl.querySelector('.vizfit-scroll') : null;
+        observeFocusFit(scrollEl);
     }
 
     // End original routines mappings

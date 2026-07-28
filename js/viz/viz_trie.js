@@ -27,7 +27,6 @@
   var DEFAULT_SERIALIZED = global.TrieViz.SAMPLE.words.join(',') + '|' + global.TrieViz.SAMPLE.query;
   var MISS_SERIALIZED = 'CAR,CARD|CARE';
   var _st = { words: global.TrieViz.SAMPLE.words.slice(), query: global.TrieViz.SAMPLE.query, mode: 'build' };
-  var _fitObs = null;   // ResizeObserver on the drawing box → repaint when it settles/changes size
 
   function computeLayout(nodes) {
     var pos = {}, LEVEL_H = 70;
@@ -79,7 +78,7 @@
     var host = K().acquireDynamicVizHost();
     var lang = (global.I18N && I18N.getCurrentLanguage) ? I18N.getCurrentLanguage() : 'en';
     host.innerHTML =
-      '<div class="trie-wrap">' +
+      '<div class="trie-wrap vizfit-host">' +
         '<div class="trie-controls">' +
           '<label>' + (lang === 'zh' ? '單字' : 'words') + ' <input type="text" class="trie-words" value="' + escAttr(_st.words.join(',')) + '"></label>' +
           '<label>' + (lang === 'zh' ? '搜尋' : 'query') + ' <input type="text" class="trie-query" value="' + escAttr(_st.query) + '"></label>' +
@@ -92,26 +91,13 @@
           buildExamplesSelect('tree-trie', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="trie-banner" data-testid="trie-banner">&nbsp;</div>' +
-        '<div class="trie-scroll"></div>' +
+        '<div class="trie-scroll vizfit-scroll"></div>' +
         '<div class="trie-msg" data-testid="trie-msg">&nbsp;</div>' +
       '</div>';
     var wrap = host.querySelector('.trie-wrap');
     var scrollEl = wrap.querySelector('.trie-scroll');
 
-    // Repaint when the drawing box changes size — so the focus fit converges to the SETTLED
-    // fullscreen/flex layout instead of a transient first-paint measurement (deterministic; also
-    // kills the focus-enter jitter). Box size is flex-driven (independent of the SVG content we
-    // write), so this never feedback-loops. One coalesced window 'resize' → buildFrameControls
-    // repaints the current frame (cursor-safe). Re-created per render; disconnect the prior one.
-    if (_fitObs) { try { _fitObs.disconnect(); } catch (e) {} _fitObs = null; }
-    if (typeof ResizeObserver !== 'undefined') {
-      var _fitRaf = 0;
-      _fitObs = new ResizeObserver(function () {
-        if (_fitRaf) cancelAnimationFrame(_fitRaf);
-        _fitRaf = requestAnimationFrame(function () { _fitRaf = 0; window.dispatchEvent(new Event('resize')); });
-      });
-      _fitObs.observe(scrollEl);
-    }
+    K().markFocusFit(host, { svg: true });   // vizfit: mark card viz-fit viz-fit-svg + observe box for re-fit
     var bannerEl = wrap.querySelector('.trie-banner');
     var msgEl = wrap.querySelector('.trie-msg');
 
@@ -136,28 +122,9 @@
       var verdict = { 'found': L === 'zh' ? '命中 FOUND' : 'FOUND', 'prefix-only': L === 'zh' ? '前綴 PREFIX-ONLY' : 'PREFIX-ONLY', 'not-found': L === 'zh' ? '找不到 NOT FOUND' : 'NOT FOUND' };
       return (L === 'zh' ? '搜尋 ' : 'Search ') + fr.query + (fr.verdict ? ' → ' + verdict[fr.verdict] : '');
     }
-    function readZoom() {
-      var el = scrollEl.closest ? scrollEl.closest('.viz-body-scaled') : null;
-      var v = el ? parseFloat(getComputedStyle(el).getPropertyValue('--viz-zoom')) : 1;
-      return (v && isFinite(v) && v > 0) ? v : 1;
-    }
     function paint(fr) {
-      var w = layout.width, h = layout.height;
-      if (document.body.classList.contains('viz-focus')) {
-        var availW = Math.max(scrollEl.clientWidth - 6, 120);
-        // Available height from STABLE viewport-anchored positions (drawing top + the pinned
-        // siblings below it), not scrollEl.clientHeight — the flex-grown height isn't settled on
-        // the first focus paint, which mis-sized the fit (drawing jitter + CI flake). The flex
-        // chain still bounds the box so the VCR stays put; this only picks the fit size.
-        var below = 0;
-        for (var sib = scrollEl.nextElementSibling; sib; sib = sib.nextElementSibling) below += sib.getBoundingClientRect().height;
-        var availH = Math.max(window.innerHeight - scrollEl.getBoundingClientRect().top - below - 8, 120);
-        var fit = Math.min(availW / layout.width, availH / layout.height);
-        fit = Math.max(0.3, Math.min(fit, 3));
-        var zoom = readZoom();
-        w = Math.round(layout.width * fit * zoom);
-        h = Math.round(layout.height * fit * zoom);
-      }
+      var sz = K().fitFocusSize(scrollEl, layout.width, layout.height);
+      var w = sz.w, h = sz.h;
       scrollEl.innerHTML = svgFor(fullTrie.nodes, fr, layout, w, h);
       bannerEl.textContent = bannerText(fr);
       msgEl.textContent = K().langOf(fr.msg);

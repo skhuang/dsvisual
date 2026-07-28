@@ -3288,23 +3288,25 @@ body.viz-focus .viz-focus-exit {
 }
 body.viz-focus .viz-focus-exit:active { cursor: grabbing; }
 
-/* Fullscreen: flex-bounded drawing. The panel fills the viewport as a flex column;
-   .trie-scroll is the single flex:1 scroll region, so the top controls (even when
-   wrapped) and the bottom VCR stay pinned and operable at any viewport size. */
-body.viz-focus .method-section-card.active[data-method-section="tree-trie"] .method-section-visual { overflow: hidden; min-height: 0; }
-body.viz-focus .method-section-card[data-method-section="tree-trie"] .viz-body-scaled,
-body.viz-focus .method-section-card[data-method-section="tree-trie"] .stack-container-wrapper,
-body.viz-focus .method-section-card[data-method-section="tree-trie"] #dynamic-viz-host,
-body.viz-focus .method-section-card[data-method-section="tree-trie"] .trie-wrap {
+/* vizfit: generic fullscreen flex-bound + drawing-only zoom. A viz opts in by rendering its
+   drawing root as .vizfit-host containing one .vizfit-scroll, and calling K().markFocusFit(host,
+   {svg}) — which marks the active card viz-fit (+ viz-fit-svg for per-SVG drawing-only zoom). */
+body.viz-focus .method-section-card.active.viz-fit .method-section-visual { overflow: hidden; min-height: 0; }
+body.viz-focus .method-section-card.active.viz-fit .viz-body-scaled,
+body.viz-focus .method-section-card.active.viz-fit .stack-container-wrapper,
+body.viz-focus .method-section-card.active.viz-fit #dynamic-viz-host,
+body.viz-focus .method-section-card.active.viz-fit .vizfit-host {
     flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
 }
-body.viz-focus .method-section-card[data-method-section="tree-trie"] .trie-scroll {
+body.viz-focus .method-section-card.active.viz-fit .vizfit-scroll {
     flex: 1 1 auto; min-height: 0; max-height: none; overflow: auto;
 }
-/* Drawing-only zoom: neutralize the whole-wrapper zoom transform for the trie in
-   focus, so --viz-zoom scales only the SVG (via paint's layout sizing), not the
-   controls/VCR. */
-body.viz-focus .method-section-card[data-method-section="tree-trie"] .viz-body-scaled { transform: none; }
+/* Per-SVG drawing-only zoom (single-SVG viz): neutralise the wrapper transform so --viz-zoom
+   scales just the SVG via the caller's fitFocusSize layout sizing, not the controls/VCR. */
+body.viz-focus .method-section-card.active.viz-fit-svg .viz-body-scaled { transform: none; }
+
+.vizfit-scroll { overflow: auto; max-height: var(--vizfit-maxh, 520px); }
+
 /* Keep the zoom toolbar reachable in fullscreen: collapse the header, hide its
    non-zoom parts, and float the zoom controls (mirrors the exit button, right). */
 body.viz-focus .method-section-header { padding: 0; margin: 0; border: 0; background: none; min-height: 0; }
@@ -3316,7 +3318,7 @@ body.viz-focus .viz-zoom-controls { position: fixed; top: 12px; left: 12px; z-in
 .trie-wrap { display: flex; flex-direction: column; gap: 10px; width: 100%; }
 .trie-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .trie-controls input[type="text"] { text-transform: uppercase; }
-.trie-scroll { overflow: auto; max-height: 520px; border: 1px solid var(--card-border); border-radius: 8px; background: var(--surface-muted); }
+.trie-scroll { border: 1px solid var(--card-border); border-radius: 8px; background: var(--surface-muted); }
 .trie-svg { display: block; }
 .trie-edge { stroke: #94a3b8; stroke-width: 2; }
 .trie-edge-cur { stroke: #f59e0b; stroke-width: 3.5; }
