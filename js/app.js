@@ -1070,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!sel) return;
         sel.value = getGlobalDifficulty();
         const cap = document.getElementById('input-difficulty-cat');
-        if (cap) cap.textContent = (typeof t === 'function' ? t('difficulty.follow-global') : '') || '';
+        if (cap) cap.textContent = '';
     }
 
     function bindDifficultySelect() {
@@ -1084,7 +1084,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const sel = document.createElement('select');
         sel.className = 'viz-difficulty';
         sel.setAttribute('data-testid', 'viz-difficulty');
-        sel.setAttribute('aria-label', (typeof t === 'function' ? t('settings.difficulty') : 'Random input difficulty'));
+        sel.setAttribute('aria-label', (typeof t === 'function' ? t('aria.viz-difficulty') : 'Random input difficulty (this visualizer)'));
+
         const follow = document.createElement('option');
         follow.value = '';
         follow.textContent = (typeof t === 'function' ? t('difficulty.follow-global') : 'Follow global');
