@@ -75,3 +75,20 @@ hidden code + bounded scroll + a fullscreen that keeps the VCR operable + workin
 editable input + examples + a difficulty-aware 🎲 (DSU via an op-sequence redesign); Catalan gets the
 layout treatment only. Built on one shared vizfit mechanism (trie migrated onto it). Each phase is a
 review-passed PR; full Playwright green throughout.
+
+## Phase-1 progress + game-tree guidance (updated 2026-07-28)
+
+- ✅ Phase 0 vizfit mechanism (#166) · ✅ #1 tree-catalan (#167) · ✅ #2 tree-general-binary (#168) ·
+  ✅ #3 tree-threaded (viewBox-SVG rewrite → viz-fit-svg). Remaining: game-tree, tree-dsu.
+- **The threaded viewBox-SVG rewrite IS the pattern game-tree reuses** (both were `.xx-stage` = SVG edge
+  layer + HTML node overlay): make the drawing one `<svg>` with a `viewBox` from node bounds, nodes as
+  `<circle>`+`<text>`, `markFocusFit(host,{svg:true})` + `K().fitFocusSize` sizing. Two deltas for
+  game-tree (from the threaded final review): (a) game-tree has **no threads**, so drop threaded's `-46`
+  top margin (that headroom was only for the purple thread arcs) — use a symmetric small pad; consider
+  hoisting the bounds→viewBox math into a `VizKit` helper so game-tree doesn't copy-paste/mis-tune it.
+  (b) game-tree's per-frame labels change (`▲=5`, α-β, pruned) — the threaded "rebuild svg innerHTML each
+  paint" strategy handles that cleanly (replaces game-tree's current per-node `getElementById` mutation);
+  the α-β checkbox stays a control, pruned/active map to node CSS classes.
+- Pre-existing, out of scope: `computeTreeLayout`'s `dx*0.55` shrink can overlap nodes on large/bushy
+  trees (affects threaded + game-tree). A proper tidy/Reingold-Tilford layout would fix both at once —
+  a candidate follow-on after the 5 viz.
