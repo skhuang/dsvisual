@@ -27,6 +27,7 @@
   var DEFAULT_SERIALIZED = global.TrieViz.SAMPLE.words.join(',') + '|' + global.TrieViz.SAMPLE.query;
   var MISS_SERIALIZED = 'CAR,CARD|CARE';
   var _st = { words: global.TrieViz.SAMPLE.words.slice(), query: global.TrieViz.SAMPLE.query, mode: 'build' };
+  var FOCUS_CHROME_RESERVE = 210;   // px reserved for controls+banner+msg+VCR in focus; keep == the CSS calc(100vh - 210px)
 
   function computeLayout(nodes) {
     var pos = {}, LEVEL_H = 70;
@@ -120,16 +121,21 @@
       var verdict = { 'found': L === 'zh' ? '命中 FOUND' : 'FOUND', 'prefix-only': L === 'zh' ? '前綴 PREFIX-ONLY' : 'PREFIX-ONLY', 'not-found': L === 'zh' ? '找不到 NOT FOUND' : 'NOT FOUND' };
       return (L === 'zh' ? '搜尋 ' : 'Search ') + fr.query + (fr.verdict ? ' → ' + verdict[fr.verdict] : '');
     }
+    function readZoom() {
+      var el = scrollEl.closest ? scrollEl.closest('.viz-body-scaled') : null;
+      var v = el ? parseFloat(getComputedStyle(el).getPropertyValue('--viz-zoom')) : 1;
+      return (v && isFinite(v) && v > 0) ? v : 1;
+    }
     function paint(fr) {
       var w = layout.width, h = layout.height;
       if (document.body.classList.contains('viz-focus')) {
-        var rect = scrollEl.getBoundingClientRect();
         var availW = Math.max(scrollEl.clientWidth - 6, 120);
-        var availH = Math.max(window.innerHeight - rect.top - 12, 120);
-        var scale = Math.min(availW / layout.width, availH / layout.height);
-        scale = Math.max(0.5, Math.min(scale, 3));
-        w = Math.round(layout.width * scale);
-        h = Math.round(layout.height * scale);
+        var availH = Math.max(window.innerHeight - FOCUS_CHROME_RESERVE, 140);
+        var fit = Math.min(availW / layout.width, availH / layout.height);
+        fit = Math.max(0.3, Math.min(fit, 3));
+        var zoom = readZoom();
+        w = Math.round(layout.width * fit * zoom);
+        h = Math.round(layout.height * fit * zoom);
       }
       scrollEl.innerHTML = svgFor(fullTrie.nodes, fr, layout, w, h);
       bannerEl.textContent = bannerText(fr);

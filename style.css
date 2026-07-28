@@ -3245,7 +3245,6 @@ ul.dc-tree, ul.dc-tree ul { list-style: none; margin: 0; padding-left: 18px; }
 body.viz-focus .app-header,
 body.viz-focus .app-category-nav,
 body.viz-focus .method-sections-heading,
-body.viz-focus .method-section-header,
 body.viz-focus .code-drawer,
 body.viz-focus .method-section-code,
 body.viz-focus .method-section-card.active .code-panel,
@@ -3289,8 +3288,20 @@ body.viz-focus .viz-focus-exit {
 }
 body.viz-focus .viz-focus-exit:active { cursor: grabbing; }
 
-/* In focus mode the trie scroll host fills the window so the SVG can fit-to-window. */
-body.viz-focus .trie-scroll { max-height: none; }
+/* Fullscreen: bound the trie drawing so the top controls/message and the bottom
+   VCR stay visible; the drawing scrolls (drag) when larger. The 210px reserve
+   MUST stay equal to FOCUS_CHROME_RESERVE in js/viz/viz_trie.js. */
+body.viz-focus .trie-scroll { max-height: calc(100vh - 210px); overflow: auto; }
+/* Drawing-only zoom: neutralize the whole-wrapper zoom transform for the trie in
+   focus, so --viz-zoom scales only the SVG (via paint's layout sizing), not the
+   controls/VCR. */
+body.viz-focus .method-section-card[data-method-section="tree-trie"] .viz-body-scaled { transform: none; }
+/* Keep the zoom toolbar reachable in fullscreen: collapse the header, hide its
+   non-zoom parts, and float the zoom controls (mirrors the exit button, right). */
+body.viz-focus .method-section-header { padding: 0; margin: 0; border: 0; background: none; min-height: 0; }
+body.viz-focus .method-section-header > :first-child,
+body.viz-focus .method-section-actions > :not(.viz-zoom-controls) { display: none; }
+body.viz-focus .viz-zoom-controls { position: fixed; top: 12px; left: 12px; z-index: 2100; margin: 0; }
 
 /* ---- Trie viz (tree-trie, VCR stepping) ----------------------------- */
 .trie-wrap { display: flex; flex-direction: column; gap: 10px; width: 100%; }

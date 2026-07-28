@@ -532,6 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
             zoom = Math.max(0.5, Math.min(2.0, Math.round(z * 100) / 100));
             scaled.style.setProperty('--viz-zoom', String(zoom));
             resetBtn.textContent = Math.round(zoom * 100) + '%';
+            requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); }); // host-fitting viz repaint at new zoom
         }
         inBtn.addEventListener('click', () => applyZoom(zoom + 0.1));
         outBtn.addEventListener('click', () => applyZoom(zoom - 0.1));
