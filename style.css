@@ -3334,3 +3334,6 @@ body.viz-focus .viz-zoom-controls { position: fixed; top: 12px; left: 12px; z-in
 
 /* tree-catalan vizfit wrap (Phase-1 vizfit adopter) */
 .cat-wrap { width: 100%; }
+
+/* tree-general-binary vizfit wrap (Phase-1 vizfit adopter) */
+.tgb-wrap { width: 100%; }
