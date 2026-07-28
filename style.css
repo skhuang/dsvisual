@@ -3331,3 +3331,6 @@ body.viz-focus .viz-zoom-controls { position: fixed; top: 12px; left: 12px; z-in
 
 /* Inline per-viz difficulty override — mirrors the examples select look. */
 .viz-difficulty { max-width: 160px; padding: 2px 4px; border: 1px solid var(--card-border, #cbd5e1); border-radius: 6px; background: var(--card-bg, #fff); font-size: 0.85rem; color: var(--text-main, #1e293b); }
+
+/* tree-catalan vizfit wrap (Phase-1 vizfit adopter) */
+.cat-wrap { width: 100%; }

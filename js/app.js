@@ -93,7 +93,7 @@ const METHOD_GROUPS = [
             { id: 'tree-general-binary', title: 'General ↔ Binary Tree', file: 'tree_general_binary.cpp', visualizer: 'tgb', controls: 'tgb' },
             { id: 'tree-copy-equal', title: 'Tree COPY & EQUAL', file: 'tree_copy_equal.cpp', visualizer: 'copyequal', controls: 'copyequal' },
             { id: 'decision-tree-coins', title: '8-Coins Decision Tree', file: 'decision_tree_coins.cpp', visualizer: 'coins', controls: 'coins' },
-            { id: 'tree-catalan', title: 'Counting Trees (Catalan)', file: 'tree_catalan.cpp', visualizer: 'catalan', controls: 'catalan' },
+            { id: 'tree-catalan', title: 'Counting Trees (Catalan)', file: 'tree_catalan.cpp', visualizer: 'catalan', controls: 'catalan', codeDrawer: true },
             { id: 'tree-array-rep', title: 'Array Representation', file: 'tree_array_rep.cpp', visualizer: 'arrayrep', controls: 'arrayrep' },
             { id: 'tree-reconstruct', title: 'Reconstruct Tree', file: 'tree_reconstruct.cpp', visualizer: 'reconstruct', controls: 'reconstruct' },
             { id: 'game-tree', title: 'Game Tree (Minimax / α-β)', file: 'game_tree.cpp', visualizer: 'gametree', controls: 'gametree' },

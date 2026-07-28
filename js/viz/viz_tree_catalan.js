@@ -32,14 +32,19 @@
         const seqRows = seq.map((r) => '<tr class="cat-seq-row" data-n="' + r.n + '"><td>C' + r.n + '</td><td>' + r.recurrence + '</td><td>' + r.closed + '</td><td>' + (r.recurrence === r.closed ? '✓' : '✗') + '</td></tr>').join('');
 
         host.innerHTML =
-            '<div class="cat-controls"><span class="sm-hint">' + langOf({ zh: '選 n,枚舉全部 Cₙ 種二元樹形狀(依左子樹大小分組)', en: 'pick n; enumerate all Cₙ binary-tree shapes (grouped by left-subtree size)' }) + '</span></div>' +
-            '<div class="cat-ns">' + nBtns + '</div>' +
-            '<div class="cat-groups"></div>' +
-            '<div class="cat-total"></div>' +
-            '<div class="cat-verdict"></div>' +
-            '<div class="cat-seqwrap"><div class="cat-seqtitle">' + langOf({ zh: 'Catalan 數 C₀…C₁₀(遞迴 vs 封閉形)', en: 'Catalan numbers C₀…C₁₀ (recurrence vs closed form)' }) + '</div>' +
-              '<table class="cat-seq"><thead><tr><th>n</th><th>' + langOf({ zh: '遞迴', en: 'recur.' }) + '</th><th>' + langOf({ zh: '封閉形', en: 'closed' }) + '</th><th>=</th></tr></thead><tbody>' + seqRows + '</tbody></table></div>' +
-            '<div class="et-phase"></div>';
+            '<div class="cat-wrap vizfit-host">' +
+              '<div class="cat-controls"><span class="sm-hint">' + langOf({ zh: '選 n,枚舉全部 Cₙ 種二元樹形狀(依左子樹大小分組)', en: 'pick n; enumerate all Cₙ binary-tree shapes (grouped by left-subtree size)' }) + '</span></div>' +
+              '<div class="cat-ns">' + nBtns + '</div>' +
+              '<div class="cat-scroll vizfit-scroll">' +
+                '<div class="cat-groups"></div>' +
+                '<div class="cat-total"></div>' +
+                '<div class="cat-verdict"></div>' +
+                '<div class="cat-seqwrap"><div class="cat-seqtitle">' + langOf({ zh: 'Catalan 數 C₀…C₁₀(遞迴 vs 封閉形)', en: 'Catalan numbers C₀…C₁₀ (recurrence vs closed form)' }) + '</div>' +
+                  '<table class="cat-seq"><thead><tr><th>n</th><th>' + langOf({ zh: '遞迴', en: 'recur.' }) + '</th><th>' + langOf({ zh: '封閉形', en: 'closed' }) + '</th><th>=</th></tr></thead><tbody>' + seqRows + '</tbody></table></div>' +
+                '<div class="et-phase"></div>' +
+              '</div>' +
+            '</div>';
+        var wrap = host.querySelector('.cat-wrap');
 
         function paint(fr, i) {
             if (!host.querySelector('.cat-groups')) return;
@@ -55,7 +60,8 @@
             else { v.className = 'cat-verdict'; v.textContent = ''; }
             host.querySelector('.et-phase').textContent = langOf(fr.msg);
         }
-        host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
+        wrap.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 800 }));
+        K().markFocusFit(host);   // vizfit viz-fit path (bounded + fullscreen-expand + wrapper zoom); no {svg}
 
         host.querySelectorAll('.cat-nbtn').forEach((b) => { b.onclick = () => { const k = parseInt(b.getAttribute('data-n'), 10); if (k !== st.n) { st.n = k; renderTreeCatalan(); } }; });
     }
