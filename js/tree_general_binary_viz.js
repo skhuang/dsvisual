@@ -63,7 +63,45 @@
     return { frames };
   }
 
-  const api = { parseGeneralTree: parseGeneralTree, toBinary: toBinary, convertFrames: convertFrames, SAMPLE: 'A:B,C,D;B:E,F;C:G' };
+  function randomInput(difficulty) {
+    var d = difficulty || 'normal';
+    var LETTERS = 'ABCDEFGHIJKLMNOPQRST';   // cap 20 → single-letter labels
+    function randInt(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+    function emit(children, order) {
+      return order.filter(function (p) { return (children[p] || []).length; })
+                  .map(function (p) { return p + ':' + children[p].join(','); })
+                  .join(';');
+    }
+    if (d === 'edge') {
+      var pick = randInt(0, 2);
+      if (pick === 0) return 'A';                 // single node
+      if (pick === 1) return 'A:B;B:C;C:D';       // pure chain
+      return 'A:B,C,D,E,F';                       // star
+    }
+    if (d === 'special') {
+      if (Math.random() < 0.5) {                  // wide fan
+        var k = randInt(4, 6), order = ['A'], children = { A: [] }, next = 1;
+        for (var i = 0; i < k && next < LETTERS.length; i++) { var lab = LETTERS[next++]; children.A.push(lab); order.push(lab); children[lab] = []; }
+        children.A.slice().forEach(function (c) { if (Math.random() < 0.5 && next < LETTERS.length) { var gl = LETTERS[next++]; children[c] = [gl]; order.push(gl); children[gl] = []; } });
+        return emit(children, order);
+      }
+      var depth = randInt(5, 7), parts = [];      // deep chain
+      for (var j = 0; j < depth && j + 1 < LETTERS.length; j++) parts.push(LETTERS[j] + ':' + LETTERS[j + 1]);
+      return parts.join(';');
+    }
+    var n, cap;
+    if (d === 'large') { n = randInt(10, 14); cap = 4; } else { n = randInt(5, 7); cap = 3; }
+    var placed = ['A'], childMap = { A: [] }, ord = ['A'];
+    for (var idx = 1; idx < n && idx < LETTERS.length; idx++) {
+      var label = LETTERS[idx];
+      var candidates = placed.filter(function (p) { return childMap[p].length < cap; });
+      var parent = candidates[randInt(0, candidates.length - 1)];
+      childMap[parent].push(label); childMap[label] = []; placed.push(label); ord.push(label);
+    }
+    return emit(childMap, ord);
+  }
+
+  const api = { parseGeneralTree: parseGeneralTree, toBinary: toBinary, convertFrames: convertFrames, SAMPLE: 'A:B,C,D;B:E,F;C:G', randomInput: randomInput };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.TreeGeneralBinaryViz = api;
 })(typeof window !== 'undefined' ? window : globalThis);
