@@ -27,6 +27,7 @@
   var DEFAULT_SERIALIZED = global.TrieViz.SAMPLE.words.join(',') + '|' + global.TrieViz.SAMPLE.query;
   var MISS_SERIALIZED = 'CAR,CARD|CARE';
   var _st = { words: global.TrieViz.SAMPLE.words.slice(), query: global.TrieViz.SAMPLE.query, mode: 'build' };
+  var _fitObs = null;   // ResizeObserver on the drawing box → repaint when it settles/changes size
 
   function computeLayout(nodes) {
     var pos = {}, LEVEL_H = 70;
@@ -96,6 +97,21 @@
       '</div>';
     var wrap = host.querySelector('.trie-wrap');
     var scrollEl = wrap.querySelector('.trie-scroll');
+
+    // Repaint when the drawing box changes size — so the focus fit converges to the SETTLED
+    // fullscreen/flex layout instead of a transient first-paint measurement (deterministic; also
+    // kills the focus-enter jitter). Box size is flex-driven (independent of the SVG content we
+    // write), so this never feedback-loops. One coalesced window 'resize' → buildFrameControls
+    // repaints the current frame (cursor-safe). Re-created per render; disconnect the prior one.
+    if (_fitObs) { try { _fitObs.disconnect(); } catch (e) {} _fitObs = null; }
+    if (typeof ResizeObserver !== 'undefined') {
+      var _fitRaf = 0;
+      _fitObs = new ResizeObserver(function () {
+        if (_fitRaf) cancelAnimationFrame(_fitRaf);
+        _fitRaf = requestAnimationFrame(function () { _fitRaf = 0; window.dispatchEvent(new Event('resize')); });
+      });
+      _fitObs.observe(scrollEl);
+    }
     var bannerEl = wrap.querySelector('.trie-banner');
     var msgEl = wrap.querySelector('.trie-msg');
 

@@ -9,6 +9,20 @@ async function enterFocusOnFullTrie(page) {
   await page.locator('.method-section-card.active .viz-focus-toggle').click();
 }
 
+// The focus fit converges once the fullscreen/flex layout settles (a ResizeObserver repaints on the
+// box-size change). Poll until the SVG width holds steady for two consecutive reads before measuring,
+// so a baseline captured mid-settle can't make an exact-size assertion flaky.
+async function settledSvgWidth(page) {
+  let last = -1;
+  await expect.poll(async () => {
+    const w = await page.locator('.trie-svg').getAttribute('width').then((v) => parseFloat(v));
+    const stable = (w === last);
+    last = w;
+    return stable ? w : -1;
+  }, { timeout: 5000, intervals: [60, 60, 60] }).toBeGreaterThan(0);
+  return last;
+}
+
 test.describe('fullscreen layout + drawing-only zoom', () => {
   test('VCR stays in-viewport, drawing is bounded, zoom toolbar is floated', async ({ page }) => {
     await enterFocusOnFullTrie(page);
@@ -23,7 +37,7 @@ test.describe('fullscreen layout + drawing-only zoom', () => {
     await enterFocusOnFullTrie(page);
     const svgW = () => page.locator('.trie-svg').getAttribute('width').then((v) => parseFloat(v));
     const vcrTop = () => page.locator('.stepctl').evaluate((el) => Math.round(el.getBoundingClientRect().top));
-    const beforeW = await svgW();
+    const beforeW = await settledSvgWidth(page);   // measure the fit only after the layout settles
     const beforeTop = await vcrTop();
     const beforeCount = await page.locator('.stepctl-count').textContent();
 
@@ -33,7 +47,9 @@ test.describe('fullscreen layout + drawing-only zoom', () => {
     expect(await page.locator('.stepctl-count').textContent()).toBe(beforeCount);   // cursor preserved
 
     await page.locator('.viz-zoom-controls [data-zoom="reset"]').click();
-    await expect.poll(async () => await svgW()).toBeLessThanOrEqual(beforeW + 1);    // back to fit size
+    const resetW = await settledSvgWidth(page);
+    expect(resetW).toBeLessThan(beforeW * 1.09);   // shrank back toward fit (below the +0.1 zoom step)
+    expect(Math.abs(resetW - beforeW)).toBeLessThanOrEqual(24);   // ~scrollbar-width tolerance
   });
 
   test('VCR stays operable at a narrow viewport where controls wrap', async ({ page }) => {
