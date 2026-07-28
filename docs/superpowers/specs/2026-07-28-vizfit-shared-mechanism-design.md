@@ -25,7 +25,7 @@ The trie's fullscreen fit/zoom lives in `style.css` scoped to `[data-method-sect
   `.method-section-card` with `viz-fit` (and `viz-fit-svg` for single-SVG per-drawing fit) and wires
   the ResizeObserver.
 - **`viz-fit`** (bounded + fullscreen-expand, wrapper zoom): tgb, dsu, catalan.
-- **`viz-fit-svg`** (also per-SVG drawing-only zoom: `transform:none` + `fitFocusSvg` in paint):
+- **`viz-fit-svg`** (also per-SVG drawing-only zoom: `transform:none` + `fitFocusSize` in paint):
   trie, threaded, game-tree.
 
 ### CSS (`style.css`) — replace the trie-scoped block with generic, marker-keyed rules
@@ -63,7 +63,7 @@ The header-collapse + floated `.viz-zoom-controls` rules (already generic) stay 
   size changes (so `buildFrameControls` repaints the current frame and the fit converges to the
   settled layout). Safe: box size is flex-driven, independent of SVG content → no loop. Returns the
   observer. (Internally keyed per scroll element via a `WeakMap` so re-renders replace cleanly.)
-- `fitFocusSvg(scrollEl, svgEl, natW, natH)` — for `viz-fit-svg` viz, called in `paint()` to size the
+- `fitFocusSize(scrollEl, natW, natH) → {w,h}` — for `viz-fit-svg` viz, called in `paint()` to size the
   SVG:
   - If NOT `document.body.classList.contains('viz-focus')`: set `svgEl` `width=natW`, `height=natH`,
     `viewBox="0 0 natW natH"` (natural).
@@ -89,7 +89,7 @@ copy:
   `--vizfit-maxh: 520px` if needed (trie's current cap).
 - `render()`: call `K().markFocusFit(host, { svg: true })` (replaces the trie's inline ResizeObserver
   block — delete that block).
-- `paint()`: replace the trie's inline focus-fit math with `K().fitFocusSvg(scrollEl, svgEl,
+- `paint()`: replace the trie's inline focus-fit math with `K().fitFocusSize(scrollEl,
   layout.width, layout.height)` (the SVG element is the `.trie-svg` written into `.trie-scroll`; the
   helper sizes it). Delete `readZoom` from the trie (now in VizKit).
 - `style.css`: delete the `[data-method-section="tree-trie"]`-scoped fit block (superseded by the
@@ -134,6 +134,6 @@ Net: identical trie behaviour, now via the shared path.
 
 The trie's fullscreen fit/zoom + bounded-scroll are provided by a reusable, marker-class mechanism
 (`.vizfit-host`/`.vizfit-scroll`, card markers `viz-fit`/`viz-fit-svg`, VizKit `markFocusFit`/
-`observeFocusFit`/`fitFocusSvg`); the trie is migrated onto it with identical behaviour (all existing
+`observeFocusFit`/`fitFocusSize`); the trie is migrated onto it with identical behaviour (all existing
 trie + fullscreen tests green, incl. `--repeat-each=6`); a `tests/vizfit.spec.js` locks the generic
 contract. Ready for Phase-1 viz to opt in with a markup class + one setup call.
