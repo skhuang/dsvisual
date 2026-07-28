@@ -17,7 +17,7 @@ test('game-tree loads, toggles alpha-beta, steps', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'game-tree');
   await expect(page.locator('[data-method-section][data-runtime-state="active"]')).toBeVisible();
-  await expect(page.locator('.gt-stage .tree-node').first()).toBeVisible();
+  await expect(page.locator('.gt-svg .gt-node').first()).toBeVisible();
   await page.click('.gt-ab');
   await page.click('[data-action="step"]');
 });
