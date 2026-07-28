@@ -496,15 +496,18 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await expect(page.locator('#graph-edges line.graph-edge')).toHaveCount(6);
     });
 
-    test('Trees: Disjoint Set renders 8 nodes initially and supports union', async ({ page }) => {
+    test('Trees: Disjoint Set renders SVG forest and supports union via op-sequence', async ({ page }) => {
         await loadMethod(page, 'tree-dsu');
         const card = page.locator('[data-method-section="tree-dsu"]');
         await expect(card.locator('.code-panel-filename')).toContainText('tree_dsu.cpp');
-        await expect(card.locator('.dsu-tree-node')).toHaveCount(8);
-        await card.locator('[data-dsu-a]').fill('0');
-        await card.locator('[data-dsu-b]').fill('1');
-        await card.locator('[data-action="union"]').click();
-        await expect(card.locator('.dsu-tree')).toHaveCount(7);
+        // SAMPLE op-string (n=8) renders 8 SVG nodes at the initial frame.
+        await expect(card.locator('.dsu-svg .dsu-node')).toHaveCount(8);
+        // Build a smaller op-sequence and step to the end — union merges the two nodes onto one root.
+        await card.locator('.dsu-input').fill('U0 1');
+        await card.locator('.dsu-build').click();
+        await expect(card.locator('.dsu-svg .dsu-node')).toHaveCount(2);
+        await card.locator('.stepctl .stepctl-scrubber').evaluate((el) => { el.value = el.max; el.dispatchEvent(new Event('input', { bubbles: true })); });
+        await expect(card.locator('.dsu-svg .dsu-root')).toHaveCount(1);
     });
 
     test('Linear: Deque renders 3 nodes and supports push/pop at both ends', async ({ page }) => {
