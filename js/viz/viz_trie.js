@@ -27,7 +27,6 @@
   var DEFAULT_SERIALIZED = global.TrieViz.SAMPLE.words.join(',') + '|' + global.TrieViz.SAMPLE.query;
   var MISS_SERIALIZED = 'CAR,CARD|CARE';
   var _st = { words: global.TrieViz.SAMPLE.words.slice(), query: global.TrieViz.SAMPLE.query, mode: 'build' };
-  var FOCUS_CHROME_RESERVE = 210;   // px reserved for controls+banner+msg+VCR in focus; keep == the CSS calc(100vh - 210px)
 
   function computeLayout(nodes) {
     var pos = {}, LEVEL_H = 70;
@@ -130,7 +129,7 @@
       var w = layout.width, h = layout.height;
       if (document.body.classList.contains('viz-focus')) {
         var availW = Math.max(scrollEl.clientWidth - 6, 120);
-        var availH = Math.max(window.innerHeight - FOCUS_CHROME_RESERVE, 140);
+        var availH = Math.max(scrollEl.clientHeight - 6, 120);   // flex-allocated height (bounds the drawing)
         var fit = Math.min(availW / layout.width, availH / layout.height);
         fit = Math.max(0.3, Math.min(fit, 3));
         var zoom = readZoom();

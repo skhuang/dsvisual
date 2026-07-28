@@ -35,4 +35,19 @@ test.describe('fullscreen layout + drawing-only zoom', () => {
     await page.locator('.viz-zoom-controls [data-zoom="reset"]').click();
     await expect.poll(async () => await svgW()).toBeLessThanOrEqual(beforeW + 1);    // back to fit size
   });
+
+  test('VCR stays operable at a narrow viewport where controls wrap', async ({ page }) => {
+    await page.setViewportSize({ width: 560, height: 380 });
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=tree-trie');
+    const scrub = page.locator('.stepctl .stepctl-scrubber');
+    await scrub.evaluate((el) => { el.value = el.max; el.dispatchEvent(new Event('input', { bubbles: true })); });
+    await page.locator('.method-section-card.active .viz-focus-toggle').click();
+    const vcr = page.locator('.stepctl');
+    await expect(vcr).toBeVisible();
+    // VCR fully within the (small) viewport — the fixed-210 reserve pushed it off here
+    expect(await vcr.evaluate((el) => el.getBoundingClientRect().bottom <= window.innerHeight + 1)).toBe(true);
+    // drawing area still shows (flex-allocated, not collapsed)
+    expect(await page.locator('.trie-scroll').evaluate((el) => el.clientHeight > 40)).toBe(true);
+  });
 });

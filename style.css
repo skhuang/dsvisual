@@ -3288,10 +3288,19 @@ body.viz-focus .viz-focus-exit {
 }
 body.viz-focus .viz-focus-exit:active { cursor: grabbing; }
 
-/* Fullscreen: bound the trie drawing so the top controls/message and the bottom
-   VCR stay visible; the drawing scrolls (drag) when larger. The 210px reserve
-   MUST stay equal to FOCUS_CHROME_RESERVE in js/viz/viz_trie.js. */
-body.viz-focus .trie-scroll { max-height: calc(100vh - 210px); overflow: auto; }
+/* Fullscreen: flex-bounded drawing. The panel fills the viewport as a flex column;
+   .trie-scroll is the single flex:1 scroll region, so the top controls (even when
+   wrapped) and the bottom VCR stay pinned and operable at any viewport size. */
+body.viz-focus .method-section-card.active[data-method-section="tree-trie"] .method-section-visual { overflow: hidden; min-height: 0; }
+body.viz-focus .method-section-card[data-method-section="tree-trie"] .viz-body-scaled,
+body.viz-focus .method-section-card[data-method-section="tree-trie"] .stack-container-wrapper,
+body.viz-focus .method-section-card[data-method-section="tree-trie"] #dynamic-viz-host,
+body.viz-focus .method-section-card[data-method-section="tree-trie"] .trie-wrap {
+    flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+}
+body.viz-focus .method-section-card[data-method-section="tree-trie"] .trie-scroll {
+    flex: 1 1 auto; min-height: 0; max-height: none; overflow: auto;
+}
 /* Drawing-only zoom: neutralize the whole-wrapper zoom transform for the trie in
    focus, so --viz-zoom scales only the SVG (via paint's layout sizing), not the
    controls/VCR. */
