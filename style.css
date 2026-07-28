@@ -3289,6 +3289,9 @@ body.viz-focus .viz-focus-exit {
 }
 body.viz-focus .viz-focus-exit:active { cursor: grabbing; }
 
+/* In focus mode the trie scroll host fills the window so the SVG can fit-to-window. */
+body.viz-focus .trie-scroll { max-height: none; }
+
 /* ---- Trie viz (tree-trie, VCR stepping) ----------------------------- */
 .trie-wrap { display: flex; flex-direction: column; gap: 10px; width: 100%; }
 .trie-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }

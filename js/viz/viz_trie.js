@@ -47,7 +47,7 @@
     return { pos: pos, width: Math.max((maxX - minX) + 2 * MARGIN, 320), height: Math.max(maxY + 60, 200) };
   }
 
-  function svgFor(nodes, fr, layout) {
+  function svgFor(nodes, fr, layout, w, h) {
     var pos = layout.pos, present = {}, endSet = {};
     if (fr.op === 'build') {
       fr.revealed.forEach(function (id) { present[id] = true; });
@@ -58,7 +58,7 @@
     var curEdge = null;
     if (fr.op === 'build' && fr.edge) curEdge = fr.edge.from + '>' + fr.edge.to;
     else if (fr.op === 'search' && fr.path && fr.path.length >= 2) { var p = fr.path; curEdge = p[p.length - 2] + '>' + p[p.length - 1]; }
-    var s = '<svg class="trie-svg" width="' + layout.width + '" height="' + layout.height + '" viewBox="0 0 ' + layout.width + ' ' + layout.height + '">';
+    var s = '<svg class="trie-svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + layout.width + ' ' + layout.height + '">';
     nodes.forEach(function (n) {
       if (n.parent < 0 || !present[n.id] || !present[n.parent]) return;
       var a = pos[n.parent], b = pos[n.id], key = n.parent + '>' + n.id;
@@ -121,7 +121,17 @@
       return (L === 'zh' ? '搜尋 ' : 'Search ') + fr.query + (fr.verdict ? ' → ' + verdict[fr.verdict] : '');
     }
     function paint(fr) {
-      scrollEl.innerHTML = svgFor(fullTrie.nodes, fr, layout);
+      var w = layout.width, h = layout.height;
+      if (document.body.classList.contains('viz-focus')) {
+        var rect = scrollEl.getBoundingClientRect();
+        var availW = Math.max(scrollEl.clientWidth - 6, 120);
+        var availH = Math.max(window.innerHeight - rect.top - 12, 120);
+        var scale = Math.min(availW / layout.width, availH / layout.height);
+        scale = Math.max(0.5, Math.min(scale, 3));
+        w = Math.round(layout.width * scale);
+        h = Math.round(layout.height * scale);
+      }
+      scrollEl.innerHTML = svgFor(fullTrie.nodes, fr, layout, w, h);
       bannerEl.textContent = bannerText(fr);
       msgEl.textContent = K().langOf(fr.msg);
       var color = '#60a5fa';

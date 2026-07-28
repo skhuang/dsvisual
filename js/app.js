@@ -1526,6 +1526,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // (bottom-right) on each entry.
             if (exitBtn) { exitBtn.style.left = ''; exitBtn.style.top = ''; exitBtn.style.right = ''; exitBtn.style.bottom = ''; }
             document.addEventListener('keydown', onKeydown);
+            requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });   // re-fit host-fitting viz to the enlarged window
             try {
                 const p = fsRequest(document.documentElement);
                 if (p && p.then) {
@@ -1541,6 +1542,7 @@ document.addEventListener('DOMContentLoaded', () => {
             body.classList.remove('viz-focus');
             setPressed(false);
             document.removeEventListener('keydown', onKeydown);
+            requestAnimationFrame(function () { window.dispatchEvent(new Event('resize')); });   // restore natural size
             if (fsElement()) { try { fsExit(); } catch (_) {} }
         }
         const onFsChange = () => {
@@ -2120,6 +2122,13 @@ document.addEventListener('DOMContentLoaded', () => {
             try { localStorage.setItem(storeKey, String(speed.value)); } catch (e) { /* ignore */ }
             if (playing && idx < last) play(); // re-apply new speed live (skip at last frame — about to auto-pause)
         });
+
+        const onResize = () => {
+            if (!strip.isConnected) { window.removeEventListener('resize', onResize); return; } // orphaned — detach
+            if (strip._fcRaf) cancelAnimationFrame(strip._fcRaf);
+            strip._fcRaf = requestAnimationFrame(() => { strip._fcRaf = 0; render(); });        // repaint current frame; idx unchanged
+        };
+        window.addEventListener('resize', onResize);
 
         render();
         return strip;

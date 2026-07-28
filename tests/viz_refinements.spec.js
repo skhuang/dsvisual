@@ -54,4 +54,21 @@ test.describe('viz refinements', () => {
     const n = await page.locator('.trie-svg .trie-node').count();
     expect(n).toBeGreaterThan(1);                            // a trie was built
   });
+
+  test('fullscreen auto-fits the trie SVG and preserves the VCR cursor', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=tree-trie');
+    const step = page.locator('.stepctl [data-action="step"]');
+    await step.click(); await step.click(); await step.click();   // land on a mid frame
+    const svgW = () => page.locator('.trie-svg').getAttribute('width').then((v) => parseFloat(v));
+    const beforeW = await svgW();
+    const beforeCount = await page.locator('.stepctl-count').textContent();
+
+    await page.locator('.method-section-card.active .viz-focus-toggle').click();
+    await expect.poll(async () => await svgW()).toBeGreaterThan(beforeW);   // SVG grew to fit the window
+    expect(await page.locator('.stepctl-count').textContent()).toBe(beforeCount);   // cursor unchanged
+
+    await page.locator('#viz-focus-exit').click();
+    await expect.poll(async () => await svgW()).toBeLessThanOrEqual(beforeW + 1);    // back to natural size
+  });
 });
