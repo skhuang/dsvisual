@@ -15,7 +15,7 @@
         loadExamples(methodId).forEach(function (e) { if (e.text === defaultText) return; h += '<option value="' + escA(e.text) + '">' + escT(trunc(e.text)) + '</option>'; });
         return h + '</select>';
     }
-    var TH_SKEW = '10,20,30,40,50';   // built-in "Left-skewed" example
+    var TH_SKEW = '50,40,30,20,10';   // built-in "Left-skewed" example (descending → left chain)
 
     // Pure geometry helper (also duplicated in app.js for other tree renderers; unchanged).
     function computeTreeLayout(node, x, y, dx, nodesMeta) {
