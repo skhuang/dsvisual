@@ -2151,7 +2151,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function fitFocusSize(scrollEl, natW, natH) {
         if (!scrollEl || !document.body.classList.contains('viz-focus')) return { w: natW, h: natH };
-        const availW = Math.max(scrollEl.clientWidth - 6, 120);
+        const box = scrollEl.closest && scrollEl.closest('.method-section-visual');
+        const availW = Math.max((box ? box.clientWidth : scrollEl.clientWidth) - 24, 120);
         let below = 0;
         for (let sib = scrollEl.nextElementSibling; sib; sib = sib.nextElementSibling) below += sib.getBoundingClientRect().height;
         const availH = Math.max(window.innerHeight - scrollEl.getBoundingClientRect().top - below - 8, 120);
