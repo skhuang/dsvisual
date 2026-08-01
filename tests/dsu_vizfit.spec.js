@@ -48,4 +48,25 @@ test.describe('tree-dsu scripted op-sequence + SVG forest (vizfit-svg)', () => {
     await expect(page.locator('.viz-zoom-controls')).toBeVisible();
     await expect(page.locator('[data-method-section="tree-dsu"] .code-drawer')).toBeHidden();
   });
+
+  test('fullscreen enlarges a WIDE drawing too (fit is natural-width-independent)', async ({ page }) => {
+    await page.addInitScript(() => { try { localStorage.setItem('dsvisual-lang', 'en'); } catch (e) {} });
+    await page.goto(FILE_URI + '#m=tree-dsu');
+    // n = clamp(maxIdx+1, 2, 12); 'U0 1; U10 11' -> n=12 -> all-singletons initial
+    // frame is ~646px wide, wider than any current default. Pre-fix this state
+    // SHRINKS in fullscreen (content-driven availW); post-fix it grows.
+    await page.fill('.dsu-input', 'U0 1; U10 11');
+    await page.click('.dsu-build');
+    const svgW = () => page.locator('.dsu-svg').getAttribute('width').then((v) => parseFloat(v));
+    const before = await svgW();
+    expect(before).toBeGreaterThan(600); // sanity: we are actually in the wide state
+    await page.locator('.method-section-card.active .viz-focus-toggle').click();
+    const card = page.locator('.method-section-card.active');
+    await expect(card).toHaveClass(/viz-fit-svg(\s|$)/);
+    // Grows to fill the fullscreen width (natural-width-independent) ...
+    await expect.poll(async () => await svgW()).toBeGreaterThan(before);
+    // ... and still fits within the fullscreen container (no cramping/overflow).
+    const visW = await page.locator('.method-section-visual').first().evaluate((el) => el.clientWidth);
+    expect(await svgW()).toBeLessThanOrEqual(visW);
+  });
 });
