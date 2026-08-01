@@ -416,7 +416,8 @@
               const showStatus = K().showStatus;
               const val = parseInt(dom.treeVal.value); if(isNaN(val)) return showStatus('Enter valid number.', '#f87171');
               if(currentMode === 'tree-bst') bstRoot = insertBST(bstRoot, val);
-              else if(currentMode === 'tree-avl') bstRoot = insertAVL(bstRoot, val);
+              // tree-avl renders into the dynamic viz host (renderTreeAVL) and never uses this
+              // legacy tree-container handler — no tree-avl branch here.
               else if(currentMode === 'tree-rb') { bstRoot = insertRB_Mock(bstRoot, val); assignRBColors(bstRoot, true); }
               else if(currentMode === 'tree-splay') bstRoot = insertSplay(bstRoot, val);
               else if(currentMode === 'tree-btree') { btreeData.push(val); btreeData.sort((a,b)=>a-b); renderAdvTrees(); return showStatus("B-Tree Updated.", "#34d399"); }
