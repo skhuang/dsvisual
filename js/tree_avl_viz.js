@@ -377,7 +377,7 @@
             this.reset(cfg.initText);
         }
         // (Re)bind the DOM this History renders into. Called from the constructor
-        // and again whenever renderTreeRB rebuilds the visualization host
+        // and again whenever renderTreeAVL rebuilds the visualization host
         // (mode/language switches), so the step history survives re-renders.
         attach(cfg) {
             this.stage = cfg.stage;
