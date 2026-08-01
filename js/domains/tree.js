@@ -169,6 +169,7 @@
   // rewindable History live in _rbState; each render builds a fresh Stage and
   // re-attaches the History to the new DOM.
   let _rbState = null;
+  let _avlState = null;
   function renderTreeRB() {
       const host = K().acquireDynamicVizHost();
       const langOf = K().langOf;
@@ -279,8 +280,116 @@
       });
   }
 
+  // ===== AVL Tree（旋轉觀測站，parallel copy of the RB observatory） =====
+  function renderTreeAVL() {
+      const host = K().acquireDynamicVizHost();
+      const langOf = K().langOf;
+      const showStatus = K().showStatus;
+      host.innerHTML =
+          '<div class="avlviz" data-testid="avlviz">' +
+              '<div class="avlviz-toolbar">' +
+                  '<div class="avlviz-field">' +
+                      '<input type="number" class="avlviz-input" data-testid="avlviz-input" placeholder="' + langOf({ zh: '鍵值', en: 'Key' }) + '" aria-label="' + langOf({ zh: '鍵值', en: 'Key' }) + '">' +
+                      '<button type="button" class="btn primary avlviz-insert" data-testid="avlviz-insert">' + langOf({ zh: '插入', en: 'Insert' }) + '</button>' +
+                      '<button type="button" class="btn secondary avlviz-delete" data-testid="avlviz-delete">' + langOf({ zh: '刪除', en: 'Delete' }) + '</button>' +
+                      '<button type="button" class="btn exception avlviz-clear" data-testid="avlviz-clear">' + langOf({ zh: '清空', en: 'Clear' }) + '</button>' +
+                  '</div>' +
+                  '<div class="avlviz-presets" data-testid="avlviz-presets"><span class="lbl">' + langOf({ zh: '劇本', en: 'Scenarios' }) + '</span></div>' +
+                  '<span class="avlviz-hint">' + langOf({ zh: '點節點可把鍵值帶入輸入框；← → 鍵逐步前進 / 倒帶，空白鍵播放 / 暫停', en: 'Click a node to load its key; ← → step forward / back, Space to play / pause' }) + '</span>' +
+              '</div>' +
+              '<div class="avlviz-workbench">' +
+                  '<div class="avlviz-stagecol">' +
+                      '<div class="avlviz-stepdesc" data-testid="avlviz-desc"></div>' +
+                      '<div class="avlviz-stage" data-testid="avlviz-stage"></div>' +
+                      '<div class="avlviz-transport" data-testid="avlviz-transport"></div>' +
+                      '<div class="avlviz-legend">' +
+                          '<span><i class="lbf"></i>' + langOf({ zh: '節點下方＝平衡因子 bf', en: 'Number below node = balance factor bf' }) + '</span>' +
+                          '<span><i class="lh"></i>' + langOf({ zh: '本步驟主角（旋轉樞紐）', en: "This step's focus (rotation pivot)" }) + '</span>' +
+                          '<span><i class="lim"></i>' + langOf({ zh: '失衡節點（|bf|=2）', en: 'Imbalanced node (|bf|=2)' }) + '</span>' +
+                          '<span><i class="lbe"></i>' + langOf({ zh: 'β 子樹（旋轉時換邊的那包）', en: 'β subtree (the bundle that switches sides on rotation)' }) + '</span>' +
+                      '</div>' +
+                  '</div>' +
+                  '<aside class="avlviz-logcol">' +
+                      '<h4>' + langOf({ zh: '步驟紀錄', en: 'Step Log' }) + '</h4>' +
+                      '<div class="avlviz-steplog" data-testid="avlviz-log"></div>' +
+                  '</aside>' +
+              '</div>' +
+          '</div>';
+
+      const input = host.querySelector('.avlviz-input');
+      const stage = new AVLViz.Stage(host.querySelector('.avlviz-stage'), {
+          emptyText: { zh: '空樹 —— 插入一個值，或載入一個劇本', en: 'Empty tree — insert a value, or load a scenario' },
+          sub: true,
+      });
+      stage.onNodeClick = (key) => { input.value = key; };
+
+      const attachCfg = {
+          stage,
+          descEl: host.querySelector('[data-testid="avlviz-desc"]'),
+          logEl: host.querySelector('[data-testid="avlviz-log"]'),
+          transportEl: host.querySelector('[data-testid="avlviz-transport"]'),
+      };
+      if (!_avlState) {
+          const tree = new AVLViz.AVLTree();
+          _avlState = { tree, hist: new AVLViz.History(Object.assign({ tree }, attachCfg)) };
+      } else {
+          _avlState.hist.attach(attachCfg);
+      }
+
+      function avlReset() {
+          _avlState.tree = new AVLViz.AVLTree();
+          _avlState.hist.tree = _avlState.tree;
+          _avlState.hist.reset();
+      }
+      function avlInsert(v, opt) {
+          if (!Number.isFinite(v)) { showStatus(langOf({ zh: '先輸入一個整數', en: 'Enter an integer first' }), '#fbbf24'); return false; }
+          v = Math.round(v);
+          if (_avlState.tree.size() >= 63) { showStatus(langOf({ zh: '節點太多了（上限 63），先刪一些吧', en: 'Too many nodes (max 63) — delete some first' }), '#fbbf24'); return false; }
+          if (_avlState.tree.find(v)) { showStatus(langOf({ zh: v + ' 已經在樹裡了', en: v + ' is already in the tree' }), '#fbbf24'); return false; }
+          _avlState.hist.runOp({ zh: '插入 ' + v, en: 'Insert ' + v }, () => _avlState.tree.insert(v), opt);
+          return true;
+      }
+      function avlDelete(v, opt) {
+          if (!Number.isFinite(v)) { showStatus(langOf({ zh: '先輸入一個整數', en: 'Enter an integer first' }), '#fbbf24'); return false; }
+          v = Math.round(v);
+          if (!_avlState.tree.find(v)) { showStatus(langOf({ zh: '樹裡沒有 ' + v, en: v + " isn't in the tree" }), '#fbbf24'); return false; }
+          _avlState.hist.runOp({ zh: '刪除 ' + v, en: 'Delete ' + v }, () => _avlState.tree.delete(v), opt);
+          return true;
+      }
+
+      host.querySelector('.avlviz-insert').addEventListener('click', () => { if (avlInsert(+input.value)) input.value = ''; });
+      host.querySelector('.avlviz-delete').addEventListener('click', () => { if (avlDelete(+input.value)) input.value = ''; });
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { if (avlInsert(+input.value)) input.value = ''; } });
+      host.querySelector('.avlviz-clear').addEventListener('click', () => { avlReset(); showStatus(langOf({ zh: '清空了', en: 'Cleared' }), '#94a3b8'); });
+
+      const presetsEl = host.querySelector('[data-testid="avlviz-presets"]');
+      AVLViz.PRESETS.forEach((p) => {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'avlviz-preset'; b.dataset.preset = p.id;
+          b.textContent = langOf(p.name);
+          const tip = langOf(p.tip || { zh: '', en: '' });
+          if (tip) b.title = tip;
+          b.addEventListener('click', () => {
+              avlReset();
+              for (const k of p.seed()) avlInsert(k, { play: false });
+              if (p.final) {
+                  const ready = _avlState.hist.steps.length - 1;
+                  if (p.final.op === 'insert') avlInsert(p.final.v, { play: false });
+                  else avlDelete(p.final.v, { play: false });
+                  _avlState.hist.goTo(ready, false);
+              } else {
+                  _avlState.hist.goTo(0, false);
+              }
+              const zhTip = (p.tip && p.tip.zh) || '', enTip = (p.tip && p.tip.en) || '';
+              showStatus(langOf({ zh: (zhTip ? zhTip + '。' : '') + '劇本已載入，按 ▶ 開始播放', en: (enTip ? enTip + '. ' : '') + 'Scenario loaded — press ▶ to play' }), '#94a3b8');
+          });
+          presetsEl.appendChild(b);
+      });
+  }
+
   function onModeSwitch(mode) {
       if (_rbState) _rbState.hist.pause(); // stop RB playback when leaving/re-entering the mode
+      if (_avlState) _avlState.hist.pause(); // stop AVL playback when leaving/re-entering the mode
       bstRoot = null;
       radixRoot = { edges: {} }; tstRoot = null; btreeData = []; bplusData = [];
       // This used to be cancelled unconditionally at the top of app.js's
@@ -352,10 +461,20 @@
           else if (e.key === 'ArrowLeft') { e.preventDefault(); h.pause(); h.goTo(h.cursor - 1); }
           else if (e.key === ' ') { e.preventDefault(); h.playing ? h.pause() : h.play(); }
       });
+
+      // 鍵盤操作（沙盒）：← → 逐步、空白鍵播放/暫停 —— 只在 AVL 樹模式作用
+      document.addEventListener('keydown', (e) => {
+          if (C().getMode() !== 'tree-avl' || !_avlState) return;
+          if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+          const h = _avlState.hist;
+          if (e.key === 'ArrowRight') { e.preventDefault(); h.pause(); h.goTo(h.cursor + 1); }
+          else if (e.key === 'ArrowLeft') { e.preventDefault(); h.pause(); h.goTo(h.cursor - 1); }
+          else if (e.key === ' ') { e.preventDefault(); h.playing ? h.pause() : h.play(); }
+      });
   }
 
   R().attach('tree-bst', { render: renderTree, code: () => codeTreeBST, layout: null });
-  R().attach('tree-avl', { render: renderTree, code: () => codeTreeAVL, layout: null });
+  R().attach('tree-avl', { render: renderTreeAVL, code: () => codeTreeAVL, layout: { host: 'dynamic' } });
   R().attach('tree-rb', { render: renderTreeRB, code: () => codeTreeRB, layout: { host: 'dynamic' } });
   R().attach('tree-splay', { render: renderTree, code: () => codeTreeSplay, layout: null });
   R().attach('tree-radix', { render: renderAdvTrees, code: () => codeTreeRadix, layout: null });

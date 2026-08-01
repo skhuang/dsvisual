@@ -73,7 +73,7 @@ const METHOD_GROUPS = [
         title: 'Trees',
         methods: [
             { id: 'tree-bst', title: 'Binary Search Tree', file: 'tree_bst.cpp', visualizer: 'tree', controls: 'tree' },
-            { id: 'tree-avl', title: 'AVL Tree', file: 'tree_avl.cpp', visualizer: 'tree', controls: 'tree' },
+            { id: 'tree-avl', title: 'AVL Tree', file: 'tree_avl.cpp', visualizer: 'avltree', controls: 'avltree', codeDrawer: true },
             { id: 'tree-rb', title: 'Red-Black Tree', file: 'tree_rb.cpp', visualizer: 'rbtree', controls: 'rbtree', codeDrawer: true },
             { id: 'tree-splay', title: 'Splay Tree', file: 'tree_splay.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'tree-trie', title: 'Trie', file: 'tree_trie.cpp', visualizer: 'trie', controls: 'trie', codeDrawer: true },
@@ -1723,15 +1723,18 @@ document.addEventListener('DOMContentLoaded', () => {
             codeTitle.textContent = 'graph_floyd_warshall.cpp';
             codeDisplay.textContent = codeGraphFloydWarshall;
         }
-        else if (['tree-bst', 'tree-avl', 'tree-splay'].includes(currentMode)) {
+        else if (['tree-bst', 'tree-splay'].includes(currentMode)) {
             treeContainer.classList.remove('hidden'); treeActions.classList.remove('hidden');
             if(currentMode === 'tree-bst') { codeTitle.textContent = 'tree_bst.cpp'; codeDisplay.textContent = codeTreeBST; }
-            if(currentMode === 'tree-avl') { codeTitle.textContent = 'tree_avl.cpp'; codeDisplay.textContent = codeTreeAVL; }
             if(currentMode === 'tree-splay') { codeTitle.textContent = 'tree_splay.cpp'; codeDisplay.textContent = codeTreeSplay; }
         }
         else if (currentMode === 'tree-rb') {
             // Rendered by renderTreeRB() into the dynamic viz host.
             codeTitle.textContent = 'tree_rb.cpp'; codeDisplay.textContent = codeTreeRB;
+        }
+        else if (currentMode === 'tree-avl') {
+            // Rendered by renderTreeAVL() into the dynamic viz host.
+            codeTitle.textContent = 'tree_avl.cpp'; codeDisplay.textContent = codeTreeAVL;
         }
         else if (['tree-radix', 'tree-ternary'].includes(currentMode)) {
             advTreeContainer.classList.remove('hidden'); textTreeActions.classList.remove('hidden');
