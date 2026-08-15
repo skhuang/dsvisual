@@ -69,6 +69,25 @@ test('handleRedirect memoizes the in-flight exchange across concurrent/duplicate
   assert.equal(calls, 1);
 });
 
+test('handleRedirect retries after a failed exchange (memo cleared on failure only)', async () => {
+  let calls = 0;
+  let mode = 'fail';
+  const s = load({ hash: '#mtoken=abc',
+    fetchImpl: async () => {
+      calls += 1;
+      if (mode === 'fail') return { ok: false, json: async () => ({}) };
+      return { ok: true, json: async () => ({ student_id: 'S9', providers: { github: false, google: true } }) };
+    } });
+  const c = s.window.cloudClient();
+  await c.handleRedirect();
+  assert.equal(c.getUser(), null);
+  assert.equal(calls, 1);   // one failed attempt so far (the auto-fire-on-load call)
+  mode = 'success';
+  await c.handleRedirect();   // must retry, not replay the cached failure
+  assert.equal(calls, 2);
+  assert.equal(c.getUser().student_id, 'S9');
+});
+
 test('handleRedirect swallows a malformed #mtoken without throwing', async () => {
   const s = load({ hash: '#mtoken=%' });
   await assert.doesNotReject(s.window.cloudClient().handleRedirect());

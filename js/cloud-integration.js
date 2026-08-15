@@ -58,7 +58,12 @@
       },
       signOut() { setUser(null); },
       handleRedirect() {
-        if (!redirectPromise) redirectPromise = runRedirect();
+        if (!redirectPromise) {
+          redirectPromise = runRedirect().then(function (ok) {
+            if (!ok) redirectPromise = null;   // allow retry after a failed/no-op exchange
+            return ok;
+          });
+        }
         return redirectPromise;
       },
     };
@@ -66,7 +71,7 @@
     async function runRedirect() {
       const hash = (location.hash || '');
       const m = hash.match(/[#&]mtoken=([^&]+)/);
-      if (!m) return;
+      if (!m) return false;
       let res;
       try {
         const token = decodeURIComponent(m[1]);
@@ -74,10 +79,10 @@
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: token }),
         });
-      } catch (e) { return; }
-      if (!res || !res.ok) return;
-      let data; try { data = await res.json(); } catch (e) { return; }
-      if (!data || !data.student_id) return;
+      } catch (e) { return false; }
+      if (!res || !res.ok) return false;
+      let data; try { data = await res.json(); } catch (e) { return false; }
+      if (!data || !data.student_id) return false;
       // strip the fragment so the token doesn't linger in the URL/history
       try { history.replaceState(null, '', location.href.replace(/#.*$/, '')); } catch (e) { /* ignore */ }
       setUser({
@@ -87,6 +92,7 @@
           google: !!(data.providers && data.providers.google),
         },
       });
+      return true;
     }
   }
 
