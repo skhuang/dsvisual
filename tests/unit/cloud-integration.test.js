@@ -41,8 +41,38 @@ test('handleRedirect: #mtoken -> verify -> getUser + fragment stripped', async (
   await s.window.cloudClient().handleRedirect();
   assert.equal(posted.url, 'https://maccount.example/api/app/verify');
   assert.equal(posted.body.token, 'abc.def');
-  assert.deepEqual(s.window.cloudClient().getUser(), { student_id: 'S9', providers: { github: false, google: true } });
+  const u = s.window.cloudClient().getUser();
+  assert.equal(u.student_id, 'S9');
+  assert.equal(u.providers.github, false);
+  assert.equal(u.providers.google, true);
   assert.doesNotMatch(s.location.href, /mtoken/);   // fragment stripped
+});
+
+test('handleRedirect normalizes providers and drops unknown fields', async () => {
+  const s = load({ hash: '#mtoken=abc',
+    fetchImpl: async () => ({ ok: true, json: async () => (
+      { student_id: 'S2', providers: { github: true }, extra: 'nope', exp: 12345 }) }) });
+  await s.window.cloudClient().handleRedirect();
+  const u = s.window.cloudClient().getUser();
+  assert.equal(u.providers.github, true);
+  assert.equal(u.providers.google, false);
+  assert.deepEqual(Object.keys(u).sort(), ['providers', 'student_id']);
+});
+
+test('handleRedirect memoizes the in-flight exchange across concurrent/duplicate calls', async () => {
+  let calls = 0;
+  const s = load({ hash: '#mtoken=abc',
+    fetchImpl: async () => { calls += 1;
+      return { ok: true, json: async () => ({ student_id: 'S9', providers: { github: false, google: true } }) }; } });
+  const c = s.window.cloudClient();
+  await Promise.all([c.handleRedirect(), c.handleRedirect()]);
+  assert.equal(calls, 1);
+});
+
+test('handleRedirect swallows a malformed #mtoken without throwing', async () => {
+  const s = load({ hash: '#mtoken=%' });
+  await assert.doesNotReject(s.window.cloudClient().handleRedirect());
+  assert.equal(s.window.cloudClient().getUser(), null);
 });
 
 test('verify failure leaves user null', async () => {

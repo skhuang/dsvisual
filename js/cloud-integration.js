@@ -32,6 +32,7 @@
     const appId = cfg.appId || 'dsvisual';
     const subs = [];
     let user = readUser();
+    let redirectPromise = null;
 
     function readUser() {
       try { const raw = sessionStorage.getItem(USER_KEY); return raw ? JSON.parse(raw) : null; }
@@ -56,27 +57,37 @@
           + '&return=' + encodeURIComponent(location.href));
       },
       signOut() { setUser(null); },
-      async handleRedirect() {
-        const hash = (location.hash || '');
-        const m = hash.match(/[#&]mtoken=([^&]+)/);
-        if (!m) return;
-        const token = decodeURIComponent(m[1]);
-        let res;
-        try {
-          res = await fetch(base + '/api/app/verify', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: token }),
-          });
-        } catch (e) { return; }
-        if (!res || !res.ok) return;
-        let data; try { data = await res.json(); } catch (e) { return; }
-        if (!data || !data.student_id) return;
-        // strip the fragment so the token doesn't linger in the URL/history
-        try { history.replaceState(null, '', location.href.replace(/#.*$/, '')); } catch (e) { /* ignore */ }
-        if (!data.providers) data.providers = { github: false, google: false };
-        setUser(data);
+      handleRedirect() {
+        if (!redirectPromise) redirectPromise = runRedirect();
+        return redirectPromise;
       },
     };
+
+    async function runRedirect() {
+      const hash = (location.hash || '');
+      const m = hash.match(/[#&]mtoken=([^&]+)/);
+      if (!m) return;
+      let res;
+      try {
+        const token = decodeURIComponent(m[1]);
+        res = await fetch(base + '/api/app/verify', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: token }),
+        });
+      } catch (e) { return; }
+      if (!res || !res.ok) return;
+      let data; try { data = await res.json(); } catch (e) { return; }
+      if (!data || !data.student_id) return;
+      // strip the fragment so the token doesn't linger in the URL/history
+      try { history.replaceState(null, '', location.href.replace(/#.*$/, '')); } catch (e) { /* ignore */ }
+      setUser({
+        student_id: data.student_id,
+        providers: {
+          github: !!(data.providers && data.providers.github),
+          google: !!(data.providers && data.providers.google),
+        },
+      });
+    }
   }
 
   function cloudClient() {
