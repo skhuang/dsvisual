@@ -3,7 +3,7 @@
 //
 // Usage:
 //   node scripts/inject-env.mjs           # reads .env if present
-//   FIREBASE_API_KEY=xxx node scripts/inject-env.mjs
+//   MACCOUNT_WORKER_URL=xxx node scripts/inject-env.mjs
 
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -29,14 +29,7 @@ try {
 }
 
 const PLACEHOLDERS = {
-  __FIREBASE_API_KEY__:              'FIREBASE_API_KEY',
-  __FIREBASE_AUTH_DOMAIN__:          'FIREBASE_AUTH_DOMAIN',
-  __FIREBASE_PROJECT_ID__:           'FIREBASE_PROJECT_ID',
-  __FIREBASE_STORAGE_BUCKET__:       'FIREBASE_STORAGE_BUCKET',
-  __FIREBASE_MESSAGING_SENDER_ID__:  'FIREBASE_MESSAGING_SENDER_ID',
-  __FIREBASE_APP_ID__:               'FIREBASE_APP_ID',
-  __FIREBASE_MEASUREMENT_ID__:       'FIREBASE_MEASUREMENT_ID',
-  __DRIVE_PRIVATE_SLIDES_FOLDER_ID__:'DRIVE_PRIVATE_SLIDES_FOLDER_ID',
+  __MACCOUNT_WORKER_URL__: 'MACCOUNT_WORKER_URL',
 };
 
 let source = await readFile(configPath, 'utf8');
