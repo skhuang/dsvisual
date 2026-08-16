@@ -2601,13 +2601,6 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
   }
 }
 
-/* Private slides (Drive-gated) */
-.slideviewer-deck-btn--signin {
-  background: #fef3c7; color: #92400e; font-style: italic; font-weight: 600;
-}
-.slideviewer-deck-btn--signin:hover { background: #fde68a; }
-.slideviewer-deck-btn__sub { font-size: 0.72rem; opacity: 0.85; margin-left: 0.25rem; }
-
 .tt-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; align-items: center; }
 .tt-stage { position: relative; height: 320px; overflow: hidden; }
 .tt-stage .tt-edges { position: absolute; inset: 0; width: 100%; height: 100%; }
