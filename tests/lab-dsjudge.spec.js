@@ -95,3 +95,22 @@ test('F: close unsubscribes (later auth change does not throw / re-render)', asy
   await page.evaluate(() => window.__setUser({ student_id: 'B3', providers: { github: true, google: false } }));
   await expect(page.locator('#lab-viewer')).toBeHidden();
 });
+
+test('G: no cloudClient at all -> enabled link fallback (no signin button)', async ({ page }) => {
+  await setup(page, { hasClient: false });
+  await page.evaluate(() => window.LabViewer.open('has-url'));
+  const link = page.locator('a[data-testid="lab-dsjudge"]');
+  await expect(link).toBeVisible();
+  await expect(link).toHaveAttribute('href', 'https://ds2026summer.cs.nycu.edu.tw/bank/fixture');
+  await expect(page.locator('[data-testid="lab-dsjudge-signin"]')).toHaveCount(0);
+});
+
+test('H: repeated open() without close() does not orphan the auth subscription', async ({ page }) => {
+  await setup(page, { loggedIn: false });
+  await page.evaluate(() => window.LabViewer.open('has-url'));
+  await page.evaluate(() => window.LabViewer.open('has-url')); // no close() between
+  await page.evaluate(() => window.LabViewer.close());
+  expect(await page.evaluate(() => window.__labAuth.cbs.length)).toBe(0);
+  await page.evaluate(() => window.__setUser({ student_id: 'B4', providers: { github: true, google: false } }));
+  expect(await page.evaluate(() => window.__labAuth.cbs.length)).toBe(0);
+});

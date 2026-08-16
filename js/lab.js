@@ -70,6 +70,7 @@
     ensureRefs();
     var arr = global.LAB_RENDERED && global.LAB_RENDERED[methodId];
     if (!arr || !arr.length || !overlay) return;
+    if (state && state.unsub) { try { state.unsub(); } catch (e) { /* ignore */ } state.unsub = null; }
     lang = curLang();
     state = { methodId: methodId, lab: arr[0] }; // pilot: first problem; multi-problem picker is a later enhancement
     render();
