@@ -34,7 +34,6 @@
     "@playwright/test": "^1.61.1",
     "clang-format": "^1.8.0",
     "fast-xml-parser": "^4.5.7",
-    "firebase": "^11.7.1",
     "katex": "^0.16.47",
     "prismjs": "^1.30.0"
   }

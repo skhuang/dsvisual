@@ -2332,6 +2332,7 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 .cloud-drawer-note { margin: 0; color: var(--text-muted, #51606f); }
 .cloud-drawer-user { margin: 0; font-weight: 600; }
 .cloud-drawer-error { margin: 0; color: #b91c1c; font-size: 0.85rem; }
+.cloud-drawer-providers.muted { margin: 0; color: var(--text-muted, #51606f); font-size: 0.85rem; }
 
 /* ============================================================
    Slide viewer — aligned with rdvisual/stvisual SlideViewer.css.
