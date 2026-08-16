@@ -68,6 +68,18 @@
       },
     };
 
+    // Remove any mtoken=... segment from the fragment while preserving the rest
+    // of the app hash. Fragments may mix '#' and '&' delimiters (the return URL
+    // may arrive as ...#m=method#mtoken=token); remaining segments are rejoined
+    // with '&' under a single leading '#'.
+    function stripMtoken(href, hash) {
+      const base = href.replace(/#.*$/, '');
+      const segs = (hash || '').replace(/^#/, '').split(/[#&]/).filter(function (s) {
+        return s && !/^mtoken=/.test(s);
+      });
+      return segs.length ? base + '#' + segs.join('&') : base;
+    }
+
     async function runRedirect() {
       const hash = (location.hash || '');
       const m = hash.match(/[#&]mtoken=([^&]+)/);
@@ -83,8 +95,10 @@
       if (!res || !res.ok) return false;
       let data; try { data = await res.json(); } catch (e) { return false; }
       if (!data || !data.student_id) return false;
-      // strip the fragment so the token doesn't linger in the URL/history
-      try { history.replaceState(null, '', location.href.replace(/#.*$/, '')); } catch (e) { /* ignore */ }
+      // strip only the mtoken so it doesn't linger in the URL/history, but keep
+      // any pre-existing app fragment (e.g. #m=insert) — the return URL may arrive
+      // as ...#m=method#mtoken=token (two '#') or ...#m=method&mtoken=token.
+      try { history.replaceState(null, '', stripMtoken(location.href, location.hash)); } catch (e) { /* ignore */ }
       setUser({
         student_id: data.student_id,
         providers: {

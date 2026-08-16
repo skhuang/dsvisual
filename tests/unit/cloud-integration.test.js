@@ -48,6 +48,15 @@ test('handleRedirect: #mtoken -> verify -> getUser + fragment stripped', async (
   assert.doesNotMatch(s.location.href, /mtoken/);   // fragment stripped
 });
 
+test('handleRedirect preserves a pre-existing app hash and strips only mtoken', async () => {
+  const s = load({ hash: '#m=insert#mtoken=abc',
+    fetchImpl: async () => ({ ok: true, json: async () => ({ student_id: 'S3', providers: { github: true, google: false } }) }) });
+  await s.window.cloudClient().handleRedirect();
+  assert.equal(s.window.cloudClient().getUser().student_id, 'S3');   // sign-in succeeded
+  assert.doesNotMatch(s.location.href, /mtoken/);                    // token removed
+  assert.match(s.location.href, /#m=insert$/);                       // app hash kept, nothing after it
+});
+
 test('handleRedirect normalizes providers and drops unknown fields', async () => {
   const s = load({ hash: '#mtoken=abc',
     fetchImpl: async () => ({ ok: true, json: async () => (
