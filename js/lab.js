@@ -4,6 +4,21 @@
   function t(k, fb) { return (global.I18N && I18N.t) ? I18N.t(k) : (fb || k); }
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
+  function getClient() { return (global.cloudClient) ? global.cloudClient() : null; }
+
+  function dsjudgeControlHtml(lab, client, user) {
+    if (!lab.dsjudgeUrl) {
+      return '<button type="button" class="btn secondary" data-testid="lab-dsjudge" aria-disabled="true" disabled>'
+        + t('lab.dsjudgeSoon', 'Practice on dsjudge (coming soon)') + '</button>';
+    }
+    if (client && client.isConfigured && !user) {
+      return '<button type="button" class="btn secondary" data-testid="lab-dsjudge-signin">'
+        + t('lab.dsjudgeSignin', 'Sign in to practice on dsjudge') + '</button>';
+    }
+    return '<a class="btn secondary" data-testid="lab-dsjudge" href="' + lab.dsjudgeUrl + '" target="_blank" rel="noopener">'
+      + t('lab.dsjudgePractice', 'Practice on dsjudge') + '</a>';
+  }
+
   var overlay, body, lang, state = null;
 
   function ensureRefs() {
@@ -34,9 +49,9 @@
     var meta = [];
     if (lab.difficulty) meta.push(t('lab.difficulty', 'Difficulty') + ' ' + '★'.repeat(lab.difficulty));
     if (lab.week) meta.push(t('lab.week', 'Week') + ' ' + lab.week);
-    var dsjudgeControl = lab.dsjudgeUrl
-      ? '<a class="btn secondary" data-testid="lab-dsjudge" href="' + lab.dsjudgeUrl + '" target="_blank" rel="noopener">' + t('lab.dsjudgeSoon', 'Practice on dsjudge (coming soon)') + '</a>'
-      : '<button type="button" class="btn secondary" data-testid="lab-dsjudge" aria-disabled="true" disabled>' + t('lab.dsjudgeSoon', 'Practice on dsjudge (coming soon)') + '</button>';
+    var client = getClient();
+    var user = (client && client.getUser) ? client.getUser() : null;
+    var dsjudgeControl = dsjudgeControlHtml(lab, client, user);
     body.innerHTML =
       '<div class="lab-head"><h3>' + esc(title) + '</h3><div class="lab-meta muted">' + meta.map(esc).join(' · ') + '</div></div>'
       + '<div class="lab-statement" data-testid="lab-statement">' + stmt + '</div>'
@@ -46,6 +61,8 @@
       + '<a class="btn primary" data-testid="lab-open-repo" href="' + lab.repoUrl + '" target="_blank" rel="noopener">' + t('lab.openRepo', 'Open practice repo') + ' ↗</a> '
       + dsjudgeControl
       + '</div>';
+    var signinBtn = body.querySelector('[data-testid="lab-dsjudge-signin"]');
+    if (signinBtn) signinBtn.addEventListener('click', function () { var c = getClient(); if (c && c.signIn) c.signIn(); });
     var lt = document.getElementById('lab-lang-toggle'); if (lt) lt.textContent = lang === 'zh' ? 'EN' : '中';
   }
 
@@ -58,9 +75,17 @@
     render();
     overlay.hidden = false; document.body.style.overflow = 'hidden';
     var panel = overlay.querySelector('.quizviewer-panel'); if (panel) panel.focus();
+    var client = getClient();
+    if (client && client.subscribeAuthState) {
+      state.unsub = client.subscribeAuthState(function () { if (state) render(); });
+    }
   }
 
-  function close() { if (overlay) { overlay.hidden = true; document.body.style.overflow = ''; } state = null; }
+  function close() {
+    if (state && state.unsub) { try { state.unsub(); } catch (e) { /* ignore */ } state.unsub = null; }
+    if (overlay) { overlay.hidden = true; document.body.style.overflow = ''; }
+    state = null;
+  }
 
   global.LabViewer = { open: open, close: close };
 })(typeof window !== 'undefined' ? window : this);
