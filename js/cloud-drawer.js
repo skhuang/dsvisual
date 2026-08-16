@@ -1,4 +1,4 @@
-// Cloud drawer: ☁ header button → modal with Google sign-in / sign-out.
+// Cloud drawer: ☁ header button → modal with maccount (NYCU) sign-in / sign-out.
 // Reads/writes auth state via window.cloudClient(). Re-renders body on
 // auth state changes. Dispatches 'cloud-auth-changed' custom event so
 // other modules (app.js slide viewer) can react.
@@ -14,38 +14,26 @@
   function render(body, client) {
     const user = client.getUser();
     if (user) {
-      const name = user.displayName || user.email || 'unknown';
+      const provs = [];
+      if (user.providers && user.providers.github) provs.push('GitHub');
+      if (user.providers && user.providers.google) provs.push('Google');
       body.innerHTML =
-        '<p class="cloud-drawer-user">' + t('cloud.current-user', { name: name }) + '</p>' +
-        '<button type="button" class="btn secondary" id="cloud-signout-btn" data-testid="cloud-signout-btn">' +
-          t('cloud.signout') +
-        '</button>';
-      const btn = body.querySelector('#cloud-signout-btn');
-      btn.addEventListener('click', async () => {
-        try {
-          await client.signOutGoogle();
-          window.dispatchEvent(new CustomEvent('cloud-auth-changed', { detail: { signedIn: false } }));
-        } catch (err) {
-          body.insertAdjacentHTML('beforeend', '<p class="cloud-drawer-error">' + (err && err.message) + '</p>');
-        }
+        '<p class="cloud-drawer-user">' + t('cloud.current-user', { name: user.student_id }) + '</p>' +
+        (provs.length ? '<p class="cloud-drawer-providers muted">' + t('cloud.linked') + ' ' + provs.join(', ') + '</p>' : '') +
+        '<button type="button" class="btn secondary" id="cloud-signout-btn" data-testid="cloud-signout-btn">' + t('cloud.signout') + '</button>';
+      body.querySelector('#cloud-signout-btn').addEventListener('click', function () {
+        client.signOut();
+        window.dispatchEvent(new CustomEvent('cloud-auth-changed', { detail: { signedIn: false } }));
       });
     } else {
       const isConfigured = client.isConfigured;
       const note = isConfigured ? t('cloud.signin-note') : (client.missingReason || 'Cloud not configured.');
       body.innerHTML =
         '<p class="cloud-drawer-note">' + note + '</p>' +
-        '<button type="button" class="btn primary" id="cloud-signin-btn" data-testid="cloud-signin-btn"' +
-          (isConfigured ? '' : ' disabled') + '>' +
-          t('cloud.signin-cta') +
-        '</button>';
+        '<button type="button" class="btn primary" id="cloud-signin-btn" data-testid="cloud-signin-btn"' + (isConfigured ? '' : ' disabled') + '>' + t('cloud.signin-cta') + '</button>';
       if (isConfigured) {
-        body.querySelector('#cloud-signin-btn').addEventListener('click', async () => {
-          try {
-            await client.signInWithGoogle();
-            window.dispatchEvent(new CustomEvent('cloud-auth-changed', { detail: { signedIn: true } }));
-          } catch (err) {
-            body.insertAdjacentHTML('beforeend', '<p class="cloud-drawer-error">' + (err && err.message) + '</p>');
-          }
+        body.querySelector('#cloud-signin-btn').addEventListener('click', function () {
+          client.signIn();   // redirects; no await
         });
       }
     }
