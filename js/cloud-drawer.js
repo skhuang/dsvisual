@@ -1,7 +1,6 @@
 // Cloud drawer: ☁ header button → modal with maccount (NYCU) sign-in / sign-out.
 // Reads/writes auth state via window.cloudClient(). Re-renders body on
-// auth state changes. Dispatches 'cloud-auth-changed' custom event so
-// other modules (app.js slide viewer) can react.
+// auth state changes.
 (function () {
   'use strict';
 
@@ -23,7 +22,6 @@
         '<button type="button" class="btn secondary" id="cloud-signout-btn" data-testid="cloud-signout-btn">' + t('cloud.signout') + '</button>';
       body.querySelector('#cloud-signout-btn').addEventListener('click', function () {
         client.signOut();
-        window.dispatchEvent(new CustomEvent('cloud-auth-changed', { detail: { signedIn: false } }));
       });
     } else {
       const isConfigured = client.isConfigured;
@@ -86,7 +84,4 @@
   } else {
     bind();
   }
-
-  // Exposed for openSlides() sign-in row handler.
-  window.openCloudDrawer = openDrawer;
 })();
