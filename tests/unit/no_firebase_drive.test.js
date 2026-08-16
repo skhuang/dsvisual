@@ -9,4 +9,5 @@ test('no firebase/drive references remain', () => {
   assert.doesNotMatch(R('js/app.js'), /getPrivateContext|getAccessToken|privateSlidesFolderId|cfg\.drive/);
   assert.doesNotMatch(R('package.json'), /"firebase"/);
   assert.ok(!fs.existsSync(path.join(__dirname, '../../tests/cloud-private-slides.spec.js')));
+  assert.doesNotMatch(R('index.html'), /private-decks\.js|slide-markdown\.js/);
 });
