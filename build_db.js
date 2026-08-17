@@ -38,6 +38,7 @@ const mappings = {
     'graph_bipartite.cpp': 'codeGraphBipartite',
     'graph_closure.cpp': 'codeGraphClosure',
     'graph_scc.cpp': 'codeGraphScc',
+    'graph_maxflow.cpp': 'codeGraphMaxFlow',
     'list_array.cpp': 'codeListArray',
     'list_linked.cpp': 'codeListLinked',
     'hash_chaining.cpp': 'codeHashChain',

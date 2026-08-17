@@ -299,6 +299,21 @@ const descDB = {
             <span class="badge space">Space: O(n + e)</span>
         </div>
     `,
+    'graph-maxflow': `
+        <h3>Maximum Flow — Edmonds-Karp / 最大流</h3>
+        <p><strong>EN.</strong> A flow sends value from a source <code>s</code> to a sink <code>t</code> without exceeding edge capacities and while conserving flow at every other vertex. <strong>中文。</strong>流量由起點 <code>s</code> 送往終點 <code>t</code>，不得超過邊容量，且中間頂點的流入量必須等於流出量。</p>
+        <hr>
+        <ul>
+            <li><strong>Residual graph / 殘量網路：</strong> a forward residual edge records unused capacity; its reverse edge records how much earlier flow may be cancelled. 正向殘量邊表示尚可使用的容量，反向邊讓後續路徑撤銷先前的選擇。</li>
+            <li><strong>Edmonds-Karp：</strong> BFS chooses an augmenting path with the fewest edges. Increase flow by the path's bottleneck, update both residual directions, and repeat. BFS 尋找邊數最少的增廣路徑，依瓶頸容量增廣並同時更新正反向殘量。</li>
+            <li><strong>Max-flow min-cut theorem / 最大流最小割定理：</strong> when <code>t</code> is unreachable in the residual graph, the vertices still reachable from <code>s</code> define a cut whose capacity equals the maximum flow.</li>
+            <li><strong>Chapter 6 uses / 第六章應用：</strong> network routing, bipartite matching, assignment, evacuation, and image segmentation.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(VE&sup2;)</span>
+            <span class="badge space">Space: O(V&sup2;) in this matrix demo</span>
+        </div>
+    `,
     'tree-bst': `
         <h3>Binary Search Tree (Standard)</h3>
         <p>An elegant hierarchical associative routing structure.</p>

@@ -123,6 +123,7 @@ const METHOD_GROUPS = [
             { id: 'graph-bipartite', title: 'Bipartite Check', file: 'graph_bipartite.cpp', visualizer: 'graph-bipartite', controls: 'graph-bipartite', codeDrawer: true },
             { id: 'graph-closure', title: 'Transitive Closure', file: 'graph_closure.cpp', visualizer: 'graph-closure', controls: 'graph-closure', codeDrawer: true },
             { id: 'graph-scc', title: 'Strongly Connected Components', file: 'graph_scc.cpp', visualizer: 'graph-scc', controls: 'graph-scc', codeDrawer: true },
+            { id: 'graph-maxflow', title: 'Maximum Flow (Edmonds-Karp)', file: 'graph_maxflow.cpp', visualizer: 'graph-maxflow', controls: 'graph-maxflow', codeDrawer: true },
         ],
     },
     {
