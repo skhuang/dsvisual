@@ -48,6 +48,22 @@ test('disconnected sink finishes at zero flow and exposes the source-side cut', 
   assert.strictEqual(done.minCut.capacity, 0);
 });
 
+test('a later augmenting path can traverse a generated reverse residual edge', () => {
+  const result = G.maxFlowFrames({
+    n: 6, source: 0, sink: 5,
+    edges: [
+      { u: 0, v: 1, capacity: 3 }, { u: 0, v: 2, capacity: 2 },
+      { u: 1, v: 3, capacity: 2 }, { u: 1, v: 4, capacity: 2 },
+      { u: 2, v: 3, capacity: 2 }, { u: 3, v: 5, capacity: 2 },
+      { u: 4, v: 5, capacity: 3 },
+    ],
+  });
+  assert.strictEqual(result.maxFlow, 4);
+  assert.ok(result.frames.some((frame) =>
+    frame.phase === 'augment' && frame.augmentEdge.u === 3 && frame.augmentEdge.v === 1
+  ));
+});
+
 test('frames include BFS, path, reverse-residual updates, bilingual text, and independent snapshots', () => {
   const { frames } = G.maxFlowFrames(G.SAMPLE);
   assert.ok(frames.some((frame) => frame.phase === 'bfs-start'));

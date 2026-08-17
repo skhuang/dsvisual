@@ -1958,6 +1958,17 @@ using Matrix = std::vector<std::vector<int>>;
 int edmondsKarp(const Matrix& capacity, int source, int sink) {
     const int n = static_cast<int>(capacity.size());
     Matrix residual = capacity;
+    std::vector<std::vector<int>> adjacency(n);
+    for (int u = 0; u < n; ++u) {
+        for (int v = u + 1; v < n; ++v) {
+            if (capacity[u][v] > 0 || capacity[v][u] > 0) {
+                // Keep the reverse neighbour even if it has no original
+                // capacity: augmentation may create that residual edge.
+                adjacency[u].push_back(v);
+                adjacency[v].push_back(u);
+            }
+        }
+    }
     int maximumFlow = 0;
 
     while (true) {
@@ -1969,7 +1980,7 @@ int edmondsKarp(const Matrix& capacity, int source, int sink) {
         while (!frontier.empty() && parent[sink] == -1) {
             int u = frontier.front();
             frontier.pop();
-            for (int v = 0; v < n; ++v) {
+            for (int v : adjacency[u]) {
                 if (parent[v] == -1 && residual[u][v] > 0) {
                     parent[v] = u;
                     frontier.push(v);

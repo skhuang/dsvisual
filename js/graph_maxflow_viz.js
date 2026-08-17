@@ -160,6 +160,14 @@
 
     const capacity = Array.from({ length: n }, () => Array(n).fill(0));
     edges.forEach((edge) => { capacity[edge.u][edge.v] += edge.capacity; });
+    const adjacencySets = Array.from({ length: n }, () => new Set());
+    edges.forEach((edge) => {
+      // Include both directions: the reverse direction may become traversable
+      // after an augmentation even when it had no original capacity.
+      adjacencySets[edge.u].add(edge.v);
+      adjacencySets[edge.v].add(edge.u);
+    });
+    const adjacency = adjacencySets.map((neighbors) => Array.from(neighbors).sort((a, b) => a - b));
     const residual = capacity.map((row) => row.slice());
     const flow = Array.from({ length: n }, () => Array(n).fill(0));
     const frames = [];
@@ -221,7 +229,8 @@
           zh: '從 BFS 佇列取出頂點 ' + u + '。',
           en: 'Dequeue vertex ' + u + ' from the BFS frontier.',
         });
-        for (let v = 0; v < n && !visited[sink]; ++v) {
+        for (const v of adjacency[u]) {
+          if (visited[sink]) break;
           if (residual[u][v] <= 0) continue;
           snapshot('inspect', {
             queue: queue.slice(head), visited, parent, current: u,
