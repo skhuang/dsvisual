@@ -300,6 +300,112 @@
     return lines.join(',');
   }
 
+  // n stays within the viz's own button range (nBtns only render k=0..4 —
+  // enumerateShapes(n) is exponential, so the UI itself never offers n>4).
+  function catalanN(rng, difficulty) {
+    switch (difficulty) {
+      case 'edge': return rng() < 0.5 ? 0 : 1;
+      case 'special': return rng() < 0.5 ? 2 : 3;
+      case 'large': return 4;
+      default: return randInt(rng, 1, 3);
+    }
+  }
+
+  // Self-contained mirror of GameTreeViz.randomInput (js/game_tree_viz.js), threaded
+  // through the shared `rng` for testability — buildGameTree() pads any leaf count up
+  // to the next power of the branching factor, so there's no fixed-size ceiling to respect.
+  function gameTreeLeaves(rng, difficulty) {
+    let n, lo, hi;
+    if (difficulty === 'large') { n = 16; lo = -9; hi = 9; }
+    else if (difficulty === 'edge') { n = 4; lo = -5; hi = 9; }
+    else { n = 8; lo = -5; hi = 9; } // normal, special
+    let leaves = [];
+    for (let i = 0; i < n; i++) leaves.push(randInt(rng, lo, hi));
+    if (difficulty === 'special') { // bias toward alpha-beta pruning: strong values first
+      const head = leaves.slice(0, n / 2).sort((a, b) => b - a);
+      leaves = head.concat(leaves.slice(n / 2));
+    }
+    return leaves;
+  }
+
+  // Self-contained mirror of TreeGeneralBinaryViz.randomInput (js/tree_general_binary_viz.js),
+  // threaded through the shared `rng` for testability. Not wired into js/viz/viz_tgb.js's
+  // own 🎲 (which already calls TreeGeneralBinaryViz.randomInput directly and is fully
+  // working/tested) — this exists so RandomInput.randomInputFor covers the methodId too.
+  function tgbTreeText(rng, difficulty) {
+    const LETTERS = 'ABCDEFGHIJKLMNOPQRST'; // cap 20 -> single-letter labels
+    function emit(children, order) {
+      return order.filter((p) => (children[p] || []).length)
+                  .map((p) => p + ':' + children[p].join(','))
+                  .join(';');
+    }
+    if (difficulty === 'edge') {
+      const which = randInt(rng, 0, 2);
+      if (which === 0) return 'A';                // single node
+      if (which === 1) return 'A:B;B:C;C:D';       // pure chain
+      return 'A:B,C,D,E,F';                        // star
+    }
+    if (difficulty === 'special') {
+      if (rng() < 0.5) { // wide fan
+        const k = randInt(rng, 4, 6); const order = ['A']; const children = { A: [] }; let next = 1;
+        for (let i = 0; i < k && next < LETTERS.length; i++) { const lab = LETTERS[next++]; children.A.push(lab); order.push(lab); children[lab] = []; }
+        children.A.slice().forEach((c) => { if (rng() < 0.5 && next < LETTERS.length) { const gl = LETTERS[next++]; children[c] = [gl]; order.push(gl); children[gl] = []; } });
+        return emit(children, order);
+      }
+      const depth = randInt(rng, 5, 7); const parts = []; // deep chain
+      for (let j = 0; j < depth && j + 1 < LETTERS.length; j++) parts.push(LETTERS[j] + ':' + LETTERS[j + 1]);
+      return parts.join(';');
+    }
+    const n = difficulty === 'large' ? randInt(rng, 10, 14) : randInt(rng, 5, 7);
+    const cap = difficulty === 'large' ? 4 : 3;
+    const placed = ['A']; const childMap = { A: [] }; const ord = ['A'];
+    for (let idx = 1; idx < n && idx < LETTERS.length; idx++) {
+      const label = LETTERS[idx];
+      const candidates = placed.filter((p) => childMap[p].length < cap);
+      const parent = candidates[randInt(rng, 0, candidates.length - 1)];
+      childMap[parent].push(label); childMap[label] = []; placed.push(label); ord.push(label);
+    }
+    return emit(childMap, ord);
+  }
+
+  // A level-order token string (space-separated; '-' = empty slot) that
+  // js/tree_copy_equal_viz.js's tokenize()/parseTree() can consume directly.
+  // Grows a valid rooted binary tree of exactly `maxNodes` nodes by always
+  // attaching the next node under a uniformly-random already-present node
+  // that still has an empty child slot, so every parent always precedes its
+  // child (no orphans) and the root (index 1) is always present.
+  function copyEqualTreeTokens(rng, difficulty) {
+    let maxNodes;
+    if (difficulty === 'edge') maxNodes = 1;
+    else if (difficulty === 'large') maxNodes = randInt(rng, 10, 14);
+    else maxNodes = randInt(rng, 5, 7); // normal, special
+    const present = new Set([1]);
+    const order = [1];
+    while (present.size < maxNodes) {
+      const candidates = order.filter((p) => !present.has(2 * p) || !present.has(2 * p + 1));
+      if (!candidates.length) break;
+      const parent = candidates[randInt(rng, 0, candidates.length - 1)];
+      const child = !present.has(2 * parent) ? 2 * parent : 2 * parent + 1;
+      present.add(child); order.push(child);
+    }
+    const maxIndex = Math.max.apply(null, Array.from(present));
+    const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let li = 0;
+    const tokens = [];
+    for (let i = 1; i <= maxIndex; i++) tokens.push(present.has(i) ? LETTERS[li++ % LETTERS.length] : '-');
+    return tokens.join(' ');
+  }
+
+  // src (COPY mode) + an {a,b} pair (EQUAL mode) — 'special' forces a===b (the
+  // "equal trees" success path); other difficulties draw a and b independently,
+  // which differ most of the time and naturally exercise the mismatch path too.
+  function copyEqualInput(rng, difficulty) {
+    const src = copyEqualTreeTokens(rng, difficulty);
+    const a = copyEqualTreeTokens(rng, difficulty);
+    const b = difficulty === 'special' ? a : copyEqualTreeTokens(rng, difficulty);
+    return { src, a, b };
+  }
+
   function graphDagText(rng, difficulty, weighted) {
     var n;
     if (difficulty === 'edge') n = randInt(rng, 3, 4);
@@ -411,6 +517,10 @@
       case 'tree-dsu': return { text: dsuOpString(rng, difficulty) };
       case 'tree-segment': return { vals: segTreeVals(rng, difficulty) };
       case 'tree-fenwick': return { vals: valSeq(rng, difficulty) };
+      case 'tree-catalan': return { n: catalanN(rng, difficulty) };
+      case 'game-tree': return { leaves: gameTreeLeaves(rng, difficulty) };
+      case 'tree-general-binary': return { text: tgbTreeText(rng, difficulty) };
+      case 'tree-copy-equal': return copyEqualInput(rng, difficulty);
       default: return null;
     }
   }

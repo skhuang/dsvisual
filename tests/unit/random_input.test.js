@@ -1,6 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert');
 const RI = require('../../js/random_input.js');
+const TGB = require('../../js/tree_general_binary_viz.js');
+const CE = require('../../js/tree_copy_equal_viz.js');
 
 const DIFFS = ['normal', 'special', 'edge', 'large'];
 function isSortedAsc(a) { return a.every((v, i) => i === 0 || a[i - 1] <= v); }
@@ -211,4 +213,67 @@ test('sort-external data + M', () => {
   const out = RI.randomInputFor('sort-external', 'normal');
   assert.ok(Array.isArray(out.data) && out.data.length >= 1);
   assert.strictEqual(out.M, 4);
+});
+
+// n stays within the UI's own n=0..4 button range (enumerateShapes(n) is exponential,
+// so the viz itself never offers a button past n=4 — see js/viz/viz_tree_catalan.js).
+test('tree-catalan: n stays within the 0..4 button range, large is the max', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 30; i++) {
+      const r = RI.randomInputFor('tree-catalan', d, Math.random);
+      assert.ok(r && Number.isInteger(r.n) && r.n >= 0 && r.n <= 4, `tree-catalan/${d} in range`);
+    }
+  }
+  assert.strictEqual(RI.randomInputFor('tree-catalan', 'large', Math.random).n, 4);
+  const n = RI.randomInputFor('tree-catalan', 'normal', Math.random).n;
+  const big = RI.randomInputFor('tree-catalan', 'large', Math.random).n;
+  assert.ok(big > n, `tree-catalan: large (${big}) > normal (${n})`);
+});
+
+test('game-tree: leaf values per difficulty', () => {
+  for (const d of DIFFS) {
+    const r = RI.randomInputFor('game-tree', d, Math.random);
+    assert.ok(r && Array.isArray(r.leaves) && r.leaves.length >= 1, `game-tree/${d} shape`);
+    assert.ok(r.leaves.every(Number.isFinite), `game-tree/${d} numbers`);
+  }
+  assert.strictEqual(RI.randomInputFor('game-tree', 'edge', Math.random).leaves.length, 4);
+  const n = RI.randomInputFor('game-tree', 'normal', Math.random).leaves.length;
+  const big = RI.randomInputFor('game-tree', 'large', Math.random).leaves.length;
+  assert.ok(big > n, `game-tree: large (${big}) > normal (${n})`);
+});
+
+test('tree-general-binary: adjacency text parses to a valid rooted tree, larger at large', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 30; i++) {
+      const r = RI.randomInputFor('tree-general-binary', d, Math.random);
+      assert.ok(r && typeof r.text === 'string' && r.text.length > 0, `tree-general-binary/${d} shape`);
+      const gen = TGB.parseGeneralTree(r.text);
+      assert.ok(gen.root, `tree-general-binary/${d} has a root`);
+      assert.doesNotThrow(() => TGB.toBinary(gen), `tree-general-binary/${d} converts to binary without throwing`);
+    }
+  }
+  const nodeCount = (text) => new Set((text.match(/[A-Z]/g) || [])).size;
+  const n = nodeCount(RI.randomInputFor('tree-general-binary', 'normal', Math.random).text);
+  const big = nodeCount(RI.randomInputFor('tree-general-binary', 'large', Math.random).text);
+  assert.ok(big > n, `tree-general-binary: large (${big}) > normal (${n}) nodes`);
+});
+
+test('tree-copy-equal: level-order tokens parse for src/a/b, special forces a===b, edge is single-node', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 30; i++) {
+      const r = RI.randomInputFor('tree-copy-equal', d, Math.random);
+      assert.ok(r && typeof r.src === 'string' && typeof r.a === 'string' && typeof r.b === 'string', `tree-copy-equal/${d} shape`);
+      for (const text of [r.src, r.a, r.b]) {
+        const { root, error } = CE.parseTree(CE.tokenize(text));
+        assert.strictEqual(error, null, `tree-copy-equal/${d} "${text}" parses cleanly`);
+        assert.ok(root, `tree-copy-equal/${d} "${text}" has a root`);
+      }
+      if (d === 'special') assert.strictEqual(r.a, r.b, 'special forces a === b');
+      if (d === 'edge') { assert.strictEqual(r.src, 'A'); assert.strictEqual(r.a, 'A'); assert.strictEqual(r.b, 'A'); }
+    }
+  }
+  const nodeCount = (text) => text.split(/\s+/).filter((t) => t !== '-').length;
+  const n = nodeCount(RI.randomInputFor('tree-copy-equal', 'normal', Math.random).src);
+  const big = nodeCount(RI.randomInputFor('tree-copy-equal', 'large', Math.random).src);
+  assert.ok(big > n, `tree-copy-equal: large (${big}) > normal (${n}) nodes`);
 });

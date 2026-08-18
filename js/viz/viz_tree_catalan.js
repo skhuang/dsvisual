@@ -28,7 +28,8 @@
         const frames = res.frames;
         const seq = TreeCatalanViz.catalanSequence(10);
 
-        const nBtns = [0, 1, 2, 3, 4].map((k) => '<button type="button" class="cat-nbtn' + (k === st.n ? ' active' : '') + '" data-n="' + k + '">n=' + k + '</button>').join('');
+        const nBtns = [0, 1, 2, 3, 4].map((k) => '<button type="button" class="cat-nbtn' + (k === st.n ? ' active' : '') + '" data-n="' + k + '">n=' + k + '</button>').join('') +
+            '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機輸入', en: 'Random input' }) + '">🎲</button>';
         const seqRows = seq.map((r) => '<tr class="cat-seq-row" data-n="' + r.n + '"><td>C' + r.n + '</td><td>' + r.recurrence + '</td><td>' + r.closed + '</td><td>' + (r.recurrence === r.closed ? '✓' : '✗') + '</td></tr>').join('');
 
         host.innerHTML =
@@ -72,6 +73,13 @@
         K().markFocusFit(host);   // vizfit viz-fit path (bounded + fullscreen-expand + wrapper zoom); no {svg}
 
         host.querySelectorAll('.cat-nbtn').forEach((b) => { b.onclick = () => { const k = parseInt(b.getAttribute('data-n'), 10); if (k !== st.n) { st.n = k; renderTreeCatalan(); } }; });
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (K() && K().getInputDifficulty) ? K().getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('tree-catalan', difficulty);
+            if (!r || typeof r.n !== 'number') return;
+            st.n = r.n;
+            renderTreeCatalan();
+        };
     }
 
     global.VizRegistry.attach('tree-catalan', {

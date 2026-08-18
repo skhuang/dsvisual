@@ -31,7 +31,8 @@
 
         host.innerHTML =
             '<div class="ce-mode">' + modeBtn('copy', 'COPY') + modeBtn('equal', 'EQUAL') + '</div>' +
-            '<div class="ce-controls">' + inputs + '<button type="button" class="ce-apply">Apply</button>' + presetBtns +
+            '<div class="ce-controls">' + inputs + '<button type="button" class="ce-apply">Apply</button>' +
+              '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機輸入', en: 'Random input' }) + '">🎲</button>' + presetBtns +
               '<span class="sm-hint">' + langOf({ zh: '層序陣列;- 表空位', en: 'level-order array; - = empty' }) + '</span></div>' +
             '<div class="ce-panels">' +
               '<div class="ce-panel"><div class="ce-ptitle">' + (copy ? langOf({ zh: '原樹', en: 'source' }) : 'A') + '</div><div class="ce-stage ce-left"><svg class="ce-edges"></svg><div class="ce-nodes"></div></div></div>' +
@@ -87,6 +88,13 @@
             renderTreeCopyEqual();
         };
         host.querySelectorAll('.ce-preset').forEach((b) => { b.onclick = () => { const p = b.getAttribute('data-p'); if (p === 'equal') { st.a = PRESETS.equalA; st.b = PRESETS.equalB; } else { st.a = PRESETS.diffA; st.b = PRESETS.diffB; } renderTreeCopyEqual(); }; });
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (K() && K().getInputDifficulty) ? K().getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('tree-copy-equal', difficulty);
+            if (!r) return;
+            if (copy) { if (r.src) st.src = r.src; } else { if (r.a) st.a = r.a; if (r.b) st.b = r.b; }
+            renderTreeCopyEqual();
+        };
     }
 
     global.VizRegistry.attach('tree-copy-equal', {

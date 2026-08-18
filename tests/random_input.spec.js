@@ -246,6 +246,34 @@ test('random button on tree-segment changes the tree and honors the <=8-leaf cap
   expect(errors).toEqual([]);
 });
 
+test('random button on tree-catalan changes n and honors the 0..4 button range at large', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'tree-catalan');
+
+  const section = page.locator('[data-method-section="tree-catalan"]');
+  const activeBtn = section.locator('.cat-nbtn.active');
+  const shapes = section.locator('.cat-shapes svg.cat-shape');
+
+  const before = await activeBtn.textContent();
+  await expect(async () => {
+    await section.locator('.rand-btn').click();
+    expect(await activeBtn.textContent()).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  // 'large' always draws n=4 (the UI's own max button) -> C4 = 14 shapes total once
+  // every group step has been shown (the step workbench starts at step 0, i.e. only
+  // the first split group, so drive the scrubber to the end first).
+  await expect(activeBtn).toHaveText('n=4');
+  const max = parseInt(await section.locator('.stepctl-scrubber').getAttribute('max'), 10);
+  const stepBtn = section.locator('.stepctl [data-action="step"]');
+  for (let i = 0; i < max; i++) await stepBtn.click();
+  await expect.poll(async () => await shapes.count()).toBe(14);
+});
+
 test('random button on heap-binary changes the rendered nodes and honors large difficulty', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'heap-binary');
