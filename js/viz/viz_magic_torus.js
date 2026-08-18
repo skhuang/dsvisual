@@ -29,6 +29,7 @@
                         [3, 5, 7].map((v) => '<option value="' + v + '"' + (v === n ? ' selected' : '') + '>' + v + '</option>').join('') +
                     '</select></label>' +
                     '<button type="button" class="mt-apply">Apply</button>' +
+                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                     '<label class="mt-ghost-toggle"><input type="checkbox" class="mt-ghost-cb"' + (st.ghosts ? ' checked' : '') + '> ghost tiles</label>' +
                     '<span class="mt-runs">runs = ' + runs + '</span>' +
                 '</div>' +
@@ -134,6 +135,13 @@
         host.querySelector('.mt-apply').onclick = () => {
             const val = parseInt(order.value, 10);
             if ([3, 5, 7].indexOf(val) >= 0) { _magicTorusState.n = val; renderMagicTorus(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (K() && K().getInputDifficulty) ? K().getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('magic-torus', difficulty);
+            if (!r || typeof r.n !== 'number') return;
+            _magicTorusState.n = r.n;
+            renderMagicTorus();
         };
         ghostCb.onchange = () => { _magicTorusState.ghosts = ghostCb.checked; paint(lastFrame); };
     }

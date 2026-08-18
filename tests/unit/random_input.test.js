@@ -15,6 +15,7 @@ const FInV = require('../../js/file_inverted_viz.js');
 const GCMV = require('../../js/gc_memory_viz.js');
 const RV = require('../../js/recursion_viz.js');
 const SPV = require('../../js/sort_polyphase_viz.js');
+const MLV = require('../../js/magic_latin_viz.js');
 
 const DIFFS = ['normal', 'special', 'edge', 'large'];
 function isSortedAsc(a) { return a.every((v, i) => i === 0 || a[i - 1] <= v); }
@@ -726,3 +727,55 @@ test('recursion: an input set per RecursionViz example, all within the viz\'s ow
   const big = RI.randomInputFor('recursion', 'large', Math.random).fibonacci.n;
   assert.ok(big >= n, `recursion: large fibonacci n (${big}) >= normal (${n})`);
 });
+
+// magic-square / magic-latin / magic-torus / magic-formula / magic-symmetry (js/viz/viz_magic*.js):
+// all five are the odd-order Siamese/Coxeter construction, which is only a genuine magic square
+// for an ODD n, and each viz's own <select class="*-order"> dropdown enumerates exactly the odd
+// orders it supports (no free-form n input exists) — magic-square/torus/formula/symmetry offer
+// [3,5,7]; magic-latin additionally offers 9. The guard this batch cares about: a random draw must
+// always land on one of THOSE exact dropdown values (never an even n, never outside the option
+// list), which is asserted both structurally (parity + set membership) and functionally (the
+// order MagicLatinViz.buildFrames actually constructs for that n really does sum to the magic
+// constant on every row/col/diagonal — the strongest possible check that n was constructible).
+const MAGIC_ALLOWED = {
+  'magic-square': [3, 5, 7],
+  'magic-torus': [3, 5, 7],
+  'magic-formula': [3, 5, 7],
+  'magic-symmetry': [3, 5, 7],
+  'magic-latin': [3, 5, 7, 9],
+};
+
+function isGenuineMagicSquare(square, magicSum) {
+  const n = square.length;
+  for (let r = 0; r < n; r++) if (square[r].reduce((a, b) => a + b, 0) !== magicSum) return false;
+  for (let c = 0; c < n; c++) {
+    let s = 0; for (let r = 0; r < n; r++) s += square[r][c];
+    if (s !== magicSum) return false;
+  }
+  let diag = 0, anti = 0;
+  for (let i = 0; i < n; i++) { diag += square[i][i]; anti += square[i][n - 1 - i]; }
+  return diag === magicSum && anti === magicSum;
+}
+
+for (const [id, allowed] of Object.entries(MAGIC_ALLOWED)) {
+  test(`randomInputFor ${id}: n is always one of the viz's own odd dropdown options and actually constructs`, () => {
+    for (const d of DIFFS) {
+      for (let i = 0; i < 30; i++) {
+        const r = RI.randomInputFor(id, d, Math.random);
+        assert.ok(r && Number.isInteger(r.n), `${id}/${d} shape`);
+        assert.ok(allowed.includes(r.n), `${id}/${d} n=${r.n} must be one of [${allowed}] (the viz's own dropdown options)`);
+        assert.strictEqual(r.n % 2, 1, `${id}/${d} n=${r.n} must be odd (Siamese/Coxeter method is odd-order only)`);
+
+        // Functional check: the odd-order Siamese construction every one of these five viz's
+        // shares (see MagicLatinViz.buildFrames/siamese) really is magic at this exact n.
+        const built = MLV.buildFrames(r.n);
+        assert.ok(isGenuineMagicSquare(built.square, built.magicSum), `${id}/${d} n=${r.n} constructs a genuinely magic square`);
+      }
+    }
+    assert.strictEqual(RI.randomInputFor(id, 'edge', Math.random).n, allowed[0], `${id}: edge picks the smallest offered order`);
+    assert.strictEqual(RI.randomInputFor(id, 'large', Math.random).n, allowed[allowed.length - 1], `${id}: large picks the largest offered order`);
+    const n = RI.randomInputFor(id, 'normal', Math.random).n;
+    const big = RI.randomInputFor(id, 'large', Math.random).n;
+    assert.ok(big >= n, `${id}: large (${big}) >= normal (${n})`);
+  });
+}

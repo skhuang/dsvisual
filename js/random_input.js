@@ -10,6 +10,35 @@
     return Array.from(set);
   }
 
+  // magic-square / magic-latin / magic-torus / magic-formula / magic-symmetry (js/viz/viz_magic*.js):
+  // all five build on the odd-order Siamese/Coxeter method (up-left, wrap-around placement), which
+  // only produces a genuine magic square for an ODD n — there is no doubly-even/singly-even branch
+  // anywhere in these modules, unlike a general-order magic-square algorithm. Each viz's own
+  // <select class="*-order"> dropdown already enumerates exactly the odd values it offers (no
+  // free-form n input exists in any of these five modules): magic-square/torus/formula/symmetry
+  // offer [3,5,7]; magic-latin additionally offers 9 ([3,5,7,9]) purely as a UI choice (its
+  // decomposition v-1 = n*a+b works for any odd n, same as the others). So "a constructible n"
+  // simply means "one of the viz's own dropdown options" — `allowed` below IS that exact option
+  // list for each caller. edge -> the smallest offered order (still a full, non-trivial magic
+  // square, unlike n=1, which none of these dropdowns even offer); large -> the largest offered
+  // order; normal -> any order except the largest (so 'large' is never smaller); special -> a
+  // middle order when one exists (never an extreme), so a 'special' draw is visibly distinct from
+  // both 'edge' and 'large'.
+  function magicOrder(rng, difficulty, allowed) {
+    switch (difficulty) {
+      case 'edge': return allowed[0];
+      case 'large': return allowed[allowed.length - 1];
+      case 'special': {
+        const mid = allowed.length > 2 ? allowed.slice(1, -1) : allowed;
+        return pick(rng, mid);
+      }
+      default: {
+        const nonMax = allowed.length > 1 ? allowed.slice(0, -1) : allowed;
+        return pick(rng, nonMax);
+      }
+    }
+  }
+
   function valSeq(rng, difficulty) {
     switch (difficulty) {
       case 'special': {
@@ -1119,6 +1148,13 @@
       case 'file-inverted': return invertedInput(rng, difficulty);
       case 'gc-memory': return gcMemoryInputs(rng, difficulty);
       case 'recursion': return recursionInputs(rng, difficulty);
+      case 'magic-square':
+      case 'magic-torus':
+      case 'magic-formula':
+      case 'magic-symmetry':
+        return { n: magicOrder(rng, difficulty, [3, 5, 7]) };
+      case 'magic-latin':
+        return { n: magicOrder(rng, difficulty, [3, 5, 7, 9]) };
       default: return null;
     }
   }

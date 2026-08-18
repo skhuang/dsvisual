@@ -66,6 +66,7 @@
             '<div class="magic-wrap">' +
                 '<div class="magic-controls">' +
                     '<label>Order <select class="magic-order"><option value="3">3 x 3</option><option value="5">5 x 5</option><option value="7">7 x 7</option></select></label>' +
+                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                     '<span class="magic-sum">Magic sum = ' + magicSum + '</span>' +
                 '</div>' +
                 '<div class="magic-layout">' +
@@ -124,6 +125,13 @@
         host.querySelector('.magic-wrap').appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 500 }));
         order.onchange = () => {
             _magicSquareState.n = parseInt(order.value, 10);
+            renderMagicSquare();
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (K() && K().getInputDifficulty) ? K().getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('magic-square', difficulty);
+            if (!r || typeof r.n !== 'number') return;
+            _magicSquareState.n = r.n;
             renderMagicSquare();
         };
     }

@@ -26,6 +26,7 @@
                         [3, 5, 7, 9].map((v) => '<option value="' + v + '"' + (v === n ? ' selected' : '') + '>' + v + '</option>').join('') +
                     '</select></label>' +
                     '<button type="button" class="ml-apply">Apply</button>' +
+                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                     '<span class="ml-sum">Magic sum = ' + magicSum + '</span>' +
                 '</div>' +
                 '<div class="ml-grids">' +
@@ -101,6 +102,13 @@
         host.querySelector('.ml-apply').onclick = () => {
             const val = parseInt(order.value, 10);
             if ([3, 5, 7, 9].indexOf(val) >= 0) { _magicLatinState.n = val; renderMagicLatin(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (K() && K().getInputDifficulty) ? K().getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('magic-latin', difficulty);
+            if (!r || typeof r.n !== 'number') return;
+            _magicLatinState.n = r.n;
+            renderMagicLatin();
         };
     }
 

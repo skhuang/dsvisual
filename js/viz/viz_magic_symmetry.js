@@ -23,6 +23,7 @@
                         [3, 5, 7].map((v) => '<option value="' + v + '"' + (v === n ? ' selected' : '') + '>' + v + '</option>').join('') +
                     '</select></label>' +
                     '<button type="button" class="sym-apply">Apply</button>' +
+                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                     '<span class="sym-sum">Magic sum = ' + magicSum + '</span>' +
                     '<span class="sym-orbit" data-testid="sym-orbit">orbit: ' + st.seen.size + ' / ' + orbitInfo.size + ' distinct</span>' +
                 '</div>' +
@@ -97,6 +98,14 @@
         host.querySelector('.sym-apply').onclick = () => {
             const val = parseInt(order.value, 10);
             if ([3, 5, 7].indexOf(val) >= 0) { _magicSymmetryState.n = val; _magicSymmetryState.seen = new Set(); renderMagicSymmetry(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (K() && K().getInputDifficulty) ? K().getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('magic-symmetry', difficulty);
+            if (!r || typeof r.n !== 'number') return;
+            _magicSymmetryState.n = r.n;
+            _magicSymmetryState.seen = new Set();
+            renderMagicSymmetry();
         };
         host.querySelectorAll('.sym-op-btn').forEach((btn) => {
             btn.onclick = () => {

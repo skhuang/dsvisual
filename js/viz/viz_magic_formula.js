@@ -24,6 +24,7 @@
                         [3, 5, 7].map((v) => '<option value="' + v + '"' + (v === n ? ' selected' : '') + '>' + v + '</option>').join('') +
                     '</select></label>' +
                     '<button type="button" class="mf-apply">Apply</button>' +
+                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                     '<button type="button" class="mf-fillall">Fill all by formula</button>' +
                 '</div>' +
                 '<div class="mf-grid" data-testid="mf-grid" style="--mf-n:' + n + '"></div>' +
@@ -110,6 +111,13 @@
         host.querySelector('.mf-apply').onclick = () => {
             const val = parseInt(order.value, 10);
             if ([3, 5, 7].indexOf(val) >= 0) { _magicFormulaState.n = val; renderMagicFormula(); }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (K() && K().getInputDifficulty) ? K().getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('magic-formula', difficulty);
+            if (!r || typeof r.n !== 'number') return;
+            _magicFormulaState.n = r.n;
+            renderMagicFormula();
         };
         host.querySelector('.mf-fillall').onclick = () => startFillAll();
     }
