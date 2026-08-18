@@ -14,7 +14,7 @@
             '<div class="dl-controls">' +
               '<input type="text" class="dl-input" value="' + st.vals.join(',') + '">' +
               '<label><input type="checkbox" class="dl-circular"' + (st.circular ? ' checked' : '') + '> circular</label>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="dl-apply">Apply</button>' +
             '</div>' +
             '<div class="dl-row' + (st.circular ? ' dl-circular-on' : '') + '"></div>' +

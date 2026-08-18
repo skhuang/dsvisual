@@ -249,6 +249,7 @@
             'btn.resume':                   'Resume',
             'btn.stop':                     'Stop',
             'btn.randomize':                'Randomize',
+            'btn.random-input':             'Random input',
             'btn.start':                    'Start()',
             'btn.peek':                     'Peek()',
             'btn.extract':                  'Extract()',
@@ -516,6 +517,7 @@
             'btn.resume':                   '繼續',
             'btn.stop':                     '停止',
             'btn.randomize':                '隨機排序',
+            'btn.random-input':             '隨機輸入',
             'btn.start':                    'Start()',
             'btn.peek':                     'Peek()',
             'btn.extract':                  'Extract()',
@@ -581,6 +583,9 @@
         });
         root.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
             el.setAttribute('placeholder', t(el.dataset.i18nPlaceholder));
+        });
+        root.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+            el.setAttribute('title', t(el.dataset.i18nTitle));
         });
     }
 

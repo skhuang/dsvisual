@@ -124,7 +124,7 @@
               '<select class="gc-mode">' +
                 modes.map((m) => '<option value="' + m[0] + '"' + (m[0] === _gcState.mode ? ' selected' : '') + '>' + m[1] + '</option>').join('') +
               '</select>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<span class="gc-badge"></span>' +
             '</div>' +
             '<div class="gc-stage"></div>';

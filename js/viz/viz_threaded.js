@@ -40,7 +40,7 @@
             '<div class="th-wrap vizfit-host">' +
               '<div class="th-controls">' +
                 '<input type="text" class="th-input" value="' + st.vals.join(',') + '">' +
-                '<button type="button" class="rand-btn" title="' + (lang === 'zh' ? '隨機' : 'Random') + '">🎲</button>' +
+                '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                 '<button type="button" class="th-build">' + (lang === 'zh' ? '建立 Build' : 'Build') + '</button>' +
                 buildExamplesSelect('tree-threaded', ThreadedViz.SAMPLE.join(',')) +
                 '<span class="sm-hint">' + (lang === 'zh' ? '數值建成 BST；虛線 = 中序線索' : 'values build a BST; dashed = inorder thread') + '</span>' +

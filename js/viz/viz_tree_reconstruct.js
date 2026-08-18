@@ -53,7 +53,7 @@
             '<div class="rc-controls">' +
               '<label>' + langOf(m.s1) + ' <input type="text" class="rc-seq1" value="' + st.seq1.replace(/"/g, '&quot;') + '"></label>' +
               '<label>' + langOf(m.s2) + ' <input type="text" class="rc-seq2" value="' + st.seq2.replace(/"/g, '&quot;') + '"></label>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="rc-apply">Apply</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button><button type="button" class="rc-apply">Apply</button>' +
             '</div>' +
             '<div class="et-stage"><svg class="et-edges"></svg><div class="et-nodes"></div></div>' +
             '<div class="rc-seqs"><div class="rc-strip rc-strip1"></div><div class="rc-strip rc-strip2"></div></div>' +

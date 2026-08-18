@@ -12,7 +12,7 @@
             '<div class="isam-controls">' +
               '<label>Search key <input type="number" class="isam-key" value="' + _isamState.key + '"></label>' +
               '<button type="button" class="isam-search">Search</button>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<span class="isam-badge"></span>' +
             '</div>' +
             '<div class="isam-stage"></div>';

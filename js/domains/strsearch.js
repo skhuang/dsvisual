@@ -84,7 +84,7 @@
         '<input type="text" class="strsearch-text" data-testid="strsearch-text" value="' + esc(parsed.text) + '" placeholder="text">' +
         '<label class="strsearch-plabel">' + (lang === 'zh' ? '樣式' : 'pattern') + ' <input type="text" class="strsearch-pattern" data-testid="strsearch-pattern" value="' + esc(parsed.pattern) + '"></label>' +
         '<button type="button" class="strsearch-build btn primary">' + (lang === 'zh' ? '建立' : 'Build') + '</button>' +
-        '<button type="button" class="rand-btn" title="' + (lang === 'zh' ? '隨機' : 'Random') + '">🎲</button>' +
+        '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
         exSelectHtml(methodId);
       host.appendChild(controls);
 

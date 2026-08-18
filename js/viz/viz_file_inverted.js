@@ -16,7 +16,7 @@
             '<div class="inv-controls">' +
               '<input type="text" class="inv-query" value="' + _invState.query + '">' +
               '<button type="button" class="inv-query-btn">Query</button>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<span class="inv-query-line"></span>' +
             '</div>' +
             '<div class="inv-stage">' +

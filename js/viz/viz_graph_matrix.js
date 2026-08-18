@@ -138,7 +138,7 @@
           '<label>n <input type="text" class="gm-n" value="' + _st.n + '"></label>' +
           '<label>edges <input type="text" class="gm-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gm-apply">套用 Apply</button>' +
-          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+          '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
           buildExamplesSelect('graph-matrix', DEFAULT_SERIALIZED) +
           '<label><input type="checkbox" class="gm-directed"' + (_st.directed ? ' checked' : '') + '> 有向 Directed</label>' +
           '<label><input type="checkbox" class="gm-weighted"' + (_st.weighted ? ' checked' : '') + '> 加權 Weighted</label>' +

@@ -44,7 +44,7 @@
               '<input type="text" class="msl-input" value="' + esc(st.text) + '">' +
               '<button type="button" class="msl-build">Build</button>' +
               buildExamplesSelect('matrix-sparse-list', MatrixSparseListViz.DEFAULT) +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="msl-phase-btn">' + (st.phase === 'build' ? 'Show Transpose' : 'Show Original') + '</button>' +
               '<span class="sm-hint">rows separated by ; , entries by ,</span>' +
             '</div>' +

@@ -32,7 +32,7 @@
         host.innerHTML =
             '<div class="ce-mode">' + modeBtn('copy', 'COPY') + modeBtn('equal', 'EQUAL') + '</div>' +
             '<div class="ce-controls">' + inputs + '<button type="button" class="ce-apply">Apply</button>' +
-              '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機輸入', en: 'Random input' }) + '">🎲</button>' + presetBtns +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' + presetBtns +
               '<span class="sm-hint">' + langOf({ zh: '層序陣列;- 表空位', en: 'level-order array; - = empty' }) + '</span></div>' +
             '<div class="ce-panels">' +
               '<div class="ce-panel"><div class="ce-ptitle">' + (copy ? langOf({ zh: '原樹', en: 'source' }) : 'A') + '</div><div class="ce-stage ce-left"><svg class="ce-edges"></svg><div class="ce-nodes"></div></div></div>' +

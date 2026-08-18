@@ -14,7 +14,7 @@
         host.innerHTML =
             '<div class="pf-controls">' +
               '<input type="text" class="pf-data" value="' + st.data.join(',') + '">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="pf-apply">Apply</button>' +
             '</div>' +
             '<div class="pf-stage"></div>' +

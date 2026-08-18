@@ -84,7 +84,7 @@
           '<label>n <input type="text" class="gc2-n" value="' + _st.n + '"></label>' +
           '<label>edges <input type="text" class="gc2-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gc2-apply">套用 Apply</button>' +
-          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+          '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
           buildExamplesSelect('graph-components', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="gc2-count" data-testid="gc2-count">&nbsp;</div>' +

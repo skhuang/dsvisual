@@ -14,7 +14,7 @@
             '<div class="lru-controls">' +
               '<label class="lru-cap-label">cap <input type="number" class="lru-cap" min="1" max="8" value="' + res.capacity + '"></label>' +
               '<input type="text" class="lru-input" value="' + st.keys.join(',') + '">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="lru-apply">Apply</button>' +
             '</div>' +
             '<div class="lru-stage" data-testid="lru-stage"></div>' +

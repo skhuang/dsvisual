@@ -16,7 +16,7 @@
             '<div class="pp-controls">' +
               'A <input type="text" class="pp-a" value="' + st.a + '"> ' +
               'B <input type="text" class="pp-b" value="' + st.b + '"> ' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="pp-apply">Apply</button>' +
               '<span class="sm-hint">terms as coef:exp, comma-separated</span>' +
             '</div>' +
