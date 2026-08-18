@@ -172,6 +172,32 @@ test('random button on tree-btree changes the rendered keys and honors large dif
   expect(largeCount).toBeGreaterThan(normalCount);
 });
 
+test('random button on tree-fenwick changes the input field and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'tree-fenwick');
+
+  const section = page.locator('[data-method-section="tree-fenwick"]');
+  const input = section.locator('.fenwick-input');
+  const before = await input.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
+
+  const cells = section.locator('.fenwick-cell');
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await cells.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await cells.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
 test('random button on heap-binary changes the rendered nodes and honors large difficulty', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'heap-binary');

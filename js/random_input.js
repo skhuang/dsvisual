@@ -243,6 +243,40 @@
     return { keys, m: 3 };
   }
 
+  // Bounded to <=8 leaves — viz_segment.js's fixed-depth SVG layout (a hardcoded
+  // POS map covering node indices 1..15) only has room for a segment tree built
+  // over at most 8 leaves before node indices spill past that table.
+  function segTreeVals(rng, difficulty) {
+    switch (difficulty) {
+      case 'edge':
+        return [randInt(rng, 1, 9)];
+      case 'special': {
+        const v = randInt(rng, 1, 9);
+        return Array.from({ length: 6 }, () => v);
+      }
+      case 'large':
+        return Array.from({ length: 8 }, () => randInt(rng, 1, 9));
+      default:
+        return Array.from({ length: randInt(rng, 4, 6) }, () => randInt(rng, 1, 9));
+    }
+  }
+
+  // Self-contained op-string generator for tree-dsu, mirroring DsuViz.randomInput
+  // (js/dsu_viz.js) but threaded through the shared `rng` for testability. Not
+  // wired into js/viz/viz_dsu.js — see task-3 report for why.
+  function dsuOpString(rng, difficulty) {
+    if (difficulty === 'special') return 'U0 1; U2 3; U0 2; U4 5; U4 0; F5';
+    if (difficulty === 'edge') return rng() < 0.5 ? 'F0' : 'U0 1; U2 3';
+    const n = difficulty === 'large' ? randInt(rng, 10, 12) : 6;
+    const numOps = difficulty === 'large' ? 10 : 6;
+    const out = [];
+    for (let i = 0; i < numOps; i++) {
+      if (rng() < 0.7) out.push('U' + randInt(rng, 0, n - 1) + ' ' + randInt(rng, 0, n - 1));
+      else out.push('F' + randInt(rng, 0, n - 1));
+    }
+    return out.join('; ');
+  }
+
   var lbl = function (i) { return String.fromCharCode(65 + i); };
 
   function graphEdgeList(rng, difficulty, weighted) {
@@ -374,6 +408,9 @@
       case 'graph-multilist':
       case 'graph-traversal':
         return { text: graphEdgeList(rng, difficulty, false) };
+      case 'tree-dsu': return { text: dsuOpString(rng, difficulty) };
+      case 'tree-segment': return { vals: segTreeVals(rng, difficulty) };
+      case 'tree-fenwick': return { vals: valSeq(rng, difficulty) };
       default: return null;
     }
   }

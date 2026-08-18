@@ -171,6 +171,42 @@ test('tree-mway keys + m', () => {
   }
 });
 
+test('tree-segment: vals per difficulty, bounded to <=8 leaves for the fixed layout', () => {
+  for (const d of DIFFS) {
+    const r = RI.randomInputFor('tree-segment', d, Math.random);
+    assert.ok(r && Array.isArray(r.vals) && r.vals.length >= 1 && r.vals.length <= 8, `tree-segment/${d} shape`);
+    assert.ok(r.vals.every(Number.isFinite), `tree-segment/${d} numbers`);
+    if (d === 'edge') assert.strictEqual(r.vals.length, 1);
+    if (d === 'special') assert.ok(allEqual(r.vals), 'special is a uniform array');
+  }
+  const n = RI.randomInputFor('tree-segment', 'normal', Math.random).vals.length;
+  const big = RI.randomInputFor('tree-segment', 'large', Math.random).vals.length;
+  assert.ok(big > n, `tree-segment: large (${big}) > normal (${n})`);
+});
+
+test('tree-fenwick: vals per difficulty', () => {
+  for (const d of DIFFS) {
+    const r = RI.randomInputFor('tree-fenwick', d, Math.random);
+    assert.ok(r && Array.isArray(r.vals) && r.vals.length >= 1, `tree-fenwick/${d} shape`);
+    assert.ok(r.vals.every(Number.isFinite), `tree-fenwick/${d} numbers`);
+  }
+  const n = RI.randomInputFor('tree-fenwick', 'normal', Math.random).vals.length;
+  const big = RI.randomInputFor('tree-fenwick', 'large', Math.random).vals.length;
+  assert.ok(big > n, `tree-fenwick: large (${big}) > normal (${n})`);
+});
+
+test('tree-dsu: op string per difficulty, more union/find ops at large', () => {
+  function opCount(s) { return (s.match(/[UuFf]/g) || []).length; }
+  for (const d of DIFFS) {
+    const r = RI.randomInputFor('tree-dsu', d, Math.random);
+    assert.ok(r && typeof r.text === 'string' && r.text.length > 0, `tree-dsu/${d} shape`);
+    assert.ok(opCount(r.text) >= 1, `tree-dsu/${d} has at least one op`);
+  }
+  const n = opCount(RI.randomInputFor('tree-dsu', 'normal', Math.random).text);
+  const big = opCount(RI.randomInputFor('tree-dsu', 'large', Math.random).text);
+  assert.ok(big > n, `tree-dsu: large (${big}) > normal (${n}) ops`);
+});
+
 test('sort-external data + M', () => {
   const out = RI.randomInputFor('sort-external', 'normal');
   assert.ok(Array.isArray(out.data) && out.data.length >= 1);

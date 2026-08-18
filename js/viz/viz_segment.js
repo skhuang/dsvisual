@@ -1,9 +1,22 @@
 (function (global) {
     const K = () => global.VizKit; // resolved at call time (VizKit set at startup)
 
+    const SEG_DEFAULT = [5, 8, 6, 3, 2, 7, 2, 6];
+
+    // Fixed-depth layout below (POS map, nodes 1..15) supports at most 8 leaves,
+    // so inputs are clamped to that bound regardless of what the user types.
+    function parseSegInput(text) {
+        const nums = String(text).split(/[\s,]+/).map((s) => parseInt(s, 10)).filter(Number.isFinite);
+        const clamped = nums.filter((v) => v >= 0 && v <= 99).slice(0, 8);
+        return clamped.length >= 1 ? clamped : SEG_DEFAULT.slice();
+    }
+
+    let _segState = null;
     function renderSegmentTree() {
         const host = K().acquireDynamicVizHost();
-        const arr = [5, 8, 6, 3, 2, 7, 2, 6];
+        if (!_segState) _segState = { vals: SEG_DEFAULT.slice() };
+        const lang = (global.I18N && I18N.getCurrentLanguage) ? I18N.getCurrentLanguage() : 'en';
+        const arr = _segState.vals;
         const n = arr.length;
         const lo = new Array(16), hi = new Array(16);
         (function setRanges(node, l, r) {
@@ -66,10 +79,15 @@
         }
 
         snapshot('Ready', -1, 'segment tree built — press Step');
-        const r1 = query(1, 2, 5, 'Phase 1: range query sum[2,5]');
+        // Query/update ranges generalize the original fixed demo ([2,5] range-sum,
+        // [1,4] += 3 update, both on n=8) to any n in [1,8] — identical to the
+        // original indices when n === 8 (the untouched default array).
+        const ql = Math.min(2, n - 1), qr = Math.max(ql, Math.min(5, n - 1));
+        const ul = Math.min(1, n - 1), ur = Math.max(ul, Math.min(4, n - 1));
+        const r1 = query(1, ql, qr, 'Phase 1: range query sum[' + ql + ',' + qr + ']');
         frames[frames.length - 1].msg += '   result = ' + r1;
-        update(1, 1, 4, 3, 'Phase 2: range update [1,4] += 3');
-        const r3 = query(1, 2, 5, 'Phase 3: range query sum[2,5]');
+        update(1, ul, ur, 3, 'Phase 2: range update [' + ul + ',' + ur + '] += 3');
+        const r3 = query(1, ql, qr, 'Phase 3: range query sum[' + ql + ',' + qr + ']');
         frames[frames.length - 1].msg += '   result = ' + r3;
 
         const POS = {
@@ -81,6 +99,11 @@
         const wrap = document.createElement('div');
         wrap.className = 'segtree-wrap';
         wrap.innerHTML =
+            '<div class="segtree-controls">' +
+              '<input type="text" class="segtree-input" value="' + arr.join(',') + '">' +
+              '<button type="button" class="segtree-build">' + (lang === 'zh' ? '建立' : 'Build') + '</button>' +
+              '<button type="button" class="rand-btn" title="' + (lang === 'zh' ? '隨機' : 'Random') + '">🎲</button>' +
+            '</div>' +
             '<div class="segtree-phase" data-testid="segtree-phase"></div>' +
             '<div class="segtree-grid"></div>' +
             '<div class="segtree-msg" data-testid="segtree-msg">&nbsp;</div>';
@@ -92,11 +115,13 @@
             let svg = '<svg class="segtree-svg" viewBox="0 0 600 252" width="100%" ' +
                       'xmlns="http://www.w3.org/2000/svg">';
             for (let node = 2; node <= 15; node++) {
+                if (lo[node] === undefined) continue; // n<8 leaves gaps in the fixed node table
                 const p = POS[node >> 1], c = POS[node];
                 svg += '<line x1="' + p[0] + '" y1="' + (p[1] + 15) + '" x2="' + c[0] +
                        '" y2="' + (c[1] - 15) + '" stroke="#cbd5e1" stroke-width="1.5"/>';
             }
             for (let node = 1; node <= 15; node++) {
+                if (lo[node] === undefined) continue;
                 const c = POS[node];
                 const isActive = node === f.active;
                 svg += '<rect class="segtree-node" data-node="' + node + '" x="' + (c[0] - 28) +
@@ -121,6 +146,18 @@
             stage: wrap, frames: frames, paint: draw, runIntervalMs: 600,
             getMessage: (f) => f.phase + (f.msg ? ' — ' + f.msg : ''),
         }));
+
+        wrap.querySelector('.segtree-build').onclick = () => {
+            _segState.vals = parseSegInput(wrap.querySelector('.segtree-input').value);
+            renderSegmentTree();
+        };
+        wrap.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('tree-segment', difficulty);
+            if (!r || !Array.isArray(r.vals) || !r.vals.length) return;
+            _segState.vals = r.vals;
+            renderSegmentTree();
+        };
     }
 
     global.VizRegistry.attach('tree-segment', {
