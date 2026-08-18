@@ -41,6 +41,7 @@
         html += '<div class="cms-readout" data-testid="cms-readout">&nbsp;</div>';
         html += '<div class="cms-controls" role="group">' +
                     '<input type="text" value="apple" data-cms-val>' +
+                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                     '<button type="button" data-action="cms-add">Add</button>' +
                     '<button type="button" data-action="cms-estimate">Estimate</button>' +
                 '</div>';
@@ -56,6 +57,19 @@
                 if (el) el.classList.add('cms-hit');
             }
         }
+        wrap.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('count-min-sketch', difficulty);
+            if (!r || !Array.isArray(r.words) || !r.words.length) return;
+            _cmsState = { table: Array.from({ length: DEPTH }, () => new Array(WIDTH).fill(0)), actual: {} };
+            const table = _cmsState.table, actual = _cmsState.actual;
+            for (const key of r.words) {
+                for (let row = 0; row < DEPTH; row++) table[row][hash(row, key)]++;
+                actual[key] = (actual[key] || 0) + 1;
+            }
+            renderCountMinSketch();
+            showStatus('Randomized ' + r.words.length + ' add(s)', '#34d399');
+        };
         wrap.querySelector('[data-action="cms-add"]').onclick = () => {
             const key = valInput.value.trim();
             if (!key) { showStatus('Enter a word', '#f87171'); return; }

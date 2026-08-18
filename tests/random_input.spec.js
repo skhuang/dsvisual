@@ -386,6 +386,130 @@ test('random button on graph-scc changes n/edges and honors large difficulty', a
   expect(largeCount).toBeGreaterThan(normalCount);
 });
 
+test('random button on hash-chain fills the table and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'hash-chain');
+  // loadMethod's last click (the "Hash Chaining" entry in the "Hash & Probabilistic" dropdown)
+  // lands the cursor at a spot that, once that dropdown closes, sits directly over the
+  // "Design Patterns" pill stacked in the nav's second row — the browser then genuinely
+  // :hover-opens ITS flyout there (pre-existing nav layout quirk, unrelated to this feature),
+  // which visually overlaps #hash-actions and intercepts the click below. Move the mouse off
+  // the nav first so the flyout closes before interacting with the panel.
+  await page.mouse.move(50, 900);
+
+  const randomBtn = page.locator('[data-testid="hash-random"]');
+  const slots = page.locator('#hash-ch-container .la-slot');
+
+  await expect(slots).toHaveCount(0); // default table is empty until something is inserted
+  await expect.poll(async () => { await randomBtn.click(); return slots.count(); }).toBeGreaterThan(0);
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await randomBtn.click();
+  const normalCount = await slots.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await randomBtn.click();
+  const largeCount = await slots.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+  expect(largeCount).toBeLessThanOrEqual(9); // matches random_input.js's hash-chain cap
+});
+
+test('random button on bloom-filter changes the inserted items and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'bloom-filter');
+
+  const section = page.locator('[data-method-section="bloom-filter"]');
+  const itemsList = section.locator('.bloom-items-list');
+  const before = await itemsList.textContent();
+  await expect(async () => {
+    await section.locator('.rand-btn').click();
+    expect(await itemsList.textContent()).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  function itemCount(text) { return text.split(',').map((s) => s.trim()).filter(Boolean).length; }
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = itemCount(await itemsList.textContent());
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = itemCount(await itemsList.textContent());
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+  expect(largeCount).toBeLessThanOrEqual(8); // matches random_input.js's bloomWords cap
+});
+
+test('random button on skip-list changes the node set and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'skip-list');
+
+  const section = page.locator('[data-method-section="skip-list"]');
+  // Every node has height >=1, so it always appears (with its key) at level 0 —
+  // counting there gives the exact node count regardless of each node's random height.
+  const level0Nodes = section.locator('.skiplist-level[data-level="0"] .skiplist-node[data-key]');
+  const before = (await level0Nodes.allTextContents()).join(',');
+  await expect(async () => {
+    await section.locator('.rand-btn').click();
+    const after = (await level0Nodes.allTextContents()).join(',');
+    expect(after).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await level0Nodes.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await level0Nodes.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+  expect(largeCount).toBeLessThanOrEqual(10); // matches random_input.js's skiplistKeys cap
+});
+
+test('random button on count-min-sketch changes the counter table and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'count-min-sketch');
+
+  const section = page.locator('[data-method-section="count-min-sketch"]');
+  const cells = section.locator('.cms-cell');
+  const before = (await cells.allTextContents()).join(',');
+  await expect(async () => {
+    await section.locator('.rand-btn').click();
+    const after = (await cells.allTextContents()).join(',');
+    expect(after).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  function sumCells(texts) { return texts.reduce((sum, t) => sum + (parseInt(t, 10) || 0), 0); }
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalSum = sumCells(await cells.allTextContents());
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeSum = sumCells(await cells.allTextContents());
+
+  expect(largeSum).toBeGreaterThan(normalSum);
+});
+
 test('random button on heap-binary changes the rendered nodes and honors large difficulty', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'heap-binary');

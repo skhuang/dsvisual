@@ -526,3 +526,70 @@ test('randomInputFor graph-maxflow: directed weighted network with capacities >=
   const big = RI.randomInputFor('graph-maxflow', 'large', Math.random).n;
   assert.ok(big > n, `graph-maxflow: large (${big}) > normal (${n}) nodes`);
 });
+
+for (const [id, cap] of [['hash-chain', 9], ['hash-open', 5], ['hash-bucket', 8]]) {
+  test(`randomInputFor ${id}: unique key set within the table's fixed capacity, larger at large`, () => {
+    for (const d of DIFFS) {
+      for (let i = 0; i < 30; i++) {
+        const r = RI.randomInputFor(id, d, Math.random);
+        assert.ok(r && Array.isArray(r.vals) && r.vals.length >= 1, `${id}/${d} shape`);
+        assert.ok(r.vals.every(Number.isFinite), `${id}/${d} numbers`);
+        assert.strictEqual(new Set(r.vals).size, r.vals.length, `${id}/${d} unique keys`);
+        assert.ok(r.vals.length <= cap, `${id}/${d} stays within the table's capacity (${cap})`);
+        if (d === 'edge') assert.strictEqual(r.vals.length, 1);
+        if (d === 'large') assert.strictEqual(r.vals.length, cap, `${id}/large fills the table exactly`);
+      }
+    }
+    const n = RI.randomInputFor(id, 'normal', Math.random).vals.length;
+    const big = RI.randomInputFor(id, 'large', Math.random).vals.length;
+    assert.ok(big > n, `${id}: large (${big}) > normal (${n})`);
+  });
+}
+
+test('randomInputFor bloom-filter: item set + query word, stays well under the 32-bit table', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 20; i++) {
+      const r = RI.randomInputFor('bloom-filter', d, Math.random);
+      assert.ok(r && Array.isArray(r.items) && r.items.length >= 1, `bloom-filter/${d} shape`);
+      assert.ok(r.items.every((w) => typeof w === 'string' && /^[a-z]+$/.test(w)), `bloom-filter/${d} lowercase words`);
+      assert.strictEqual(new Set(r.items).size, r.items.length, `bloom-filter/${d} unique items`);
+      assert.ok(r.items.length <= 8, `bloom-filter/${d} stays well under the 32-bit table`);
+      assert.ok(typeof r.query === 'string' && r.query.length > 0, `bloom-filter/${d} has a query word`);
+      if (d === 'edge') assert.strictEqual(r.items.length, 1);
+    }
+  }
+  const n = RI.randomInputFor('bloom-filter', 'normal', Math.random).items.length;
+  const big = RI.randomInputFor('bloom-filter', 'large', Math.random).items.length;
+  assert.ok(big > n, `bloom-filter: large (${big}) > normal (${n})`);
+});
+
+test('randomInputFor skip-list: unique key set, kept readable, larger at large', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 20; i++) {
+      const r = RI.randomInputFor('skip-list', d, Math.random);
+      assert.ok(r && Array.isArray(r.vals) && r.vals.length >= 1, `skip-list/${d} shape`);
+      assert.ok(r.vals.every(Number.isFinite), `skip-list/${d} numbers`);
+      assert.strictEqual(new Set(r.vals).size, r.vals.length, `skip-list/${d} unique keys`);
+      assert.ok(r.vals.length <= 10, `skip-list/${d} stays readable (<=10 nodes)`);
+      if (d === 'edge') assert.strictEqual(r.vals.length, 1);
+    }
+  }
+  const n = RI.randomInputFor('skip-list', 'normal', Math.random).vals.length;
+  const big = RI.randomInputFor('skip-list', 'large', Math.random).vals.length;
+  assert.ok(big > n, `skip-list: large (${big}) > normal (${n})`);
+});
+
+test('randomInputFor count-min-sketch: word-op sequence, heavy repeats at special, larger at large', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 20; i++) {
+      const r = RI.randomInputFor('count-min-sketch', d, Math.random);
+      assert.ok(r && Array.isArray(r.words) && r.words.length >= 1, `count-min-sketch/${d} shape`);
+      assert.ok(r.words.every((w) => typeof w === 'string' && /^[a-z]+$/.test(w)), `count-min-sketch/${d} lowercase words`);
+      if (d === 'edge') assert.strictEqual(r.words.length, 1);
+      if (d === 'special') assert.ok(new Set(r.words).size <= 2, `count-min-sketch/special stays within 2 distinct words`);
+    }
+  }
+  const n = RI.randomInputFor('count-min-sketch', 'normal', Math.random).words.length;
+  const big = RI.randomInputFor('count-min-sketch', 'large', Math.random).words.length;
+  assert.ok(big > n, `count-min-sketch: large (${big}) > normal (${n})`);
+});

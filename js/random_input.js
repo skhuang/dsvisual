@@ -646,6 +646,97 @@
     return lines.join(',');
   }
 
+  // hash-chain / hash-open / hash-bucket (js/domains/hash.js): a set of UNIQUE keys inserted
+  // into a small fixed-size table. Uniqueness only guards against a value being inserted twice
+  // outright — once hashed mod the table size, several unique keys legitimately land in the
+  // same slot/bucket, which is exactly what chaining/bucketing exist to demonstrate. `cap` is
+  // each table's real physical capacity: hash-open has exactly 5 slots (linear probing over a
+  // full table hits hash.js's "Hash Table Full!" bail-out and silently drops the value) and
+  // hash-bucket has 4 buckets * 2 slots = 8 total (its own "All Buckets Saturated!" bail-out);
+  // hash-chain has no structural bound (chains grow unbounded) so it's just kept in the same
+  // ballpark as the other two for a readable diagram. 'large' always fills exactly `cap` keys
+  // (always inside the table for open/bucket); 'normal'/'special' stay comfortably below any
+  // `cap` (min 5) so 'large' is guaranteed strictly bigger every draw.
+  function hashKeys(rng, difficulty, cap) {
+    let n;
+    switch (difficulty) {
+      case 'edge': n = 1; break;
+      case 'special': n = Math.min(cap, randInt(rng, 4, 5)); break;
+      case 'large': n = cap; break;
+      default: n = Math.min(cap, randInt(rng, 2, 3));
+    }
+    return uniqueInts(rng, n, 1, 99);
+  }
+
+  // bloom-filter (js/viz/viz_bloom.js): a small set of lowercase words to insert plus one query
+  // word. SIZE=32 bits / 3 hash functions per insert — capped at 8 words (<=24 bit-sets, with
+  // overlap) so it never approaches saturating every bit, which would make every query trivially
+  // "possibly present" and defeat the demo. The query word is drawn 50/50 from the inserted set
+  // (exercises the "possibly present" path) or fresh (exercises "definitely not present").
+  function bloomWords(rng, difficulty) {
+    const alpha = 'abcdefghijklmnopqrstuvwxyz';
+    function randWord(len) { let s = ''; for (let i = 0; i < len; i++) s += alpha[Math.floor(rng() * alpha.length)]; return s; }
+    let n;
+    switch (difficulty) {
+      case 'edge': n = 1; break;
+      case 'special': n = randInt(rng, 5, 6); break;
+      case 'large': n = randInt(rng, 7, 8); break;
+      default: n = randInt(rng, 3, 4);
+    }
+    const items = new Set();
+    let guard = 0;
+    while (items.size < n && guard++ < n * 50) items.add(randWord(randInt(rng, 3, 5)));
+    const itemsArr = Array.from(items);
+    let query;
+    if (rng() < 0.5) {
+      query = itemsArr[Math.floor(rng() * itemsArr.length)];
+    } else {
+      let q, g2 = 0;
+      do { q = randWord(randInt(rng, 3, 5)); g2++; } while (items.has(q) && g2 < 50);
+      query = q;
+    }
+    return { items: itemsArr, query: query };
+  }
+
+  // skip-list (js/viz/viz_skiplist.js): a unique key set for the node list. No hard structural
+  // cap — MAXLVL=4 governs each node's *height*, assigned by the viz's own randomLevel() at
+  // insert time, not by the key count — but node count is still kept modest (<=10) so the level
+  // rows stay readable rather than scrolling arbitrarily wide.
+  function skiplistKeys(rng, difficulty) {
+    let n;
+    switch (difficulty) {
+      case 'edge': n = 1; break;
+      case 'special': n = randInt(rng, 6, 7); break;
+      case 'large': n = randInt(rng, 8, 10); break;
+      default: n = randInt(rng, 4, 5);
+    }
+    return uniqueInts(rng, n, 1, 60);
+  }
+
+  // count-min-sketch (js/viz/viz_cms.js): a sequence of word "add" operations — repeats allowed
+  // and expected, since CMS's whole point is estimating frequency from a handful of hashed
+  // counters, so a few repeated words is what makes the demo interesting. WIDTH=8 counters per
+  // row just accumulate integers (no hard capacity ceiling), so distinct-word and op counts are
+  // kept modest purely for readability.
+  function cmsWords(rng, difficulty) {
+    const alpha = 'abcdefghijklmnopqrstuvwxyz';
+    function randWord(len) { let s = ''; for (let i = 0; i < len; i++) s += alpha[Math.floor(rng() * alpha.length)]; return s; }
+    let nDistinct, totalOps;
+    switch (difficulty) {
+      case 'edge': nDistinct = 1; totalOps = 1; break;
+      case 'special': nDistinct = 2; totalOps = randInt(rng, 6, 8); break; // heavy repeats -> visible frequency skew
+      case 'large': nDistinct = randInt(rng, 5, 6); totalOps = randInt(rng, 10, 12); break;
+      default: nDistinct = randInt(rng, 3, 4); totalOps = randInt(rng, 5, 6);
+    }
+    const words = new Set();
+    let guard = 0;
+    while (words.size < nDistinct && guard++ < nDistinct * 50) words.add(randWord(randInt(rng, 3, 5)));
+    const pool = Array.from(words);
+    const ops = [];
+    for (let i = 0; i < totalOps; i++) ops.push(pool[Math.floor(rng() * pool.length)]);
+    return ops;
+  }
+
   function randomInputFor(methodId, difficulty, rng) {
     rng = rng || Math.random;
     if (['normal', 'special', 'edge', 'large'].indexOf(difficulty) === -1) difficulty = 'normal';
@@ -753,6 +844,12 @@
       case 'game-tree': return { leaves: gameTreeLeaves(rng, difficulty) };
       case 'tree-general-binary': return { text: tgbTreeText(rng, difficulty) };
       case 'tree-copy-equal': return copyEqualInput(rng, difficulty);
+      case 'hash-chain': return { vals: hashKeys(rng, difficulty, 9) };
+      case 'hash-open': return { vals: hashKeys(rng, difficulty, 5) };
+      case 'hash-bucket': return { vals: hashKeys(rng, difficulty, 8) };
+      case 'bloom-filter': return bloomWords(rng, difficulty);
+      case 'skip-list': return { vals: skiplistKeys(rng, difficulty) };
+      case 'count-min-sketch': return { words: cmsWords(rng, difficulty) };
       default: return null;
     }
   }

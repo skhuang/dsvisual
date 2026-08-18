@@ -62,6 +62,7 @@
             '<div class="skiplist-status" data-testid="skiplist-status">&nbsp;</div>' +
             '<div class="skiplist-controls" role="group">' +
                 '<input type="number" value="15" data-skiplist-val>' +
+                '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                 '<button type="button" data-action="skiplist-insert">Insert</button>' +
                 '<button type="button" data-action="skiplist-delete">Delete</button>' +
                 '<input type="number" value="12" data-skiplist-search>' +
@@ -151,6 +152,14 @@
             }
         }, true);
 
+        wrap.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('skip-list', difficulty);
+            if (!r || !Array.isArray(r.vals) || !r.vals.length) return;
+            sl.nodes = r.vals.map((key) => ({ key: key, h: randomLevel() }));
+            showStatus('Randomized ' + r.vals.length + ' key(s)', '#34d399');
+            renderSkipList();
+        };
         wrap.querySelector('[data-action="skiplist-insert"]').onclick = () => {
             const v = parseInt(wrap.querySelector('[data-skiplist-val]').value, 10);
             if (Number.isNaN(v)) { showStatus('Enter a number', '#f87171'); return; }

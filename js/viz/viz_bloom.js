@@ -42,6 +42,7 @@
         html += '<div class="bloom-items"><strong>inserted:</strong> <span class="bloom-items-list"></span></div>';
         html += '<div class="bloom-controls" role="group">' +
                     '<input type="text" data-bloom-val>' +
+                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                     '<button type="button" data-action="bloom-insert">Insert</button>' +
                     '<button type="button" data-action="bloom-query">Query</button>' +
                 '</div>';
@@ -69,6 +70,18 @@
             if (!items.includes(key)) items.push(key);
             renderBloomFilter();
             showStatus('Inserted "' + key + '" → bits {' + idxs.join(', ') + '}', '#34d399');
+        };
+        wrap.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('bloom-filter', difficulty);
+            if (!r || !Array.isArray(r.items) || !r.items.length) return;
+            _bloomState = { bits: new Array(SIZE).fill(false), items: [], inputVal: r.query || 'fish' };
+            for (const w of r.items) {
+                for (const i of hashes(w)) _bloomState.bits[i] = true;
+                _bloomState.items.push(w);
+            }
+            renderBloomFilter();
+            showStatus('Randomized ' + r.items.length + ' item(s)', '#34d399');
         };
         wrap.querySelector('[data-action="bloom-query"]').onclick = () => {
             const key = valInput.value.trim();
