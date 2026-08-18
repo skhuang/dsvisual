@@ -21,7 +21,7 @@
               '<textarea class="gw-input aoe-input" data-testid="aoe-input" rows="2" spellcheck="false">' + escText(_aoeState.text) + '</textarea>' +
               '<div class="gw-btns">' +
                 '<button type="button" class="btn primary aoe-apply" data-testid="aoe-apply">' + langOf({ zh: '建立', en: 'Build' }) + '</button>' +
-                '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機', en: 'Random' }) + '">🎲</button>' +
+                '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '</div>' +
               '<div class="gw-err aoe-err" data-testid="aoe-err" style="display:none"></div>' +
             '</div>' +

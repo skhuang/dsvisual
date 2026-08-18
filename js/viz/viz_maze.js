@@ -13,7 +13,7 @@
 
         host.innerHTML =
             '<div class="mz-controls"><input type="text" class="mz-input" value="' + st.text + '">' +
-            '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+            '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
             '<button type="button" class="mz-apply">Apply</button>' +
             '<span class="sm-hint"># wall, . open, S start, E end; rows split by ;</span></div>' +
             '<div class="mz-cols"><div class="mz-grid"></div><div class="mz-stack"><strong>Path stack:</strong><div class="mz-stack-cells"></div></div></div>' +

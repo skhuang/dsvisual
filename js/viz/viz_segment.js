@@ -102,7 +102,7 @@
             '<div class="segtree-controls">' +
               '<input type="text" class="segtree-input" value="' + arr.join(',') + '">' +
               '<button type="button" class="segtree-build">' + (lang === 'zh' ? '建立' : 'Build') + '</button>' +
-              '<button type="button" class="rand-btn" title="' + (lang === 'zh' ? '隨機' : 'Random') + '">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
             '</div>' +
             '<div class="segtree-phase" data-testid="segtree-phase"></div>' +
             '<div class="segtree-grid"></div>' +

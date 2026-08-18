@@ -65,7 +65,7 @@
             '<div class="fenwick-controls">' +
               '<input type="text" class="fenwick-input" value="' + arr.join(',') + '">' +
               '<button type="button" class="fenwick-build">' + (lang === 'zh' ? '建立' : 'Build') + '</button>' +
-              '<button type="button" class="rand-btn" title="' + (lang === 'zh' ? '隨機' : 'Random') + '">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
             '</div>' +
             '<div class="fenwick-phase" data-testid="fenwick-phase"></div>' +
             '<div class="fenwick-row"></div>' +

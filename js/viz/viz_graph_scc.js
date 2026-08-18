@@ -114,7 +114,7 @@
           '<label>n <input type="text" class="gsc-n" value="' + _st.n + '"></label>' +
           '<label>edges (u-v, directed) <input type="text" class="gsc-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gsc-apply">套用 Apply</button>' +
-          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+          '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
           buildExamplesSelect('graph-scc', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="gsc-banner" data-testid="gsc-banner">&nbsp;</div>' +

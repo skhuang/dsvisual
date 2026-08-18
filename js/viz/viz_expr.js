@@ -23,7 +23,7 @@
             return;
         }
         host.innerHTML =
-            '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="expr-apply">Apply</button></div>' +
+            '<div class="expr-controls"><input type="text" class="expr-input"><button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button><button type="button" class="expr-apply">Apply</button></div>' +
             '<div class="expr-phasebadge"></div>' +
             '<div class="expr-stack"><strong>Stack:</strong> <span class="expr-stack-cells"></span></div>' +
             '<div class="expr-out"><strong>Output:</strong> <span class="expr-out-cells"></span></div>' +

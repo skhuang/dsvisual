@@ -41,7 +41,7 @@
         html += '<div class="cms-readout" data-testid="cms-readout">&nbsp;</div>';
         html += '<div class="cms-controls" role="group">' +
                     '<input type="text" value="apple" data-cms-val>' +
-                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                    '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                     '<button type="button" data-action="cms-add">Add</button>' +
                     '<button type="button" data-action="cms-estimate">Estimate</button>' +
                 '</div>';

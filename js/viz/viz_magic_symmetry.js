@@ -23,7 +23,7 @@
                         [3, 5, 7].map((v) => '<option value="' + v + '"' + (v === n ? ' selected' : '') + '>' + v + '</option>').join('') +
                     '</select></label>' +
                     '<button type="button" class="sym-apply">Apply</button>' +
-                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                    '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                     '<span class="sym-sum">Magic sum = ' + magicSum + '</span>' +
                     '<span class="sym-orbit" data-testid="sym-orbit">orbit: ' + st.seen.size + ' / ' + orbitInfo.size + ' distinct</span>' +
                 '</div>' +

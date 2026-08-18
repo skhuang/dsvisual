@@ -48,7 +48,7 @@
       controls.innerHTML =
         '<input type="text" class="sortviz-input" data-testid="sortviz-input" value="' + esc(_sortText[methodId]) + '">' +
         '<button type="button" class="sortviz-build btn primary">' + (lang === 'zh' ? '建立' : 'Build') + '</button>' +
-        '<button type="button" class="rand-btn" title="' + (lang === 'zh' ? '隨機' : 'Random') + '">🎲</button>' +
+        '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
         exSelectHtml(methodId);
       host.appendChild(controls);
 

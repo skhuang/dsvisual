@@ -54,7 +54,7 @@
         '<input type="text" class="searchviz-arr" data-testid="searchviz-arr" value="' + esc(arr.join(',')) + '">' +
         '<label class="searchviz-tlabel">' + (lang === 'zh' ? '目標' : 'target') + ' <input type="number" class="searchviz-target" data-testid="searchviz-target" value="' + esc(target) + '"></label>' +
         '<button type="button" class="searchviz-build btn primary">' + (lang === 'zh' ? '建立' : 'Build') + '</button>' +
-        '<button type="button" class="rand-btn" title="' + (lang === 'zh' ? '隨機' : 'Random') + '">🎲</button>' +
+        '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
         exSelectHtml(methodId);
       host.appendChild(controls);
 

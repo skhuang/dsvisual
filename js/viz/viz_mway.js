@@ -15,7 +15,7 @@
             '<div class="mw-controls">' +
               '<input type="text" class="mw-keys" value="' + st.keys.join(',') + '">' +
               'm <input type="number" class="mw-m" min="3" max="6" value="' + st.m + '" style="width:54px">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="mw-apply">Apply</button>' +
             '</div>' +
             '<div class="mw-stage"><svg class="mw-edges"></svg><div class="mw-nodes"></div></div>' +

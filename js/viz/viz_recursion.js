@@ -60,7 +60,7 @@
               '<select class="rec-example">' + optsHtml + '</select>' +
               inputsHtml +
               '<button type="button" class="rec-build">Build</button>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
             '</div>' +
             '<div class="rec-stage">' +
               '<div class="rec-tree" style="position:relative;overflow:auto;height:320px">' +

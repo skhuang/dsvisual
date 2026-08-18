@@ -26,7 +26,7 @@
                         [3, 5, 7, 9].map((v) => '<option value="' + v + '"' + (v === n ? ' selected' : '') + '>' + v + '</option>').join('') +
                     '</select></label>' +
                     '<button type="button" class="ml-apply">Apply</button>' +
-                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                    '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                     '<span class="ml-sum">Magic sum = ' + magicSum + '</span>' +
                 '</div>' +
                 '<div class="ml-grids">' +

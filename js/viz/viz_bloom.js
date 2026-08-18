@@ -42,7 +42,7 @@
         html += '<div class="bloom-items"><strong>inserted:</strong> <span class="bloom-items-list"></span></div>';
         html += '<div class="bloom-controls" role="group">' +
                     '<input type="text" data-bloom-val>' +
-                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                    '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                     '<button type="button" data-action="bloom-insert">Insert</button>' +
                     '<button type="button" data-action="bloom-query">Query</button>' +
                 '</div>';

@@ -92,7 +92,7 @@
           '<label>n <input type="text" class="gbp-n" value="' + _st.n + '"></label>' +
           '<label>edges <input type="text" class="gbp-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gbp-apply">套用 Apply</button>' +
-          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+          '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
           buildExamplesSelect('graph-bipartite', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="gbp-verdict" data-testid="gbp-verdict">&nbsp;</div>' +

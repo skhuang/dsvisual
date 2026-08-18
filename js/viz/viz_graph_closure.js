@@ -93,7 +93,7 @@
           '<label>n <input type="text" class="gcl-n" value="' + _st.n + '"></label>' +
           '<label>edges (u-v, directed) <input type="text" class="gcl-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gcl-apply">套用 Apply</button>' +
-          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+          '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
           buildExamplesSelect('graph-closure', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="gcl-scroll"><div class="gcl-graph"></div><div class="gcl-matrix"></div></div>' +

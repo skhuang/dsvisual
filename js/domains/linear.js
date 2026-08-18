@@ -69,7 +69,7 @@
     html += '</div>';
     html += '<div class="deque-controls" role="group">' +
                 '<input type="number" value="42" data-deque-val>' +
-                '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                 '<button type="button" data-action="push-front">Push Front</button>' +
                 '<button type="button" data-action="push-back">Push Back</button>' +
                 '<button type="button" data-action="pop-front">Pop Front</button>' +

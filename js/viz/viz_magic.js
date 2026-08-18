@@ -66,7 +66,7 @@
             '<div class="magic-wrap">' +
                 '<div class="magic-controls">' +
                     '<label>Order <select class="magic-order"><option value="3">3 x 3</option><option value="5">5 x 5</option><option value="7">7 x 7</option></select></label>' +
-                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                    '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                     '<span class="magic-sum">Magic sum = ' + magicSum + '</span>' +
                 '</div>' +
                 '<div class="magic-layout">' +

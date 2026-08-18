@@ -39,7 +39,7 @@
             '<div class="ar-wrap">' +
             '<div class="ar-controls">' +
               '<input type="text" class="ar-input" value="' + st.text.replace(/"/g, '&quot;') + '">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="ar-apply">Apply</button>' +
               '<span class="sm-hint">' + langOf({ zh: '層序陣列;- 表空位;左=2i 右=2i+1 父=⌊i/2⌋', en: 'level-order array; - = empty; left=2i right=2i+1 parent=⌊i/2⌋' }) + '</span>' +
             '</div>' +

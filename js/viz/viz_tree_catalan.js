@@ -29,7 +29,7 @@
         const seq = TreeCatalanViz.catalanSequence(10);
 
         const nBtns = [0, 1, 2, 3, 4].map((k) => '<button type="button" class="cat-nbtn' + (k === st.n ? ' active' : '') + '" data-n="' + k + '">n=' + k + '</button>').join('') +
-            '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機輸入', en: 'Random input' }) + '">🎲</button>';
+            '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>';
         const seqRows = seq.map((r) => '<tr class="cat-seq-row" data-n="' + r.n + '"><td>C' + r.n + '</td><td>' + r.recurrence + '</td><td>' + r.closed + '</td><td>' + (r.recurrence === r.closed ? '✓' : '✗') + '</td></tr>').join('');
 
         host.innerHTML =

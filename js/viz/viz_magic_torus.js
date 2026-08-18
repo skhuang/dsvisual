@@ -29,7 +29,7 @@
                         [3, 5, 7].map((v) => '<option value="' + v + '"' + (v === n ? ' selected' : '') + '>' + v + '</option>').join('') +
                     '</select></label>' +
                     '<button type="button" class="mt-apply">Apply</button>' +
-                    '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                    '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                     '<label class="mt-ghost-toggle"><input type="checkbox" class="mt-ghost-cb"' + (st.ghosts ? ' checked' : '') + '> ghost tiles</label>' +
                     '<span class="mt-runs">runs = ' + runs + '</span>' +
                 '</div>' +

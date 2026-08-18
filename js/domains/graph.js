@@ -23,7 +23,7 @@
             '<label>' + langOf({ zh: '邊', en: 'edges' }) + ' <input type="text" class="floyd-edges" data-testid="floyd-edges" value="' + floydEscAttr(_floydState.text) + '"></label>' +
             '<button type="button" class="btn primary floyd-apply" data-testid="floyd-apply">' + langOf({ zh: '套用', en: 'Apply' }) + '</button>' +
             '<label><input type="checkbox" class="floyd-directed"' + (_floydState.directed ? ' checked' : '') + '> ' + langOf({ zh: '有向', en: 'Directed' }) + '</label>' +
-            '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機', en: 'Random' }) + '">🎲</button>' +
+            '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
           '</div>' +
           '<div class="gw-err floyd-err" data-testid="floyd-err" style="display:none"></div>' +
           '<div class="floyd-grid"></div>' +
@@ -217,7 +217,7 @@
             langOf({ zh: '邊以逗號或換行分隔:' + (meta.weighted ? 'u-v:w(例 A-B:4)' : 'u-v(例 A-B,B-C)'), en: 'Edges by comma or newline: ' + (meta.weighted ? 'u-v:w (e.g. A-B:4)' : 'u-v (e.g. A-B,B-C)') }) + '"></textarea>' +
           '<div class="gw-btns">' +
             '<button type="button" class="btn primary gw-build" data-testid="gw-build">' + langOf({ zh: '建立', en: 'Build' }) + '</button>' +
-            '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機', en: 'Random' }) + '">🎲</button>' +
+            '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
             gwBuildExamplesSelect(methodId, DEF) +
             sourceCtl +
             gwDirToggleHtml(methodId, st, langOf) +
@@ -393,7 +393,7 @@
             langOf({ zh: '邊以逗號或換行分隔:u-v(例 A-B,B-C)', en: 'Edges by comma or newline: u-v (e.g. A-B,B-C)' }) + '"></textarea>' +
           '<div class="gw-btns">' +
             '<button type="button" class="btn primary gw-build" data-testid="gw-build">' + langOf({ zh: '建立', en: 'Build' }) + '</button>' +
-            '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機', en: 'Random' }) + '">🎲</button>' +
+            '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
             gwBuildExamplesSelect(methodId, DEF) +
             gwDirToggleHtml(methodId, st, langOf) +
           '</div>' +
@@ -493,7 +493,7 @@
             langOf({ zh: '邊以逗號或換行分隔:u-v(例 A-B,B-C)', en: 'Edges by comma or newline: u-v (e.g. A-B,B-C)' }) + '"></textarea>' +
           '<div class="gw-btns">' +
             '<button type="button" class="btn primary gw-build" data-testid="gw-build">' + langOf({ zh: '建立', en: 'Build' }) + '</button>' +
-            '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機', en: 'Random' }) + '">🎲</button>' +
+            '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
             gwBuildExamplesSelect(methodId, DEF) +
             '<label class="gw-src-lbl">' + langOf({ zh: '起點', en: 'Source' }) + ' <select class="gw-source" data-testid="gw-source"></select></label>' +
             gwDirToggleHtml(methodId, st, langOf) +

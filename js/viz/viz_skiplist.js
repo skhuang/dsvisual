@@ -62,7 +62,7 @@
             '<div class="skiplist-status" data-testid="skiplist-status">&nbsp;</div>' +
             '<div class="skiplist-controls" role="group">' +
                 '<input type="number" value="15" data-skiplist-val>' +
-                '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                 '<button type="button" data-action="skiplist-insert">Insert</button>' +
                 '<button type="button" data-action="skiplist-delete">Delete</button>' +
                 '<input type="number" value="12" data-skiplist-search>' +
