@@ -557,6 +557,7 @@
           btnHeapDelete: document.getElementById('btn-heap-delete'),
           btnHeapFindMin: document.getElementById('btn-heap-find-min'),
           btnHeapStats: document.getElementById('btn-heap-stats'),
+          btnHeapRandom: document.getElementById('btn-heap-random'),
           btnHeapTutorial: document.getElementById('btn-heap-tutorial'),
           heapTutorialPanel: document.getElementById('heap-tutorial-panel'),
           heapTutorialMode: document.getElementById('heap-tutorial-mode'),
@@ -715,6 +716,22 @@
 
           showStatus(statsMsg, '#a78bfa');
           maybeAdvanceHeapTutorial('stats', { size });
+      });
+
+      dom.btnHeapRandom.addEventListener('click', () => {
+          const showStatus = K().showStatus;
+          const model = getActiveHeapModel();
+          if (!model) return;
+          const methodId = C().getMode();
+          const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+          const r = global.RandomInput && global.RandomInput.randomInputFor(methodId, difficulty);
+          if (!r || !Array.isArray(r.vals)) return;
+          model.clear();
+          model.setOrder(heapIsMin);
+          clearHeapEventMarks();
+          r.vals.forEach(v => model.insert(v));
+          renderHeap();
+          showStatus('Randomized ' + r.vals.length + ' values', '#34d399');
       });
 
       dom.btnHeapTutorial.addEventListener('click', () => {

@@ -27,6 +27,18 @@ test('value-seq methods: shape + per-difficulty properties', () => {
   }
 });
 
+for (const id of ['heap-binary', 'heap-binomial', 'heap-fibonacci', 'heap-leftist', 'heap-skew', 'heap-dary', 'heap-pairing']) {
+  test(`randomInputFor ${id}: value sequence per difficulty`, () => {
+    for (const d of DIFFS) {
+      const r = RI.randomInputFor(id, d, Math.random);
+      assert.ok(r && Array.isArray(r.vals) && r.vals.length >= 1, `${id}/${d} shape`);
+    }
+    const n = RI.randomInputFor(id, 'normal', Math.random).vals.length;
+    const big = RI.randomInputFor(id, 'large', Math.random).vals.length;
+    assert.ok(big > n, `${id}: large (${big}) > normal (${n})`);
+  });
+}
+
 test('list-doubly: vals + circular boolean', () => {
   for (const d of DIFFS) {
     const out = RI.randomInputFor('list-doubly', d);

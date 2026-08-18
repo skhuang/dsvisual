@@ -113,3 +113,32 @@ test('random button on search-fibonacci changes the input field', async ({ page 
   const before = await input.inputValue();
   await expectRandomizes(section.locator('.rand-btn'), input, before);
 });
+
+test('random button on heap-binary changes the rendered nodes and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'heap-binary');
+
+  const randomBtn = page.locator('[data-testid="heap-random"]');
+  const nodes = page.locator('.heap-node');
+
+  const before = (await nodes.allTextContents()).join(',');
+  await expect(async () => {
+    await randomBtn.click();
+    const after = (await nodes.allTextContents()).join(',');
+    expect(after).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await randomBtn.click();
+  const normalCount = await nodes.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await randomBtn.click();
+  const largeCount = await nodes.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});

@@ -3058,6 +3058,25 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 }
 .rand-btn:hover { background: #334155; }
 
+/* Random-input buttons for domains rendered through the static legacy control
+   panel (#heap-actions, etc.) that stays permanently mounted (hidden, not
+   removed) alongside every active method section. Deliberately NOT `.rand-btn`
+   — that class is scoped by many specs via `section.locator('.rand-btn')`,
+   and a hidden-but-present sibling would still count toward Playwright's
+   strict-mode match, breaking unrelated domains' tests. Target these via
+   their `data-testid` instead of this class. */
+.legacy-rand-btn {
+    cursor: pointer;
+    border: 1px solid #475569;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+.legacy-rand-btn:hover { background: #334155; }
+
 /* ===== nano-LLM visualizations (bpe-encode, compute-graph, bpe-train, ngram-next) ===== */
 
 /* -- bpe-encode -- */

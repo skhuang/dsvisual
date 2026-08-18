@@ -266,6 +266,14 @@
     switch (methodId) {
       case 'tree-traversal':
       case 'tree-threaded': return { vals: valSeq(rng, difficulty) };
+      case 'heap-binary':
+      case 'heap-binomial':
+      case 'heap-fibonacci':
+      case 'heap-leftist':
+      case 'heap-skew':
+      case 'heap-dary':
+      case 'heap-pairing':
+        return { vals: valSeq(rng, difficulty) };
       case 'list-doubly': return { vals: valSeq(rng, difficulty), circular: rng() < 0.5 };
       case 'list-equivalence': {
         if (difficulty === 'edge') return rng() < 0.5 ? { n: 1, pairs: [] } : { n: randInt(rng, 4, 6), pairs: [] };
