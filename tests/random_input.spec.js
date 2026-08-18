@@ -114,6 +114,64 @@ test('random button on search-fibonacci changes the input field', async ({ page 
   await expectRandomizes(section.locator('.rand-btn'), input, before);
 });
 
+test('random button on tree-radix changes the rendered edges and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'tree-radix');
+
+  const randomBtn = page.locator('[data-testid="text-tree-random"]');
+  const edges = page.locator('#advanced-tree-container .edge-label');
+
+  const before = (await edges.allTextContents()).join(',');
+  await expect(async () => {
+    await randomBtn.click();
+    const after = (await edges.allTextContents()).join(',');
+    expect(after).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await randomBtn.click();
+  const normalCount = await edges.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await randomBtn.click();
+  const largeCount = await edges.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
+test('random button on tree-btree changes the rendered keys and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'tree-btree');
+
+  const randomBtn = page.locator('[data-testid="tree-random"]');
+  const keys = page.locator('#advanced-tree-container .key');
+
+  const before = (await keys.allTextContents()).join(',');
+  await expect(async () => {
+    await randomBtn.click();
+    const after = (await keys.allTextContents()).join(',');
+    expect(after).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await randomBtn.click();
+  const normalCount = await keys.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await randomBtn.click();
+  const largeCount = await keys.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
 test('random button on heap-binary changes the rendered nodes and honors large difficulty', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'heap-binary');

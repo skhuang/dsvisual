@@ -39,6 +39,34 @@ for (const id of ['heap-binary', 'heap-binomial', 'heap-fibonacci', 'heap-leftis
   });
 }
 
+for (const id of ['tree-btree', 'tree-bplus']) {
+  test(`randomInputFor ${id}: value sequence per difficulty`, () => {
+    for (const d of DIFFS) {
+      const r = RI.randomInputFor(id, d, Math.random);
+      assert.ok(r && Array.isArray(r.vals) && r.vals.length >= 1, `${id}/${d} shape`);
+      assert.ok(r.vals.every(Number.isFinite), `${id}/${d} numbers`);
+    }
+    const n = RI.randomInputFor(id, 'normal', Math.random).vals.length;
+    const big = RI.randomInputFor(id, 'large', Math.random).vals.length;
+    assert.ok(big > n, `${id}: large (${big}) > normal (${n})`);
+  });
+}
+
+for (const id of ['tree-radix', 'tree-ternary']) {
+  test(`randomInputFor ${id}: word set per difficulty`, () => {
+    for (const d of DIFFS) {
+      const r = RI.randomInputFor(id, d, Math.random);
+      assert.ok(r && Array.isArray(r.words) && r.words.length >= 1, `${id}/${d} shape`);
+      assert.ok(r.words.every((w) => typeof w === 'string' && /^[a-z]+$/.test(w)), `${id}/${d} lowercase words`);
+      if (d === 'edge') assert.strictEqual(r.words.length, 1);
+      if (d === 'special') assert.ok(r.words.every((w) => w.length >= 3), `${id}/special words carry the shared 2-char prefix`);
+    }
+    const n = RI.randomInputFor(id, 'normal', Math.random).words.length;
+    const big = RI.randomInputFor(id, 'large', Math.random).words.length;
+    assert.ok(big > n, `${id}: large (${big}) > normal (${n})`);
+  });
+}
+
 test('list-doubly: vals + circular boolean', () => {
   for (const d of DIFFS) {
     const out = RI.randomInputFor('list-doubly', d);

@@ -210,6 +210,29 @@
     return makeMaze(rng, R, C, 0);
   }
 
+  function wordSet(rng, difficulty) {
+    const alpha = 'abcdefghijklmnopqrstuvwxyz';
+    const ch = () => alpha[Math.floor(rng() * alpha.length)];
+    function randWord(len) { let s = ''; for (let i = 0; i < len; i++) s += ch(); return s; }
+    if (difficulty === 'edge') return [randWord(1)];
+    if (difficulty === 'special') {
+      // Shared-prefix cluster — exercises branching/merging in radix & ternary trees.
+      const prefix = randWord(2);
+      const n = randInt(rng, 3, 5);
+      const words = new Set();
+      let guard = 0;
+      while (words.size < n && guard++ < n * 50) words.add(prefix + randWord(randInt(rng, 1, 3)));
+      return Array.from(words);
+    }
+    const n = difficulty === 'large' ? randInt(rng, 10, 14) : randInt(rng, 4, 6);
+    const lenLo = difficulty === 'large' ? 4 : 3;
+    const lenHi = difficulty === 'large' ? 7 : 6;
+    const words = new Set();
+    let guard = 0;
+    while (words.size < n && guard++ < n * 50) words.add(randWord(randInt(rng, lenLo, lenHi)));
+    return Array.from(words);
+  }
+
   function mwayInput(rng, difficulty) {
     let nk;
     if (difficulty === 'edge') nk = randInt(rng, 1, 2);
@@ -319,6 +342,12 @@
       case 'expr-infix-postfix': return { text: exprInfix(rng, difficulty) };
       case 'tree-expression': return { text: exprPostfix(rng, difficulty) };
       case 'tree-obst': return obstInput(rng, difficulty);
+      case 'tree-radix':
+      case 'tree-ternary':
+        return { words: wordSet(rng, difficulty) };
+      case 'tree-btree':
+      case 'tree-bplus':
+        return { vals: valSeq(rng, difficulty) };
       case 'matrix-sparse': return { text: matrixText(rng, difficulty) };
       case 'matrix-sparse-list': return { text: matrixSparseListText(rng, difficulty) };
       case 'poly-padd': return polyInput(rng, difficulty);
