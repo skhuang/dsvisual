@@ -11,6 +11,16 @@
 
     let _cmsState = null;
 
+    // Fresh random short lowercase word for [data-cms-val] — mirrors linear.js's
+    // randStdValue()/tree.js's randKey() idiom, adapted for a text field.
+    function randWord() {
+        const alpha = 'abcdefghijklmnopqrstuvwxyz';
+        const len = 3 + Math.floor(Math.random() * 3); // 3..5 chars
+        let s = '';
+        for (let i = 0; i < len; i++) s += alpha[Math.floor(Math.random() * alpha.length)];
+        return s;
+    }
+
     function renderCountMinSketch() {
         const host = K().acquireDynamicVizHost();
         const DEPTH = 3, WIDTH = 8;
@@ -40,7 +50,7 @@
         html += '</div>';
         html += '<div class="cms-readout" data-testid="cms-readout">&nbsp;</div>';
         html += '<div class="cms-controls" role="group">' +
-                    '<input type="text" value="apple" data-cms-val>' +
+                    '<input type="text" value="' + randWord() + '" data-cms-val>' +
                     '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                     '<button type="button" data-action="cms-add">Add</button>' +
                     '<button type="button" data-action="cms-estimate">Estimate</button>' +
@@ -84,6 +94,9 @@
             cms.actual[key] = (cms.actual[key] || 0) + 1;
             highlight(cells);
             showStatus('Added "' + key + '" (+1 per row)', '#34d399');
+            // "cms-add" updates cells in place rather than re-rendering the whole widget, so
+            // refill the field explicitly with a fresh random word after a successful add.
+            valInput.value = randWord();
         };
         wrap.querySelector('[data-action="cms-estimate"]').onclick = () => {
             const key = valInput.value.trim();

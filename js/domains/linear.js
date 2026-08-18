@@ -68,7 +68,7 @@
     html += '<span class="deque-null">null</span>';
     html += '</div>';
     html += '<div class="deque-controls" role="group">' +
-                '<input type="number" value="42" data-deque-val>' +
+                '<input type="number" value="' + randStdValue() + '" data-deque-val>' +
                 '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                 '<button type="button" data-action="push-front">Push Front</button>' +
                 '<button type="button" data-action="push-back">Push Back</button>' +

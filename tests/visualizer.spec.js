@@ -573,6 +573,9 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         await card.locator('[data-action="bloom-insert"]').click();
         const onAfter = await card.locator('.bloom-cell.bloom-on').count();
         expect(onAfter).toBeGreaterThanOrEqual(onBefore);
+        // A successful insert auto-fills the field with a fresh random word (this feature) — refill
+        // 'zebra' explicitly before querying it, rather than relying on the post-insert value.
+        await card.locator('[data-bloom-val]').fill('zebra');
         await card.locator('[data-action="bloom-query"]').click();
         await expect(card.locator('[data-testid="bloom-hashes"]')).toContainText('zebra');
         await expect(card.locator('.bloom-cell.bloom-hit').first()).toBeVisible();
@@ -621,9 +624,13 @@ test.describe('Data Structure Visualizer Full Suite', () => {
         const card = page.locator('[data-method-section="count-min-sketch"]');
         await expect(card.locator('.code-panel-filename')).toContainText('count_min_sketch.cpp');
         await expect(card.locator('.cms-cell')).toHaveCount(24);
+        // A successful add auto-fills the field with a fresh random word (this feature) — refill
+        // 'apple' explicitly before each dependent action, rather than relying on the post-add value.
         await card.locator('[data-cms-val]').fill('apple');
         await card.locator('[data-action="cms-add"]').click();
+        await card.locator('[data-cms-val]').fill('apple');
         await card.locator('[data-action="cms-add"]').click();
+        await card.locator('[data-cms-val]').fill('apple');
         await card.locator('[data-action="cms-estimate"]').click();
         await expect(card.locator('[data-testid="cms-readout"]')).toContainText('= 2');
         await expect(card.locator('.cms-cell.cms-hit')).toHaveCount(3);

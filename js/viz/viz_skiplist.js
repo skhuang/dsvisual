@@ -61,7 +61,11 @@
             '<div class="skiplist-grid"></div>' +
             '<div class="skiplist-status" data-testid="skiplist-status">&nbsp;</div>' +
             '<div class="skiplist-controls" role="group">' +
-                '<input type="number" value="15" data-skiplist-val>' +
+                // Fresh random insert value (1..99) each time this template is built — this
+                // function is re-invoked wholesale after a successful insert/delete, so a
+                // computed default here naturally covers both "on mount" and "after insert"
+                // (mirrors linear.js's randStdValue() idiom).
+                '<input type="number" value="' + (1 + Math.floor(Math.random() * 99)) + '" data-skiplist-val>' +
                 '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                 '<button type="button" data-action="skiplist-insert">Insert</button>' +
                 '<button type="button" data-action="skiplist-delete">Delete</button>' +
