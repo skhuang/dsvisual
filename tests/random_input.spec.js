@@ -357,6 +357,35 @@ test('random button on graph-matrix changes n/edges and honors large difficulty'
   expect(largeCount).toBeGreaterThan(normalCount);
 });
 
+test('random button on graph-scc changes n/edges and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'graph-scc');
+
+  const section = page.locator('[data-method-section="graph-scc"]');
+  const nInput = section.locator('.gsc-n');
+  const nodes = section.locator('.gsc-graph .gsc-node');
+
+  const before = await nInput.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), nInput, before);
+  // Still a valid directed graph the algorithm can run on: the frame controls
+  // (and hence the step transport) render after randomizing.
+  await expect(section.locator('.stepctl-scrubber')).toBeVisible();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await nodes.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await nodes.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
 test('random button on heap-binary changes the rendered nodes and honors large difficulty', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'heap-binary');

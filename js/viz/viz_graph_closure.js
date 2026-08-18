@@ -93,6 +93,7 @@
           '<label>n <input type="text" class="gcl-n" value="' + _st.n + '"></label>' +
           '<label>edges (u-v, directed) <input type="text" class="gcl-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gcl-apply">套用 Apply</button>' +
+          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
           buildExamplesSelect('graph-closure', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="gcl-scroll"><div class="gcl-graph"></div><div class="gcl-matrix"></div></div>' +
@@ -125,6 +126,14 @@
     wrap.querySelector('.gcl-apply').addEventListener('click', function () {
       const parsed = global.GraphClosureViz.parseInput(wrap.querySelector('.gcl-n').value, wrap.querySelector('.gcl-edges').value);
       _st.n = parsed.n; _st.edges = parsed.edges;
+      saveExample('graph-closure', serialize(_st), DEFAULT_SERIALIZED);
+      renderGraphClosure();
+    });
+    wrap.querySelector('.rand-btn').addEventListener('click', function () {
+      const difficulty = K().getInputDifficulty();
+      const r = global.RandomInput && global.RandomInput.randomInputFor('graph-closure', difficulty);
+      if (!r || !Array.isArray(r.edges)) return;
+      _st.n = r.n; _st.edges = r.edges;
       saveExample('graph-closure', serialize(_st), DEFAULT_SERIALIZED);
       renderGraphClosure();
     });

@@ -114,6 +114,7 @@
           '<label>n <input type="text" class="gsc-n" value="' + _st.n + '"></label>' +
           '<label>edges (u-v, directed) <input type="text" class="gsc-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gsc-apply">套用 Apply</button>' +
+          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
           buildExamplesSelect('graph-scc', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="gsc-banner" data-testid="gsc-banner">&nbsp;</div>' +
@@ -156,6 +157,14 @@
     wrap.querySelector('.gsc-apply').addEventListener('click', function () {
       const parsed = global.GraphSccViz.parseInput(wrap.querySelector('.gsc-n').value, wrap.querySelector('.gsc-edges').value);
       _st.n = parsed.n; _st.edges = parsed.edges;
+      saveExample('graph-scc', serialize(_st), DEFAULT_SERIALIZED);
+      renderGraphScc();
+    });
+    wrap.querySelector('.rand-btn').addEventListener('click', function () {
+      const difficulty = K().getInputDifficulty();
+      const r = global.RandomInput && global.RandomInput.randomInputFor('graph-scc', difficulty);
+      if (!r || !Array.isArray(r.edges)) return;
+      _st.n = r.n; _st.edges = r.edges;
       saveExample('graph-scc', serialize(_st), DEFAULT_SERIALIZED);
       renderGraphScc();
     });

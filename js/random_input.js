@@ -354,6 +354,175 @@
     return { n: n, edges: edges };
   }
 
+  // Numeric 0-based DIRECTED edge-list generator for graph-closure / graph-scc.
+  // Their GraphClosureViz/GraphSccViz.parseInput expect PLAIN NUMERIC "u-v[:w]"
+  // tokens (a trailing weight is tolerated but ignored) and clamp n to <=10 —
+  // a different token alphabet from graphEdgeList's letter labels, so it isn't
+  // reused as-is (same reasoning as graphMatrixInput's own numeric generator
+  // in task 5). Dedupes by the exact ordered pair (so both u->v and v->u can
+  // coexist) and ALSO fires one extra 0->target edge: the spanning pass only
+  // ever adds "child->parent" edges (parent index strictly smaller than
+  // child), so every node already has a directed path back down to node 0 —
+  // adding 0->target therefore always closes at least one cycle, which SCC
+  // needs to be interesting (an acyclic graph has every vertex in its own
+  // singleton SCC). graph-components/graph-bipartite do NOT use this — they
+  // need structural properties (multiple components; a controlled mix of
+  // bipartite/non-bipartite instances) that a single connected spanning tree
+  // can never produce, so they get their own dedicated generators below.
+  function graphNumericEdges(rng, difficulty) {
+    var n, extra;
+    if (difficulty === 'edge') { n = randInt(rng, 2, 3); extra = 0; }
+    else if (difficulty === 'large') { n = randInt(rng, 8, 10); extra = randInt(rng, n, n + 3); }
+    else if (difficulty === 'special') { n = 6; extra = 2; }
+    else { n = randInt(rng, 4, 6); extra = randInt(rng, 1, 3); }
+    var seen = {}, edges = [];
+    function key(u, v) { return u + '>' + v; }
+    function add(u, v) {
+      if (u === v) return false;
+      var k = key(u, v);
+      if (seen[k]) return false;
+      seen[k] = true;
+      edges.push({ u: u, v: v });
+      return true;
+    }
+    var i;
+    for (i = 1; i < n; i++) add(i, randInt(rng, 0, i - 1)); // spanning chain -> weakly connected
+    var tries = 0;
+    while (extra > 0 && tries < 200) { tries++; if (add(randInt(rng, 0, n - 1), randInt(rng, 0, n - 1))) extra--; }
+    if (n > 1) add(0, randInt(rng, 1, n - 1)); // guarantee >=1 cycle (see comment above)
+    return { n: n, edges: edges };
+  }
+
+  // Numeric 0-based UNDIRECTED FOREST generator for graph-components — the
+  // entire point of "Connected Components" is watching componentsFrames
+  // partition the graph into >=2 pieces, so a single spanning tree over all n
+  // nodes (which is always 1 component) would defeat the demo. Partitions the
+  // n nodes into k disjoint, non-empty groups (k scales with difficulty),
+  // spanning-trees WITHIN each group, and only ever adds extra edges WITHIN a
+  // group — never across groups — so the graph has EXACTLY k components,
+  // never 1, regardless of which edges happen to land where.
+  function graphComponentsEdges(rng, difficulty) {
+    var n, k;
+    if (difficulty === 'edge') { n = randInt(rng, 3, 4); k = randInt(rng, 1, 2); }
+    else if (difficulty === 'large') { n = randInt(rng, 8, 10); k = randInt(rng, 2, 3); }
+    else if (difficulty === 'special') { n = 6; k = 3; }
+    else { n = randInt(rng, 4, 6); k = 2; }
+    if (k > n) k = n;
+    var groups = [], g;
+    for (g = 0; g < k; g++) groups.push([]);
+    var i;
+    for (i = 0; i < n; i++) groups[i < k ? i : randInt(rng, 0, k - 1)].push(i); // every group non-empty (first k nodes seed one each)
+    var seen = {}, edges = [];
+    function add(u, v) {
+      if (u === v) return false;
+      var a = Math.min(u, v), b = Math.max(u, v), key = a + '-' + b;
+      if (seen[key]) return false;
+      seen[key] = true;
+      edges.push({ u: u, v: v });
+      return true;
+    }
+    groups.forEach(function (group) {
+      var j;
+      for (j = 1; j < group.length; j++) add(group[j], group[randInt(rng, 0, j - 1)]); // spanning tree within the group only
+      var extra = group.length > 2 ? randInt(rng, 0, Math.min(2, group.length - 1)) : 0;
+      var tries = 0;
+      while (extra > 0 && tries < 100) { tries++; if (add(group[randInt(rng, 0, group.length - 1)], group[randInt(rng, 0, group.length - 1)])) extra--; }
+    });
+    return { n: n, edges: edges };
+  }
+
+  // Numeric 0-based UNDIRECTED generator for graph-bipartite. Left uncontrolled
+  // (spanning tree + extra=0 always acyclic, i.e. always bipartite) an 'edge'
+  // draw NEVER shows the "NOT bipartite" verdict, and (spanning tree + several
+  // random extra edges) a 'large' draw ALMOST ALWAYS lands on an odd cycle, so
+  // it ALMOST NEVER shows the "Bipartite" verdict either — only two of the
+  // four difficulty tiers used to exercise both outcomes. Fixed by building
+  // the spanning tree with an explicit BFS-style 2-coloring (color[child] =
+  // 1 - color[parent], assigned as each tree edge is added) and then flipping
+  // a coin per draw: if "make it bipartite", extra edges are restricted to
+  // cross-color pairs (color[u] != color[v]) so the whole graph stays
+  // 2-colorable; otherwise ONE edge between a same-color pair is forced first
+  // — the tree path between any two same-colored vertices has even length (by
+  // the very same parity argument), so closing it with a length-1 edge always
+  // produces an odd cycle, guaranteeing the graph is NOT bipartite regardless
+  // of what other edges are added afterward. This yields a genuine ~50/50 mix
+  // of both verdicts at every difficulty, not just normal/special.
+  function graphBipartiteEdges(rng, difficulty) {
+    var n, extra;
+    if (difficulty === 'edge') { n = randInt(rng, 3, 4); extra = 0; }
+    else if (difficulty === 'large') { n = randInt(rng, 8, 10); extra = randInt(rng, n, n + 3); }
+    else if (difficulty === 'special') { n = 6; extra = 2; }
+    else { n = randInt(rng, 4, 6); extra = randInt(rng, 1, 3); }
+    var seen = {}, edges = [], color = [0];
+    function add(u, v) {
+      if (u === v) return false;
+      var a = Math.min(u, v), b = Math.max(u, v), key = a + '-' + b;
+      if (seen[key]) return false;
+      seen[key] = true;
+      edges.push({ u: u, v: v });
+      return true;
+    }
+    var i, parent;
+    for (i = 1; i < n; i++) {
+      parent = randInt(rng, 0, i - 1);
+      color[i] = 1 - color[parent];
+      add(i, parent);
+    }
+    if (rng() < 0.5) {
+      // stay bipartite: extra edges only ever cross color classes
+      var tries = 0;
+      while (extra > 0 && tries < 200) {
+        tries++;
+        var u = randInt(rng, 0, n - 1), v = randInt(rng, 0, n - 1);
+        if (color[u] !== color[v] && add(u, v)) extra--;
+      }
+    } else {
+      // force >=1 odd cycle first (see comment above), then fill in the rest freely
+      var guard = 0, forced = false;
+      while (!forced && guard < 200) {
+        guard++;
+        var a = randInt(rng, 0, n - 1), b = randInt(rng, 0, n - 1);
+        if (a !== b && color[a] === color[b] && add(a, b)) forced = true;
+      }
+      var tries2 = 0;
+      while (extra > 0 && tries2 < 200) { tries2++; if (add(randInt(rng, 0, n - 1), randInt(rng, 0, n - 1))) extra--; }
+    }
+    return { n: n, edges: edges };
+  }
+
+  // Self-contained mirror of GraphMaxFlowViz.randomConfig (js/graph_maxflow_viz.js),
+  // threaded through the shared rng for testability. NOT wired into
+  // js/viz/viz_graph_maxflow.js's own 🎲 (which already calls
+  // GraphMaxFlowViz.randomConfig(difficulty) directly and is fully
+  // working/tested) — this exists only so RandomInput.randomInputFor covers the
+  // methodId too. Deliberately mirrors the source module's own two-tier design:
+  // GraphMaxFlowViz only distinguishes 'normal' from everything else
+  // (syncDifficultyPreset maps inputDifficulty==='normal' to the 'normal'
+  // tier and any other difficulty to 'challenge'), so this does the same.
+  function maxFlowConfig(rng, difficulty) {
+    var challenge = difficulty !== 'normal';
+    var n = challenge ? 8 : 6;
+    var source = 0, sink = n - 1;
+    var targetEdges = challenge ? 2 * n : n + 3;
+    var maxCapacity = challenge ? 30 : 16;
+    var edges = {};
+    function randomCapacity() { return 2 + Math.floor(Math.max(0, Math.min(0.999999, rng())) * (maxCapacity - 1)); }
+    function addEdge(u, v) { edges[u + '>' + v] = { u: u, v: v, capacity: randomCapacity() }; }
+    var u, v, i;
+    for (u = 0; u + 1 < n; u++) addEdge(u, u + 1);
+    var candidates = [];
+    for (u = 0; u < n; u++) for (v = 0; v < n; v++) if (u !== v && !edges[u + '>' + v]) candidates.push({ u: u, v: v });
+    for (i = candidates.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.max(0, Math.min(0.999999, rng())) * (i + 1));
+      var tmp = candidates[i]; candidates[i] = candidates[j]; candidates[j] = tmp;
+    }
+    var idx = 0;
+    while (Object.keys(edges).length < targetEdges && idx < candidates.length) { addEdge(candidates[idx].u, candidates[idx].v); idx++; }
+    var out = [];
+    Object.keys(edges).forEach(function (k) { out.push(edges[k]); });
+    return { n: n, source: source, sink: sink, edges: out };
+  }
+
   // n stays within the viz's own button range (nBtns only render k=0..4 —
   // enumerateShapes(n) is exponential, so the UI itself never offers n>4).
   function catalanN(rng, difficulty) {
@@ -571,6 +740,12 @@
       case 'graph-multilist':
       case 'graph-traversal':
         return { text: graphEdgeList(rng, difficulty, false) };
+      case 'graph-components': return graphComponentsEdges(rng, difficulty);
+      case 'graph-bipartite': return graphBipartiteEdges(rng, difficulty);
+      case 'graph-closure':
+      case 'graph-scc':
+        return graphNumericEdges(rng, difficulty);
+      case 'graph-maxflow': return maxFlowConfig(rng, difficulty);
       case 'tree-dsu': return { text: dsuOpString(rng, difficulty) };
       case 'tree-segment': return { vals: segTreeVals(rng, difficulty) };
       case 'tree-fenwick': return { vals: valSeq(rng, difficulty) };

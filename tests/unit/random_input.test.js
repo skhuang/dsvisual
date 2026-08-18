@@ -5,6 +5,11 @@ const TGB = require('../../js/tree_general_binary_viz.js');
 const CE = require('../../js/tree_copy_equal_viz.js');
 const GW = require('../../js/viz/viz_graph_workbench.js');
 const GMV = require('../../js/graph_matrix_viz.js');
+const GCV = require('../../js/graph_components_viz.js');
+const GBV = require('../../js/graph_bipartite_viz.js');
+const GCLV = require('../../js/graph_closure_viz.js');
+const GSCV = require('../../js/graph_scc_viz.js');
+const GMFV = require('../../js/graph_maxflow_viz.js');
 
 const DIFFS = ['normal', 'special', 'edge', 'large'];
 function isSortedAsc(a) { return a.every((v, i) => i === 0 || a[i - 1] <= v); }
@@ -346,4 +351,178 @@ test('graph-matrix: {n, edges} is valid input for GraphMatrixViz, larger at larg
   const n = RI.randomInputFor('graph-matrix', 'normal', Math.random).n;
   const big = RI.randomInputFor('graph-matrix', 'large', Math.random).n;
   assert.ok(big > n, `graph-matrix: large (${big}) > normal (${n}) nodes`);
+});
+
+function isConnectedUndirected(n, edges) {
+  const adj = Array.from({ length: n }, () => []);
+  edges.forEach((e) => { adj[e.u].push(e.v); adj[e.v].push(e.u); });
+  const seen = new Array(n).fill(false);
+  const stack = [0];
+  seen[0] = true;
+  let count = 1;
+  while (stack.length) {
+    const u = stack.pop();
+    adj[u].forEach((v) => { if (!seen[v]) { seen[v] = true; count++; stack.push(v); } });
+  }
+  return count === n;
+}
+
+function hasDirectedCycle(n, edges) {
+  const adj = Array.from({ length: n }, () => []);
+  edges.forEach((e) => adj[e.u].push(e.v));
+  const color = new Array(n).fill(0); // 0=white, 1=gray, 2=black
+  let found = false;
+  function dfs(u) {
+    color[u] = 1;
+    for (const v of adj[u]) {
+      if (color[v] === 1) { found = true; return; }
+      if (color[v] === 0) dfs(v);
+      if (found) return;
+    }
+    color[u] = 2;
+  }
+  for (let i = 0; i < n && !found; i++) if (color[i] === 0) dfs(i);
+  return found;
+}
+
+function countComponentsUndirected(n, edges) {
+  const adj = Array.from({ length: n }, () => []);
+  edges.forEach((e) => { adj[e.u].push(e.v); adj[e.v].push(e.u); });
+  const seen = new Array(n).fill(false);
+  let count = 0;
+  for (let s = 0; s < n; s++) {
+    if (seen[s]) continue;
+    count++;
+    const stack = [s];
+    seen[s] = true;
+    while (stack.length) {
+      const u = stack.pop();
+      adj[u].forEach((v) => { if (!seen[v]) { seen[v] = true; stack.push(v); } });
+    }
+  }
+  return count;
+}
+
+function isBipartiteUndirected(n, edges) {
+  const adj = Array.from({ length: n }, () => []);
+  edges.forEach((e) => { adj[e.u].push(e.v); adj[e.v].push(e.u); });
+  const color = new Array(n).fill(-1);
+  for (let s = 0; s < n; s++) {
+    if (color[s] !== -1) continue;
+    color[s] = 0;
+    const queue = [s];
+    while (queue.length) {
+      const u = queue.shift();
+      for (const v of adj[u]) {
+        if (color[v] === -1) { color[v] = 1 - color[u]; queue.push(v); }
+        else if (color[v] === color[u]) return false;
+      }
+    }
+  }
+  return true;
+}
+
+test('randomInputFor graph-components: undirected numeric FOREST with >1 component, larger at large', () => {
+  // 'edge' may legitimately draw k=1 (a single tiny component), so it isn't
+  // asserted here — but every other tier's k is fixed/floored at >=2, so it
+  // must show >1 component on every single draw, never just "sometimes".
+  for (const d of DIFFS) {
+    for (let i = 0; i < 30; i++) {
+      const r = RI.randomInputFor('graph-components', d, Math.random);
+      assert.ok(r && Number.isInteger(r.n) && Array.isArray(r.edges), `graph-components/${d} shape`);
+      assert.ok(r.n >= 2 && r.n <= 10, `graph-components/${d} node count in the viz's 1..10 range`);
+      r.edges.forEach((e) => {
+        assert.ok(Number.isInteger(e.u) && Number.isInteger(e.v) && e.u !== e.v, `graph-components/${d} edge endpoints valid`);
+        assert.ok(e.u >= 0 && e.u < r.n && e.v >= 0 && e.v < r.n, `graph-components/${d} endpoints within n`);
+      });
+      const count = countComponentsUndirected(r.n, r.edges);
+      if (d !== 'edge') assert.ok(count > 1, `graph-components/${d} draw #${i} has ${count} component(s), expected >1`);
+      else assert.ok(count >= 1, `graph-components/edge has >=1 component`);
+      // Round-trips through the viz's own parser unchanged.
+      const roundTrip = GCV.parseInput(String(r.n), r.edges.map((e) => e.u + '-' + e.v).join(','));
+      assert.strictEqual(roundTrip.n, r.n, `graph-components/${d} round-trips n`);
+      assert.strictEqual(roundTrip.edges.length, r.edges.length, `graph-components/${d} round-trips edge count`);
+    }
+  }
+  const n = RI.randomInputFor('graph-components', 'normal', Math.random).n;
+  const big = RI.randomInputFor('graph-components', 'large', Math.random).n;
+  assert.ok(big > n, `graph-components: large (${big}) > normal (${n}) nodes`);
+});
+
+test('randomInputFor graph-bipartite: connected undirected graph, mixed bipartite/non-bipartite verdicts at every difficulty, larger at large', () => {
+  for (const d of DIFFS) {
+    const seen = { bipartite: false, notBipartite: false };
+    for (let i = 0; i < 60; i++) {
+      const r = RI.randomInputFor('graph-bipartite', d, Math.random);
+      assert.ok(r && Number.isInteger(r.n) && Array.isArray(r.edges), `graph-bipartite/${d} shape`);
+      assert.ok(r.n >= 2 && r.n <= 10, `graph-bipartite/${d} node count in the viz's 1..10 range`);
+      r.edges.forEach((e) => {
+        assert.ok(Number.isInteger(e.u) && Number.isInteger(e.v) && e.u !== e.v, `graph-bipartite/${d} edge endpoints valid`);
+        assert.ok(e.u >= 0 && e.u < r.n && e.v >= 0 && e.v < r.n, `graph-bipartite/${d} endpoints within n`);
+      });
+      assert.ok(isConnectedUndirected(r.n, r.edges), `graph-bipartite/${d} graph is connected`);
+      if (isBipartiteUndirected(r.n, r.edges)) seen.bipartite = true; else seen.notBipartite = true;
+      // Round-trips through the viz's own parser unchanged.
+      const roundTrip = GBV.parseInput(String(r.n), r.edges.map((e) => e.u + '-' + e.v).join(','));
+      assert.strictEqual(roundTrip.n, r.n, `graph-bipartite/${d} round-trips n`);
+      assert.strictEqual(roundTrip.edges.length, r.edges.length, `graph-bipartite/${d} round-trips edge count`);
+    }
+    assert.ok(seen.bipartite, `graph-bipartite/${d}: at least one of 60 draws should be bipartite`);
+    assert.ok(seen.notBipartite, `graph-bipartite/${d}: at least one of 60 draws should be NOT bipartite`);
+  }
+  const n = RI.randomInputFor('graph-bipartite', 'normal', Math.random).n;
+  const big = RI.randomInputFor('graph-bipartite', 'large', Math.random).n;
+  assert.ok(big > n, `graph-bipartite: large (${big}) > normal (${n}) nodes`);
+});
+
+for (const [id, Viz] of [['graph-closure', GCLV], ['graph-scc', GSCV]]) {
+  test(`randomInputFor ${id}: directed numeric graph with a guaranteed cycle, larger at large`, () => {
+    for (const d of DIFFS) {
+      for (let i = 0; i < 30; i++) {
+        const r = RI.randomInputFor(id, d, Math.random);
+        assert.ok(r && Number.isInteger(r.n) && Array.isArray(r.edges), `${id}/${d} shape`);
+        assert.ok(r.n >= 2 && r.n <= 10, `${id}/${d} node count in the viz's 1..10 range`);
+        r.edges.forEach((e) => {
+          assert.ok(Number.isInteger(e.u) && Number.isInteger(e.v) && e.u !== e.v, `${id}/${d} edge endpoints valid`);
+          assert.ok(e.u >= 0 && e.u < r.n && e.v >= 0 && e.v < r.n, `${id}/${d} endpoints within n`);
+        });
+        assert.ok(hasDirectedCycle(r.n, r.edges), `${id}/${d} graph contains at least one cycle`);
+        // Round-trips through the viz's own parser unchanged.
+        const roundTrip = Viz.parseInput(String(r.n), r.edges.map((e) => e.u + '-' + e.v).join(','));
+        assert.strictEqual(roundTrip.n, r.n, `${id}/${d} round-trips n`);
+        assert.strictEqual(roundTrip.edges.length, r.edges.length, `${id}/${d} round-trips edge count`);
+      }
+    }
+    const n = RI.randomInputFor(id, 'normal', Math.random).n;
+    const big = RI.randomInputFor(id, 'large', Math.random).n;
+    assert.ok(big > n, `${id}: large (${big}) > normal (${n}) nodes`);
+  });
+}
+
+test('randomInputFor graph-maxflow: directed weighted network with capacities >=1 and a clear source/sink, larger at challenge tiers', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 30; i++) {
+      const r = RI.randomInputFor('graph-maxflow', d, Math.random);
+      assert.ok(r && Number.isInteger(r.n) && Array.isArray(r.edges), `graph-maxflow/${d} shape`);
+      assert.ok(Number.isInteger(r.source) && Number.isInteger(r.sink) && r.source !== r.sink, `graph-maxflow/${d} distinct source/sink`);
+      assert.ok(r.source >= 0 && r.source < r.n && r.sink >= 0 && r.sink < r.n, `graph-maxflow/${d} source/sink within n`);
+      assert.ok(r.edges.length >= 1, `graph-maxflow/${d} has at least one edge`);
+      r.edges.forEach((e) => {
+        assert.ok(Number.isInteger(e.u) && Number.isInteger(e.v) && e.u !== e.v, `graph-maxflow/${d} edge endpoints valid`);
+        assert.ok(e.u >= 0 && e.u < r.n && e.v >= 0 && e.v < r.n, `graph-maxflow/${d} endpoints within n`);
+        assert.ok(Number.isInteger(e.capacity) && e.capacity >= 1, `graph-maxflow/${d} capacity >=1`);
+      });
+      assert.ok(r.edges.some((e) => e.u === r.source), `graph-maxflow/${d} source has an outgoing edge`);
+      assert.ok(r.edges.some((e) => e.v === r.sink), `graph-maxflow/${d} sink has an incoming edge`);
+      // Round-trips through the viz's own parser unchanged.
+      const edgesText = r.edges.map((e) => e.u + '-' + e.v + ':' + e.capacity).join(',');
+      const parsed = GMFV.parseInput(String(r.n), edgesText, String(r.source), String(r.sink));
+      assert.strictEqual(parsed.errors.length, 0, `graph-maxflow/${d} round-trip has no errors: ${JSON.stringify(parsed.errors)}`);
+      assert.strictEqual(parsed.n, r.n, `graph-maxflow/${d} round-trips n`);
+      assert.strictEqual(parsed.edges.length, r.edges.length, `graph-maxflow/${d} round-trips edge count`);
+    }
+  }
+  const n = RI.randomInputFor('graph-maxflow', 'normal', Math.random).n;
+  const big = RI.randomInputFor('graph-maxflow', 'large', Math.random).n;
+  assert.ok(big > n, `graph-maxflow: large (${big}) > normal (${n}) nodes`);
 });

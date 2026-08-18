@@ -84,6 +84,7 @@
           '<label>n <input type="text" class="gc2-n" value="' + _st.n + '"></label>' +
           '<label>edges <input type="text" class="gc2-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gc2-apply">套用 Apply</button>' +
+          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
           buildExamplesSelect('graph-components', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="gc2-count" data-testid="gc2-count">&nbsp;</div>' +
@@ -114,6 +115,14 @@
     wrap.querySelector('.gc2-apply').addEventListener('click', function () {
       const parsed = global.GraphComponentsViz.parseInput(wrap.querySelector('.gc2-n').value, wrap.querySelector('.gc2-edges').value);
       _st.n = parsed.n; _st.edges = parsed.edges;
+      saveExample('graph-components', serialize(_st), DEFAULT_SERIALIZED);
+      renderGraphComponents();
+    });
+    wrap.querySelector('.rand-btn').addEventListener('click', function () {
+      const difficulty = K().getInputDifficulty();
+      const r = global.RandomInput && global.RandomInput.randomInputFor('graph-components', difficulty);
+      if (!r || !Array.isArray(r.edges)) return;
+      _st.n = r.n; _st.edges = r.edges;
       saveExample('graph-components', serialize(_st), DEFAULT_SERIALIZED);
       renderGraphComponents();
     });

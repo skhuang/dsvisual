@@ -92,6 +92,7 @@
           '<label>n <input type="text" class="gbp-n" value="' + _st.n + '"></label>' +
           '<label>edges <input type="text" class="gbp-edges" value="' + edgesToStr(_st.edges) + '"></label>' +
           '<button type="button" class="gbp-apply">套用 Apply</button>' +
+          '<button type="button" class="rand-btn" title="Random">🎲</button>' +
           buildExamplesSelect('graph-bipartite', DEFAULT_SERIALIZED) +
         '</div>' +
         '<div class="gbp-verdict" data-testid="gbp-verdict">&nbsp;</div>' +
@@ -128,6 +129,14 @@
     wrap.querySelector('.gbp-apply').addEventListener('click', function () {
       const parsed = global.GraphBipartiteViz.parseInput(wrap.querySelector('.gbp-n').value, wrap.querySelector('.gbp-edges').value);
       _st.n = parsed.n; _st.edges = parsed.edges;
+      saveExample('graph-bipartite', serialize(_st), DEFAULT_SERIALIZED);
+      renderGraphBipartite();
+    });
+    wrap.querySelector('.rand-btn').addEventListener('click', function () {
+      const difficulty = K().getInputDifficulty();
+      const r = global.RandomInput && global.RandomInput.randomInputFor('graph-bipartite', difficulty);
+      if (!r || !Array.isArray(r.edges)) return;
+      _st.n = r.n; _st.edges = r.edges;
       saveExample('graph-bipartite', serialize(_st), DEFAULT_SERIALIZED);
       renderGraphBipartite();
     });
