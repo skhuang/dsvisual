@@ -60,6 +60,7 @@
               '<select class="rec-example">' + optsHtml + '</select>' +
               inputsHtml +
               '<button type="button" class="rec-build">Build</button>' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
             '</div>' +
             '<div class="rec-stage">' +
               '<div class="rec-tree" style="position:relative;overflow:auto;height:320px">' +
@@ -98,6 +99,13 @@
                 }
                 renderRecursion();
             } catch (e) { /* ignore malformed input */ }
+        };
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('recursion', difficulty);
+            if (!r) return;
+            _recState.inputs = r;
+            renderRecursion();
         };
 
         // Guard: no calls recorded (empty or degenerate input) — show a friendly note, keep controls usable.

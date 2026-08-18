@@ -12,6 +12,7 @@
             '<div class="isam-controls">' +
               '<label>Search key <input type="number" class="isam-key" value="' + _isamState.key + '"></label>' +
               '<button type="button" class="isam-search">Search</button>' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<span class="isam-badge"></span>' +
             '</div>' +
             '<div class="isam-stage"></div>';
@@ -87,6 +88,14 @@
         }
 
         host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
+
+        host.querySelector('.rand-btn').onclick = function () {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('file-isam', difficulty);
+            if (!r || !Array.isArray(r.keys)) return;
+            _isamState = { keys: r.keys, blockSize: r.blockSize || FileIsamViz.SAMPLE_BLOCK, key: r.key };
+            renderFileIsam();
+        };
 
         host.querySelector('.isam-search').onclick = function () {
             try {

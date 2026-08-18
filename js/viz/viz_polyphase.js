@@ -14,6 +14,7 @@
         host.innerHTML =
             '<div class="pf-controls">' +
               '<input type="text" class="pf-data" value="' + st.data.join(',') + '">' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<button type="button" class="pf-apply">Apply</button>' +
             '</div>' +
             '<div class="pf-stage"></div>' +
@@ -37,6 +38,14 @@
             host.querySelector('.pf-phase').innerHTML = '<span class="pf-badge pf-' + fr.phase + '">' + badge + '</span>';
         }
         host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
+
+        host.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('sort-polyphase', difficulty);
+            if (!r || !Array.isArray(r.data)) return;
+            _polyphaseState.data = r.data;
+            renderSortPolyphase();
+        };
 
         host.querySelector('.pf-apply').onclick = () => {
             try {

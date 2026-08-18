@@ -737,6 +737,269 @@
     return ops;
   }
 
+  // file-isam (js/viz/viz_file_isam.js): a sorted set of unique integer keys the ISAM
+  // index/blocks are built over (FileIsamViz.buildIsam sorts internally too, but keeping
+  // the generator's output pre-sorted matches the SAMPLE_KEYS default) plus a search key.
+  // blockSize stays at the viz's own default (3) — only the key set and search target are
+  // randomized, per the brief's "sorted keys / records the ISAM viz builds its index over."
+  function isamInput(rng, difficulty) {
+    let n;
+    switch (difficulty) {
+      case 'edge': n = 1; break;
+      case 'special': n = 9; break; // exactly 3 full blocks at the default blockSize=3
+      case 'large': n = randInt(rng, 15, 18); break;
+      default: n = randInt(rng, 6, 9);
+    }
+    const keys = uniqueInts(rng, n, 10, 99).sort((a, b) => a - b);
+    const key = rng() < 0.7 ? keys[randInt(rng, 0, keys.length - 1)] : randInt(rng, 100, 199);
+    return { keys: keys, blockSize: 3, key: key };
+  }
+
+  // file-inverted (js/viz/viz_file_inverted.js): a small set of short documents (space-separated
+  // lowercase words, tokenized the same way FileInvertedViz.tokenize does) plus a query term drawn
+  // from the shared vocabulary so it's a hit most of the time — mirrors the shape the viz already
+  // keeps in `_invState.docs`/`.query`. Vocabulary/doc counts stay small (<=6 docs, <=6 words/doc)
+  // so the rendered Documents/Index panes stay readable.
+  function invertedInput(rng, difficulty) {
+    const alpha = 'abcdefghijklmnopqrstuvwxyz';
+    function randWord(len) { let s = ''; for (let i = 0; i < len; i++) s += alpha[Math.floor(rng() * alpha.length)]; return s; }
+    let numDocs, wordsPerDoc, vocabSize;
+    switch (difficulty) {
+      case 'edge': numDocs = 1; wordsPerDoc = 1; vocabSize = 2; break;
+      case 'special': numDocs = 3; wordsPerDoc = 3; vocabSize = 4; break; // small shared vocabulary -> visible term overlap across docs
+      case 'large': numDocs = randInt(rng, 5, 6); wordsPerDoc = randInt(rng, 5, 6); vocabSize = 10; break;
+      default: numDocs = randInt(rng, 3, 4); wordsPerDoc = randInt(rng, 3, 4); vocabSize = 7;
+    }
+    const vocab = [];
+    let guard = 0;
+    while (vocab.length < vocabSize && guard++ < vocabSize * 50) {
+      const w = randWord(randInt(rng, 3, 5));
+      if (vocab.indexOf(w) === -1) vocab.push(w);
+    }
+    const docs = [];
+    const used = [];
+    for (let d = 0; d < numDocs; d++) {
+      const words = [];
+      for (let w = 0; w < wordsPerDoc; w++) {
+        const pick = vocab[randInt(rng, 0, vocab.length - 1)];
+        words.push(pick);
+        used.push(pick);
+      }
+      docs.push(words.join(' '));
+    }
+    // Draw the query from words that actually landed in a doc (not just the full vocab pool —
+    // FileInvertedViz.buildFrames only indexes terms that appear, so a query term that was never
+    // actually picked for any doc would legitimately miss, breaking the "actually in the index"
+    // invariant tests/unit/random_input.test.js checks).
+    const query = used[randInt(rng, 0, used.length - 1)];
+    return { docs: docs, query: query };
+  }
+
+  // gc-memory (js/viz/viz_gc.js): the viz has FIVE independent scenario shapes, one per mode
+  // selector option (mark-sweep / refcount / buddy / pointer-reversal / compact) — each backed
+  // by its own hardcoded default scenario in js/gc_memory_viz.js (MS_SCENARIO, RC_OPS,
+  // BUDDY_OPS, PR_SCENARIO, COMPACT_SCENARIO). Rather than requiring the caller to know which
+  // mode is currently selected, this returns a random scenario for ALL FIVE at once (mirroring
+  // how `recursionInputs` covers every example); the viz's 🎲 handler stores all five and only
+  // the active mode's is used until the user switches modes, at which point that one is already
+  // randomized too. All generators are careful to stay within each algorithm's safety
+  // requirements (see per-function comments) — none of gcMemoryFrames' underlying functions has
+  // a runaway-loop guard, so a malformed scenario is the actual hang/crash risk here.
+
+  // Reachable chain from the roots, plus an UNREACHABLE 2-object reference cycle at the tail
+  // (objects[n-2] <-> objects[n-1], never referenced by anything in the reachable chain) so
+  // mark-sweep always has real garbage to collect, exactly like MS_SCENARIO's cycle {7,8}.
+  function gcMarkSweepScenario(rng, difficulty) {
+    let n;
+    switch (difficulty) {
+      case 'edge': n = 2; break;
+      case 'special': n = 6; break;
+      case 'large': n = 10; break;
+      default: n = randInt(rng, 5, 7);
+    }
+    const objects = [];
+    for (let i = 0; i < n; i++) objects.push({ id: i, refs: [] });
+    const numRoots = difficulty === 'edge' ? 1 : randInt(rng, 1, 2);
+    const roots = [];
+    for (let i = 0; i < Math.min(numRoots, n); i++) roots.push(i);
+    const reachableEnd = n >= 4 ? n - 2 : n; // objects[reachableEnd..n) are left for the garbage cycle
+    for (let i = 0; i < reachableEnd - 1; i++) {
+      if (rng() < 0.7) objects[i].refs.push(i + 1);
+    }
+    if (n >= 4) {
+      objects[n - 2].refs.push(n - 1);
+      objects[n - 1].refs.push(n - 2);
+    }
+    return { objects: objects, roots: roots };
+  }
+
+  // alloc/ref/droproot op sequence for GcMemoryViz.refCountFrames. `to` in every 'ref' op is
+  // always a DIFFERENT already-allocated id (never self-referential) — refCountFrames indexes
+  // straight into `objs[op.from]`/`objs[op.to]` with no existence guard for 'ref', so every id
+  // referenced must already have an 'alloc' op ahead of it in the sequence (guaranteed here since
+  // all allocs are emitted first). 'special' forces a mutual A<->B cycle to exercise the
+  // "leaked cycle stays alive" legend case, same as RC_OPS's D<->E pair.
+  function gcRefcountOps(rng, difficulty) {
+    let n;
+    switch (difficulty) {
+      case 'edge': n = 1; break;
+      case 'special': n = 2; break;
+      case 'large': n = 5; break;
+      default: n = randInt(rng, 3, 4);
+    }
+    const ids = 'ABCDEFGH'.slice(0, n).split('');
+    const ops = [];
+    ids.forEach((id) => ops.push({ type: 'alloc', id: id }));
+    if (difficulty === 'special' && n >= 2) {
+      ops.push({ type: 'ref', from: ids[0], to: ids[1] });
+      ops.push({ type: 'ref', from: ids[1], to: ids[0] });
+    } else if (n >= 2) {
+      const numRefs = difficulty === 'large' ? randInt(rng, 2, 3) : randInt(rng, 0, 1);
+      for (let i = 0; i < numRefs; i++) {
+        const from = ids[randInt(rng, 0, n - 1)];
+        const to = ids[(ids.indexOf(from) + 1) % n]; // always != from
+        ops.push({ type: 'ref', from: from, to: to });
+      }
+    }
+    ids.forEach((id) => ops.push({ type: 'droproot', id: id }));
+    return ops;
+  }
+
+  // alloc/free op sequence for GcMemoryViz.buddyFrames. Every 'free' targets an id that was
+  // actually allocated earlier in the sequence (tracked in `allocated`) and every 'alloc' size is
+  // drawn from a fixed power-of-two menu <= the chosen `total`, so nextPow2() splitting always has
+  // somewhere to bottom out; an alloc that can't find a free block just logs "FAILED" (buddyFrames'
+  // own, non-throwing bail-out) rather than erroring, so oversubscribing the arena is harmless.
+  function gcBuddyOps(rng, difficulty) {
+    let total, numOps, maxSizeIdx;
+    switch (difficulty) {
+      case 'edge': total = 16; numOps = 2; maxSizeIdx = 1; break;
+      case 'special': total = 32; numOps = 5; maxSizeIdx = 2; break;
+      case 'large': total = 128; numOps = 8; maxSizeIdx = 3; break;
+      default: total = 64; numOps = 5; maxSizeIdx = 2;
+    }
+    const sizes = [4, 8, 16, 32];
+    const ids = 'abcdefgh';
+    const allocated = [];
+    const ops = [];
+    let nextIdx = 0;
+    for (let i = 0; i < numOps; i++) {
+      if (allocated.length && rng() < 0.35) {
+        const idx = randInt(rng, 0, allocated.length - 1);
+        const id = allocated.splice(idx, 1)[0];
+        ops.push({ type: 'free', id: id });
+      } else {
+        const id = ids[nextIdx++ % ids.length];
+        const size = sizes[randInt(rng, 0, maxSizeIdx)];
+        ops.push({ type: 'alloc', id: id, size: size });
+        allocated.push(id);
+      }
+    }
+    return { total: total, ops: ops };
+  }
+
+  // A single top-level list node (tag=1) whose dlink descends into a chain of plain atoms
+  // (tag=0) linked by rlink — a generalized, arbitrary-length version of PR_SCENARIO's shape
+  // (R -> n1 -> n2 -> ... via dlink then rlink). Deliberately NOT a general random graph: the
+  // Schorr-Waite mark loop in pointerReversalFrames has no iteration guard of its own, and its
+  // termination proof depends on every dlink/rlink either being null or pointing at a node that
+  // actually exists in `nodes` — a single unbranching chain trivially satisfies that by
+  // construction for any n, so this is safe at every difficulty without risking a hang.
+  function gcPointerReversalScenario(rng, difficulty) {
+    let n;
+    switch (difficulty) {
+      case 'edge': n = 2; break;
+      case 'special': n = 4; break;
+      case 'large': n = 6; break;
+      default: n = randInt(rng, 3, 5);
+    }
+    const ids = [];
+    for (let i = 0; i < n; i++) ids.push('A' + i);
+    const nodes = ids.map((id, i) => ({ id: id, tag: 0, dlink: null, rlink: i + 1 < n ? ids[i + 1] : null }));
+    nodes.unshift({ id: 'R', tag: 1, dlink: ids[0], rlink: null });
+    return { nodes: nodes, root: 'R' };
+  }
+
+  // A contiguous run of blocks (live/dead, `addr` assigned sequentially from 1 with no gaps or
+  // overlaps) for GcMemoryViz.compactFrames, generalizing COMPACT_SCENARIO's fixed 5-block layout.
+  // `total` is set to exactly one past the last block's end address (same convention as the
+  // original: total=10, last block E ends at addr 9 + size 1 = 10), so pass1's address assignment
+  // and pass3's relocation always have room for every live block. A `link` (when present) always
+  // points at a DIFFERENT already-created live block's id — compactFrames tolerates a link to a
+  // dead/missing id anyway (falls back to `0`), so this is a belt-and-suspenders choice, not a
+  // required one.
+  function gcCompactScenario(rng, difficulty) {
+    let n;
+    switch (difficulty) {
+      case 'edge': n = 2; break;
+      case 'special': n = 5; break;
+      case 'large': n = 7; break;
+      default: n = randInt(rng, 3, 4);
+    }
+    const LETTERS = 'ABCDEFG';
+    const blocks = [];
+    let addr = 1;
+    const liveIds = [];
+    for (let i = 0; i < n; i++) {
+      const size = randInt(rng, 1, 2);
+      const live = rng() < 0.6;
+      blocks.push({ id: LETTERS[i], addr: addr, size: size, live: live, link: null });
+      if (live) liveIds.push(LETTERS[i]);
+      addr += size;
+    }
+    if (liveIds.length >= 2 && rng() < 0.7) {
+      const a = liveIds[randInt(rng, 0, liveIds.length - 1)];
+      const others = liveIds.filter((x) => x !== a);
+      if (others.length) blocks.filter((b) => b.id === a)[0].link = others[randInt(rng, 0, others.length - 1)];
+    }
+    return { total: addr, blocks: blocks };
+  }
+
+  function gcMemoryInputs(rng, difficulty) {
+    return {
+      markSweep: gcMarkSweepScenario(rng, difficulty),
+      refcountOps: gcRefcountOps(rng, difficulty),
+      buddy: gcBuddyOps(rng, difficulty),
+      pointerReversal: gcPointerReversalScenario(rng, difficulty),
+      compact: gcCompactScenario(rng, difficulty),
+    };
+  }
+
+  // recursion (js/viz/viz_recursion.js): one input set per RecursionViz.EXAMPLES entry, matching
+  // RecursionViz.DEFAULTS's shape exactly, so the 🎲 handler can just replace `_recState.inputs`
+  // wholesale regardless of which example is currently selected. Every bound mirrors the viz's
+  // OWN "Build" button clamps (js/viz/viz_recursion.js) since the random handler bypasses that
+  // parsing/clamping and writes straight into state: fibonacci n<=7 (the `.rec-n` input itself
+  // has max="7"), reverse text<=6 chars (`.slice(0,6)`), permutations text<=4 chars
+  // (`.slice(0,4)`), binary-search arr<=15 entries (`.slice(0,15)`), quicksort arr<=10 entries
+  // (`.slice(0,10)`). Fibonacci n<=7 in particular is the recursion-depth safety cap the brief
+  // calls out: recursionTrace has no guard of its own, so exceeding the viz's own bound here
+  // (fib(n) makes 2*fib(n+1)-1 calls -- 41 calls at n=7) is exactly the risk to avoid.
+  function recLetters(rng, n) {
+    const pool = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    let s = '';
+    for (let i = 0; i < n; i++) s += pool.splice(randInt(rng, 0, pool.length - 1), 1)[0];
+    return s;
+  }
+  function recursionInputs(rng, difficulty) {
+    let fibN, revLen, permLen, bsLen, qsLen;
+    switch (difficulty) {
+      case 'edge': fibN = 0; revLen = 1; permLen = 1; bsLen = 1; qsLen = 1; break;
+      case 'special': fibN = 1; revLen = 3; permLen = 3; bsLen = 6; qsLen = 5; break;
+      case 'large': fibN = 7; revLen = 6; permLen = 4; bsLen = 15; qsLen = 10; break;
+      default: fibN = randInt(rng, 3, 6); revLen = randInt(rng, 3, 5); permLen = randInt(rng, 2, 3); bsLen = randInt(rng, 6, 10); qsLen = randInt(rng, 5, 8);
+    }
+    const bsArr = uniqueInts(rng, bsLen, 1, 99);
+    const bsTarget = rng() < 0.7 ? bsArr[randInt(rng, 0, bsArr.length - 1)] : randInt(rng, 1, 99);
+    return {
+      fibonacci: { n: fibN },
+      reverse: { text: recLetters(rng, revLen) },
+      permutations: { text: recLetters(rng, permLen) },
+      'binary-search': { arr: bsArr, target: bsTarget },
+      quicksort: { arr: uniqueInts(rng, qsLen, 1, 99) },
+    };
+  }
+
   function randomInputFor(methodId, difficulty, rng) {
     rng = rng || Math.random;
     if (['normal', 'special', 'edge', 'large'].indexOf(difficulty) === -1) difficulty = 'normal';
@@ -850,6 +1113,12 @@
       case 'bloom-filter': return bloomWords(rng, difficulty);
       case 'skip-list': return { vals: skiplistKeys(rng, difficulty) };
       case 'count-min-sketch': return { words: cmsWords(rng, difficulty) };
+      case 'deque': return { vals: valSeq(rng, difficulty) };
+      case 'sort-polyphase': return { data: valSeq(rng, difficulty) };
+      case 'file-isam': return isamInput(rng, difficulty);
+      case 'file-inverted': return invertedInput(rng, difficulty);
+      case 'gc-memory': return gcMemoryInputs(rng, difficulty);
+      case 'recursion': return recursionInputs(rng, difficulty);
       default: return null;
     }
   }

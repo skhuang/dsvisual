@@ -538,3 +538,154 @@ test('random button on heap-binary changes the rendered nodes and honors large d
 
   expect(largeCount).toBeGreaterThan(normalCount);
 });
+
+test('random button on deque changes the rendered nodes and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'deque');
+
+  const section = page.locator('[data-method-section="deque"]');
+  const nodes = section.locator('.deque-node');
+
+  const before = (await nodes.allTextContents()).join(',');
+  await expect(async () => {
+    await section.locator('.rand-btn').click();
+    const after = (await nodes.allTextContents()).join(',');
+    expect(after).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await nodes.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await nodes.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
+test('random button on sort-polyphase changes the input field and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'sort-polyphase');
+
+  const section = page.locator('[data-method-section="sort-polyphase"]');
+  const input = section.locator('.pf-data');
+  const before = await input.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
+
+  const dataLen = (v) => v.split(',').filter(Boolean).length;
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalLen = dataLen(await input.inputValue());
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeLen = dataLen(await input.inputValue());
+
+  expect(largeLen).toBeGreaterThan(normalLen);
+});
+
+test('random button on file-isam changes the search key and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'file-isam');
+
+  const section = page.locator('[data-method-section="file-isam"]');
+  const input = section.locator('.isam-key');
+  const blocks = section.locator('.isam-block');
+  const before = await input.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await blocks.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await blocks.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
+test('random button on file-inverted changes the query and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'file-inverted');
+
+  const section = page.locator('[data-method-section="file-inverted"]');
+  const input = section.locator('.inv-query');
+  const docs = section.locator('.inv-doc');
+  const before = await input.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await docs.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await docs.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
+test('random button on gc-memory changes the mark-sweep object graph and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'gc-memory');
+
+  const section = page.locator('[data-method-section="gc-memory"]');
+  const nodes = section.locator('.gc-node');
+
+  const before = (await nodes.allTextContents()).join(',');
+  await expect(async () => {
+    await section.locator('.rand-btn').click();
+    const after = (await nodes.allTextContents()).join(',');
+    expect(after).not.toBe(before);
+  }).toPass({ timeout: 5000 });
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await nodes.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await nodes.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
+test('random button on recursion changes the fibonacci n and honors the <=7 depth cap', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'recursion');
+
+  const section = page.locator('[data-method-section="recursion"]');
+  const input = section.locator('.rec-n');
+  const before = await input.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
+
+  // 'large' always hits the viz's own n<=7 safety cap exactly (fib(7) => 41 calls, still small).
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  await expect(input).toHaveValue('7');
+  await expect(section.locator('.rec-node').first()).toBeVisible();
+});

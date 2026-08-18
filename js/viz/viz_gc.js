@@ -95,10 +95,22 @@
         stage.appendChild(legend);
     }
 
+    // Computes the active mode's frames from a PER-MODE override in `_gcState` when the 🎲
+    // handler has set one, else falls through to each function's own hardcoded default
+    // scenario (markSweepFrames(undefined) === MS_SCENARIO, etc.) — so before the first
+    // randomize, this is byte-identical to the old `GcMemoryViz.gcMemoryFrames(_gcState.mode)`.
+    function computeGcFrames() {
+        if (_gcState.mode === 'refcount') return GcMemoryViz.refCountFrames(_gcState.rc);
+        if (_gcState.mode === 'buddy') return GcMemoryViz.buddyFrames(_gcState.buddy && _gcState.buddy.total, _gcState.buddy && _gcState.buddy.ops);
+        if (_gcState.mode === 'pointer-reversal') return GcMemoryViz.pointerReversalFrames(_gcState.pr);
+        if (_gcState.mode === 'compact') return GcMemoryViz.compactFrames(_gcState.compact);
+        return GcMemoryViz.markSweepFrames(_gcState.ms);
+    }
+
     function renderGcMemory() {
-        if (!_gcState) _gcState = { mode: 'mark-sweep' };
+        if (!_gcState) _gcState = { mode: 'mark-sweep', ms: null, rc: null, buddy: null, pr: null, compact: null };
         const host = K().acquireDynamicVizHost();
-        const { frames } = GcMemoryViz.gcMemoryFrames(_gcState.mode);
+        const { frames } = computeGcFrames();
 
         const modes = [
             ['mark-sweep', 'Mark-Sweep'],
@@ -112,6 +124,7 @@
               '<select class="gc-mode">' +
                 modes.map((m) => '<option value="' + m[0] + '"' + (m[0] === _gcState.mode ? ' selected' : '') + '>' + m[1] + '</option>').join('') +
               '</select>' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<span class="gc-badge"></span>' +
             '</div>' +
             '<div class="gc-stage"></div>';
@@ -188,6 +201,18 @@
 
         host.querySelector('.gc-mode').onchange = function () {
             _gcState.mode = this.value;
+            renderGcMemory();
+        };
+
+        host.querySelector('.rand-btn').onclick = function () {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('gc-memory', difficulty);
+            if (!r) return;
+            _gcState.ms = r.markSweep;
+            _gcState.rc = r.refcountOps;
+            _gcState.buddy = r.buddy;
+            _gcState.pr = r.pointerReversal;
+            _gcState.compact = r.compact;
             renderGcMemory();
         };
     }

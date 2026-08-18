@@ -69,6 +69,7 @@
     html += '</div>';
     html += '<div class="deque-controls" role="group">' +
                 '<input type="number" value="42" data-deque-val>' +
+                '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                 '<button type="button" data-action="push-front">Push Front</button>' +
                 '<button type="button" data-action="push-back">Push Back</button>' +
                 '<button type="button" data-action="pop-front">Pop Front</button>' +
@@ -82,6 +83,13 @@
         const v = parseInt(valInput.value, 10);
         return Number.isNaN(v) ? 0 : v;
     }
+    wrap.querySelector('.rand-btn').onclick = () => {
+        const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+        const r = global.RandomInput && global.RandomInput.randomInputFor('deque', difficulty);
+        if (!r || !Array.isArray(r.vals)) return;
+        _dequeData = r.vals.slice();
+        renderDeque();
+    };
     wrap.querySelector('[data-action="push-front"]').onclick = () => {
         data.unshift(readVal());
         renderDeque();

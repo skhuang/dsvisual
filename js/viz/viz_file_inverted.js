@@ -16,6 +16,7 @@
             '<div class="inv-controls">' +
               '<input type="text" class="inv-query" value="' + _invState.query + '">' +
               '<button type="button" class="inv-query-btn">Query</button>' +
+              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
               '<span class="inv-query-line"></span>' +
             '</div>' +
             '<div class="inv-stage">' +
@@ -62,6 +63,14 @@
         }
 
         host.appendChild(K().buildFrameControls(frames, paint, { runIntervalMs: 700 }));
+
+        host.querySelector('.rand-btn').onclick = function () {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('file-inverted', difficulty);
+            if (!r || !Array.isArray(r.docs)) return;
+            _invState = { docs: r.docs, query: r.query };
+            renderFileInverted();
+        };
 
         host.querySelector('.inv-query-btn').onclick = function () {
             try {

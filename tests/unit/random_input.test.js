@@ -10,6 +10,11 @@ const GBV = require('../../js/graph_bipartite_viz.js');
 const GCLV = require('../../js/graph_closure_viz.js');
 const GSCV = require('../../js/graph_scc_viz.js');
 const GMFV = require('../../js/graph_maxflow_viz.js');
+const FIV = require('../../js/file_isam_viz.js');
+const FInV = require('../../js/file_inverted_viz.js');
+const GCMV = require('../../js/gc_memory_viz.js');
+const RV = require('../../js/recursion_viz.js');
+const SPV = require('../../js/sort_polyphase_viz.js');
 
 const DIFFS = ['normal', 'special', 'edge', 'large'];
 function isSortedAsc(a) { return a.every((v, i) => i === 0 || a[i - 1] <= v); }
@@ -592,4 +597,132 @@ test('randomInputFor count-min-sketch: word-op sequence, heavy repeats at specia
   const n = RI.randomInputFor('count-min-sketch', 'normal', Math.random).words.length;
   const big = RI.randomInputFor('count-min-sketch', 'large', Math.random).words.length;
   assert.ok(big > n, `count-min-sketch: large (${big}) > normal (${n})`);
+});
+
+test('deque: value sequence per difficulty', () => {
+  for (const d of DIFFS) {
+    const r = RI.randomInputFor('deque', d, Math.random);
+    assert.ok(r && Array.isArray(r.vals) && r.vals.length >= 1, `deque/${d} shape`);
+    assert.ok(r.vals.every(Number.isFinite), `deque/${d} numbers`);
+  }
+  const n = RI.randomInputFor('deque', 'normal', Math.random).vals.length;
+  const big = RI.randomInputFor('deque', 'large', Math.random).vals.length;
+  assert.ok(big > n, `deque: large (${big}) > normal (${n})`);
+});
+
+test('sort-polyphase: data array per difficulty, valid input to polyphaseFrames', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 15; i++) {
+      const r = RI.randomInputFor('sort-polyphase', d, Math.random);
+      assert.ok(r && Array.isArray(r.data) && r.data.length >= 1, `sort-polyphase/${d} shape`);
+      assert.ok(r.data.every(Number.isFinite), `sort-polyphase/${d} numbers`);
+      assert.doesNotThrow(() => SPV.polyphaseFrames(r.data), `sort-polyphase/${d} runs without throwing`);
+    }
+  }
+  const n = RI.randomInputFor('sort-polyphase', 'normal', Math.random).data.length;
+  const big = RI.randomInputFor('sort-polyphase', 'large', Math.random).data.length;
+  assert.ok(big > n, `sort-polyphase: large (${big}) > normal (${n})`);
+});
+
+test('file-isam: sorted unique keys + search key, valid input to buildIsam/searchFrames', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 15; i++) {
+      const r = RI.randomInputFor('file-isam', d, Math.random);
+      assert.ok(r && Array.isArray(r.keys) && r.keys.length >= 1, `file-isam/${d} shape`);
+      assert.ok(isSortedAsc(r.keys), `file-isam/${d} sorted keys`);
+      assert.strictEqual(new Set(r.keys).size, r.keys.length, `file-isam/${d} unique keys`);
+      assert.strictEqual(r.blockSize, 3, `file-isam/${d} default blockSize`);
+      assert.ok(Number.isFinite(r.key), `file-isam/${d} search key is a number`);
+      if (d === 'edge') assert.strictEqual(r.keys.length, 1);
+      if (d === 'large') assert.ok(r.keys.length >= 15);
+      const isam = FIV.buildIsam(r.keys, r.blockSize);
+      assert.doesNotThrow(() => FIV.searchFrames(isam, r.key), `file-isam/${d} search runs without throwing`);
+    }
+  }
+  const n = RI.randomInputFor('file-isam', 'normal', Math.random).keys.length;
+  const big = RI.randomInputFor('file-isam', 'large', Math.random).keys.length;
+  assert.ok(big > n, `file-isam: large (${big}) > normal (${n})`);
+});
+
+test('file-inverted: small document set + query term drawn from the shared vocabulary', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 15; i++) {
+      const r = RI.randomInputFor('file-inverted', d, Math.random);
+      assert.ok(r && Array.isArray(r.docs) && r.docs.length >= 1, `file-inverted/${d} shape`);
+      assert.ok(r.docs.every((doc) => typeof doc === 'string' && doc.length > 0), `file-inverted/${d} non-empty docs`);
+      assert.ok(typeof r.query === 'string' && r.query.length > 0, `file-inverted/${d} query`);
+      assert.ok(r.docs.length <= 6, `file-inverted/${d} stays readable (<=6 docs)`);
+      if (d === 'edge') assert.strictEqual(r.docs.length, 1);
+      const { index } = FInV.buildFrames(r.docs);
+      assert.ok(Object.prototype.hasOwnProperty.call(index, r.query), `file-inverted/${d} query term is actually in the built index`);
+    }
+  }
+  const n = RI.randomInputFor('file-inverted', 'normal', Math.random).docs.length;
+  const big = RI.randomInputFor('file-inverted', 'large', Math.random).docs.length;
+  assert.ok(big > n, `file-inverted: large (${big}) > normal (${n})`);
+});
+
+test('gc-memory: a scenario for every mode, each valid input to its GcMemoryViz function', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 15; i++) {
+      const r = RI.randomInputFor('gc-memory', d, Math.random);
+      assert.ok(r && r.markSweep && Array.isArray(r.markSweep.objects) && Array.isArray(r.markSweep.roots), `gc-memory/${d} markSweep shape`);
+      assert.ok(Array.isArray(r.refcountOps) && r.refcountOps.length >= 1, `gc-memory/${d} refcountOps shape`);
+      assert.ok(r.buddy && Number.isFinite(r.buddy.total) && Array.isArray(r.buddy.ops), `gc-memory/${d} buddy shape`);
+      assert.ok(r.pointerReversal && Array.isArray(r.pointerReversal.nodes) && r.pointerReversal.root, `gc-memory/${d} pointerReversal shape`);
+      assert.ok(r.compact && Number.isFinite(r.compact.total) && Array.isArray(r.compact.blocks), `gc-memory/${d} compact shape`);
+
+      assert.doesNotThrow(() => GCMV.markSweepFrames(r.markSweep), `gc-memory/${d} markSweepFrames runs without throwing`);
+      assert.doesNotThrow(() => GCMV.refCountFrames(r.refcountOps), `gc-memory/${d} refCountFrames runs without throwing`);
+      assert.doesNotThrow(() => GCMV.buddyFrames(r.buddy.total, r.buddy.ops), `gc-memory/${d} buddyFrames runs without throwing`);
+      assert.doesNotThrow(() => GCMV.compactFrames(r.compact), `gc-memory/${d} compactFrames runs without throwing`);
+
+      // The pointer-reversal Schorr-Waite mark loop (js/gc_memory_viz.js) has NO iteration
+      // guard of its own -- termination relies entirely on the generator only ever emitting a
+      // simple unbranching dlink->rlink-chain (see js/random_input.js's gcPointerReversalScenario
+      // comment). This assertion is the actual regression guard for that safety property: a
+      // malformed scenario would hang this test (and the real browser) instead of throwing.
+      const prResult = GCMV.pointerReversalFrames(r.pointerReversal);
+      assert.ok(prResult.frames.length >= 1, `gc-memory/${d} pointerReversalFrames terminates with >=1 frame`);
+
+      // Every unreachable-garbage-cycle object (present whenever markSweep has >=4 objects)
+      // must end up freed, and every root-reachable object must not.
+      const msFrames = GCMV.markSweepFrames(r.markSweep).frames;
+      const last = msFrames[msFrames.length - 1];
+      const n = r.markSweep.objects.length;
+      if (n >= 4) {
+        const heapById = {}; last.heap.forEach((o) => { heapById[o.id] = o; });
+        assert.ok(heapById[n - 1].free && heapById[n - 2].free, `gc-memory/${d} the tail garbage cycle got collected`);
+      }
+    }
+  }
+  const msCount = (r) => r.markSweep.objects.length;
+  const n = msCount(RI.randomInputFor('gc-memory', 'normal', Math.random));
+  const big = msCount(RI.randomInputFor('gc-memory', 'large', Math.random));
+  assert.ok(big > n, `gc-memory: large (${big}) > normal (${n}) markSweep objects`);
+});
+
+test('recursion: an input set per RecursionViz example, all within the viz\'s own safety caps', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 15; i++) {
+      const r = RI.randomInputFor('recursion', d, Math.random);
+      assert.ok(r && r.fibonacci && r.reverse && r.permutations && r['binary-search'] && r.quicksort, `recursion/${d} covers every example`);
+
+      // Fibonacci n<=7 -- the recursion-depth/call-count safety cap (js/viz/viz_recursion.js's
+      // own .rec-n input has max="7"); recursionTrace has no guard of its own.
+      assert.ok(Number.isInteger(r.fibonacci.n) && r.fibonacci.n >= 0 && r.fibonacci.n <= 7, `recursion/${d} fibonacci n in [0,7]`);
+      assert.ok(typeof r.reverse.text === 'string' && r.reverse.text.length >= 1 && r.reverse.text.length <= 6, `recursion/${d} reverse text length in [1,6]`);
+      assert.ok(typeof r.permutations.text === 'string' && r.permutations.text.length >= 1 && r.permutations.text.length <= 4, `recursion/${d} permutations text length in [1,4]`);
+      assert.ok(Array.isArray(r['binary-search'].arr) && r['binary-search'].arr.length >= 1 && r['binary-search'].arr.length <= 15, `recursion/${d} binary-search arr length in [1,15]`);
+      assert.ok(Array.isArray(r.quicksort.arr) && r.quicksort.arr.length >= 1 && r.quicksort.arr.length <= 10, `recursion/${d} quicksort arr length in [1,10]`);
+
+      for (const ex of RV.EXAMPLES) {
+        assert.doesNotThrow(() => RV.recursionTrace(ex, r[ex]), `recursion/${d} ${ex} runs without throwing`);
+      }
+    }
+  }
+  assert.strictEqual(RI.randomInputFor('recursion', 'large', Math.random).fibonacci.n, 7, 'recursion/large hits the fibonacci n=7 cap exactly');
+  const n = RI.randomInputFor('recursion', 'normal', Math.random).fibonacci.n;
+  const big = RI.randomInputFor('recursion', 'large', Math.random).fibonacci.n;
+  assert.ok(big >= n, `recursion: large fibonacci n (${big}) >= normal (${n})`);
 });
