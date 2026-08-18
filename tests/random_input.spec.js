@@ -274,6 +274,89 @@ test('random button on tree-catalan changes n and honors the 0..4 button range a
   await expect.poll(async () => await shapes.count()).toBe(14);
 });
 
+test('random button on graph-floyd-warshall changes the edge list and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'graph-floyd-warshall');
+
+  const section = page.locator('[data-method-section="graph-floyd-warshall"]');
+  const input = section.locator('.floyd-edges');
+  const cells = section.locator('.floyd-cell');
+
+  await expect(cells).toHaveCount(16); // default 4x4 matrix, unchanged (byte-identical to the old hardcoded demo)
+  const before = await input.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await cells.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await cells.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
+test('random button on graph-aoe changes the activity network and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'graph-aoe');
+
+  const section = page.locator('[data-method-section="graph-aoe"]');
+  const input = section.locator('.aoe-input');
+  const nodeCircles = section.locator('.aoe-nodes circle');
+
+  await expect(nodeCircles).toHaveCount(9); // default network ≅ the original 9-node AOE_PRESET
+  const before = await input.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await nodeCircles.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await nodeCircles.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+  // Still a valid single-source/single-sink DAG: the ee/le table renders and the
+  // step transport can be driven without erroring.
+  await expect(section.locator('.aoe-tbl')).toBeVisible();
+});
+
+test('random button on graph-matrix changes n/edges and honors large difficulty', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'graph-matrix');
+
+  const section = page.locator('[data-method-section="graph-matrix"]');
+  const nInput = section.locator('.gm-n');
+  const nodes = section.locator('.gm-graph .gm-node');
+
+  const before = await nInput.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), nInput, before);
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await nodes.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await nodes.count();
+
+  expect(largeCount).toBeGreaterThan(normalCount);
+});
+
 test('random button on heap-binary changes the rendered nodes and honors large difficulty', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'heap-binary');

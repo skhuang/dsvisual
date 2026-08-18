@@ -300,6 +300,60 @@
     return lines.join(',');
   }
 
+  // A weighted DAG guaranteed to have a SINGLE source (node 0, in-degree 0) and a
+  // SINGLE sink (node n-1, out-degree 0) — js/graph_aoe_viz.js's buildAoeFrames
+  // computes le[u] for every node with no outgoing edges as `ee[sink]` where
+  // `sink` is just the last node in topological order, so more than one true sink
+  // would silently get the wrong le. Not reusing graphDagText(rng,difficulty,true)
+  // here: (a) its extra-edge pass never targets node 0 or sources node n-1, so a
+  // middle node can end up with out-degree 0 too (a second, bogus "sink"), and
+  // (b) its weights are randInt(-5,9) (negative, meant for Bellman-Ford's edge
+  // relaxation demo) — an activity duration can't be negative. All edges keep
+  // u<v by construction (spanning-chain parent<child, extra a<b, and both
+  // repair passes below), so the graph is acyclic by index order alone.
+  function aoeNetworkText(rng, difficulty) {
+    var n;
+    if (difficulty === 'edge') n = randInt(rng, 3, 4);
+    else if (difficulty === 'large') n = randInt(rng, 9, 12);
+    else if (difficulty === 'special') n = 6;
+    else n = randInt(rng, 5, 7);
+    var seen = {}, lines = [], indeg = [], outdeg = [], i;
+    for (i = 0; i < n; i++) { indeg.push(0); outdeg.push(0); }
+    function add(u, v) {
+      var k = u + '-' + v; if (u === v || seen[k]) return;
+      seen[k] = true; outdeg[u]++; indeg[v]++;
+      lines.push(lbl(u) + '-' + lbl(v) + ':' + randInt(rng, 1, 9));
+    }
+    for (i = 1; i < n; i++) add(randInt(rng, 0, i - 1), i); // spanning chain → node 0 is the only source
+    var extra = difficulty === 'large' ? n : Math.floor(n / 2);
+    for (var e = 0; e < extra; e++) { var a = randInt(rng, 0, n - 2), b = randInt(rng, a + 1, n - 1); add(a, b); }
+    for (i = 0; i < n - 1; i++) if (outdeg[i] === 0) add(i, n - 1);   // repair: route every dead end to the sink
+    for (i = 1; i < n; i++) if (indeg[i] === 0) add(0, i);            // repair: connect any stray source to node 0
+    return lines.join(',');
+  }
+
+  // graph-matrix's own edge format is numeric (u-v[:w], 0-based — see
+  // GraphMatrixViz.parseInput), unlike graphEdgeList's letter labels, so this
+  // builds {n, edges} directly rather than reusing graphEdgeList's text output.
+  function graphMatrixInput(rng, difficulty) {
+    var n, extra;
+    if (difficulty === 'edge') { n = randInt(rng, 2, 3); extra = 0; }
+    else if (difficulty === 'large') { n = randInt(rng, 8, 10); extra = randInt(rng, n, n + 3); }
+    else if (difficulty === 'special') { n = 6; extra = 2; }
+    else { n = randInt(rng, 4, 6); extra = randInt(rng, 1, 3); }
+    var seen = {}, edges = [];
+    function add(u, v) {
+      var k = u + '-' + v; if (u === v || seen[k]) return false;
+      seen[k] = true; edges.push({ u: u, v: v, w: randInt(rng, 1, 9) });
+      return true;
+    }
+    var i;
+    for (i = 1; i < n; i++) add(i, randInt(rng, 0, i - 1)); // spanning tree → connected
+    var tries = 0;
+    while (extra > 0 && tries < 200) { tries++; if (add(randInt(rng, 0, n - 1), randInt(rng, 0, n - 1))) extra--; }
+    return { n: n, edges: edges };
+  }
+
   // n stays within the viz's own button range (nBtns only render k=0..4 —
   // enumerateShapes(n) is exponential, so the UI itself never offers n>4).
   function catalanN(rng, difficulty) {
@@ -509,6 +563,9 @@
         return { text: graphEdgeList(rng, difficulty, true) };
       case 'graph-topo': return { text: graphDagText(rng, difficulty, false) };
       case 'graph-bellman-ford': return { text: graphDagText(rng, difficulty, true) };
+      case 'graph-floyd-warshall': return { text: graphEdgeList(rng, difficulty, true) };
+      case 'graph-aoe': return { text: aoeNetworkText(rng, difficulty) };
+      case 'graph-matrix': return graphMatrixInput(rng, difficulty);
       case 'graph':
       case 'graph-adjlist':
       case 'graph-multilist':

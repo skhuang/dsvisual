@@ -3,6 +3,8 @@ const assert = require('node:assert');
 const RI = require('../../js/random_input.js');
 const TGB = require('../../js/tree_general_binary_viz.js');
 const CE = require('../../js/tree_copy_equal_viz.js');
+const GW = require('../../js/viz/viz_graph_workbench.js');
+const GMV = require('../../js/graph_matrix_viz.js');
 
 const DIFFS = ['normal', 'special', 'edge', 'large'];
 function isSortedAsc(a) { return a.every((v, i) => i === 0 || a[i - 1] <= v); }
@@ -276,4 +278,72 @@ test('tree-copy-equal: level-order tokens parse for src/a/b, special forces a===
   const n = nodeCount(RI.randomInputFor('tree-copy-equal', 'normal', Math.random).src);
   const big = nodeCount(RI.randomInputFor('tree-copy-equal', 'large', Math.random).src);
   assert.ok(big > n, `tree-copy-equal: large (${big}) > normal (${n}) nodes`);
+});
+
+test('graph-floyd-warshall: edge-list text parses to a valid (weighted, directed-or-not) graph, larger at large', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 30; i++) {
+      const r = RI.randomInputFor('graph-floyd-warshall', d, Math.random);
+      assert.ok(r && typeof r.text === 'string' && r.text.length > 0, `graph-floyd-warshall/${d} shape`);
+      const parsedDirected = GW.parseEdges(r.text, true, true, false);
+      const parsedUndirected = GW.parseEdges(r.text, true, false, false);
+      assert.ok(parsedDirected.ok, `graph-floyd-warshall/${d} parses directed: ${JSON.stringify(parsedDirected.error)}`);
+      assert.ok(parsedUndirected.ok, `graph-floyd-warshall/${d} parses undirected: ${JSON.stringify(parsedUndirected.error)}`);
+      assert.ok(parsedDirected.n >= 2 && parsedDirected.n <= 12, `graph-floyd-warshall/${d} node count in range`);
+      assert.ok(parsedDirected.edges.length >= 1, `graph-floyd-warshall/${d} has at least one edge`);
+      parsedDirected.edges.forEach((e) => assert.ok(e.w >= 1, `graph-floyd-warshall/${d} positive weight`));
+    }
+  }
+  const nodeCount = (text) => GW.parseEdges(text, true, true, false).n;
+  const n = nodeCount(RI.randomInputFor('graph-floyd-warshall', 'normal', Math.random).text);
+  const big = nodeCount(RI.randomInputFor('graph-floyd-warshall', 'large', Math.random).text);
+  assert.ok(big > n, `graph-floyd-warshall: large (${big}) > normal (${n}) nodes`);
+});
+
+test('graph-aoe: activity network is a DAG with a single source and single sink, larger at large', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 30; i++) {
+      const r = RI.randomInputFor('graph-aoe', d, Math.random);
+      assert.ok(r && typeof r.text === 'string' && r.text.length > 0, `graph-aoe/${d} shape`);
+      const parsed = GW.parseEdges(r.text, true, true, false);
+      assert.ok(parsed.ok, `graph-aoe/${d} parses: ${JSON.stringify(parsed.error)}`);
+      const n = parsed.n;
+      const indeg = new Array(n).fill(0), outdeg = new Array(n).fill(0);
+      parsed.edges.forEach((e) => {
+        assert.ok(e.u < e.v, `graph-aoe/${d} edge ${e.u}-${e.v} keeps index order (acyclic by construction)`);
+        assert.ok(e.w >= 1, `graph-aoe/${d} positive activity duration`);
+        outdeg[e.u]++; indeg[e.v]++;
+      });
+      assert.strictEqual(indeg.filter((x) => x === 0).length, 1, `graph-aoe/${d} exactly one source`);
+      assert.strictEqual(outdeg.filter((x) => x === 0).length, 1, `graph-aoe/${d} exactly one sink`);
+      assert.strictEqual(indeg[0], 0, `graph-aoe/${d} node 0 is the source`);
+      assert.strictEqual(outdeg[n - 1], 0, `graph-aoe/${d} last node is the sink`);
+    }
+  }
+  const nodeCount = (text) => GW.parseEdges(text, true, true, false).n;
+  const n = nodeCount(RI.randomInputFor('graph-aoe', 'normal', Math.random).text);
+  const big = nodeCount(RI.randomInputFor('graph-aoe', 'large', Math.random).text);
+  assert.ok(big > n, `graph-aoe: large (${big}) > normal (${n}) nodes`);
+});
+
+test('graph-matrix: {n, edges} is valid input for GraphMatrixViz, larger at large', () => {
+  for (const d of DIFFS) {
+    for (let i = 0; i < 30; i++) {
+      const r = RI.randomInputFor('graph-matrix', d, Math.random);
+      assert.ok(r && Number.isInteger(r.n) && Array.isArray(r.edges), `graph-matrix/${d} shape`);
+      assert.ok(r.n >= 1 && r.n <= 10, `graph-matrix/${d} node count in GraphMatrixViz's range`);
+      r.edges.forEach((e) => {
+        assert.ok(Number.isInteger(e.u) && Number.isInteger(e.v) && e.u !== e.v, `graph-matrix/${d} edge endpoints valid`);
+        assert.ok(e.u >= 0 && e.u < r.n && e.v >= 0 && e.v < r.n, `graph-matrix/${d} endpoints within n`);
+        assert.ok(e.w >= 1, `graph-matrix/${d} positive weight`);
+      });
+      // Round-trips through the viz's own parser unchanged.
+      const roundTrip = GMV.parseInput(String(r.n), r.edges.map((e) => e.u + '-' + e.v + ':' + e.w).join(','));
+      assert.strictEqual(roundTrip.n, r.n, `graph-matrix/${d} round-trips n`);
+      assert.strictEqual(roundTrip.edges.length, r.edges.length, `graph-matrix/${d} round-trips edge count`);
+    }
+  }
+  const n = RI.randomInputFor('graph-matrix', 'normal', Math.random).n;
+  const big = RI.randomInputFor('graph-matrix', 'large', Math.random).n;
+  assert.ok(big > n, `graph-matrix: large (${big}) > normal (${n}) nodes`);
 });

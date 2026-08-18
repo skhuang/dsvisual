@@ -3,25 +3,79 @@
   const C = () => global.VizCore;
   const R = () => global.VizRegistry;
 
+  // Default = the graph's original hardcoded 4x4 distance matrix, re-expressed as
+  // a directed weighted edge-list (A-D ≅ the old row/col 0-3) so the default
+  // render — including tests/visualizer.spec.js's "16 cells / 'initial' / 'k = 0'"
+  // assertions — stays byte-identical while making the input genuinely editable.
+  const FLOYD_DEFAULT_TEXT = 'A-B:3,B-C:2,C-D:1,D-A:2,A-D:7,B-A:8,C-A:5';
+  const _floydState = { text: FLOYD_DEFAULT_TEXT, directed: true };
+
+  function floydEscAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+
   function renderFloydWarshall() {
     const host = K().acquireDynamicVizHost();
-    const V = 4;
-    const labels = ['A', 'B', 'C', 'D'];
+    const langOf = K().langOf;
     const INF = Infinity;
-    const init = [
-      [0, 3, INF, 7],
-      [8, 0, 2, INF],
-      [5, INF, 0, 1],
-      [2, INF, INF, 0],
-    ];
+
+    host.innerHTML =
+        '<div class="floyd-wrap">' +
+          '<div class="gm-controls">' +
+            '<label>' + langOf({ zh: '邊', en: 'edges' }) + ' <input type="text" class="floyd-edges" data-testid="floyd-edges" value="' + floydEscAttr(_floydState.text) + '"></label>' +
+            '<button type="button" class="btn primary floyd-apply" data-testid="floyd-apply">' + langOf({ zh: '套用', en: 'Apply' }) + '</button>' +
+            '<label><input type="checkbox" class="floyd-directed"' + (_floydState.directed ? ' checked' : '') + '> ' + langOf({ zh: '有向', en: 'Directed' }) + '</label>' +
+            '<button type="button" class="rand-btn" title="' + langOf({ zh: '隨機', en: 'Random' }) + '">🎲</button>' +
+          '</div>' +
+          '<div class="gw-err floyd-err" data-testid="floyd-err" style="display:none"></div>' +
+          '<div class="floyd-grid"></div>' +
+          '<div class="floyd-msg" data-testid="floyd-msg">&nbsp;</div>' +
+        '</div>';
+
+    const wrap = host.querySelector('.floyd-wrap');
+    const gridEl = wrap.querySelector('.floyd-grid');
+    const msgEl = wrap.querySelector('.floyd-msg');
+    const errEl = wrap.querySelector('.floyd-err');
+
+    function wireToolbar() {
+      wrap.querySelector('.floyd-apply').addEventListener('click', () => {
+        _floydState.text = wrap.querySelector('.floyd-edges').value;
+        renderFloydWarshall();
+      });
+      wrap.querySelector('.floyd-directed').addEventListener('change', function () {
+        _floydState.directed = this.checked;
+        renderFloydWarshall();
+      });
+      wrap.querySelector('.rand-btn').addEventListener('click', () => {
+        const difficulty = K().getInputDifficulty();
+        const r = window.RandomInput && RandomInput.randomInputFor('graph-floyd-warshall', difficulty);
+        if (!r || !r.text) return;
+        _floydState.text = r.text;
+        renderFloydWarshall();
+      });
+    }
+
+    const parsed = GraphWorkbench.parseEdges(_floydState.text, true, _floydState.directed, false);
+    if (!parsed.ok) {
+      errEl.textContent = langOf(parsed.error);
+      errEl.style.display = '';
+      wireToolbar();
+      return;
+    }
+    errEl.style.display = 'none';
+
+    const n = parsed.n, labels = parsed.labels;
+    const init = Array.from({ length: n }, () => Array(n).fill(INF));
+    for (let i = 0; i < n; i++) {
+      init[i][i] = 0;
+      parsed.adj[i].forEach((e) => { if (e.w < init[i][e.to]) init[i][e.to] = e.w; });
+    }
     const frames = [{ k: -1, dist: init.map((r) => r.slice()), changed: [],
         msg: 'initial distance matrix (direct edges only)' }];
     let dist = init.map((r) => r.slice());
-    for (let k = 0; k < V; k++) {
+    for (let k = 0; k < n; k++) {
       const changed = [];
       const next = dist.map((r) => r.slice());
-      for (let i = 0; i < V; i++) {
-        for (let j = 0; j < V; j++) {
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
           if (dist[i][k] + dist[k][j] < dist[i][j]) {
             next[i][j] = dist[i][k] + dist[k][j];
             changed.push(i + ',' + j);
@@ -33,25 +87,20 @@
           msg: 'k = ' + k + '  (' + labels[k] + ' as intermediate) — ' +
                changed.length + ' cell(s) improved' });
     }
-    const wrap = document.createElement('div');
-    wrap.className = 'floyd-wrap';
-    wrap.innerHTML =
-        '<div class="floyd-grid"></div>' +
-        '<div class="floyd-msg" data-testid="floyd-msg">&nbsp;</div>';
-    host.appendChild(wrap);
-    const gridEl = wrap.querySelector('.floyd-grid');
-    const msgEl = wrap.querySelector('.floyd-msg');
+
+    gridEl.style.gridTemplateColumns = 'repeat(' + (n + 1) + ', 40px)';
+    gridEl.style.overflowX = 'auto';
 
     function draw(f) {
       let html = '<div class="floyd-hcell"></div>';
-      for (let j = 0; j < V; j++) {
+      for (let j = 0; j < n; j++) {
         html += '<div class="floyd-hcell' + (j === f.k ? ' floyd-pivot' : '') + '">' +
                 labels[j] + '</div>';
       }
-      for (let i = 0; i < V; i++) {
+      for (let i = 0; i < n; i++) {
         html += '<div class="floyd-hcell' + (i === f.k ? ' floyd-pivot' : '') + '">' +
                 labels[i] + '</div>';
-        for (let j = 0; j < V; j++) {
+        for (let j = 0; j < n; j++) {
           const val = f.dist[i][j] === INF ? '∞' : f.dist[i][j];
           const cls = 'floyd-cell' +
               (f.changed.indexOf(i + ',' + j) >= 0 ? ' floyd-changed' : '') +
@@ -63,6 +112,7 @@
       msgEl.textContent = f.msg;
     }
     wrap.appendChild(K().buildFrameControls(frames, draw, { runIntervalMs: 800 }));
+    wireToolbar();
   }
 
   // ---- Graph workbench (edge-list + VCR) : pilot bfs/dfs/dijkstra ----
