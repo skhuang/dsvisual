@@ -198,6 +198,54 @@ test('random button on tree-fenwick changes the input field and honors large dif
   expect(largeCount).toBeGreaterThan(normalCount);
 });
 
+test('random button on tree-segment changes the tree and honors the <=8-leaf cap', async ({ page }) => {
+  await page.goto(fileUri);
+  const errors = [];
+  page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+  page.on('pageerror', (e) => errors.push(String(e)));
+
+  await loadMethod(page, 'tree-segment');
+
+  const section = page.locator('[data-method-section="tree-segment"]');
+  const input = section.locator('.segtree-input');
+  const nodes = section.locator('.segtree-node');
+  const before = await input.inputValue();
+  await expectRandomizes(section.locator('.rand-btn'), input, before);
+
+  // Step through the query/update phases at this randomized (very likely n!=8)
+  // array, so the generalized ql/qr/ul/ur formulas run in the browser at n!=8,
+  // not just by hand-proof — and the fixed POS-table gap-skip branch fires.
+  // Frame count per phase varies with the recursion shape, so just drive the
+  // transport to the end via the scrubber and assert it got there cleanly.
+  const phase = section.locator('[data-testid="segtree-phase"]');
+  await expect(phase).toContainText('Ready');
+  const max = parseInt(await section.locator('.stepctl-scrubber').getAttribute('max'), 10);
+  const stepBtn = section.locator('.stepctl [data-action="step"]');
+  for (let i = 0; i < max; i++) await stepBtn.click();
+  await expect(phase).toContainText('Phase 3');
+  await expect(nodes.first()).toBeVisible();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('normal');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const normalCount = await nodes.count();
+
+  await openSettings(page);
+  await page.locator('#input-difficulty').selectOption('large');
+  await page.click('#settings-drawer .settings-drawer-close');
+  await section.locator('.rand-btn').click();
+  const largeCount = await nodes.count();
+
+  // 'large' always fills all 8 leaves -> all 15 node-table slots are visited
+  // (no gaps); 'normal' (4-6 leaves) always renders strictly fewer.
+  expect(largeCount).toBe(15);
+  expect(largeCount).toBeGreaterThan(normalCount);
+  expect(largeCount).toBeLessThanOrEqual(15); // never overflows the fixed 15-node table
+
+  expect(errors).toEqual([]);
+});
+
 test('random button on heap-binary changes the rendered nodes and honors large difficulty', async ({ page }) => {
   await page.goto(fileUri);
   await loadMethod(page, 'heap-binary');
