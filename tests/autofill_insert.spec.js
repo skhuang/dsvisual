@@ -129,3 +129,52 @@ test('count-min sketch: [data-cms-val] auto-fills a random word on load and afte
   await expectRandomizes(section.locator('[data-action="cms-add"]'), input, before);
   expect(isValidWord(await input.inputValue())).toBe(true);
 });
+
+// Regression: deque/skip-list/CMS render functions are the modules' VizRegistry.render() hooks,
+// which fire again on every navigate-away/navigate-back (not just on mount/insert). A typed value
+// must survive that re-render, not get replaced by a fresh random one — mirrors the persistence
+// viz_bloom.js already had via _bloomState.inputVal.
+test('skip-list: a typed insert value survives navigating away and back (not re-randomized on re-render)', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'skip-list');
+
+  const section = page.locator('[data-method-section="skip-list"]');
+  const input = section.locator('[data-skiplist-val]');
+  await input.fill('43');
+  await expect(input).toHaveValue('43');
+
+  await loadMethod(page, 'heap-binary');
+  await loadMethod(page, 'skip-list');
+
+  await expect(section.locator('[data-skiplist-val]')).toHaveValue('43');
+});
+
+test('deque: a typed insert value survives navigating away and back (not re-randomized on re-render)', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'deque');
+
+  const section = page.locator('[data-method-section="deque"]');
+  const input = section.locator('[data-deque-val]');
+  await input.fill('43');
+  await expect(input).toHaveValue('43');
+
+  await loadMethod(page, 'heap-binary');
+  await loadMethod(page, 'deque');
+
+  await expect(section.locator('[data-deque-val]')).toHaveValue('43');
+});
+
+test('count-min sketch: a typed insert value survives navigating away and back (not re-randomized on re-render)', async ({ page }) => {
+  await page.goto(fileUri);
+  await loadMethod(page, 'count-min-sketch');
+
+  const section = page.locator('[data-method-section="count-min-sketch"]');
+  const input = section.locator('[data-cms-val]');
+  await input.fill('zzzqx');
+  await expect(input).toHaveValue('zzzqx');
+
+  await loadMethod(page, 'heap-binary');
+  await loadMethod(page, 'count-min-sketch');
+
+  await expect(section.locator('[data-cms-val]')).toHaveValue('zzzqx');
+});

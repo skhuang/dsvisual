@@ -20,10 +20,16 @@
                     { key: 3, h: 1 }, { key: 7, h: 2 }, { key: 12, h: 3 },
                     { key: 19, h: 1 }, { key: 25, h: 1 },
                 ],
+                inputVal: null, // persisted insert-field value across re-renders (see below)
             };
         }
         const sl = _skipListState;
         sl.nodes.sort((a, b) => a.key - b.key);
+        // Persist the insert field's value across re-renders (this function is re-invoked
+        // wholesale after insert/delete, and again on navigate-away/back) — mirrors
+        // viz_bloom.js's _bloomState.inputVal pattern so a re-render never clobbers what the
+        // user typed. Falsy (unset) only at genuine first mount -> fresh random default.
+        if (!sl.inputVal) sl.inputVal = String(1 + Math.floor(Math.random() * 99));
 
         function randomLevel() {
             let lvl = 1;
@@ -61,11 +67,7 @@
             '<div class="skiplist-grid"></div>' +
             '<div class="skiplist-status" data-testid="skiplist-status">&nbsp;</div>' +
             '<div class="skiplist-controls" role="group">' +
-                // Fresh random insert value (1..99) each time this template is built — this
-                // function is re-invoked wholesale after a successful insert/delete, so a
-                // computed default here naturally covers both "on mount" and "after insert"
-                // (mirrors linear.js's randStdValue() idiom).
-                '<input type="number" value="' + (1 + Math.floor(Math.random() * 99)) + '" data-skiplist-val>' +
+                '<input type="number" value="' + sl.inputVal + '" data-skiplist-val>' +
                 '<button type="button" class="rand-btn" title="Random">🎲</button>' +
                 '<button type="button" data-action="skiplist-insert">Insert</button>' +
                 '<button type="button" data-action="skiplist-delete">Delete</button>' +
@@ -156,6 +158,7 @@
             }
         }, true);
 
+        wrap.querySelector('[data-skiplist-val]').addEventListener('input', (e) => { sl.inputVal = e.target.value; });
         wrap.querySelector('.rand-btn').onclick = () => {
             const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
             const r = global.RandomInput && global.RandomInput.randomInputFor('skip-list', difficulty);
@@ -170,6 +173,7 @@
             if (sl.nodes.some((n) => n.key === v)) { showStatus(v + ' already present', '#f87171'); return; }
             const h = randomLevel();
             sl.nodes.push({ key: v, h: h });
+            sl.inputVal = String(1 + Math.floor(Math.random() * 99));
             showStatus('Inserted ' + v + ' (level ' + h + ')', '#34d399');
             renderSkipList();
         };
