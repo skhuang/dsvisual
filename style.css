@@ -536,6 +536,14 @@ body.viz-focus .method-section-card.active .viz-logcol { max-height: none; min-h
 .sortviz-stage { width: 100%; height: 260px; display: flex; align-items: flex-end; justify-content: center; gap: 3px; padding-bottom: 22px; overflow-x: auto; }
 body.viz-focus .method-section-card.active .sortviz-stage { flex: 1 1 auto; height: auto; min-height: 0; }
 
+.sortviz-heaptree { width: 100%; height: auto; max-height: 40vh; margin-top: 12px; overflow-x: auto; display: block; }
+.heaptree-edge { stroke: var(--text-muted, #94a3b8); stroke-width: 1; }
+.heaptree-edge.dim { opacity: 0.25; }
+.heaptree-node { fill: #60a5fa; }
+.heaptree-node.active { fill: #818cf8; }
+.heaptree-node.sorted { fill: #34d399; opacity: 0.5; }
+.heaptree-label { fill: #fff; font-size: 4px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+
 .searchviz-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
 .searchviz-arr { flex: 1 1 220px; min-width: 160px; }
 .searchviz-stage { width: 100%; height: 220px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; overflow: auto; }
