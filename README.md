@@ -67,6 +67,7 @@ open index.html
 |-----------|-------------|
 | AOE / Critical Path | Forward/backward pass, critical activities |
 | Max-Flow (Edmonds–Karp) | BFS augmenting paths on the residual network — *student contribution* |
+| Euler Path / Circuit (Hierholzer) | Stack-based edge traversal building the Euler tour — *student contribution* |
 
 ### Linear Structures / Stack
 | Algorithm | Description |
@@ -237,6 +238,7 @@ Visualizations contributed by students of the Data Structures course, alongside 
 |-------------|--------------|
 | **Engel Yu** ([@engelyu](https://github.com/engelyu)) | LRU Cache visualization ([#102](https://github.com/skhuang/dsvisual/pull/102)); Red-Black Tree rewrite as the rotation observatory (every rotation & recolor a rewindable step) |
 | **brianxuan** ([@brianxuan](https://github.com/brianxuan)) | Max-Flow / Edmonds–Karp residual-network visualizer ([#234](https://github.com/skhuang/dsvisual/pull/234)) |
+| **haleychang0530** ([@haleychang0530](https://github.com/haleychang0530)) | Euler path / circuit (Hierholzer) visualizer ([#241](https://github.com/skhuang/dsvisual/pull/241)) |
 
 Contributions welcome — see the existing visualizers under `js/viz/` and the conventions in `docs/conventions/`.
 
