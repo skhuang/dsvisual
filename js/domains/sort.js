@@ -40,16 +40,24 @@
   function renderHeapTree(svg, array, hi) {
     const n = array.length;
     const heightPerLevel = 20;
+    const R = 4; // node radius, in viewBox units — kept in sync with the SLOT sizing below
+    const SLOT = 12; // >= 2*R plus a margin, so deepest-level siblings never touch/overlap
     if (!n) { svg.setAttribute('viewBox', '0 0 100 ' + heightPerLevel); svg.innerHTML = ''; return; }
     const depth = Math.floor(Math.log2(n)) + 1;
     const H = depth * heightPerLevel;
-    svg.setAttribute('viewBox', '0 0 100 ' + H);
+    // Widen the viewBox to fit the deepest level's slot count so its siblings keep a full
+    // SLOT of spacing regardless of n (fixes overlap once the heap reaches 16+ elements);
+    // shallower levels just space out further within the same width. Width stays >= 100 so
+    // small trees keep their original scale.
+    const deepestLevelCount = Math.pow(2, depth - 1);
+    const W = Math.max(100, deepestLevelCount * SLOT);
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
     const pos = new Array(n);
     for (let i = 0; i < n; i++) {
       const L = Math.floor(Math.log2(i + 1));
       const levelCount = Math.pow(2, L);
       const p = i - (levelCount - 1);
-      pos[i] = { x: ((p + 0.5) / levelCount) * 100, y: ((L + 0.5) / depth) * H };
+      pos[i] = { x: ((p + 0.5) / levelCount) * W, y: ((L + 0.5) / depth) * H };
     }
     let edges = '';
     for (let i = 1; i < n; i++) {
@@ -61,7 +69,7 @@
     let nodes = '';
     for (let i = 0; i < n; i++) {
       const cls = hi[i] || '';
-      nodes += '<circle class="heaptree-node ' + cls + '" cx="' + pos[i].x.toFixed(2) + '" cy="' + pos[i].y.toFixed(2) + '" r="4"></circle>' +
+      nodes += '<circle class="heaptree-node ' + cls + '" cx="' + pos[i].x.toFixed(2) + '" cy="' + pos[i].y.toFixed(2) + '" r="' + R + '"></circle>' +
         '<text class="heaptree-label" x="' + pos[i].x.toFixed(2) + '" y="' + pos[i].y.toFixed(2) + '">' + esc(Math.trunc(array[i])) + '</text>';
     }
     svg.innerHTML = edges + nodes;
