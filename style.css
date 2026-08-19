@@ -3369,6 +3369,35 @@ body.viz-focus .method-section-card.active .cg-svg { max-height: none; }
     font-size: 0.95rem;
     font-family: 'Fira Code', monospace;
 }
+.code-drawer-header-title {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+.srclang-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+}
+.srclang-pill {
+    padding: 3px 10px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-subtle);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-family: 'Fira Code', monospace;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.srclang-pill:hover { border-color: var(--primary-color); color: var(--text-main); }
+.srclang-pill.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+}
 .code-drawer-close {
     width: 32px;
     height: 32px;
