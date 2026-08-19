@@ -35,6 +35,46 @@
     return a.length >= 2 ? a : (global.SortFrames ? global.SortFrames.SORT_DEFAULT.slice() : [5,2,8,1,9,3,7,4,6]);
   }
 
+  // Renders a complete-binary-heap tree (used only by sort-heap) into an SVG element,
+  // synchronized with the current animation frame's array + highlight map.
+  function renderHeapTree(svg, array, hi) {
+    const n = array.length;
+    const heightPerLevel = 20;
+    const R = 4; // node radius, in viewBox units — kept in sync with the SLOT sizing below
+    const SLOT = 12; // >= 2*R plus a margin, so deepest-level siblings never touch/overlap
+    if (!n) { svg.setAttribute('viewBox', '0 0 100 ' + heightPerLevel); svg.innerHTML = ''; return; }
+    const depth = Math.floor(Math.log2(n)) + 1;
+    const H = depth * heightPerLevel;
+    // Widen the viewBox to fit the deepest level's slot count so its siblings keep a full
+    // SLOT of spacing regardless of n (fixes overlap once the heap reaches 16+ elements);
+    // shallower levels just space out further within the same width. Width stays >= 100 so
+    // small trees keep their original scale.
+    const deepestLevelCount = Math.pow(2, depth - 1);
+    const W = Math.max(100, deepestLevelCount * SLOT);
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    const pos = new Array(n);
+    for (let i = 0; i < n; i++) {
+      const L = Math.floor(Math.log2(i + 1));
+      const levelCount = Math.pow(2, L);
+      const p = i - (levelCount - 1);
+      pos[i] = { x: ((p + 0.5) / levelCount) * W, y: ((L + 0.5) / depth) * H };
+    }
+    let edges = '';
+    for (let i = 1; i < n; i++) {
+      const parent = Math.floor((i - 1) / 2);
+      const dim = (hi[i] === 'sorted' || hi[parent] === 'sorted') ? ' dim' : '';
+      edges += '<line class="heaptree-edge' + dim + '" x1="' + pos[parent].x.toFixed(2) + '" y1="' + pos[parent].y.toFixed(2) +
+        '" x2="' + pos[i].x.toFixed(2) + '" y2="' + pos[i].y.toFixed(2) + '"></line>';
+    }
+    let nodes = '';
+    for (let i = 0; i < n; i++) {
+      const cls = hi[i] || '';
+      nodes += '<circle class="heaptree-node ' + cls + '" cx="' + pos[i].x.toFixed(2) + '" cy="' + pos[i].y.toFixed(2) + '" r="' + R + '"></circle>' +
+        '<text class="heaptree-label" x="' + pos[i].x.toFixed(2) + '" y="' + pos[i].y.toFixed(2) + '">' + esc(Math.trunc(array[i])) + '</text>';
+    }
+    svg.innerHTML = edges + nodes;
+  }
+
   function renderSort(methodId) {
     const K1 = K();
     const host = K1.acquireDynamicVizHost();
@@ -57,12 +97,20 @@
       const maxV = Math.max.apply(null, arr) || 1;
       const stage = document.createElement('div');
       stage.className = 'sortviz-stage';
+      let treeStage = null;
+      if (methodId === 'sort-heap') {
+        treeStage = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        treeStage.setAttribute('class', 'sortviz-heaptree');
+        treeStage.setAttribute('data-testid', 'heaptree');
+      }
       function paint(f) {
         stage.innerHTML = f.array.map((v, i) =>
           '<div class="sort-bar ' + (f.hi[i] || '') + '" style="height:' + ((v / maxV) * 100).toFixed(2) + '%"><span>' + v + '</span></div>'
         ).join('');
+        if (methodId === 'sort-heap') renderHeapTree(treeStage, f.array, f.hi);
       }
       host.appendChild(K1.buildStepWorkbench({ stage: stage, frames: frames, paint: paint, getMessage: (f) => K1.langOf(f.message), runIntervalMs: 400 }));
+      if (treeStage) host.appendChild(treeStage);
 
       function applyText(text) { _sortText[methodId] = text; saveEx(methodId, text); rebuild(); }
       controls.querySelector('.sortviz-build').addEventListener('click', () => applyText(controls.querySelector('.sortviz-input').value));
