@@ -231,11 +231,13 @@ func main() {
 `,
         php: `<?php
 
-const INF = 1000000000;
+// Note: PHP already defines a native INF constant (float infinity), so this
+// sentinel uses a distinct name to avoid colliding with (and redefining) it.
+const DIST_INF = 1000000000;
 
 function dijkstra(array \$adj, int \$v, int \$source): array
 {
-    \$dist = array_fill(0, \$v, INF);
+    \$dist = array_fill(0, \$v, DIST_INF);
     \$visited = array_fill(0, \$v, false);
 
     // Min-priority-queue keyed by distance: SplPriorityQueue is a max-heap,
@@ -301,7 +303,7 @@ function main(): void
 
     echo "Final shortest distances from node \$source:\\n";
     for (\$i = 0; \$i < \$v; \$i++) {
-        if (\$dist[\$i] === INF) {
+        if (\$dist[\$i] === DIST_INF) {
             echo "Node \$i: INF (unreachable)\\n";
         } else {
             echo "Node \$i: {\$dist[\$i]}\\n";
