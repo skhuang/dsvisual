@@ -17,37 +17,110 @@ open index.html
 
 ## Supported Algorithms
 
-### Data Structures
-| Category | Implementations |
-|----------|----------------|
-| **Stack** | Array, Linked List |
-| **Queue** | Standard Queue |
-| **List** | Array-based, Linked List |
-| **Graph** | Adjacency representation, traversal |
-| **Hash Table** | Chaining, Open Addressing, Bucket Hashing |
-| **Heap / Priority Queue** | Binary Heap, Binomial Queue, Fibonacci Heap, Leftist Heap, Skew Heap, 4-ary Heap, Pairing Heap |
-| **Cache** | LRU Cache (doubly-linked list + hash map) — *student contribution* |
+Every entry below is a live, step-by-step visualizer, grouped as in the app's navigation. Entries marked *student contribution* were added by course students (see [Contributors](#contributors)).
+
+### Linear Structures
+| Structure | Description |
+|-----------|-------------|
+| Stack (Array) | LIFO stack backed by an array |
+| Stack (List) | LIFO stack backed by a linked list |
+| Queue | FIFO queue |
+| Array List | Array-backed list with indexed insert/delete |
+| Singly Linked List | Node chain with next pointers |
+| Deque | Double-ended queue (push/pop both ends) |
+| Infix → Postfix | Shunting-yard conversion + stack evaluation |
+| Maze (Stack Backtracking) | DFS with an explicit path stack |
+| Doubly / Circular Linked List | prev/next pointers, forward & backward |
+| Equivalence Classes | Union of relations via a linked-list forest |
+
+### Arrays
+| Topic | Description |
+|-------|-------------|
+| Sparse Matrix (Transpose) | Triple representation + FAST_TRANSPOSE |
+| Sparse Matrix (Linked List) | Row/column circular linked-list representation |
+| Polynomial Addition | Two-pointer merge of term lists |
+| Magic Square — Latin Decomposition | Odd-order magic square via two orthogonal Latin squares |
+| Magic Square — Toroidal Tiling | Siamese method viewed as diagonal wrap on a torus |
+| Magic Square — O(1) getValue Formula | Closed-form cell value without building the grid |
+| Magic Square — Symmetry (D₄) | Dihedral symmetries of the magic square |
 
 ### Trees
 | Type | Description |
 |------|-------------|
-| BST | Binary Search Tree |
-| AVL | Self-balancing BST with rotations |
-| Red-Black Tree | Real CLRS insert/delete; every rotation & recolor is a rewindable step |
-| Splay Tree | Splay (zig/zig-zig/zig-zag) operations |
+| Binary Search Tree | Ordered insert / search / delete |
+| AVL Tree | Self-balancing BST with rotations |
+| Red-Black Tree | Real CLRS insert/delete; every rotation & recolor a rewindable step — *student contribution* |
+| Splay Tree | Splay (zig / zig-zig / zig-zag) operations |
 | Trie | Prefix tree with string input |
 | Radix Tree | Compressed prefix tree |
-| TST | Ternary Search Tree |
-| B-Tree | Multi-way balanced tree |
+| Ternary Search Tree | Character-split BST for strings |
+| B-Tree | Multi-way balanced search tree |
 | B+ Tree | B-Tree variant with leaf-linked data |
-| Tree Traversal | Pre/In/Post/Level-order, recursive & iterative |
-| Huffman Coding | Greedy optimal prefix-code tree construction |
+| Disjoint Set (Union-Find) | Union by rank + path compression |
+| Segment Tree | Range query / point update over an array |
+| Fenwick Tree (BIT) | Prefix sums with O(log n) update |
+| Tree Traversal | Pre / In / Post / Level-order, recursive & iterative |
+| Huffman Coding | Greedy optimal prefix-code tree |
 | Optimal BST | DP table → reconstructed minimum-cost tree |
 | Threaded Binary Tree | Inorder-successor threads; stack-free traversal |
 | m-way Search Tree | Up to m−1 keys / m children per node |
 | Expression Tree | Build from postfix via a subtree stack, then evaluate |
+| General ↔ Binary Tree | Left-child / right-sibling conversion |
+| Tree COPY & EQUAL | Recursive structural copy and equality |
+| 8-Coins Decision Tree | Weighing decision tree for the counterfeit-coin puzzle |
+| Counting Trees (Catalan) | Enumerate the Cₙ distinct binary-tree shapes |
+| Array Representation | Complete-tree ↔ array index mapping |
+| Reconstruct Tree | Rebuild a tree from traversal orders |
+| Game Tree (Minimax / α-β) | Minimax search with alpha-beta pruning |
 
-### Sorting Algorithms
+### Graphs
+| Algorithm | Description |
+|-----------|-------------|
+| Undirected Graph | Build and inspect an undirected graph |
+| Adjacency List | List-of-neighbours representation |
+| Adjacency Multilist | Shared edge nodes for undirected graphs |
+| BFS vs DFS (Dual-Pane) | Side-by-side traversal comparison |
+| Breadth-First Search | Level-order traversal via a queue |
+| Depth-First Search | Backtracking traversal via a stack |
+| Kruskal MST | Sort edges + union-find |
+| Dijkstra (Shortest Path) | Greedy shortest paths with a priority queue |
+| Topological Sort | Kahn / DFS ordering of a DAG |
+| Borůvka MST | Component-merging minimum spanning tree |
+| Red-Blue Rules (MST) | Cut/cycle rules underlying MST algorithms |
+| Bellman-Ford | Shortest paths with negative edges |
+| Floyd-Warshall | All-pairs shortest paths (DP matrix) |
+| AOE / Critical Path | Forward/backward pass, critical activities |
+| Adjacency Matrix | Matrix representation with cell↔edge highlighting |
+| Connected Components | Partition an undirected graph into components |
+| Bipartite Check | 2-coloring; detect odd cycles |
+| Transitive Closure | Reachability closure of a digraph |
+| Strongly Connected Components | Directed SCC decomposition |
+| Maximum Flow (Edmonds–Karp) | BFS augmenting paths on the residual network — *student contribution* |
+| Euler Path / Circuit (Hierholzer) | Stack-based edge traversal building the Euler tour — *student contribution* |
+
+### Hash & Probabilistic
+| Structure | Description |
+|-----------|-------------|
+| Hash Chaining | Separate-chaining hash table |
+| Open Addressing | Linear/quadratic probing |
+| Bucketing | Bucket hashing |
+| Bloom Filter | Probabilistic set membership with k hashes |
+| Skip List | Randomized layered linked list |
+| Count-Min Sketch | Sublinear frequency estimation |
+| LRU Cache | Doubly-linked list + hash map eviction — *student contribution* |
+
+### Heaps / Priority Queues
+| Type | Description |
+|------|-------------|
+| Binary Heap | Array-backed complete-tree heap |
+| Binomial Heap | Forest of binomial trees linked by degree |
+| Fibonacci Heap | Lazy melding with amortized decrease-key |
+| Leftist Heap | Merge-oriented heap on the null-path length |
+| Skew Heap | Self-adjusting merge heap |
+| 4-ary Heap | d-ary heap with four children per node |
+| Pairing Heap | Simple, fast amortized heap |
+
+### Sorting
 | Algorithm | Category |
 |-----------|----------|
 | Bubble Sort | Comparison |
@@ -56,39 +129,69 @@ open index.html
 | Quick Sort | Comparison |
 | Merge Sort | Comparison |
 | Shell Sort | Comparison |
+| Shaker Sort | Comparison (bidirectional bubble) |
+| Heap Sort | Comparison (with a synchronized heap-tree view) |
 | Bucket Sort | Non-comparison |
 | Counting Sort | Non-comparison |
 | Radix Sort | Non-comparison |
-| Heap Sort | Non-comparison |
 | External Merge Sort | Run generation + winner-tree k-way merge |
+| Polyphase Merge (Tapes) | Fibonacci-distributed multi-tape external merge |
 
-### Graphs
-| Algorithm | Description |
-|-----------|-------------|
-| AOE / Critical Path | Forward/backward pass, critical activities |
-| Max-Flow (Edmonds–Karp) | BFS augmenting paths on the residual network — *student contribution* |
-| Euler Path / Circuit (Hierholzer) | Stack-based edge traversal building the Euler tour — *student contribution* |
-
-### Linear Structures / Stack
-| Algorithm | Description |
-|-----------|-------------|
-| Infix → Postfix | Shunting-yard conversion + stack evaluation |
-| Maze (Stack Backtracking) | DFS with an explicit path stack |
-| Doubly / Circular Linked List | prev/next pointers, forward & backward |
-
-### Arrays
-| Algorithm | Description |
-|-----------|-------------|
-| Sparse Matrix | Triple representation + FAST_TRANSPOSE |
-| Polynomial Addition | Two-pointer merge of term lists |
-
-### Search Algorithms
+### Searching & String Matching
 | Algorithm | Description |
 |-----------|-------------|
 | Linear Search | Scan every element until a match is found |
 | Binary Search | Halve the search space on each comparison |
 | Fibonacci Search | Split a sorted array at Fibonacci offsets |
 | Interpolation Search | Probe by linear interpolation of the target |
+| KMP (Knuth-Morris-Pratt) | Failure-function prefix matching |
+| Boyer-Moore | Bad-character / good-suffix skips |
+| Rabin-Karp | Rolling-hash substring search |
+| Z-Algorithm | Z-array prefix matching |
+| String Matching Compared | Side-by-side of the matching algorithms |
+| Aho-Corasick | Multi-pattern trie + failure links |
+
+### File Structures
+| Structure | Description |
+|-----------|-------------|
+| ISAM (Indexed Sequential) | Static index over sequential data blocks |
+| Inverted Index | Term → document postings lists |
+
+### Memory / GC
+| Topic | Description |
+|-------|-------------|
+| Dynamic Storage / GC | Allocation, mark-sweep, reference counting, buddy system, pointer reversal, compaction |
+
+### Recursion
+| Topic | Description |
+|-------|-------------|
+| Recursion (Call Tree & Stack) | Visualize the call tree and the runtime stack |
+
+### OOP Concepts
+| Concept | Description |
+|---------|-------------|
+| Class Inheritance | Base/derived relationships |
+| Polymorphism (Virtual) | Dynamic dispatch through virtual functions |
+| Encapsulation & Access | public / protected / private access |
+| Abstraction (Abstract Classes) | Pure-virtual interfaces |
+| Ad-hoc Polymorphism (Overloading) | Function/operator overloading |
+| Parametric Polymorphism (Templates) | Compile-time generics |
+
+### Design Patterns
+| Category | Patterns |
+|----------|----------|
+| Creational | Builder, Factory Method, Singleton |
+| Structural | Adapter, Composite, Decorator |
+| Behavioral | Command, Observer, Strategy |
+| Architectural | Dependency Injection, Layered Architecture, MVC, Pipe-and-Filter, Publish-Subscribe |
+
+### nano-LLM
+| Topic | Description |
+|-------|-------------|
+| BPE Encode (trie) | Byte-pair-encoding tokenization over a trie |
+| Compute Graph (DAG) | Forward/backward passes on a computation graph |
+| BPE Train (list+heap) | Learn merges via a frequency list + heap |
+| n-gram Sampling (hash) | Next-token sampling from an n-gram hash model |
 
 ## Project Structure
 
