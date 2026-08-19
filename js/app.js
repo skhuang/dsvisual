@@ -124,6 +124,7 @@ const METHOD_GROUPS = [
             { id: 'graph-closure', title: 'Transitive Closure', file: 'graph_closure.cpp', visualizer: 'graph-closure', controls: 'graph-closure', codeDrawer: true },
             { id: 'graph-scc', title: 'Strongly Connected Components', file: 'graph_scc.cpp', visualizer: 'graph-scc', controls: 'graph-scc', codeDrawer: true },
             { id: 'graph-maxflow', title: 'Maximum Flow (Edmonds-Karp)', file: 'graph_maxflow.cpp', visualizer: 'graph-maxflow', controls: 'graph-maxflow', codeDrawer: true },
+            { id: 'graph-euler', title: 'Euler Path / Circuit (Hierholzer)', file: 'graph_euler.cpp', visualizer: 'graph-euler', controls: 'graph-euler', codeDrawer: true },
         ],
     },
     {

@@ -2191,6 +2191,44 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 .gmf-cut { padding: 7px 10px; border: 1px solid #fca5a5; border-radius: 7px; background: #fff1f2; color: #991b1b; font-family: monospace; font-size: 12px; text-align: center; }
 .gmf-msg { min-height: 1.3em; font-family: monospace; font-size: 12px; color: #475569; text-align: center; }
 
+/* Euler trail / circuit (Hierholzer): graph beside the stack + output list. */
+.geu-wrap { display: flex; flex-direction: column; gap: 10px; align-items: center; width: 100%; }
+.geu-controls { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; justify-content: center; font-size: 13px; color: #475569; }
+.geu-controls label { display: flex; align-items: center; gap: 4px; }
+.geu-controls input { width: 42px; font-family: monospace; }
+.geu-controls .geu-edges { width: min(430px, 65vw); }
+.geu-tier { padding: 3px 9px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; font-weight: 700; }
+.geu-issues { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; }
+.geu-error { color: #b91c1c; font-weight: 700; }
+.geu-warning { color: #92400e; }
+.geu-banner { font-family: monospace; font-size: 14px; font-weight: 800; color: #0f172a; min-height: 1.3em; text-align: center; }
+.geu-panels { overflow: auto; width: 100%; max-height: 660px; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 16px; }
+.geu-panels h4 { margin: 6px 0 2px; color: #475569; font-size: 12px; letter-spacing: .04em; }
+.geu-graph-pane { min-width: 360px; text-align: center; }
+.geu-side { min-width: 210px; text-align: center; }
+.geu-graph-svg { max-width: 100%; }
+.geu-edge { fill: none; stroke: #94a3b8; stroke-width: 2; }
+.geu-edge-used { stroke: #7c3aed; stroke-width: 4; }
+.geu-edge-current { stroke: #f59e0b; stroke-width: 6; }
+.geu-edge-order { font-family: monospace; font-size: 10px; font-weight: 800; fill: #6d28d9; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.geu-node { fill: #f8fafc; stroke: #334155; stroke-width: 2; }
+.geu-node-odd { fill: #fef3c7; stroke: #b45309; }
+.geu-node-start { stroke: #15803d; stroke-width: 4; }
+.geu-node-current { stroke: #f59e0b; stroke-width: 5; }
+.geu-node-checking { stroke: #2563eb; stroke-width: 5; }
+.geu-node-label { font-size: 12px; font-weight: 800; fill: #0f172a; }
+.geu-node-deg { font-family: monospace; font-size: 10px; font-weight: 700; fill: #475569; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.geu-deg-table { margin: 0 auto; border-collapse: collapse; font-family: monospace; font-size: 12px; }
+.geu-deg-table th, .geu-deg-table td { border: 1px solid #cbd5e1; padding: 2px 8px; }
+.geu-deg-table th { background: #f1f5f9; color: #475569; font-weight: 700; }
+.geu-deg-odd { background: #fef3c7; color: #92400e; font-weight: 700; }
+.geu-deg-checking { outline: 2px solid #2563eb; }
+.geu-stack, .geu-circuit { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 26px; font-family: monospace; font-size: 12px; }
+.geu-stack-item { min-width: 24px; padding: 3px 6px; border: 1px solid #93c5fd; border-radius: 5px; background: #eff6ff; text-align: center; }
+.geu-circuit-item { min-width: 24px; padding: 3px 6px; border: 1px solid #c4b5fd; border-radius: 5px; background: #f5f3ff; color: #5b21b6; font-weight: 700; text-align: center; }
+.geu-empty { color: #94a3b8; }
+.geu-msg { min-height: 1.3em; font-family: monospace; font-size: 12px; color: #475569; text-align: center; }
+
 /* ----- Header actions + language hover menu ----- */
 .app-header__actions {
     position: absolute;
