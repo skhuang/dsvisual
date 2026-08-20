@@ -31,7 +31,7 @@ test.describe('lab entry point', () => {
     await expect(page.locator('[data-method-section="graph-dijkstra"] .method-lab-btn')).toHaveCount(0);
   });
 
-  test('opening Lab shows statement, samples, repo link, disabled dsjudge button', async ({ page }) => {
+  test('opening Lab shows statement, samples, repo link, and the Practice-on-dsjudge link', async ({ page }) => {
     await loadMethod(page, 'graph-dijkstra');
     await page.locator('[data-method-section="graph-dijkstra"] .method-lab-btn').click();
     const v = page.locator('#lab-viewer');
@@ -40,7 +40,11 @@ test.describe('lab entry point', () => {
     await expect(v.locator('[data-testid="lab-samples"]')).toContainText('0 3 1 4 7');
     const repo = v.locator('[data-testid="lab-open-repo"]');
     await expect(repo).toHaveAttribute('href', /ds2026-lab-dijkstra/);
-    await expect(v.locator('[data-testid="lab-dsjudge"]')).toBeDisabled();
+    // Post go-live: dijkstra has a dsjudgeUrl, and with no maccount client
+    // configured in this test the control falls back to an enabled bank link.
+    const dsj = v.locator('a[data-testid="lab-dsjudge"]');
+    await expect(dsj).toBeVisible();
+    await expect(dsj).toHaveAttribute('href', 'https://ds2026summer.cs.nycu.edu.tw/bank/dijkstra');
     await page.keyboard.press('Escape');
     await expect(v).toBeHidden();
   });
