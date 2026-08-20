@@ -3,7 +3,7 @@
     {
       "slug": "dijkstra",
       "repoUrl": "https://github.com/nycu-cs-course-ds/ds2026-lab-dijkstra",
-      "dsjudgeUrl": null
+      "dsjudgeUrl": "https://ds2026summer.cs.nycu.edu.tw/bank/dijkstra"
     }
   ]
 }

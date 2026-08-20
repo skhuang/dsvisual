@@ -21,7 +21,8 @@ test('buildLabs maps graph-dijkstra with public fields and no hidden data', () =
   assert.ok(R['graph-dijkstra'], 'graph-dijkstra present');
   const lab = R['graph-dijkstra'][0];
   assert.strictEqual(lab.slug, 'dijkstra');
-  assert.strictEqual(lab.dsjudgeUrl, null);
+  // Published to the public bank in the 2026-08-19 go-live (was null before).
+  assert.strictEqual(lab.dsjudgeUrl, 'https://ds2026summer.cs.nycu.edu.tw/bank/dijkstra');
   assert.match(lab.repoUrl, /ds2026-lab-dijkstra/);
   assert.ok(lab.statementHtml.zh && lab.statementHtml.en, 'both langs present (en falls back to zh)');
   assert.ok(Array.isArray(lab.samples) && lab.samples[0].in && lab.samples[0].out, 'samples present');
