@@ -14,7 +14,7 @@
             '<div class="ext-controls">' +
               '<input type="text" class="ext-data" value="' + st.data.join(',') + '">' +
               '<label>M <input type="number" class="ext-m" min="1" max="20" value="' + st.M + '" style="width:54px"></label>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="ext-apply">Apply</button>' +
             '</div>' +
             '<div class="ext-runs"></div>' +

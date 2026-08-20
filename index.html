@@ -75,17 +75,20 @@
 
                     <div class="actions hidden" id="hash-actions">
                         <input type="number" id="hash-val" data-i18n-placeholder="ph.value-example" placeholder="Value (e.g. 42)">
+                        <button type="button" class="legacy-rand-btn" id="btn-hash-random" title="Random input" data-i18n-title="btn.random-input" data-testid="hash-random">🎲</button>
                         <button id="btn-hash-add" class="btn primary" data-i18n-key="btn.hash-insert">Hash/Insert()</button>
                     </div>
 
                     <div class="actions hidden" id="tree-actions">
                         <input type="number" id="tree-val" data-i18n-placeholder="ph.node-value" placeholder="Node Value" value="50">
+                        <button type="button" class="legacy-rand-btn" id="btn-tree-random" title="Random input" data-i18n-title="btn.random-input" data-testid="tree-random">🎲</button>
                         <button id="btn-tree-add" class="btn primary" data-i18n-key="btn.insert-call">Insert()</button>
                         <button id="btn-tree-search" class="btn secondary" data-i18n-key="btn.splay-search">Splay Search()</button>
                     </div>
 
                     <div class="actions hidden" id="text-tree-actions">
                         <input type="text" id="text-tree-val" data-i18n-placeholder="ph.word-example" placeholder="Word (e.g. CAT)" style="text-transform: uppercase;">
+                        <button type="button" class="legacy-rand-btn" id="btn-text-tree-random" title="Random input" data-i18n-title="btn.random-input" data-testid="text-tree-random">🎲</button>
                         <button id="btn-text-tree-add" class="btn primary" data-i18n-key="btn.insert-word">Insert Word()</button>
                     </div>
 
@@ -95,6 +98,7 @@
                             <option value="max">Max-Heap</option>
                         </select>
                         <input type="number" id="heap-val" data-i18n-placeholder="ph.value" placeholder="Value">
+                        <button type="button" class="legacy-rand-btn" id="btn-heap-random" title="Random input" data-i18n-title="btn.random-input" data-testid="heap-random">🎲</button>
                         <input type="text" id="heap-extra" data-i18n-placeholder="ph.heap-extra" placeholder="Extra list or new value">
                         <button id="btn-heap-insert" class="btn primary" data-i18n-key="btn.insert-call">Insert()</button>
                         <button id="btn-heap-peek" class="btn secondary" data-i18n-key="btn.peek">Peek()</button>
@@ -396,11 +400,17 @@
     <script src="vendor/prism/prism.min.js" defer></script>
     <script src="vendor/prism/prism-c.min.js" defer></script>
     <script src="vendor/prism/prism-cpp.min.js" defer></script>
+    <script src="vendor/prism/prism-python.min.js" defer></script>
+    <script src="vendor/prism/prism-rust.min.js" defer></script>
+    <script src="vendor/prism/prism-go.min.js" defer></script>
+    <script src="vendor/prism/prism-markup-templating.min.js" defer></script>
+    <script src="vendor/prism/prism-php.min.js" defer></script>
     <script src="js/core/registry.js" defer></script>
     <script src="js/core/domains.js" defer></script>
     <script src="js/algos/tree_algos.js" defer></script>
     <script src="js/desc_db.js" defer></script>
     <script src="js/code_db.js" defer></script>
+    <script src="js/code_multilang.js" defer></script>
     <script src="js/graph_matrix_viz.js" defer></script>
     <script src="js/viz/viz_graph_matrix.js" defer></script>
     <script src="js/graph_components_viz.js" defer></script>
@@ -411,6 +421,10 @@
     <script src="js/viz/viz_graph_closure.js" defer></script>
     <script src="js/graph_scc_viz.js" defer></script>
     <script src="js/viz/viz_graph_scc.js" defer></script>
+    <script src="js/graph_maxflow_viz.js" defer></script>
+    <script src="js/viz/viz_graph_maxflow.js" defer></script>
+    <script src="js/graph_euler_viz.js" defer></script>
+    <script src="js/viz/viz_graph_euler.js" defer></script>
     <script src="js/patterns_db.js" defer></script>
     <script src="js/viz/viz_pattern.js" defer></script>
     <script src="js/domains/hash.js" defer></script>

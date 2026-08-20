@@ -65,7 +65,7 @@
               '<button type="button" class="et-mode-btn' + (!bool ? ' active' : '') + '" data-mode="arith">' + langOf({ zh: '算術', en: 'Arithmetic' }) + '</button>' +
               '<button type="button" class="et-mode-btn' + (bool ? ' active' : '') + '" data-mode="bool">' + langOf({ zh: '布林', en: 'Boolean' }) + '</button>' +
             '</div>' +
-            '<div class="et-controls"><input type="text" class="et-input" value="' + inputVal + '"><button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="et-apply">Apply</button>' +
+            '<div class="et-controls"><input type="text" class="et-input" value="' + inputVal + '"><button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button><button type="button" class="et-apply">Apply</button>' +
             '<span class="sm-hint">' + hint + '</span></div>' +
             '<div class="et-stack"><strong>Subtree stack:</strong> <span class="et-stack-cells"></span></div>' +
             '<div class="et-stage"><svg class="et-edges"></svg><div class="et-nodes"></div></div>' +

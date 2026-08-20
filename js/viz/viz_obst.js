@@ -28,7 +28,7 @@
             '<div class="obst-controls">' +
               '<input type="text" class="obst-keys" value="' + st.keys.join(',') + '" placeholder="keys e.g. 10,20,30">' +
               '<input type="text" class="obst-freqs" value="' + st.freqs.join(',') + '" placeholder="freqs e.g. 4,2,6">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="obst-apply">Apply</button>' +
             '</div>' +
             '<div class="obst-grid"></div>' +

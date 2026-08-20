@@ -8,6 +8,11 @@
   let hashBucketData = Array.from({ length: 4 }, () => []); // 4 buckets, max 2 items each
   let dom = null; // { hashChContainer, hashOaContainer, hashBucketContainer, btnHashAdd, hashVal }
 
+  // Fresh random insert value (1..99) for #hash-val — mirrors linear.js's randStdValue() idiom.
+  function randInsertVal() { return Math.floor(Math.random() * 99) + 1; }
+
+  // Returns true when the value was actually inserted (chain always succeeds; open/bucket can
+  // fail when full/saturated) — the click handler uses this to decide whether to refill #hash-val.
   async function runHashInsert(val) {
     const currentMode = C().getMode();
     const showStatus = K().showStatus;
@@ -15,6 +20,7 @@
         const num = 5; let idx = ((val % num) + num) % num;
         showStatus(val + " % " + num + " = " + idx, "#fbbf24"); await sleep(1000);
         hashChData[idx].push(val); renderHashes(); showStatus("Chained at Index " + idx, "#34d399");
+        return true;
     } else if(currentMode === 'hash-open') {
         const num = 5; let idx = ((val % num) + num) % num;
         showStatus(val + " % " + num + " = " + idx, "#fbbf24"); await sleep(800);
@@ -23,9 +29,10 @@
             showStatus("Index " + idx + " occupied! Probing...", "#f87171");
             const s = document.getElementById("hoa-slot-" + idx); if(s) { s.classList.add('swapping'); await sleep(800); s.classList.remove('swapping'); }
             idx = (idx + 1) % num;
-            if(idx === startIdx) { showStatus("Hash Table Full!", "#f87171"); return; }
+            if(idx === startIdx) { showStatus("Hash Table Full!", "#f87171"); return false; }
         }
         hashOaData[idx] = val; renderHashes(); showStatus("Inserted at Index " + idx, "#34d399");
+        return true;
     } else if(currentMode === 'hash-bucket') {
         const numBuckets = 4; const bCapacity = 2; let idx = ((val % numBuckets) + numBuckets) % numBuckets;
         showStatus(val + " % " + numBuckets + " = Bucket " + idx, "#fbbf24"); await sleep(800);
@@ -34,10 +41,12 @@
             showStatus("Bucket " + idx + " Block full! Overflowing...", "#f87171");
             const b = document.getElementById("hb-block-" + idx); if(b) { b.classList.add('swapping'); await sleep(800); b.classList.remove('swapping'); }
             idx = (idx + 1) % numBuckets;
-            if(idx === startIdx) { showStatus("All Buckets Saturated!", "#f87171"); return; }
+            if(idx === startIdx) { showStatus("All Buckets Saturated!", "#f87171"); return false; }
         }
         hashBucketData[idx].push(val); renderHashes(); showStatus("Inserted into Bucket " + idx, "#34d399");
+        return true;
     }
+    return false;
   }
 
   function renderHashes() {
@@ -84,18 +93,65 @@
     else if (mode === 'hash-bucket') hashBucketData = Array.from({ length: 4 }, () => []);
   }
 
+  // Synchronous (no animation/status-per-step) counterpart to runHashInsert, used only by the
+  // 🎲 random-fill handler below: inserting a whole batch of values through the animated path
+  // (each with its own sleep()) would take n * ~1s to settle, which isn't what a "randomize"
+  // action should do. Mirrors the same index-math and collision/overflow handling as
+  // runHashInsert; on a full open-addressing table or a saturated bucket set it just drops the
+  // value (same "give up on this one" behavior as the animated path's bail-out).
+  function insertSync(mode, val) {
+    if (mode === 'hash-chain') {
+      const num = 5; const idx = ((val % num) + num) % num;
+      hashChData[idx].push(val);
+    } else if (mode === 'hash-open') {
+      const num = 5; let idx = ((val % num) + num) % num;
+      const startIdx = idx;
+      while (hashOaData[idx] !== null) {
+        idx = (idx + 1) % num;
+        if (idx === startIdx) return;
+      }
+      hashOaData[idx] = val;
+    } else if (mode === 'hash-bucket') {
+      const numBuckets = 4; const bCapacity = 2; let idx = ((val % numBuckets) + numBuckets) % numBuckets;
+      const startIdx = idx;
+      while (hashBucketData[idx].length >= bCapacity) {
+        idx = (idx + 1) % numBuckets;
+        if (idx === startIdx) return;
+      }
+      hashBucketData[idx].push(val);
+    }
+  }
+
   function init() {
     dom = {
       hashChContainer: document.getElementById('hash-ch-container'),
       hashOaContainer: document.getElementById('hash-oa-container'),
       hashBucketContainer: document.getElementById('hash-bucket-container'),
       btnHashAdd: document.getElementById('btn-hash-add'),
+      btnHashRandom: document.getElementById('btn-hash-random'),
       hashVal: document.getElementById('hash-val'),
     };
+    if (dom.hashVal) dom.hashVal.value = String(randInsertVal());
     dom.btnHashAdd.addEventListener('click', () => {
+      // Read the value before the animated wrapper runs, and only refill #hash-val once the
+      // insert has actually completed (and succeeded) — never interrupt the animation mid-flight.
       const val = parseInt(dom.hashVal.value);
       if (isNaN(val)) return K().showStatus('Enter valid number.', '#f87171');
-      K().executeAnimWrapper(async () => await runHashInsert(val));
+      K().executeAnimWrapper(async () => {
+        const ok = await runHashInsert(val);
+        if (ok) dom.hashVal.value = String(randInsertVal());
+      });
+    });
+    dom.btnHashRandom.addEventListener('click', () => {
+      const showStatus = K().showStatus;
+      const methodId = C().getMode();
+      const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+      const r = global.RandomInput && global.RandomInput.randomInputFor(methodId, difficulty);
+      if (!r || !Array.isArray(r.vals)) return;
+      onModeSwitch(methodId);
+      r.vals.forEach((v) => insertSync(methodId, v));
+      renderHashes();
+      showStatus('Randomized ' + r.vals.length + ' value(s)', '#34d399');
     });
   }
 

@@ -123,6 +123,8 @@ const METHOD_GROUPS = [
             { id: 'graph-bipartite', title: 'Bipartite Check', file: 'graph_bipartite.cpp', visualizer: 'graph-bipartite', controls: 'graph-bipartite', codeDrawer: true },
             { id: 'graph-closure', title: 'Transitive Closure', file: 'graph_closure.cpp', visualizer: 'graph-closure', controls: 'graph-closure', codeDrawer: true },
             { id: 'graph-scc', title: 'Strongly Connected Components', file: 'graph_scc.cpp', visualizer: 'graph-scc', controls: 'graph-scc', codeDrawer: true },
+            { id: 'graph-maxflow', title: 'Maximum Flow (Edmonds-Karp)', file: 'graph_maxflow.cpp', visualizer: 'graph-maxflow', controls: 'graph-maxflow', codeDrawer: true },
+            { id: 'graph-euler', title: 'Euler Path / Circuit (Hierholzer)', file: 'graph_euler.cpp', visualizer: 'graph-euler', controls: 'graph-euler', codeDrawer: true },
         ],
     },
     {
@@ -569,6 +571,19 @@ document.addEventListener('DOMContentLoaded', () => {
         bindZoomControls(section);
     }
 
+    const SRCLANG_LABELS = { cpp: 'C++', python: 'Python', rust: 'Rust', go: 'Go', php: 'PHP' };
+    const SRCLANG_EXT = { cpp: 'cpp', python: 'py', rust: 'rs', go: 'go', php: 'php' };
+    // Wraps each line of a highlighted <code> block in .code-line so the CSS
+    // line-number gutter renders. Shared by the initial render and by the
+    // source-language switcher (re-highlighting replaces innerHTML, so the
+    // gutter has to be rebuilt every time).
+    function wrapCodeLines(codeEl) {
+        const lines = codeEl.innerHTML.split('\n');
+        codeEl.innerHTML = lines.map((line) =>
+            '<span class="code-line">' + line + '</span>'
+        ).join('\n');
+    }
+
     function renderMethodSections(groupId) {
         if (!methodSections) return;
         const group = getMethodGroupById(groupId);
@@ -616,6 +631,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // drawer (opened via a header button) so the visualization gets the
         // full card width. Everyone else keeps the side-by-side grid.
         const useCodeDrawer = !!method.codeDrawer;
+        const multilang = (window.CODE_MULTILANG && window.CODE_MULTILANG[method.id]) || null;
+        const srclangPillsHtml = multilang ? `
+                    <div class="srclang-pills">
+                        <button type="button" class="srclang-pill active" data-lang="cpp" data-testid="srclang-cpp">C++</button>
+                        ${Object.keys(multilang).map((lang) => `<button type="button" class="srclang-pill" data-lang="${lang}" data-testid="srclang-${lang}">${SRCLANG_LABELS[lang] || lang}</button>`).join('')}
+                    </div>` : '';
         const codePanelHtml = `
                 <div class="code-panel" data-language="cpp">
                     <div class="code-panel-header">
@@ -655,10 +676,18 @@ document.addEventListener('DOMContentLoaded', () => {
             <aside class="code-drawer" data-testid="code-drawer" hidden>
                 <button type="button" class="code-drawer-backdrop" data-code-drawer-close aria-label="Close code panel"></button>
                 <section class="code-drawer-panel" role="dialog" aria-modal="true" aria-label="${method.file}" tabindex="-1">
+                    ${multilang ? `
+                    <header class="code-drawer-header">
+                        <div class="code-drawer-header-title">
+                            <h3>${method.file}</h3>
+                            ${srclangPillsHtml}
+                        </div>
+                        <button type="button" class="code-drawer-close" data-code-drawer-close aria-label="Close">×</button>
+                    </header>` : `
                     <header class="code-drawer-header">
                         <h3>${method.file}</h3>
                         <button type="button" class="code-drawer-close" data-code-drawer-close aria-label="Close">×</button>
-                    </header>
+                    </header>`}
                     <div class="code-drawer-body">${codePanelHtml}</div>
                 </section>
             </aside>` : ''}
@@ -688,17 +717,31 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             codeDrawerToggle.addEventListener('click', openDrawer);
             drawer.querySelectorAll('[data-code-drawer-close]').forEach((btn) => btn.addEventListener('click', closeDrawer));
+
+            if (multilang) {
+                const codeEl = drawer.querySelector('.code-panel-body code');
+                const filenameEl = drawer.querySelector('.code-panel-filename');
+                const baseName = method.file.replace(/\.[^.]+$/, '');
+                const pills = drawer.querySelectorAll('.srclang-pill');
+                pills.forEach((pill) => {
+                    pill.addEventListener('click', () => {
+                        const lang = pill.dataset.lang;
+                        const source = lang === 'cpp' ? getCodeForMethod(method.id) : multilang[lang];
+                        codeEl.className = 'language-' + (lang === 'cpp' ? 'cpp' : lang);
+                        codeEl.textContent = source;
+                        if (window.Prism) Prism.highlightElement(codeEl);
+                        wrapCodeLines(codeEl);
+                        if (filenameEl) filenameEl.textContent = baseName + '.' + (SRCLANG_EXT[lang] || lang);
+                        pills.forEach((p) => p.classList.toggle('active', p === pill));
+                    });
+                });
+            }
         }
         methodSections.appendChild(section);
         mountActiveRuntime(section);
         if (window.Prism) Prism.highlightAllUnder(section);
         // Wrap each line in .code-line so the CSS line-number gutter renders.
-        section.querySelectorAll('.code-panel-body > code').forEach((codeEl) => {
-          const lines = codeEl.innerHTML.split('\n');
-          codeEl.innerHTML = lines.map((line) =>
-            '<span class="code-line">' + line + '</span>'
-          ).join('\n');
-        });
+        section.querySelectorAll('.code-panel-body > code').forEach(wrapCodeLines);
     }
 
     function selectMethod(methodId) {

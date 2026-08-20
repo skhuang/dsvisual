@@ -299,6 +299,40 @@ const descDB = {
             <span class="badge space">Space: O(n + e)</span>
         </div>
     `,
+    'graph-maxflow': `
+        <h3>Maximum Flow — Edmonds-Karp / 最大流</h3>
+        <p><strong>EN.</strong> A flow sends value from a source <code>s</code> to a sink <code>t</code> without exceeding edge capacities and while conserving flow at every other vertex. <strong>中文。</strong>流量由起點 <code>s</code> 送往終點 <code>t</code>，不得超過邊容量，且中間頂點的流入量必須等於流出量。</p>
+        <hr>
+        <ul>
+            <li><strong>Representation / 表示法：</strong> capacity, flow, and residual values use matrices for O(1) updates; BFS follows an adjacency list so each search is O(E). 容量、流量與殘量使用矩陣以 O(1) 更新；BFS 走訪鄰接串列，因此每次搜尋為 O(E)。</li>
+            <li><strong>Residual graph / 殘量網路：</strong> a forward residual edge records unused capacity; its reverse edge records how much earlier flow may be cancelled. 正向殘量邊表示尚可使用的容量，反向邊讓後續路徑撤銷先前的選擇。</li>
+            <li><strong>Edmonds-Karp：</strong> BFS chooses an augmenting path with the fewest edges. Increase flow by the path's bottleneck, update both residual directions, and repeat. BFS 尋找邊數最少的增廣路徑，依瓶頸容量增廣並同時更新正反向殘量。</li>
+            <li><strong>Max-flow min-cut theorem / 最大流最小割定理：</strong> when <code>t</code> is unreachable in the residual graph, the vertices still reachable from <code>s</code> define a cut whose capacity equals the maximum flow.</li>
+            <li><strong>Chapter 6 uses / 第六章應用：</strong> network routing, bipartite matching, assignment, evacuation, and image segmentation.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(VE&sup2;)</span>
+            <span class="badge space">Space: O(V&sup2;) in this matrix demo</span>
+        </div>
+    `,
+    'graph-euler': `
+        <h3>Euler Path / Circuit — Hierholzer / 尤拉路徑與迴路</h3>
+        <p><strong>EN.</strong> An Euler trail walks <em>every edge exactly once</em>; if it also returns to its starting vertex it is an Euler circuit. This is the problem that started graph theory: Euler's 1736 answer to the seven bridges of Konigsberg. <strong>中文。</strong>尤拉路徑是「每條邊恰好走一次」的走訪；若還能回到起點就是尤拉迴路。這正是圖論的起點——尤拉 1736 年對柯尼斯堡七橋問題的解答。</p>
+        <hr>
+        <ul>
+            <li><strong>Euler's theorem / 尤拉定理：</strong> with the edges connected, a circuit exists iff <em>every</em> degree is even; a path exists iff <em>exactly two</em> degrees are odd, and it must start at one odd vertex and end at the other. 邊連通的前提下，所有度數皆偶 → 有迴路；恰有兩個奇點 → 有路徑，且必須從一個奇點出發、在另一個奇點結束。</li>
+            <li><strong>Both conditions are needed / 兩個條件缺一不可：</strong> the "even degrees but disconnected" preset has every degree even yet no circuit — parity alone is not sufficient. 「度數全偶但不連通」的範例度數全為偶數卻沒有迴路，說明只看奇偶並不足夠。</li>
+            <li><strong>Konigsberg / 柯尼斯堡：</strong> all four land masses have odd degree (3, 3, 5, 3), so neither a path nor a circuit exists — the walk the townspeople looked for is impossible. 四塊陸地度數皆為奇數，因此路徑與迴路都不存在。</li>
+            <li><strong>Hierholzer / 演算法：</strong> walk along unused edges until stuck, pop the dead end onto an output list, and resume from the vertex below it on the stack. Reversing the output list yields the trail. 沿未使用的邊一直走到卡住，把死路頂點彈出到輸出串列，再從堆疊下一個頂點繼續；最後把輸出串列反轉就是答案。</li>
+            <li><strong>Why the stack / 為什麼需要堆疊：</strong> a greedy walk can strand itself in one lobe of the graph. The stack lets the algorithm splice the leftover cycle back in instead of restarting. 貪婪走訪可能困在圖的某一側；堆疊讓演算法把剩下的環接回去，而不必重來。</li>
+            <li><strong>Parallel edges / 平行邊：</strong> stored by edge id, not by vertex pair — Konigsberg has two bridges between the same pair of banks. 以邊的編號儲存而非頂點對，因為柯尼斯堡同一對岸之間有兩座橋。</li>
+            <li><strong>Chapter 6 uses / 第六章應用：</strong> route inspection (Chinese postman), DNA fragment assembly via de Bruijn graphs, one-stroke drawing, and CNC/plotter tool paths.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(V + E)</span>
+            <span class="badge space">Space: O(V + E)</span>
+        </div>
+    `,
     'tree-bst': `
         <h3>Binary Search Tree (Standard)</h3>
         <p>An elegant hierarchical associative routing structure.</p>

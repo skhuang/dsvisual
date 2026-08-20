@@ -10,6 +10,11 @@
   let stackData = []; let qArr = new Array(5).fill(null); let qFront = 0; let qRear = -1; let qCount = 0;
   let mainListData = [];
   let _dequeData = null;
+  // Persisted insert-field value across re-renders (renderDeque() rebuilds the whole
+  // deque-controls block every call, including on navigate-away/back and after pop) — mirrors
+  // viz_bloom.js's _bloomState.inputVal pattern so a re-render never clobbers what the user typed.
+  // null = not yet set (first mount) -> fresh randStdValue().
+  let _dequeVal = null;
 
   let dom = null; // { arrayContainer, linkedListContainer, queueContainer, listArrContainer, listLLContainer, btnStdAdd, btnStdRemove, btnListAdd, btnListRemove, stdVal, listIdx, listValInput }
 
@@ -53,6 +58,7 @@
     if (!Array.isArray(_dequeData)) {
         _dequeData = [10, 20, 30];
     }
+    if (!_dequeVal) _dequeVal = String(randStdValue());
     const data = _dequeData;
     const wrap = document.createElement('div');
     wrap.className = 'deque-wrap';
@@ -68,7 +74,8 @@
     html += '<span class="deque-null">null</span>';
     html += '</div>';
     html += '<div class="deque-controls" role="group">' +
-                '<input type="number" value="42" data-deque-val>' +
+                '<input type="number" value="' + _dequeVal + '" data-deque-val>' +
+                '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                 '<button type="button" data-action="push-front">Push Front</button>' +
                 '<button type="button" data-action="push-back">Push Back</button>' +
                 '<button type="button" data-action="pop-front">Pop Front</button>' +
@@ -82,12 +89,22 @@
         const v = parseInt(valInput.value, 10);
         return Number.isNaN(v) ? 0 : v;
     }
+    valInput.addEventListener('input', () => { _dequeVal = valInput.value; });
+    wrap.querySelector('.rand-btn').onclick = () => {
+        const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+        const r = global.RandomInput && global.RandomInput.randomInputFor('deque', difficulty);
+        if (!r || !Array.isArray(r.vals)) return;
+        _dequeData = r.vals.slice();
+        renderDeque();
+    };
     wrap.querySelector('[data-action="push-front"]').onclick = () => {
         data.unshift(readVal());
+        _dequeVal = String(randStdValue());
         renderDeque();
     };
     wrap.querySelector('[data-action="push-back"]').onclick = () => {
         data.push(readVal());
+        _dequeVal = String(randStdValue());
         renderDeque();
     };
     wrap.querySelector('[data-action="pop-front"]').onclick = () => {

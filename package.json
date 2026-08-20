@@ -10,6 +10,7 @@
     "build:slides": "node build_slides.js",
     "build:quiz": "node build_quiz.js",
     "build:labs": "node build_labs.js",
+    "build:multilang": "node build_multilang.js",
     "slides:pdf": "marp --pdf --allow-local-files --input-dir slides/zh -o slides/pdf/zh && marp --pdf --allow-local-files --input-dir slides/en -o slides/pdf/en",
     "format:code": "node format_code.js",
     "inject-env": "node scripts/inject-env.mjs",

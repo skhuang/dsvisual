@@ -536,6 +536,14 @@ body.viz-focus .method-section-card.active .viz-logcol { max-height: none; min-h
 .sortviz-stage { width: 100%; height: 260px; display: flex; align-items: flex-end; justify-content: center; gap: 3px; padding-bottom: 22px; overflow-x: auto; }
 body.viz-focus .method-section-card.active .sortviz-stage { flex: 1 1 auto; height: auto; min-height: 0; }
 
+.sortviz-heaptree { width: 100%; height: auto; max-height: 40vh; margin-top: 12px; overflow-x: auto; display: block; }
+.heaptree-edge { stroke: var(--text-muted, #94a3b8); stroke-width: 1; }
+.heaptree-edge.dim { opacity: 0.25; }
+.heaptree-node { fill: #60a5fa; }
+.heaptree-node.active { fill: #818cf8; }
+.heaptree-node.sorted { fill: #34d399; opacity: 0.5; }
+.heaptree-label { fill: #fff; font-size: 4px; text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+
 .searchviz-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
 .searchviz-arr { flex: 1 1 220px; min-width: 160px; }
 .searchviz-stage { width: 100%; height: 220px; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; overflow: auto; }
@@ -2142,6 +2150,85 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 .gsc-cond-edge { stroke: #64748b; stroke-width: 2; }
 .gsc-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
 
+/* Maximum flow (Edmonds-Karp): paired flow/residual networks. */
+.gmf-wrap { display: flex; flex-direction: column; gap: 10px; align-items: center; width: 100%; }
+.gmf-controls { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; justify-content: center; font-size: 13px; color: #475569; }
+.gmf-controls label { display: flex; align-items: center; gap: 4px; }
+.gmf-controls input { width: 42px; font-family: monospace; }
+.gmf-controls .gmf-edges { width: min(430px, 65vw); }
+.gmf-tier { padding: 3px 9px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; font-weight: 700; }
+.gmf-issues { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; }
+.gmf-error { color: #b91c1c; font-weight: 700; }
+.gmf-warning { color: #92400e; }
+.gmf-banner { font-family: monospace; font-size: 14px; font-weight: 800; color: #0f172a; min-height: 1.3em; }
+.gmf-panels { overflow: auto; width: 100%; max-height: 660px; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 14px; }
+.gmf-panels section { min-width: 360px; text-align: center; }
+.gmf-panels h4 { margin: 0 0 2px; color: #475569; font-size: 12px; letter-spacing: .04em; }
+.gmf-flow-svg, .gmf-res-svg { max-width: 100%; }
+.gmf-flow-edge, .gmf-res-edge { fill: none; stroke: #64748b; stroke-width: 2; }
+.gmf-res-edge { stroke: #60a5fa; stroke-dasharray: 5 3; }
+.gmf-flow-svg marker path { fill: #64748b; }
+.gmf-res-svg marker path { fill: #60a5fa; }
+.gmf-edge-saturated { stroke: #cbd5e1; }
+.gmf-edge-path { stroke: #7c3aed; stroke-width: 4; stroke-dasharray: none; }
+.gmf-edge-inspect { stroke: #2563eb; stroke-width: 4; stroke-dasharray: none; }
+.gmf-edge-augment { stroke: #f59e0b; stroke-width: 5; stroke-dasharray: none; }
+.gmf-edge-cut { stroke: #dc2626; stroke-width: 5; stroke-dasharray: 7 4; }
+.gmf-edge-label, .gmf-res-label { font-family: monospace; font-size: 10px; font-weight: 800; fill: #334155; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.gmf-flow-node, .gmf-res-node { fill: #f8fafc; stroke: #334155; stroke-width: 2; }
+.gmf-flow-node-source, .gmf-res-node-source { fill: #dcfce7; stroke: #15803d; }
+.gmf-flow-node-sink, .gmf-res-node-sink { fill: #fee2e2; stroke: #b91c1c; }
+.gmf-flow-node-visited, .gmf-res-node-visited { stroke: #2563eb; stroke-width: 3; }
+.gmf-flow-node-current, .gmf-res-node-current { stroke: #f59e0b; stroke-width: 5; }
+.gmf-flow-node-cut-s, .gmf-res-node-cut-s { fill: #dbeafe; }
+.gmf-flow-node-cut-t, .gmf-res-node-cut-t { fill: #f1f5f9; opacity: .72; }
+.gmf-flow-node-label, .gmf-res-node-label { font-size: 12px; font-weight: 800; fill: #0f172a; }
+.gmf-flow-node-role, .gmf-res-node-role { font-family: monospace; font-size: 12px; font-weight: 900; fill: #475569; }
+.gmf-queue { min-height: 28px; display: flex; align-items: center; gap: 6px; font-family: monospace; font-size: 12px; }
+.gmf-queue-values { display: flex; gap: 4px; }
+.gmf-queue-item { min-width: 24px; padding: 3px 6px; border: 1px solid #93c5fd; border-radius: 5px; background: #eff6ff; text-align: center; }
+.gmf-queue-empty { color: #94a3b8; }
+.gmf-cut { padding: 7px 10px; border: 1px solid #fca5a5; border-radius: 7px; background: #fff1f2; color: #991b1b; font-family: monospace; font-size: 12px; text-align: center; }
+.gmf-msg { min-height: 1.3em; font-family: monospace; font-size: 12px; color: #475569; text-align: center; }
+
+/* Euler trail / circuit (Hierholzer): graph beside the stack + output list. */
+.geu-wrap { display: flex; flex-direction: column; gap: 10px; align-items: center; width: 100%; }
+.geu-controls { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; justify-content: center; font-size: 13px; color: #475569; }
+.geu-controls label { display: flex; align-items: center; gap: 4px; }
+.geu-controls input { width: 42px; font-family: monospace; }
+.geu-controls .geu-edges { width: min(430px, 65vw); }
+.geu-tier { padding: 3px 9px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; font-weight: 700; }
+.geu-issues { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; }
+.geu-error { color: #b91c1c; font-weight: 700; }
+.geu-warning { color: #92400e; }
+.geu-banner { font-family: monospace; font-size: 14px; font-weight: 800; color: #0f172a; min-height: 1.3em; text-align: center; }
+.geu-panels { overflow: auto; width: 100%; max-height: 660px; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 16px; }
+.geu-panels h4 { margin: 6px 0 2px; color: #475569; font-size: 12px; letter-spacing: .04em; }
+.geu-graph-pane { min-width: 360px; text-align: center; }
+.geu-side { min-width: 210px; text-align: center; }
+.geu-graph-svg { max-width: 100%; }
+.geu-edge { fill: none; stroke: #94a3b8; stroke-width: 2; }
+.geu-edge-used { stroke: #7c3aed; stroke-width: 4; }
+.geu-edge-current { stroke: #f59e0b; stroke-width: 6; }
+.geu-edge-order { font-family: monospace; font-size: 10px; font-weight: 800; fill: #6d28d9; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.geu-node { fill: #f8fafc; stroke: #334155; stroke-width: 2; }
+.geu-node-odd { fill: #fef3c7; stroke: #b45309; }
+.geu-node-start { stroke: #15803d; stroke-width: 4; }
+.geu-node-current { stroke: #f59e0b; stroke-width: 5; }
+.geu-node-checking { stroke: #2563eb; stroke-width: 5; }
+.geu-node-label { font-size: 12px; font-weight: 800; fill: #0f172a; }
+.geu-node-deg { font-family: monospace; font-size: 10px; font-weight: 700; fill: #475569; paint-order: stroke; stroke: #fff; stroke-width: 3px; stroke-linejoin: round; }
+.geu-deg-table { margin: 0 auto; border-collapse: collapse; font-family: monospace; font-size: 12px; }
+.geu-deg-table th, .geu-deg-table td { border: 1px solid #cbd5e1; padding: 2px 8px; }
+.geu-deg-table th { background: #f1f5f9; color: #475569; font-weight: 700; }
+.geu-deg-odd { background: #fef3c7; color: #92400e; font-weight: 700; }
+.geu-deg-checking { outline: 2px solid #2563eb; }
+.geu-stack, .geu-circuit { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; min-height: 26px; font-family: monospace; font-size: 12px; }
+.geu-stack-item { min-width: 24px; padding: 3px 6px; border: 1px solid #93c5fd; border-radius: 5px; background: #eff6ff; text-align: center; }
+.geu-circuit-item { min-width: 24px; padding: 3px 6px; border: 1px solid #c4b5fd; border-radius: 5px; background: #f5f3ff; color: #5b21b6; font-weight: 700; text-align: center; }
+.geu-empty { color: #94a3b8; }
+.geu-msg { min-height: 1.3em; font-family: monospace; font-size: 12px; color: #475569; text-align: center; }
+
 /* ----- Header actions + language hover menu ----- */
 .app-header__actions {
     position: absolute;
@@ -3017,6 +3104,25 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 }
 .rand-btn:hover { background: #334155; }
 
+/* Random-input buttons for domains rendered through the static legacy control
+   panel (#heap-actions, etc.) that stays permanently mounted (hidden, not
+   removed) alongside every active method section. Deliberately NOT `.rand-btn`
+   — that class is scoped by many specs via `section.locator('.rand-btn')`,
+   and a hidden-but-present sibling would still count toward Playwright's
+   strict-mode match, breaking unrelated domains' tests. Target these via
+   their `data-testid` instead of this class. */
+.legacy-rand-btn {
+    cursor: pointer;
+    border: 1px solid #475569;
+    background: #1e293b;
+    color: #e2e8f0;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+.legacy-rand-btn:hover { background: #334155; }
+
 /* ===== nano-LLM visualizations (bpe-encode, compute-graph, bpe-train, ngram-next) ===== */
 
 /* -- bpe-encode -- */
@@ -3262,6 +3368,35 @@ body.viz-focus .method-section-card.active .cg-svg { max-height: none; }
     margin: 0;
     font-size: 0.95rem;
     font-family: 'Fira Code', monospace;
+}
+.code-drawer-header-title {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+.srclang-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+}
+.srclang-pill {
+    padding: 3px 10px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-subtle);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-family: 'Fira Code', monospace;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.srclang-pill:hover { border-color: var(--primary-color); color: var(--text-main); }
+.srclang-pill.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
 }
 .code-drawer-close {
     width: 32px;

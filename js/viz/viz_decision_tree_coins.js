@@ -55,7 +55,7 @@
               '<div class="dc-dir">' +
                 '<button type="button" class="dc-hl' + (st.heavy ? ' active' : '') + '" data-heavy="1">' + langOf({ zh: '較重', en: 'heavy' }) + '</button>' +
                 '<button type="button" class="dc-hl' + (!st.heavy ? ' active' : '') + '" data-heavy="0">' + langOf({ zh: '較輕', en: 'light' }) + '</button>' +
-                '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+                '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                 '<button type="button" class="dc-verify">' + langOf({ zh: '驗證全部 16', en: 'verify all 16' }) + '</button>' +
                 '<span class="dc-verifyout"></span>' +
               '</div>' +

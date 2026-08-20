@@ -41,7 +41,7 @@
                 loadSparseExamples().forEach((e) => { h += '<option value="' + esc(e.text) + '">' + trunc(e.text) + '</option>'; });
                 return h + '</select>';
             })() +
-            '<button type="button" class="rand-btn" title="Random">🎲</button><button type="button" class="sm-apply">Apply</button>' +
+            '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button><button type="button" class="sm-apply">Apply</button>' +
             '<span class="sm-hint">rows separated by ; , entries by ,</span></div>' +
             '<div class="sm-error" style="display:none"></div>' +
             '<div class="sm-cols"><div class="sm-dense"></div><div class="sm-triples"></div></div>' +

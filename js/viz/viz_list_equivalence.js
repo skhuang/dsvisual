@@ -42,7 +42,7 @@
               '<input type="text" class="eq-pairs" value="' + st.pairs.map((p) => p[0] + '=' + p[1]).join(',') + '">' +
               '<button type="button" class="eq-build">Build</button>' +
               buildExamplesSelect('list-equivalence', defSerEq) +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
             '</div>' +
             '<div class="eq-stage">' +
               '<div class="eq-adj"></div>' +

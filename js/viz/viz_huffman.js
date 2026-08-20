@@ -27,7 +27,7 @@
         host.innerHTML =
             '<div class="hf-controls">' +
               '<input type="text" class="hf-input">' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<button type="button" class="hf-apply">Apply</button>' +
             '</div>' +
             '<div class="hf-pq"><strong>Priority queue:</strong> <span class="hf-pq-list"></span></div>' +

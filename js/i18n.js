@@ -72,6 +72,8 @@
             'method.graph-bipartite':       'Bipartite Check',
             'method.graph-closure':         'Transitive Closure',
             'method.graph-scc':             'Strongly Connected Components',
+            'method.graph-maxflow':         'Maximum Flow (Edmonds-Karp)',
+            'method.graph-euler':           'Euler Path / Circuit (Hierholzer)',
             'method.graph-traversal':       'BFS vs DFS (Dual-Pane)',
             'method.graph-bfs':             'Breadth-First Search',
             'method.graph-dfs':             'Depth-First Search',
@@ -199,8 +201,8 @@
             'aria.exit-fullscreen':         'Exit fullscreen',
             'aria.viz-difficulty':          'Random input difficulty (this visualizer)',
             'cloud.title':                  'Sign in',
-            'cloud.signin-cta':             'Sign in with NYCU',
-            'cloud.signin-note':            'Sign in with your NYCU account (via maccount) to enable practice on dsjudge.',
+            'cloud.signin-cta':             'Sign in',
+            'cloud.signin-note':            'Sign in with your NYCU, GitHub, or Google account (via maccount) to enable practice on dsjudge.',
             'cloud.current-user':           'Signed in as {name}',
             'cloud.linked':                 'Linked:',
             'cloud.signout':                'Sign out',
@@ -248,6 +250,7 @@
             'btn.resume':                   'Resume',
             'btn.stop':                     'Stop',
             'btn.randomize':                'Randomize',
+            'btn.random-input':             'Random input',
             'btn.start':                    'Start()',
             'btn.peek':                     'Peek()',
             'btn.extract':                  'Extract()',
@@ -338,6 +341,8 @@
             'method.graph-bipartite':       '二分圖判定',
             'method.graph-closure':         '遞移閉包',
             'method.graph-scc':             '強連通分量',
+            'method.graph-maxflow':         '最大流（Edmonds-Karp）',
+            'method.graph-euler':           '尤拉路徑／迴路（Hierholzer）',
             'method.graph-traversal':       'BFS vs DFS（並排對照）',
             'method.graph-bfs':             '廣度優先搜尋',
             'method.graph-dfs':             '深度優先搜尋',
@@ -465,8 +470,8 @@
             'aria.exit-fullscreen':         '離開全螢幕',
             'aria.viz-difficulty':          '隨機輸入難度（此視覺化）',
             'cloud.title':                  '登入',
-            'cloud.signin-cta':             '以 NYCU 帳號登入',
-            'cloud.signin-note':            '以你的 NYCU 帳號登入(透過 maccount),即可在 dsjudge 練習。',
+            'cloud.signin-cta':             '登入',
+            'cloud.signin-note':            '以你在 maccount 綁定的 NYCU、GitHub 或 Google 帳號登入,即可在 dsjudge 練習。',
             'cloud.current-user':           '已登入：{name}',
             'cloud.linked':                 '已綁定:',
             'cloud.signout':                '登出',
@@ -514,6 +519,7 @@
             'btn.resume':                   '繼續',
             'btn.stop':                     '停止',
             'btn.randomize':                '隨機排序',
+            'btn.random-input':             '隨機輸入',
             'btn.start':                    'Start()',
             'btn.peek':                     'Peek()',
             'btn.extract':                  'Extract()',
@@ -579,6 +585,9 @@
         });
         root.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
             el.setAttribute('placeholder', t(el.dataset.i18nPlaceholder));
+        });
+        root.querySelectorAll('[data-i18n-title]').forEach(function (el) {
+            el.setAttribute('title', t(el.dataset.i18nTitle));
         });
     }
 

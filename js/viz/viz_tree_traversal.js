@@ -27,7 +27,7 @@
             '<div class="tt-controls">' +
               '<input type="text" class="tt-input" placeholder="50,30,70,..." value="' + st.values.join(',') + '">' +
               '<button type="button" class="tt-build">Build</button>' +
-              '<button type="button" class="rand-btn" title="Random">🎲</button>' +
+              '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
               '<select class="tt-order">' +
                 '<option value="preorder">Preorder</option>' +
                 '<option value="inorder">Inorder</option>' +

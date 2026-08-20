@@ -424,8 +424,10 @@
           advTreeContainer: document.getElementById('advanced-tree-container'),
           btnTreeAdd: document.getElementById('btn-tree-add'),
           btnTreeSearch: document.getElementById('btn-tree-search'),
+          btnTreeRandom: document.getElementById('btn-tree-random'),
           treeVal: document.getElementById('tree-val'),
           btnTextTreeAdd: document.getElementById('btn-text-tree-add'),
+          btnTextTreeRandom: document.getElementById('btn-text-tree-random'),
           textTreeVal: document.getElementById('text-tree-val'),
       };
 
@@ -451,6 +453,23 @@
           if(currentMode === 'tree-splay') { bstRoot = splayNode(bstRoot, val); renderTree(); showStatus("Splayed " + val, '#fbbf24'); }
       });
 
+      // #tree-actions is a single shared legacy panel (bst/splay/traversal/huffman/btree/bplus
+      // all re-parent it in) — this button only acts on tree-btree/tree-bplus, the same
+      // "visible for the whole shared bar, functional only in its own submode" convention the
+      // existing Splay Search() button already uses.
+      dom.btnTreeRandom.addEventListener('click', () => {
+          const currentMode = C().getMode();
+          if (currentMode !== 'tree-btree' && currentMode !== 'tree-bplus') return;
+          const showStatus = K().showStatus;
+          const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+          const r = global.RandomInput && global.RandomInput.randomInputFor(currentMode, difficulty);
+          if (!r || !Array.isArray(r.vals)) return;
+          const sorted = r.vals.slice().sort((a, b) => a - b);
+          if (currentMode === 'tree-btree') btreeData = sorted; else bplusData = sorted;
+          renderAdvTrees();
+          showStatus('Randomized ' + sorted.length + ' values', '#34d399');
+      });
+
       dom.btnTextTreeAdd.addEventListener('click', () => {
           let str = dom.textTreeVal.value.trim().toUpperCase();
           const showStatus = K().showStatus;
@@ -470,6 +489,36 @@
                   tstRoot = ins(tstRoot, str, 0); renderAdvTrees(); showStatus("TST Inserted: " + str, "#34d399");
               }
           });
+      });
+
+      // #text-tree-actions is shared only by tree-radix/tree-ternary (no other methodId
+      // re-parents it), so — unlike #tree-actions above — this button doesn't need a
+      // mode guard beyond dispatching on which of the two is active.
+      dom.btnTextTreeRandom.addEventListener('click', () => {
+          const currentMode = C().getMode();
+          const showStatus = K().showStatus;
+          const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+          const r = global.RandomInput && global.RandomInput.randomInputFor(currentMode, difficulty);
+          if (!r || !Array.isArray(r.words)) return;
+          if (currentMode === 'tree-radix') {
+              radixRoot = { edges: {} };
+              r.words.forEach((w) => { radixRoot.edges[w.toUpperCase()] = { edges: {}, endOfWord: true }; });
+          } else if (currentMode === 'tree-ternary') {
+              function ins(node, word, depth) {
+                  let c = word[depth]; if(!node) node = { char: c, isEnd: false, left: null, eq: null, right: null };
+                  if(c < node.char) node.left = ins(node.left, word, depth);
+                  else if(c > node.char) node.right = ins(node.right, word, depth);
+                  else { if(depth+1 < word.length) node.eq = ins(node.eq, word, depth+1); else node.isEnd = true; }
+                  return node;
+              }
+              tstRoot = null;
+              r.words.forEach((w) => { tstRoot = ins(tstRoot, w.toUpperCase(), 0); });
+          } else {
+              return;
+          }
+          dom.textTreeVal.value = '';
+          renderAdvTrees();
+          showStatus('Randomized ' + r.words.length + ' words', '#34d399');
       });
 
       // 鍵盤操作（沙盒）：← → 逐步、空白鍵播放/暫停 —— 只在紅黑樹模式作用

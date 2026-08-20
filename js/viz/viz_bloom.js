@@ -11,6 +11,16 @@
 
     let _bloomState = null;
 
+    // Fresh random short lowercase word for [data-bloom-val] — mirrors linear.js's
+    // randStdValue()/tree.js's randKey() idiom, adapted for a text field.
+    function randWord() {
+        const alpha = 'abcdefghijklmnopqrstuvwxyz';
+        const len = 3 + Math.floor(Math.random() * 3); // 3..5 chars
+        let s = '';
+        for (let i = 0; i < len; i++) s += alpha[Math.floor(Math.random() * alpha.length)];
+        return s;
+    }
+
     function renderBloomFilter() {
         const host = K().acquireDynamicVizHost();
         const SIZE = 32;
@@ -20,7 +30,7 @@
         function hashes(s) { return [h1(s), h2(s), h3(s)]; }
 
         if (!_bloomState) {
-            _bloomState = { bits: new Array(SIZE).fill(false), items: [], inputVal: 'fish' };
+            _bloomState = { bits: new Array(SIZE).fill(false), items: [], inputVal: randWord() };
             for (const w of ['cat', 'dog', 'bird']) {
                 for (const i of hashes(w)) _bloomState.bits[i] = true;
                 _bloomState.items.push(w);
@@ -42,6 +52,7 @@
         html += '<div class="bloom-items"><strong>inserted:</strong> <span class="bloom-items-list"></span></div>';
         html += '<div class="bloom-controls" role="group">' +
                     '<input type="text" data-bloom-val>' +
+                    '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
                     '<button type="button" data-action="bloom-insert">Insert</button>' +
                     '<button type="button" data-action="bloom-query">Query</button>' +
                 '</div>';
@@ -63,12 +74,26 @@
         wrap.querySelector('[data-action="bloom-insert"]').onclick = () => {
             const key = valInput.value.trim();
             if (!key) { showStatus('Enter a word', '#f87171'); return; }
-            _bloomState.inputVal = key;
             const idxs = hashes(key);
             for (const i of idxs) bits[i] = true;
             if (!items.includes(key)) items.push(key);
+            // Refill with a fresh random word after a successful insert, rather than
+            // leaving the just-inserted word sitting in the field.
+            _bloomState.inputVal = randWord();
             renderBloomFilter();
             showStatus('Inserted "' + key + '" → bits {' + idxs.join(', ') + '}', '#34d399');
+        };
+        wrap.querySelector('.rand-btn').onclick = () => {
+            const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+            const r = global.RandomInput && global.RandomInput.randomInputFor('bloom-filter', difficulty);
+            if (!r || !Array.isArray(r.items) || !r.items.length) return;
+            _bloomState = { bits: new Array(SIZE).fill(false), items: [], inputVal: r.query || 'fish' };
+            for (const w of r.items) {
+                for (const i of hashes(w)) _bloomState.bits[i] = true;
+                _bloomState.items.push(w);
+            }
+            renderBloomFilter();
+            showStatus('Randomized ' + r.items.length + ' item(s)', '#34d399');
         };
         wrap.querySelector('[data-action="bloom-query"]').onclick = () => {
             const key = valInput.value.trim();

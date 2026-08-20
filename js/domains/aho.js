@@ -44,7 +44,7 @@
         '<label class="aho-plabel">' + (lang === 'zh' ? '樣式' : 'patterns') + ' <input type="text" class="aho-patterns" data-testid="aho-patterns" value="' + esc(parsed.patterns.join(',')) + '"></label>' +
         '<label class="aho-tlabel">' + (lang === 'zh' ? '文字' : 'text') + ' <input type="text" class="aho-text" data-testid="aho-text" value="' + esc(parsed.text) + '"></label>' +
         '<button type="button" class="aho-build btn primary">' + (lang === 'zh' ? '建立' : 'Build') + '</button>' +
-        '<button type="button" class="rand-btn" title="' + (lang === 'zh' ? '隨機' : 'Random') + '">🎲</button>' +
+        '<button type="button" class="rand-btn" title="' + K().t('btn.random-input') + '">🎲</button>' +
         exSelectHtml(methodId);
       host.appendChild(controls);
 

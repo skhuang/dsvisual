@@ -5,6 +5,11 @@
 
   let heapEventTimer = null;
   let heapIsMin = true;
+  // Fresh random insert value (1..99) for #heap-val — mirrors linear.js's randStdValue()/
+  // tree.js's randKey() idiom. Only used at mount and after a successful *user* insert
+  // (btn-heap-insert); never while the tutorial is driving #heap-val (see the tutorialDriving
+  // gate in that click handler) so it can't clobber the guided step values set at :222.
+  function randInsertVal() { return Math.floor(Math.random() * 99) + 1; }
   const heapModels = {
     'heap-binary': HeapModels.createHeapModel('heap-binary', heapIsMin),
     'heap-binomial': HeapModels.createHeapModel('heap-binomial', heapIsMin),
@@ -557,6 +562,7 @@
           btnHeapDelete: document.getElementById('btn-heap-delete'),
           btnHeapFindMin: document.getElementById('btn-heap-find-min'),
           btnHeapStats: document.getElementById('btn-heap-stats'),
+          btnHeapRandom: document.getElementById('btn-heap-random'),
           btnHeapTutorial: document.getElementById('btn-heap-tutorial'),
           heapTutorialPanel: document.getElementById('heap-tutorial-panel'),
           heapTutorialMode: document.getElementById('heap-tutorial-mode'),
@@ -567,6 +573,8 @@
           btnHeapTutorialRestart: document.getElementById('btn-heap-tutorial-restart'),
           btnHeapTutorialExit: document.getElementById('btn-heap-tutorial-exit'),
       };
+
+      if (dom.heapValInput) dom.heapValInput.value = String(randInsertVal());
 
       dom.heapOrderSelect.addEventListener('change', () => {
           const currentMode = C().getMode();
@@ -584,9 +592,20 @@
           const model = getActiveHeapModel();
           const val = parseInt(dom.heapValInput.value);
           if (!model || isNaN(val)) return showStatus('Enter a valid heap value.', '#f87171');
+          // Don't auto-fill while the tutorial is actively driving this mode's #heap-val —
+          // maybeAdvanceHeapTutorial() later (via renderHeapTutorialPanel) sets it to the next
+          // guided step's value when applicable. Captured up front (not after the animation)
+          // since it doesn't change mid-insert.
+          const tutorialDriving = heapTutorialState.active && C().getMode() === heapTutorialState.mode;
           K().executeAnimWrapper(async () => {
               const out = model.insert(val);
               renderHeap();
+              // Refill synchronously right after the model mutation — not after the (multi-await,
+              // hundreds-of-ms) sift animation below. A fast next insert (script or user) can
+              // otherwise fill()+click() before the delayed refill lands, and the refill would
+              // clobber the freshly-typed value out from under it (caught by
+              // tests/heap_visualizer.spec.js's back-to-back insertAll()).
+              if (!tutorialDriving) dom.heapValInput.value = String(randInsertVal());
               await animateHeapEvents(out.events);
               showStatus('Inserted ' + val, '#34d399');
               maybeAdvanceHeapTutorial('insert', { value: val });
@@ -715,6 +734,22 @@
 
           showStatus(statsMsg, '#a78bfa');
           maybeAdvanceHeapTutorial('stats', { size });
+      });
+
+      dom.btnHeapRandom.addEventListener('click', () => {
+          const showStatus = K().showStatus;
+          const model = getActiveHeapModel();
+          if (!model) return;
+          const methodId = C().getMode();
+          const difficulty = (global.VizKit && global.VizKit.getInputDifficulty) ? global.VizKit.getInputDifficulty() : 'normal';
+          const r = global.RandomInput && global.RandomInput.randomInputFor(methodId, difficulty);
+          if (!r || !Array.isArray(r.vals)) return;
+          model.clear();
+          model.setOrder(heapIsMin);
+          clearHeapEventMarks();
+          r.vals.forEach(v => model.insert(v));
+          renderHeap();
+          showStatus('Randomized ' + r.vals.length + ' values', '#34d399');
       });
 
       dom.btnHeapTutorial.addEventListener('click', () => {
