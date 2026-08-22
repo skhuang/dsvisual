@@ -347,4 +347,4 @@ Contributions welcome — see the existing visualizers under `js/viz/` and the c
 
 ## License
 
-ISC
+[MIT](LICENSE) © 2026 Shih-Kun Huang and dsvisual contributors
