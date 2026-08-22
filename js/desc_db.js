@@ -452,6 +452,22 @@ const descDB = {
             <span class="badge time">Search Time: O(log N)</span>
         </div>
     `,
+    'select-quickselect': `
+        <h3>Quickselect Algorithm (快速選擇演算法)</h3>
+        <p><strong>EN.</strong> A selection algorithm based on Quick Sort partition and Median-of-Medians pivot selection to find the k-th smallest element in O(n) worst-case time.</p>
+        <p><strong>中文。</strong> 基於快速排序 (Quick Sort) 分治思想的選擇演算法，結合 Median-of-Medians (BFPRT) 挑選 Pivot，可在最壞情況 O(n) 時間內找到第 k 小的元素。</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism / 核心機制：</strong> Partitioning divides array relative to a pivot; pruning only recurses into the side containing the k-th element. 利用劃分將陣列依 Pivot 分流，並剪枝僅遞迴包含第 k 小元素的那一側。</li>
+            <li><strong>Median-of-Medians / 中位數的中位數：</strong> Groups elements by 5, finds group medians, and selects their median as the pivot to guarantee balanced splits. 每 5 個元素分組取中位數，再取中位數作為 Pivot，保證極限劃分比例。</li>
+            <li><strong>Applications / 常見應用：</strong> Order statistics, quantile estimation, top-k filtering, statistical median finding. 順序統計量計算、分位數估算、Top-K 篩選與中位數尋找。</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Avg Time: O(N)</span>
+            <span class="badge time">Worst Time: O(N)</span>
+            <span class="badge space">Space: O(1) auxiliary</span>
+        </div>
+    `,
     'sort-bubble': `
         <h3>Bubble Sort</h3>
         <p>The infamous beginner's sorting loop focused on local adjacency.</p>

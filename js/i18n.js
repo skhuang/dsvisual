@@ -150,6 +150,7 @@
             'method.search-aho':            'Aho-Corasick',
             'method.search-fibonacci': 'Fibonacci Search',
             'method.search-interpolation': 'Interpolation Search',
+            'method.select-quickselect': 'Quickselect',
 
             // Methods — OOP
             'method.oop-inheritance':       'Class Inheritance',
@@ -419,6 +420,7 @@
             'method.search-aho':            'Aho-Corasick',
             'method.search-fibonacci': '費氏搜尋',
             'method.search-interpolation': '內插搜尋',
+            'method.select-quickselect': '快速選擇',
 
             // Methods — OOP
             'method.oop-inheritance':       '類別繼承',

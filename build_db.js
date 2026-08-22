@@ -131,6 +131,7 @@ const mappings = {
     'file_inverted.cpp': 'codeFileInverted',
     'recursion.cpp': 'codeRecursion',
     'lru_cache.cpp': 'codeLruCache',
+    'quickselect.cpp': 'codeQuickselect',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

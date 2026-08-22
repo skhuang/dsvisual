@@ -186,6 +186,7 @@ const METHOD_GROUPS = [
             { id: 'search-aho', title: 'Aho-Corasick', file: 'search_aho.cpp', visualizer: 'aho-corasick', controls: 'aho-corasick', codeDrawer: true },
             { id: 'search-fibonacci', title: 'Fibonacci Search', file: 'search_fibonacci.cpp', visualizer: 'fibsearch', controls: 'fibsearch', codeDrawer: true },
             { id: 'search-interpolation', title: 'Interpolation Search', file: 'search_interpolation.cpp', visualizer: 'interpsearch', controls: 'interpsearch', codeDrawer: true },
+            { id: 'select-quickselect', title: 'Quickselect', file: 'quickselect.cpp', visualizer: 'quickselect', controls: 'quickselect', codeDrawer: true },
         ],
     },
     {
