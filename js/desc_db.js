@@ -983,11 +983,26 @@ const descDB = {
             <span class="badge space">Space: O(N)</span>
         </div>
     `,
+    'tree-234': `
+        <h3>2-3-4 Tree (4-way Search Tree)</h3>
+        <p><strong>EN.</strong> A self-balancing multiway search tree where every internal node contains 1, 2, or 3 keys and has 2, 3, or 4 children. <strong>中文。</strong> 自平衡多路搜尋樹（4 階 B-Tree），每個內部節點包含 1 至 3 個鍵值以及 2 至 4 個子節點。</p>
+        <hr>
+        <ul>
+            <li><strong>Proactive Top-Down Splitting / 預先分裂：</strong> During insertion, whenever a 4-node (3 keys) is encountered along the path from root to leaf, it is immediately split by promoting its middle key to the parent. 插入過程中，只要在向下搜尋路徑上遇到滿的 4-節點，便立即將中間鍵值提升至父節點進行分裂。</li>
+            <li><strong>Single-Pass Insertion / 單次走訪：</strong> Preemptive splitting ensures that the parent of the target leaf always has room, preventing cascading upward splits and guaranteeing O(log N) insertion. 預先分裂保證了父節點一定有空間容納提升的鍵值，避免了向上級聯分裂的開銷。</li>
+            <li><strong>Red-Black Tree Equivalence / 與紅黑樹的等價性：</strong> 2-3-4 Trees are structurally isomorphic to Red-Black Trees, where 3-nodes and 4-nodes are represented by clusters of black and red nodes. 2-3-4 樹在結構上與紅黑樹等價，其 3-節點與 4-節點可對應到紅黑樹中的紅色連結。</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Search: O(log N)</span>
+            <span class="badge time">Insert: O(log N)</span>
+            <span class="badge space">Space: O(N)</span>
+        </div>
+    `,
     'tree-expression': `
         <h3>Expression Tree</h3>
         <p>Build a binary expression tree from a postfix expression using a stack of subtrees, then evaluate it bottom-up.</p>
         <hr>
-        <ul>
+        <ul> 
             <li><strong>Operand:</strong> push a leaf node onto the subtree stack</li>
             <li><strong>Operator:</strong> pop two subtrees, make them the children of a new node, push it</li>
             <li><strong>Evaluate:</strong> recurse — leaves are values, internal nodes apply their operator</li>

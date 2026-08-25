@@ -97,7 +97,7 @@ const METHOD_GROUPS = [
             { id: 'tree-array-rep', title: 'Array Representation', file: 'tree_array_rep.cpp', visualizer: 'arrayrep', controls: 'arrayrep', codeDrawer: true },
             { id: 'tree-reconstruct', title: 'Reconstruct Tree', file: 'tree_reconstruct.cpp', visualizer: 'reconstruct', controls: 'reconstruct' },
             { id: 'game-tree', title: 'Game Tree (Minimax / α-β)', file: 'game_tree.cpp', visualizer: 'gametree', controls: 'gametree', codeDrawer: true },
-            { id: 'tree-234, name: 2-3-4 Tree', nameZh: '2-3-4 樹', chapter: 5, category: 'trees', desc: 'Self-balancing multiway search tree (B-Tree of order 4) with proactive top-down splitting', descZh: '自平衡多路搜尋樹（4 階 B-Tree），採 Top-down 預先分裂機制。'},
+            { id: 'tree-234', title: '2-3-4 Tree', file: 'tree_234.cpp', visualizer: 'tree-234', controls: 'tree-234', codeDrawer: true},
         ],
     },
     {
