@@ -57,6 +57,7 @@ const mappings = {
     'tree_ternary.cpp': 'codeTreeTST',
     'tree_btree.cpp': 'codeTreeBTree',
     'tree_bplus.cpp': 'codeTreeBPlus',
+    'tree_234.cpp': 'codeTree234',
     'oop_inheritance.cpp': 'codeOOPInheritance',
     'oop_polymorphism.cpp': 'codeOOPPolymorphism',
     'oop_encapsulation.cpp': 'codeOOPEncapsulation',

@@ -239,7 +239,7 @@
     },
 
     code() {
-      return window.CODE_DB ? window.CODE_DB['tree_234.cpp'] : '';
+      return (window.CODE_DB && window.CODE_DB['tree_234.cpp']) || '';
     },
 
     render(container) {
