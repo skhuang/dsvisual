@@ -468,6 +468,22 @@ const descDB = {
             <span class="badge space">Space: O(1) auxiliary</span>
         </div>
     `,
+    'sparse-table-rmq': `
+        <h3>Sparse Table — Range Minimum Query (稀疏表 / 區間最小值查詢)</h3>
+        <p><strong>EN.</strong> A static (build-once, no updates) structure that precomputes the minimum of every power-of-two-length window via doubling, then answers any range-minimum query in O(1) by overlapping two such windows.</p>
+        <p><strong>中文。</strong> 一種靜態（建好後不支援更新）的資料結構，利用倍增法預先算出所有「長度為 2 的冪」的區間最小值，查詢時用兩個可重疊的視窗覆蓋任意區間，即可在 O(1) 時間內得到答案。</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism / 核心機制：</strong> st[k][i] = min of a[i .. i+2^k-1], built as st[k][i] = min(st[k-1][i], st[k-1][i+2^(k-1)]) — combining two half-length windows. 以 st[k][i] 表示從 i 開始、長度 2^k 的區間最小值，由兩個長度減半的子區間合併而來。</li>
+            <li><strong>O(1) Query / 常數時間查詢：</strong> For range [l, r] of length len, let k = floor(log2(len)); the answer is min(st[k][l], st[k][r-2^k+1]) — the two windows may overlap, which is harmless for an idempotent operator like min. 查詢 [l, r] 時取 k = floor(log2(len))，答案即 min(st[k][l], st[k][r-2^k+1])；兩視窗允許重疊，對 min 這類冪等運算不影響正確性。</li>
+            <li><strong>Trade-off / 取捨：</strong> No point updates (unlike a Segment Tree or Fenwick Tree) — any change requires an O(n log n) rebuild. Best suited for static arrays with many range-min/max/gcd queries. 不支援單點更新（不同於線段樹、樹狀陣列），資料變動需整體以 O(n log n) 重建；適合資料不變、但要大量查詢區間最小值/最大值/gcd 的情境。</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Build Time: O(N log N)</span>
+            <span class="badge time">Query Time: O(1)</span>
+            <span class="badge space">Space: O(N log N)</span>
+        </div>
+    `,
     'sort-bubble': `
         <h3>Bubble Sort</h3>
         <p>The infamous beginner's sorting loop focused on local adjacency.</p>

@@ -2010,6 +2010,25 @@ pre.code-panel-body[class*="language-"] {
 .fenwick-span { font-family: monospace; font-size: 9px; color: #94a3b8; }
 .fenwick-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
 
+/* Sparse Table (RMQ) */
+.spt-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+.spt-controls .spt-arr { flex: 1 1 200px; min-width: 140px; }
+.spt-controls .spt-range { width: 70px; }
+.spt-range-label { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #64748b; }
+.spt-wrap { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.spt-grid { display: grid; grid-template-columns: max-content 1fr; row-gap: 4px; column-gap: 8px; align-items: center; overflow-x: auto; }
+.spt-level-label { font-family: monospace; font-size: 11px; color: #64748b; white-space: nowrap; }
+.spt-row { display: flex; gap: 6px; }
+.spt-idx { width: 36px; text-align: center; font-family: monospace; font-size: 11px; color: #94a3b8; }
+.spt-cell { width: 36px; height: 32px; display: flex; align-items: center; justify-content: center;
+  border: 1px solid #3b82f6; border-radius: 4px; background: #eff6ff; font-family: monospace; font-weight: 700; }
+.spt-cell.empty { border-style: dashed; border-color: #cbd5e1; background: transparent; }
+.spt-cell.active { background: #fde68a; border-color: #d97706; }
+.spt-cell.src { background: #a7f3d0; border-color: #059669; }
+.spt-cell.dst { background: #34d399; border-color: #059669; color: #fff; }
+.spt-cell.ans { background: #f87171; border-color: #dc2626; color: #fff; }
+.spt-msg { font-family: monospace; font-size: 12px; color: #475569; min-height: 1.2em; text-align: center; }
+
 /* Spec 4 — shared weighted graph */
 .wgraph-svg { max-width: 340px; }
 .wgraph-node.wgraph-in { fill: #34d399; }
