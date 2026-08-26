@@ -2,6 +2,128 @@
   'use strict';
 
   const K = () => global.VizKit;
+function loadExamples(methodId) {
+  try {
+    return ExamplesStore.load(
+      localStorage,
+      methodId
+    );
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveExample(
+  methodId,
+  text,
+  defaultText
+) {
+  try {
+    ExamplesStore.save(
+      localStorage,
+      methodId,
+      text,
+      defaultText
+    );
+  } catch (e) {
+    // localStorage unavailable
+  }
+}
+
+function buildExamplesSelect(
+  methodId,
+  defaultText
+) {
+  const escapeAttr = (s) =>
+    String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;');
+
+  const escapeText = (s) =>
+    String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;');
+
+  const truncate = (s) => {
+    s = String(s);
+
+    return s.length > 28
+      ? s.slice(0, 28) + '...'
+      : s;
+  };
+
+  let html =
+    `<select class="hk-examples">`;
+
+  html +=
+    `<option value="">Examples...</option>`;
+
+  html +=
+    `<option value="${escapeAttr(defaultText)}">` +
+    `Default` +
+    `</option>`;
+
+  loadExamples(methodId).forEach((entry) => {
+    if (entry.text === defaultText) {
+      return;
+    }
+
+    html +=
+      `<option value="${escapeAttr(entry.text)}">` +
+      `${escapeText(truncate(entry.text))}` +
+      `</option>`;
+  });
+
+  html += `</select>`;
+
+  return html;
+}
+function edgesToText(edges) {
+  return (edges || [])
+    .map(([u, v]) => `${u}-${v}`)
+    .join(',');
+}
+
+function serializeInput(
+  nLeft,
+  nRight,
+  edges
+) {
+  return [
+    nLeft,
+    nRight,
+    edgesToText(edges)
+  ].join('|');
+}
+
+function deserializeInput(text) {
+  const parts =
+    String(text).split('|');
+
+  if (parts.length < 3) {
+    return null;
+  }
+
+  const nLeft = Number(parts[0]);
+  const nRight = Number(parts[1]);
+
+  const edgeText =
+    parts.slice(2).join('|');
+
+  const result =
+    validateInput(
+      String(nLeft),
+      String(nRight),
+      edgeText
+    );
+
+  if (!result.valid) {
+    return null;
+  }
+
+  return result;
+}
 
   const NORMAL_SAMPLE = {
   nLeft: 2,
@@ -466,6 +588,12 @@ function getDifficultySample() {
 
   function renderGraphHopcroftKarp() {
     const preset = getDifficultySample();
+const defaultSerialized =
+  serializeInput(
+    preset.nLeft,
+    preset.nRight,
+    preset.edges
+  );
 
 const difficulty =
   K().getInputDifficulty
@@ -525,6 +653,11 @@ const difficultyLabel =
             <button class="hk-apply" type="button">套用</button>
 
             <button class="hk-demo" type="button">載入教學範例</button>
+		${buildExamplesSelect(
+  'graph-hopcroft-karp',
+  defaultSerialized
+)}
+
           </div>
 
   <div
@@ -621,6 +754,51 @@ const difficultyLabel =
     const infoBox = host.querySelector('.hk-info');
     const vcr = host.querySelector('.hk-vcr');
     const issuesBox = host.querySelector('.hk-issues');
+    const examplesSelect = host.querySelector('.hk-examples');
+
+	if (examplesSelect) {
+  examplesSelect.addEventListener(
+    'change',
+    (event) => {
+      const value =
+        event.target.value;
+
+      if (!value) {
+        return;
+      }
+
+      const result =
+        deserializeInput(value);
+
+      if (!result) {
+        return;
+      }
+
+      host.querySelector('.hk-left').value =
+        String(result.nLeft);
+
+      host.querySelector('.hk-right').value =
+        String(result.nRight);
+
+      host.querySelector('.hk-edges').value =
+        edgesToText(result.edges);
+
+      showIssues(
+        result.errors,
+        result.warnings
+      );
+
+      frames =
+        global.GraphHopcroftKarpViz.generateFrames(
+          result.nLeft,
+          result.nRight,
+          result.edges
+        ).frames;
+
+      mountControls();
+    }
+  );
+}
 
     let frames =
   global.GraphHopcroftKarpViz.generateFrames(
@@ -739,6 +917,18 @@ host.querySelector('.hk-edges').value =
   if (!result.valid) {
     return;
   }
+const serialized =
+  serializeInput(
+    result.nLeft,
+    result.nRight,
+    result.edges
+  );
+
+saveExample(
+  'graph-hopcroft-karp',
+  serialized,
+  defaultSerialized
+);
 
   frames =
     global.GraphHopcroftKarpViz.generateFrames(
