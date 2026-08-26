@@ -90,6 +90,7 @@ const mappings = {
     'search_aho.cpp': 'codeSearchAho',
     'tree_segment.cpp': 'codeTreeSegment',
     'tree_fenwick.cpp': 'codeTreeFenwick',
+    'tree_persistent_segment.cpp': 'codeTreePersistentSegment',
     'tree_traversal.cpp': 'codeTreeTraversal',
     'huffman.cpp': 'codeHuffman',
     'expr_infix_postfix.cpp': 'codeExprInfixPostfix',
