@@ -84,6 +84,7 @@ const METHOD_GROUPS = [
             { id: 'tree-dsu', title: 'Disjoint Set (Union-Find)', file: 'tree_dsu.cpp', visualizer: 'dsu', controls: 'dsu', codeDrawer: true },
             { id: 'tree-segment', title: 'Segment Tree', file: 'tree_segment.cpp', visualizer: 'segtree', controls: 'segtree', codeDrawer: true },
             { id: 'tree-fenwick', title: 'Fenwick Tree (BIT)', file: 'tree_fenwick.cpp', visualizer: 'fenwick', controls: 'fenwick', codeDrawer: true },
+            { id: 'tree-persistent-segment', title: 'Persistent Segment Tree', file: 'tree_persistent_segment.cpp', visualizer: 'pst', controls: 'pst', codeDrawer: true },
             { id: 'tree-traversal', title: 'Tree Traversal', file: 'tree_traversal.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'huffman', title: 'Huffman Coding', file: 'huffman.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'tree-obst', title: 'Optimal BST', file: 'tree_obst.cpp', visualizer: 'obst', controls: 'obst', codeDrawer: true },
@@ -97,6 +98,7 @@ const METHOD_GROUPS = [
             { id: 'tree-array-rep', title: 'Array Representation', file: 'tree_array_rep.cpp', visualizer: 'arrayrep', controls: 'arrayrep', codeDrawer: true },
             { id: 'tree-reconstruct', title: 'Reconstruct Tree', file: 'tree_reconstruct.cpp', visualizer: 'reconstruct', controls: 'reconstruct' },
             { id: 'game-tree', title: 'Game Tree (Minimax / α-β)', file: 'game_tree.cpp', visualizer: 'gametree', controls: 'gametree', codeDrawer: true },
+            { id: 'tree-234', title: '2-3-4 Tree', file: 'tree_234.cpp', visualizer: 'tree-234', controls: 'tree-234', codeDrawer: true},
         ],
     },
     {

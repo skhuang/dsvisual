@@ -2210,6 +2210,28 @@ text.gm-edge-label.gm-edge-hover { fill: #db2777; font-weight: 700; }
 .gmf-cut { padding: 7px 10px; border: 1px solid #fca5a5; border-radius: 7px; background: #fff1f2; color: #991b1b; font-family: monospace; font-size: 12px; text-align: center; }
 .gmf-msg { min-height: 1.3em; font-family: monospace; font-size: 12px; color: #475569; text-align: center; }
 
+.pst-wrap { display: flex; flex-direction: column; gap: 10px; align-items: center; width: 100%; }
+.pst-controls { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; justify-content: center; font-size: 13px; color: #475569; }
+.pst-controls label { display: flex; align-items: center; gap: 4px; }
+.pst-controls input { font-family: monospace; width: 92px; }
+.pst-controls .pst-arr { width: 150px; }
+.pst-tier { padding: 3px 9px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; font-weight: 700; }
+.pst-issues { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; }
+.pst-error { color: #b91c1c; font-weight: 700; }
+.pst-warning { color: #92400e; }
+.pst-versions { display: flex; gap: 8px; }
+.pst-vtab { border: 1.5px solid #cbd5e1; background: #fff; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 700; color: #475569; cursor: pointer; }
+.pst-vtab-sum { font-weight: 400; color: #94a3b8; margin-left: 3px; }
+.pst-vtab-current { border-color: #059669; background: #ecfdf5; color: #047857; }
+.pst-banner { font-family: monospace; font-size: 13px; font-weight: 800; color: #0f172a; min-height: 1.3em; }
+.pst-stage { width: 100%; overflow: auto; }
+.pst-svg { max-width: 100%; }
+.pst-node { }
+.pst-stats-row { font-size: 12px; color: #475569; text-align: center; min-height: 1.2em; }
+.pst-msg { min-height: 1.3em; font-family: monospace; font-size: 12px; color: #475569; text-align: center; }
+.pst-invariant { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; font-family: monospace; font-size: 12px; color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; }
+.pst-jump-btn { border: 1px solid #93c5fd; background: #eff6ff; color: #1d4ed8; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700; cursor: pointer; }
+
 /* Euler trail / circuit (Hierholzer): graph beside the stack + output list. */
 .geu-wrap { display: flex; flex-direction: column; gap: 10px; align-items: center; width: 100%; }
 .geu-controls { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; justify-content: center; font-size: 13px; color: #475569; }
