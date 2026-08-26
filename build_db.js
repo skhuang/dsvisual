@@ -134,6 +134,7 @@ const mappings = {
     'recursion.cpp': 'codeRecursion',
     'lru_cache.cpp': 'codeLruCache',
     'quickselect.cpp': 'codeQuickselect',
+    'sparse_table_rmq.cpp': 'codeSparseTableRMQ',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

@@ -189,6 +189,7 @@ const METHOD_GROUPS = [
             { id: 'search-fibonacci', title: 'Fibonacci Search', file: 'search_fibonacci.cpp', visualizer: 'fibsearch', controls: 'fibsearch', codeDrawer: true },
             { id: 'search-interpolation', title: 'Interpolation Search', file: 'search_interpolation.cpp', visualizer: 'interpsearch', controls: 'interpsearch', codeDrawer: true },
             { id: 'select-quickselect', title: 'Quickselect', file: 'quickselect.cpp', visualizer: 'quickselect', controls: 'quickselect', codeDrawer: true },
+            { id: 'sparse-table-rmq', title: 'Sparse Table (RMQ)', file: 'sparse_table_rmq.cpp', visualizer: 'sparse-table-rmq', controls: 'sparse-table-rmq', codeDrawer: true },
         ],
     },
     {
