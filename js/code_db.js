@@ -3708,6 +3708,73 @@ int main() {
 }
 `;
 
+const codeTree234 = `#include <iostream>
+#include <vector>
+#include <algorithm>
+
+struct Node234 {
+    std::vector<int> keys;
+    std::vector<Node234*> children;
+
+    bool isLeaf() const { return children.empty(); }
+    bool isFull() const { return keys.size() == 3; }
+};
+
+class Tree234 {
+private:
+    Node234* root;
+
+    void splitChild(Node234* parent, int idx) {
+        Node234* fullChild = parent->children[idx];
+        Node234* leftChild = new Node234();
+        Node234* rightChild = new Node234();
+
+        leftChild->keys = {fullChild->keys[0]};
+        int middleKey = fullChild->keys[1];
+        rightChild->keys = {fullChild->keys[2]};
+
+        if (!fullChild->isLeaf()) {
+            leftChild->children = {fullChild->children[0], fullChild->children[1]};
+            rightChild->children = {fullChild->children[2], fullChild->children[3]};
+        }
+
+        parent->keys.insert(parent->keys.begin() + idx, middleKey);
+        parent->children.erase(parent->children.begin() + idx);
+        parent->children.insert(parent->children.begin() + idx, rightChild);
+        parent->children.insert(parent->children.begin() + idx, leftChild);
+        delete fullChild;
+    }
+
+    void insertNonFull(Node234* node, int key) {
+        int i = static_cast<int>(node->keys.size()) - 1;
+        if (node->isLeaf()) {
+            node->keys.push_back(key);
+            std::sort(node->keys.begin(), node->keys.end());
+            return;
+        }
+        while (i >= 0 && key < node->keys[i]) i--;
+        i++;
+        if (node->children[i]->isFull()) {
+            splitChild(node, i);
+            if (key > node->keys[i]) i++;
+        }
+        insertNonFull(node->children[i], key);
+    }
+
+public:
+    Tree234() : root(new Node234()) {}
+
+    void insert(int key) {
+        if (root->isFull()) {
+            Node234* oldRoot = root;
+            root = new Node234();
+            root->children.push_back(oldRoot);
+            splitChild(root, 0);
+        }
+        insertNonFull(root, key);
+    }
+};`;
+
 const codeOOPInheritance = `#include <iostream>
 using namespace std;
 
@@ -5650,6 +5717,69 @@ int main() {
     cout << "prefixSum(7) = " << ft.prefixSum(7) << "\\n"; // 28
     ft.update(3, 5);
     cout << "after +5 at index 3, prefixSum(7) = " << ft.prefixSum(7) << "\\n"; // 33
+    return 0;
+}
+`;
+
+const codeTreePersistentSegment = `#include <iostream>
+#include <memory>
+#include <vector>
+
+// A persistent segment tree never mutates an existing node. Every update
+// walks root-to-leaf and allocates a NEW node for each node on that path
+// (O(log n) allocations); every node NOT on the path is shared, unchanged,
+// with the previous version. Each update therefore returns a new root while
+// every earlier root remains valid and queryable forever.
+struct Node {
+    int sum;
+    std::shared_ptr<Node> left, right;
+    Node(int s, std::shared_ptr<Node> l, std::shared_ptr<Node> r)
+        : sum(s), left(std::move(l)), right(std::move(r)) {}
+};
+using NodePtr = std::shared_ptr<Node>;
+
+NodePtr build(const std::vector<int>& arr, int l, int r) {
+    if (l == r) return std::make_shared<Node>(arr[l], nullptr, nullptr);
+    int mid = (l + r) / 2;
+    NodePtr left = build(arr, l, mid);
+    NodePtr right = build(arr, mid + 1, r);
+    return std::make_shared<Node>(left->sum + right->sum, left, right);
+}
+
+// Returns the root of a NEW version with arr[index] = value; \`prev\` (and every
+// node it can still reach) is left completely untouched.
+NodePtr update(const NodePtr& prev, int l, int r, int index, int value) {
+    if (l == r) return std::make_shared<Node>(value, nullptr, nullptr);
+    int mid = (l + r) / 2;
+    if (index <= mid) {
+        NodePtr newLeft = update(prev->left, l, mid, index, value);
+        // prev->right is reused as-is: no allocation, no mutation.
+        return std::make_shared<Node>(newLeft->sum + prev->right->sum, newLeft, prev->right);
+    }
+    NodePtr newRight = update(prev->right, mid + 1, r, index, value);
+    return std::make_shared<Node>(prev->left->sum + newRight->sum, prev->left, newRight);
+}
+
+int query(const NodePtr& node, int l, int r, int ql, int qr) {
+    if (qr < l || r < ql) return 0;                 // disjoint
+    if (ql <= l && r <= qr) return node->sum;        // fully covered
+    int mid = (l + r) / 2;                           // partial: recurse
+    return query(node->left, l, mid, ql, qr) + query(node->right, mid + 1, r, ql, qr);
+}
+
+int main() {
+    std::vector<int> arr = {5, 8, 6, 3, 2, 7, 2, 6};
+    int n = static_cast<int>(arr.size());
+
+    std::vector<NodePtr> roots;
+    roots.push_back(build(arr, 0, n - 1));           // version 0
+
+    roots.push_back(update(roots[0], 0, n - 1, 1, 20)); // version 1: index 1 -> 20
+    roots.push_back(update(roots[1], 0, n - 1, 4, 9));  // version 2: index 4 -> 9
+
+    // v0 is still exactly as it was — persistence in action.
+    std::cout << "sum[2,5] on v0 = " << query(roots[0], 0, n - 1, 2, 5) << '\\n';
+    std::cout << "sum[2,5] on v2 = " << query(roots[2], 0, n - 1, 2, 5) << '\\n';
     return 0;
 }
 `;
@@ -7639,6 +7769,55 @@ int quickSelect(std::vector<int>& arr, int l, int r, int k) {
 
 `;
 
+const codeSparseTableRMQ = `#include <iostream>
+#include <vector>
+using namespace std;
+
+// Sparse Table for Range Minimum Query (RMQ). Static structure: no updates
+// after build, but every query answers in O(1) once built.
+//
+// st[k][i] = min of the window a[i .. i + 2^k - 1] (length 2^k).
+// Doubling: st[k][i] = min(st[k-1][i], st[k-1][i + 2^(k-1)]) — two half
+// windows of length 2^(k-1) that together cover the full 2^k window.
+class SparseTable {
+    int n;
+    vector<vector<int>> st; // st[k][i]
+    vector<int> logTable;   // logTable[len] = floor(log2(len))
+
+public:
+    SparseTable(const vector<int>& a) {
+        n = a.size();
+        int K = 1;
+        while ((1 << K) <= n) K++;
+        st.assign(K, vector<int>(n));
+        st[0] = a;
+        for (int k = 1; k < K; k++)
+            for (int i = 0; i + (1 << k) <= n; i++)
+                st[k][i] = min(st[k - 1][i], st[k - 1][i + (1 << (k - 1))]);
+
+        logTable.assign(n + 1, 0);
+        for (int len = 2; len <= n; len++)
+            logTable[len] = logTable[len / 2] + 1;
+    }
+
+    // Inclusive range [l, r], 0-indexed. Two overlapping windows of the same
+    // power-of-two length cover [l, r]; overlap is harmless for min/max/gcd.
+    int query(int l, int r) {
+        int len = r - l + 1;
+        int k = logTable[len];
+        return min(st[k][l], st[k][r - (1 << k) + 1]);
+    }
+};
+
+int main() {
+    vector<int> a = {7, 2, 3, 9, 4, 6, 1, 8};
+    SparseTable rmq(a);
+    cout << "min[1,4] = " << rmq.query(1, 4) << "\\n"; // 2
+    cout << "min[3,7] = " << rmq.query(3, 7) << "\\n"; // 1
+    return 0;
+}
+`;
+
 const CODE_DB = {
     "search_linear.cpp": codeSearchLinear,
     "search_binary.cpp": codeSearchBinary,
@@ -7696,6 +7875,7 @@ const CODE_DB = {
     "tree_ternary.cpp": codeTreeTST,
     "tree_btree.cpp": codeTreeBTree,
     "tree_bplus.cpp": codeTreeBPlus,
+    "tree_234.cpp": codeTree234,
     "oop_inheritance.cpp": codeOOPInheritance,
     "oop_polymorphism.cpp": codeOOPPolymorphism,
     "oop_encapsulation.cpp": codeOOPEncapsulation,
@@ -7728,6 +7908,7 @@ const CODE_DB = {
     "search_aho.cpp": codeSearchAho,
     "tree_segment.cpp": codeTreeSegment,
     "tree_fenwick.cpp": codeTreeFenwick,
+    "tree_persistent_segment.cpp": codeTreePersistentSegment,
     "tree_traversal.cpp": codeTreeTraversal,
     "huffman.cpp": codeHuffman,
     "expr_infix_postfix.cpp": codeExprInfixPostfix,
@@ -7771,6 +7952,7 @@ const CODE_DB = {
     "recursion.cpp": codeRecursion,
     "lru_cache.cpp": codeLruCache,
     "quickselect.cpp": codeQuickselect,
+    "sparse_table_rmq.cpp": codeSparseTableRMQ,
 };
 
 if (typeof module !== 'undefined' && module.exports) { module.exports.CODE_DB = CODE_DB; }

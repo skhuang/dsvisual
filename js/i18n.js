@@ -50,6 +50,7 @@
             'method.tree-dsu':              'Disjoint Set (Union-Find)',
             'method.tree-segment':          'Segment Tree',
             'method.tree-fenwick':          'Fenwick Tree (BIT)',
+            'method.tree-persistent-segment': 'Persistent Segment Tree',
             'method.tree-traversal':        'Tree Traversal',
             'method.huffman':               'Huffman Coding',
             'method.tree-threaded': 'Threaded Binary Tree',
@@ -62,6 +63,7 @@
             'method.decision-tree-coins': '8-Coins Decision Tree',
             'method.tree-copy-equal': 'Tree COPY & EQUAL',
             'method.game-tree': 'Game Tree (Minimax / α-β)',
+            'method.tree-234': '2-3-4 Tree',
 
             // Methods — Graphs
             'method.graph':                 'Undirected Graph',
@@ -320,6 +322,7 @@
             'method.tree-dsu':              '互斥集合（並查集）',
             'method.tree-segment':          '線段樹',
             'method.tree-fenwick':          'Fenwick 樹（BIT）',
+            'method.tree-persistent-segment': '可持久化線段樹',
             'method.tree-traversal':        '二元樹走訪',
             'method.huffman':               'Huffman 編碼',
             'method.tree-threaded': '引線二元樹',
@@ -332,6 +335,7 @@
             'method.decision-tree-coins': '八枚硬幣決策樹',
             'method.tree-copy-equal': '二元樹 COPY 與 EQUAL',
             'method.game-tree': '賽局樹(Minimax / α-β 剪枝)',
+            'method.tree-234': '2-3-4 樹',
 
             // Methods — Graphs
             'method.graph':                 '無向圖',

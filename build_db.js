@@ -57,6 +57,7 @@ const mappings = {
     'tree_ternary.cpp': 'codeTreeTST',
     'tree_btree.cpp': 'codeTreeBTree',
     'tree_bplus.cpp': 'codeTreeBPlus',
+    'tree_234.cpp': 'codeTree234',
     'oop_inheritance.cpp': 'codeOOPInheritance',
     'oop_polymorphism.cpp': 'codeOOPPolymorphism',
     'oop_encapsulation.cpp': 'codeOOPEncapsulation',
@@ -89,6 +90,7 @@ const mappings = {
     'search_aho.cpp': 'codeSearchAho',
     'tree_segment.cpp': 'codeTreeSegment',
     'tree_fenwick.cpp': 'codeTreeFenwick',
+    'tree_persistent_segment.cpp': 'codeTreePersistentSegment',
     'tree_traversal.cpp': 'codeTreeTraversal',
     'huffman.cpp': 'codeHuffman',
     'expr_infix_postfix.cpp': 'codeExprInfixPostfix',
@@ -132,6 +134,7 @@ const mappings = {
     'recursion.cpp': 'codeRecursion',
     'lru_cache.cpp': 'codeLruCache',
     'quickselect.cpp': 'codeQuickselect',
+    'sparse_table_rmq.cpp': 'codeSparseTableRMQ',
 };
 
 let out = '// Auto-generated code DB for visualization\n';

@@ -76,6 +76,28 @@
     return { arr, target };
   }
 
+  // sparse-table-rmq: an array plus a random valid [l, r] query range.
+  // 'edge' -> single-element array (l===r===0, trivial query).
+  // 'special' -> duplicate values so ties in the min are visible.
+  // 'large' -> near the viz's display cap, to show a taller doubling table.
+  function sparseTableInput(rng, difficulty) {
+    let vals;
+    if (difficulty === 'edge') {
+      vals = [randInt(rng, 1, 99)];
+    } else if (difficulty === 'special') {
+      const n = randInt(rng, 6, 8), tie = randInt(rng, 1, 5);
+      vals = Array.from({ length: n }, () => (rng() < 0.4 ? tie : randInt(rng, 1, 99)));
+    } else if (difficulty === 'large') {
+      vals = Array.from({ length: randInt(rng, 12, 16) }, () => randInt(rng, 1, 99));
+    } else {
+      vals = Array.from({ length: randInt(rng, 6, 9) }, () => randInt(rng, 1, 99));
+    }
+    const n = vals.length;
+    let l = randInt(rng, 0, n - 1), r = randInt(rng, 0, n - 1);
+    if (l > r) { const t = l; l = r; r = t; }
+    return { vals, l, r };
+  }
+
   function huffmanText(rng, difficulty) {
     const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const ch = () => A[Math.floor(rng() * 26)];
@@ -1103,6 +1125,7 @@
       case 'search-interpolation': return searchInput(rng, difficulty, true);
       case 'search-binary':
       case 'search-linear': return searchInput(rng, difficulty, false);
+      case 'sparse-table-rmq': return sparseTableInput(rng, difficulty);
       case 'graph-bfs':
       case 'graph-dfs':
         return { text: graphEdgeList(rng, difficulty, false) };

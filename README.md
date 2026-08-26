@@ -150,6 +150,7 @@ Every entry below is a live, step-by-step visualizer, grouped as in the app's na
 | Z-Algorithm | Z-array prefix matching |
 | String Matching Compared | Side-by-side of the matching algorithms |
 | Aho-Corasick | Multi-pattern trie + failure links |
+| Sparse Table (RMQ) | O(n log n) doubling build, O(1) range-minimum query — *student contribution* |
 
 ### File Structures
 | Structure | Description |
