@@ -9,7 +9,7 @@ test('cppFiles returns every .cpp in repo root', () => {
   const files = f.cppFiles();
   assert.ok(files.length >= 50, 'expected at least 50 .cpp files, got ' + files.length);
   assert.ok(files.every((p) => p.endsWith('.cpp')));
-  assert.ok(files.some((p) => p.endsWith('/stack_array.cpp')))
+  assert.ok(files.some((p) => p.endsWith('stack_array.cpp')));
 });
 
 test('formatCppFile reformats and is idempotent', () => {
