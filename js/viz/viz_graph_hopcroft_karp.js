@@ -13,32 +13,94 @@
     ]
   };
 
-  function parseEdges(text, nLeft, nRight) {
-    const edges = [];
-    const parts = String(text || '').split(',');
+  function validateInput(leftText, rightText, edgeText) {
+  const errors = [];
+  const warnings = [];
 
-    for (const raw of parts) {
-      const s = raw.trim();
-      if (!s) continue;
+  const nLeft = Number(leftText);
+  const nRight = Number(rightText);
 
-      const m = s.match(/^(\d+)-(\d+)$/);
-      if (!m) continue;
+  if (!Number.isInteger(nLeft)) {
+    errors.push('左側頂點數 |U| 必須是整數。');
+  } else if (nLeft < 1) {
+    errors.push('左側頂點數 |U| 至少必須為 1。');
+  } else if (nLeft > 10) {
+    errors.push('左側頂點數 |U| 最多為 10，以避免視覺化過度擁擠。');
+  }
 
-      const u = Number(m[1]);
-      const v = Number(m[2]);
+  if (!Number.isInteger(nRight)) {
+    errors.push('右側頂點數 |V| 必須是整數。');
+  } else if (nRight < 1) {
+    errors.push('右側頂點數 |V| 至少必須為 1。');
+  } else if (nRight > 10) {
+    errors.push('右側頂點數 |V| 最多為 10，以避免視覺化過度擁擠。');
+  }
 
-      if (
-        Number.isInteger(u) &&
-        Number.isInteger(v) &&
-        u >= 0 && u < nLeft &&
-        v >= 0 && v < nRight
-      ) {
-        edges.push([u, v]);
-      }
+  if (errors.length > 0) {
+    return {
+      valid: false,
+      nLeft,
+      nRight,
+      edges: [],
+      errors,
+      warnings
+    };
+  }
+
+  const edges = [];
+  const seen = new Set();
+
+  const tokens = String(edgeText || '')
+    .split(/[,;\n]/)
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  for (const token of tokens) {
+    const match = token.match(/^(\d+)\s*-\s*(\d+)$/);
+
+    if (!match) {
+      warnings.push(`忽略格式錯誤的邊：「${token}」`);
+      continue;
     }
 
-    return edges;
+    const u = Number(match[1]);
+    const v = Number(match[2]);
+
+    if (u < 0 || u >= nLeft || v < 0 || v >= nRight) {
+      warnings.push(
+        `忽略超出範圍的邊：${u}-${v}`
+      );
+      continue;
+    }
+
+    const key = `${u}-${v}`;
+
+    if (seen.has(key)) {
+      warnings.push(
+        `重複邊 ${u}-${v} 已忽略。`
+      );
+      continue;
+    }
+
+    seen.add(key);
+    edges.push([u, v]);
   }
+
+  if (edges.length === 0) {
+    warnings.push(
+      '沒有有效邊；最大匹配將為 0。'
+    );
+  }
+
+  return {
+    valid: true,
+    nLeft,
+    nRight,
+    edges,
+    errors,
+    warnings
+  };
+}
 
   function buildNodePositions(nLeft, nRight) {
     const left = [];
@@ -423,6 +485,17 @@
             <button class="hk-demo" type="button">載入教學範例</button>
           </div>
 
+  <div
+    class="hk-issues"
+    style="
+        display:none;
+        margin:0 0 14px 0;
+        padding:10px 14px;
+        border-radius:10px;
+        font-size:14px;
+        line-height:1.7;
+    "
+  ></div>
           <div style="
             text-align:center;
             font-size:16px;
@@ -505,6 +578,7 @@
     const queueBox = host.querySelector('.hk-queue');
     const infoBox = host.querySelector('.hk-info');
     const vcr = host.querySelector('.hk-vcr');
+    const issuesBox = host.querySelector('.hk-issues');
 
     let frames =
     global.GraphHopcroftKarpViz.generateFrames(
@@ -529,6 +603,40 @@
         <div>邊數：${frame.data.edges.length}</div>
       `;
     }
+
+    function showIssues(errors, warnings) {
+  if (
+    errors.length === 0 &&
+    warnings.length === 0
+  ) {
+    issuesBox.style.display = 'none';
+    issuesBox.innerHTML = '';
+    return;
+  }
+
+  issuesBox.style.display = 'block';
+
+  if (errors.length > 0) {
+    issuesBox.style.background = '#fef2f2';
+    issuesBox.style.border = '1px solid #fecaca';
+    issuesBox.style.color = '#991b1b';
+  } else {
+    issuesBox.style.background = '#fffbeb';
+    issuesBox.style.border = '1px solid #fde68a';
+    issuesBox.style.color = '#92400e';
+  }
+
+  const errorHtml = errors
+    .map(msg => `<div>⚠ ${msg}</div>`)
+    .join('');
+
+  const warningHtml = warnings
+    .map(msg => `<div>• ${msg}</div>`)
+    .join('');
+
+  issuesBox.innerHTML =
+    errorHtml + warningHtml;
+}
 
     function mountControls() {
       vcr.innerHTML = '';
@@ -556,23 +664,40 @@
     });
 
     host.querySelector('.hk-apply').addEventListener('click', () => {
-      const leftValue = Number(host.querySelector('.hk-left').value);
-      const rightValue = Number(host.querySelector('.hk-right').value);
-      const edgeText = host.querySelector('.hk-edges').value;
+  const leftText =
+    host.querySelector('.hk-left').value;
 
-      const nLeft = Number.isInteger(leftValue) && leftValue > 0 ? leftValue : 2;
-      const nRight = Number.isInteger(rightValue) && rightValue > 0 ? rightValue : 2;
-      const edges = parseEdges(edgeText, nLeft, nRight);
+  const rightText =
+    host.querySelector('.hk-right').value;
 
-      frames =
+  const edgeText =
+    host.querySelector('.hk-edges').value;
+
+  const result =
+    validateInput(
+      leftText,
+      rightText,
+      edgeText
+    );
+
+  showIssues(
+    result.errors,
+    result.warnings
+  );
+
+  if (!result.valid) {
+    return;
+  }
+
+  frames =
     global.GraphHopcroftKarpViz.generateFrames(
-      nLeft,
-      nRight,
-      edges
+      result.nLeft,
+      result.nRight,
+      result.edges
     ).frames;
 
-      mountControls();
-    });
+  mountControls();
+});
   }
 
   global.VizRegistry.attach('graph-hopcroft-karp', {
