@@ -2,6 +2,17 @@
   'use strict';
 
   const K = () => global.VizKit;
+const L = (zh, en) => {
+  try {
+    return global.I18N &&
+      I18N.getCurrentLanguage() === 'zh'
+      ? zh
+      : en;
+  }
+  catch (error) {
+    return en;
+  }
+};
 function loadExamples(methodId) {
   try {
     return ExamplesStore.load(
@@ -421,8 +432,8 @@ function getDifficultySample() {
       <table style="border-collapse:collapse; width:100%; font-size:14px;">
         <thead>
           <tr style="background:#f8fafc;">
-            <th style="padding:6px 10px;border:1px solid #cbd5e1;">Left</th>
-            <th style="padding:6px 10px;border:1px solid #cbd5e1;">Matched To</th>
+            <th style="padding:6px 10px;border:1px solid #cbd5e1;">${L('左側', 'Left')}</th>
+            <th style="padding:6px 10px;border:1px solid #cbd5e1;">${L('匹配至', 'Matched To')}</th>
           </tr>
         </thead>
         <tbody>
@@ -602,8 +613,8 @@ const difficulty =
 
 const difficultyLabel =
   difficulty === 'normal'
-    ? '一般輸入'
-    : '挑戰輸入';
+    ? L('一般輸入', 'Normal input')
+    : L('挑戰輸入', 'Challenge input');
 
     const host = K().acquireDynamicVizHost();
 
@@ -646,13 +657,13 @@ const difficultyLabel =
               <input class="hk-right" type="text" value="${preset.nRight}" style="width:56px;margin-left:4px;">
             </label>
 
-            <label>邊 u-v
+            <label>${L('邊 u-v', 'Edges u-v')}
               <input class="hk-edges" type="text" value="${initialEdgeText}" style="width:360px;max-width:100%;margin-left:4px;">
             </label>
 
-            <button class="hk-apply" type="button">套用</button>
+            <button class="hk-apply" type="button">${L('套用', 'Apply')}</button>
 
-            <button class="hk-demo" type="button">載入教學範例</button>
+            <button class="hk-demo" type="button">${L('教學範例', 'tutorial example')}</button>
 		${buildExamplesSelect(
   'graph-hopcroft-karp',
   defaultSerialized
@@ -678,7 +689,8 @@ const difficultyLabel =
             color:#2563eb;
             margin-bottom:14px;
           ">
-            Hopcroft-Karp 二分圖最大匹配
+            'Hopcroft-Karp 二分圖最大匹配',
+  'Hopcroft-Karp Bipartite Matching'
           </div>
 
           <div style="
@@ -705,7 +717,7 @@ const difficultyLabel =
               padding:14px;
             ">
               <div style="font-size:18px;font-weight:700;margin-bottom:10px;color:#1e293b;">
-                狀態資訊
+                ${L('狀態資訊', 'State')}
               </div>
 
               <div style="margin-bottom:14px;">
@@ -724,17 +736,17 @@ const difficultyLabel =
               </div>
 
               <div style="margin-bottom:14px;">
-                <div style="font-weight:700;margin-bottom:6px;">說明</div>
+                <div style="font-weight:700;margin-bottom:6px;">${L('說明', 'Description')}</div>
                 <div class="hk-info" style="font-size:14px;line-height:1.7;color:#334155;"></div>
               </div>
 
               <div>
-                <div style="font-weight:700;margin-bottom:6px;">圖例</div>
+                <div style="font-weight:700;margin-bottom:6px;">${L('圖例', 'Legend')}</div>
                 <div style="font-size:14px;line-height:1.8;color:#334155;">
-                  <div><span style="display:inline-block;width:18px;height:0;border-top:3px solid #94a3b8;vertical-align:middle;margin-right:8px;"></span>未匹配邊</div>
-                  <div><span style="display:inline-block;width:18px;height:0;border-top:5px solid #16a34a;vertical-align:middle;margin-right:8px;"></span>匹配邊</div>
-                  <div><span style="display:inline-block;width:18px;height:0;border-top:5px solid #f59e0b;vertical-align:middle;margin-right:8px;"></span>目前檢查</div>
-                  <div><span style="display:inline-block;width:18px;height:0;border-top:5px solid #7c3aed;vertical-align:middle;margin-right:8px;"></span>增廣路徑</div>
+                  <div><span style="display:inline-block;width:18px;height:0;border-top:3px solid #94a3b8;vertical-align:middle;margin-right:8px;"></span>${L('未匹配邊', 'Unmatched edge')}</div>
+                  <div><span style="display:inline-block;width:18px;height:0;border-top:5px solid #16a34a;vertical-align:middle;margin-right:8px;"></span>${L('匹配邊', 'Matched edge')}</div>
+                  <div><span style="display:inline-block;width:18px;height:0;border-top:5px solid #f59e0b;vertical-align:middle;margin-right:8px;"></span>${L('目前檢查', 'Inspecting')}</div>
+                  <div><span style="display:inline-block;width:18px;height:0;border-top:5px solid #7c3aed;vertical-align:middle;margin-right:8px;"></span>${L('增廣路徑', 'Augmenting path')}</div>
                 </div>
               </div>
             </div>
@@ -816,11 +828,11 @@ const difficultyLabel =
       infoBox.innerHTML = `
         <div><strong>${frame.title}</strong></div>
         <div style="margin-top:6px;">${frame.message}</div>
-        <div style="margin-top:8px;">步驟：${index + 1} / ${frames.length}</div>
-        <div>目前匹配大小：${frame.data.matching.length}</div>
-        <div>左側頂點數：${frame.data.nLeft}</div>
-        <div>右側頂點數：${frame.data.nRight}</div>
-        <div>邊數：${frame.data.edges.length}</div>
+        <div style="margin-top:8px;">${L('步驟', 'Step')}：${index + 1} / ${frames.length}</div>
+        <div>${L('目前匹配大小', 'Matching size')}：${frame.data.matching.length}</div>
+        <div>${L('左側頂點數', 'Left vertices')}：${frame.data.nLeft}</div>
+        <div>${L('右側頂點數', 'Right vertices')}：${frame.data.nRight}</div>
+        <div>${L('邊數', 'Edges')}：${frame.data.edges.length}</div>
       `;
     }
 
