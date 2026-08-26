@@ -3,15 +3,42 @@
 
   const K = () => global.VizKit;
 
-  const SAMPLE = {
-    nLeft: 2,
-    nRight: 2,
-    edges: [
-      [0, 0],
-      [0, 1],
-      [1, 0]
-    ]
-  };
+  const NORMAL_SAMPLE = {
+  nLeft: 2,
+  nRight: 2,
+  edges: [
+    [0, 0],
+    [0, 1],
+    [1, 0]
+  ]
+};
+
+const CHALLENGE_SAMPLE = {
+  nLeft: 5,
+  nRight: 5,
+  edges: [
+    [0, 0],
+    [0, 1],
+    [1, 0],
+    [2, 1],
+    [2, 2],
+    [3, 2],
+    [3, 3],
+    [4, 3],
+    [4, 4]
+  ]
+};
+
+function getDifficultySample() {
+  const difficulty =
+    K().getInputDifficulty
+      ? K().getInputDifficulty()
+      : 'normal';
+
+  return difficulty === 'normal'
+    ? NORMAL_SAMPLE
+    : CHALLENGE_SAMPLE;
+}
 
   function validateInput(leftText, rightText, edgeText) {
   const errors = [];
@@ -438,9 +465,24 @@
   }
 
   function renderGraphHopcroftKarp() {
+    const preset = getDifficultySample();
+
+const difficulty =
+  K().getInputDifficulty
+    ? K().getInputDifficulty()
+    : 'normal';
+
+const difficultyLabel =
+  difficulty === 'normal'
+    ? '一般輸入'
+    : '挑戰輸入';
+
     const host = K().acquireDynamicVizHost();
 
-    const initialEdgeText = SAMPLE.edges.map(([u, v]) => `${u}-${v}`).join(',');
+    const initialEdgeText =
+  preset.edges
+    .map(([u, v]) => `${u}-${v}`)
+    .join(',');
 
     host.innerHTML = `
       <div style="padding: 18px 18px 8px 18px;">
@@ -466,14 +508,14 @@
               font-size:13px;
               border-radius:999px;
               padding:6px 12px;
-            ">一般輸入</span>
+            ">${difficultyLabel}</span>
 
             <label>|U|
-              <input class="hk-left" type="text" value="2" style="width:56px;margin-left:4px;">
+              <input class="hk-left" type="text" value="${preset.nLeft}" style="width:56px;margin-left:4px;">
             </label>
 
             <label>|V|
-              <input class="hk-right" type="text" value="2" style="width:56px;margin-left:4px;">
+              <input class="hk-right" type="text" value="${preset.nRight}" style="width:56px;margin-left:4px;">
             </label>
 
             <label>邊 u-v
@@ -581,11 +623,11 @@
     const issuesBox = host.querySelector('.hk-issues');
 
     let frames =
-    global.GraphHopcroftKarpViz.generateFrames(
-      SAMPLE.nLeft,
-      SAMPLE.nRight,
-      SAMPLE.edges
-   ).frames;
+  global.GraphHopcroftKarpViz.generateFrames(
+    preset.nLeft,
+    preset.nRight,
+    preset.edges
+  ).frames;
 
     function paint(frame, index) {
       svgArea.innerHTML = renderSvgGraph(frame);
@@ -651,15 +693,24 @@
     mountControls();
 
     host.querySelector('.hk-demo').addEventListener('click', () => {
-      host.querySelector('.hk-left').value = '2';
-      host.querySelector('.hk-right').value = '2';
-      host.querySelector('.hk-edges').value = '0-0,0-1,1-0';
+      const demo = getDifficultySample();
+
+host.querySelector('.hk-left').value =
+  String(demo.nLeft);
+
+host.querySelector('.hk-right').value =
+  String(demo.nRight);
+
+host.querySelector('.hk-edges').value =
+  demo.edges
+    .map(([u, v]) => `${u}-${v}`)
+    .join(',');
       frames =
-    global.GraphHopcroftKarpViz.generateFrames(
-      SAMPLE.nLeft,
-      SAMPLE.nRight,
-      SAMPLE.edges
-    ).frames;
+  global.GraphHopcroftKarpViz.generateFrames(
+    demo.nLeft,
+    demo.nRight,
+    demo.edges
+  ).frames;
       mountControls();
     });
 
