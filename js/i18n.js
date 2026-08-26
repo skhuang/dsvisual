@@ -40,6 +40,7 @@
             // Methods — Trees
             'method.tree-bst':              'Binary Search Tree',
             'method.tree-avl':              'AVL Tree',
+            'method.tree-treap':            'Treap (Cartesian Tree)',
             'method.tree-rb':               'Red-Black Tree',
             'method.tree-splay':            'Splay Tree',
             'method.tree-trie':             'Trie',
@@ -310,6 +311,7 @@
             // Methods — Trees
             'method.tree-bst':              '二元搜尋樹',
             'method.tree-avl':              'AVL 樹',
+            'method.tree-treap':            'Treap（樹堆）',
             'method.tree-rb':               '紅黑樹',
             'method.tree-splay':            '伸展樹',
             'method.tree-trie':             'Trie 字典樹',
