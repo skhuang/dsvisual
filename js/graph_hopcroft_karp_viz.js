@@ -2,6 +2,31 @@
   'use strict';
 
   const INF = Number.POSITIVE_INFINITY;
+function langText(value) {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  let lang = 'en';
+
+  try {
+    if (
+      global.I18N &&
+      I18N.getCurrentLanguage &&
+      I18N.getCurrentLanguage() === 'zh'
+    ) {
+      lang = 'zh';
+    }
+  } catch (error) {
+    lang = 'en';
+  }
+
+  if (value && typeof value === 'object') {
+    return value[lang] || value.en || value.zh || '';
+  }
+
+  return '';
+}
 
   function cloneMatching(pairU) {
     const result = [];
@@ -77,8 +102,8 @@
 
     function pushFrame(options) {
       frames.push({
-        title: options.title,
-        message: options.message,
+  title: langText(options.title),
+  message: langText(options.message),
 
         data: {
           nLeft,
@@ -129,9 +154,15 @@
     }
 
     pushFrame({
-      title: 'Step 0 — Initial graph',
-      message:
-        '初始狀態：所有左右頂點皆尚未匹配。',
+  title: {
+    zh: '步驟 0 — 初始圖',
+    en: 'Step 0 — Initial graph'
+  },
+
+  message: {
+    zh: '初始狀態：所有左右頂點皆尚未匹配。',
+    en: 'Initial state: all vertices on both sides are unmatched.'
+  },
       layers: {},
       queue: []
     });
@@ -153,9 +184,15 @@
       }
 
       pushFrame({
-        title: `BFS Phase ${phase} — Start`,
-        message:
-          '將所有尚未匹配的左側頂點加入 BFS 佇列，並設為第 0 層。',
+        title: {
+  zh: `BFS 第 ${phase} 輪 — 開始`,
+  en: `BFS Phase ${phase} — Start`
+},
+
+message: {
+  zh: '將所有尚未匹配的左側頂點加入 BFS 佇列，並設為第 0 層。',
+  en: 'Add every unmatched left-side vertex to the BFS queue and assign it distance 0.'
+},
         queue: queue.map(u => `U${u}`)
       });
 
@@ -170,9 +207,15 @@
           const matchedU = pairV[v];
 
           pushFrame({
-            title: `BFS Phase ${phase} — Inspect U${u}-V${v}`,
-            message:
-              `BFS 檢查 U${u} 到 V${v}。`,
+            title: {
+  zh: `BFS 第 ${phase} 輪 — 檢查 U${u}-V${v}`,
+  en: `BFS Phase ${phase} — Inspect U${u}-V${v}`
+},
+
+message: {
+  zh: `BFS 檢查邊 U${u}-V${v}。`,
+  en: `BFS inspects edge U${u}-V${v}.`
+},
             queue:
               queue
                 .slice(head)
@@ -189,10 +232,15 @@
             );
 
             pushFrame({
-              title:
-                `BFS Phase ${phase} — Free V${v}`,
-              message:
-                `V${v} 尚未匹配，因此找到一條可能結束於此的最短增廣路徑。`,
+              title: {
+  zh: `BFS 第 ${phase} 輪 — V${v} 為自由頂點`,
+  en: `BFS Phase ${phase} — Free V${v}`
+},
+
+message: {
+  zh: `V${v} 尚未匹配，因此找到一條可能結束於此的最短增廣路徑。`,
+  en: `V${v} is unmatched, so a shortest augmenting path may terminate here.`
+},
               queue:
                 queue
                   .slice(head)
@@ -213,10 +261,15 @@
             queue.push(matchedU);
 
             pushFrame({
-              title:
-                `BFS Phase ${phase} — Layer U${matchedU}`,
-              message:
-                `V${v} 已與 U${matchedU} 匹配，因此沿匹配邊回到 U${matchedU}，設定 dist(U${matchedU}) = ${dist[matchedU]}。`,
+              title: {
+  zh: `BFS 第 ${phase} 輪 — 將 U${matchedU} 加入分層`,
+  en: `BFS Phase ${phase} — Layer U${matchedU}`
+},
+
+message: {
+  zh: `V${v} 已與 U${matchedU} 匹配，因此沿匹配邊回到 U${matchedU}，設定 dist(U${matchedU}) = ${dist[matchedU]}。`,
+  en: `V${v} is matched with U${matchedU}. Follow the matched edge back to U${matchedU} and set dist(U${matchedU}) = ${dist[matchedU]}.`
+},
               queue:
                 queue
                   .slice(head)
@@ -243,9 +296,15 @@
         const matchedU = pairV[v];
 
         pushFrame({
-          title: `DFS — Inspect U${u}-V${v}`,
-          message:
-            `DFS 從 U${u} 嘗試邊 U${u}-V${v}。`,
+          title: {
+  zh: `DFS — 檢查 U${u}-V${v}`,
+  en: `DFS — Inspect U${u}-V${v}`
+},
+
+message: {
+  zh: `DFS 從 U${u} 嘗試邊 U${u}-V${v}。`,
+  en: `DFS from U${u} explores edge U${u}-V${v}.`
+},
           inspectEdges: [[u, v]],
           currentU: u,
           currentV: v
@@ -296,9 +355,15 @@
       active.delete(u);
 
       pushFrame({
-        title: `DFS — Dead end at U${u}`,
-        message:
-          `U${u} 在目前 BFS 分層中沒有可用的最短增廣路徑。`,
+       title: {
+  zh: `DFS — U${u} 無可行路徑`,
+  en: `DFS — Dead end at U${u}`
+},
+
+message: {
+  zh: `U${u} 在目前 BFS 分層中沒有可用的最短增廣路徑。`,
+  en: `U${u} has no valid shortest augmenting path in the current BFS layering.`
+},
         currentU: u
       });
 
@@ -312,9 +377,15 @@
         }
 
         pushFrame({
-          title: `DFS — Start from U${u}`,
-          message:
-            `從自由左側頂點 U${u} 開始 DFS，並只沿 BFS 建立的分層前進。`,
+          title: {
+  zh: `DFS — 從 U${u} 開始`,
+  en: `DFS — Start from U${u}`
+},
+
+message: {
+  zh: `從自由左側頂點 U${u} 開始 DFS，並只沿 BFS 建立的分層前進。`,
+  en: `Start DFS from unmatched vertex U${u}, following only edges consistent with the BFS layers.`
+},
           currentU: u
         });
 
@@ -326,9 +397,15 @@
         }
 
         pushFrame({
-          title: 'Shortest augmenting path',
-          message:
-            '找到符合 BFS 分層的最短增廣路徑，紫色顯示整條 alternating path。',
+          title: {
+  zh: '找到最短增廣路徑',
+  en: 'Shortest augmenting path'
+},
+
+message: {
+  zh: '找到符合 BFS 分層的最短增廣路徑，紫色顯示整條交替路徑。',
+  en: 'A shortest augmenting path consistent with the BFS layers is found. The alternating path is highlighted in purple.'
+},
           pathEdges: found.pathEdges
         });
 
@@ -342,10 +419,15 @@
         matching++;
 
         pushFrame({
-          title:
-            `Augment — Matching size = ${matching}`,
-          message:
-            `翻轉增廣路徑後，匹配大小增加為 ${matching}。`,
+          title: {
+  zh: `增廣 — 匹配大小 = ${matching}`,
+  en: `Augment — Matching size = ${matching}`
+},
+
+message: {
+  zh: `翻轉增廣路徑上的匹配狀態後，匹配大小增加為 ${matching}。`,
+  en: `Flip the matching status along the augmenting path. The matching size increases to ${matching}.`
+},
           layers: {},
           queue: []
         });
@@ -353,9 +435,15 @@
     }
 
     pushFrame({
-      title: 'Done — Maximum matching',
-      message:
-        `已無新的增廣路徑，因此最大匹配大小為 ${matching}。`,
+      title: {
+  zh: '完成 — 最大匹配',
+  en: 'Done — Maximum matching'
+},
+
+message: {
+  zh: `已無新的增廣路徑，因此最大匹配大小為 ${matching}。`,
+  en: `No augmenting path remains, so the maximum matching size is ${matching}.`
+},
       layers: {},
       queue: []
     });

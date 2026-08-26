@@ -689,8 +689,10 @@ const difficultyLabel =
             color:#2563eb;
             margin-bottom:14px;
           ">
-            'Hopcroft-Karp 二分圖最大匹配',
+            ${L(
+  'Hopcroft-Karp 二分圖最大匹配',
   'Hopcroft-Karp Bipartite Matching'
+)}
           </div>
 
           <div style="
@@ -739,6 +741,40 @@ const difficultyLabel =
                 <div style="font-weight:700;margin-bottom:6px;">${L('說明', 'Description')}</div>
                 <div class="hk-info" style="font-size:14px;line-height:1.7;color:#334155;"></div>
               </div>
+
+		<div style="margin-bottom:14px;">
+  <div style="font-weight:700;margin-bottom:6px;">
+    ${L('演算法資訊', 'Algorithm')}
+  </div>
+
+  <div style="
+    font-size:14px;
+    line-height:1.7;
+    color:#334155;
+  ">
+    <div>
+      ${L(
+        'BFS 建立最短增廣路徑分層，DFS 沿分層尋找增廣路徑。',
+        'BFS builds shortest augmenting-path layers; DFS searches for augmenting paths within those layers.'
+      )}
+    </div>
+
+    <div style="margin-top:6px;">
+      <strong>${L('時間複雜度', 'Time')}：</strong>
+      O(E√V)
+    </div>
+
+    <div>
+      <strong>${L('空間複雜度', 'Space')}：</strong>
+      O(V + E)
+    </div>
+
+    <div>
+      <strong>${L('課程', 'Course')}：</strong>
+      Chapter 6 — Graph Algorithms
+    </div>
+  </div>
+</div>
 
               <div>
                 <div style="font-weight:700;margin-bottom:6px;">${L('圖例', 'Legend')}</div>
@@ -819,15 +855,26 @@ const difficultyLabel =
     preset.edges
   ).frames;
 
-    function paint(frame, index) {
+
+function paint(frame, index) {
+  const frameTitle =
+    typeof frame.title === 'string'
+      ? frame.title
+      : K().langOf(frame.title);
+
+  const frameMessage =
+    typeof frame.message === 'string'
+      ? frame.message
+      : K().langOf(frame.message);
+
       svgArea.innerHTML = renderSvgGraph(frame);
       matchingTable.innerHTML = renderMatchingTable(frame);
       layerTable.innerHTML = renderLayerTable(frame, frame.data.nLeft);
       queueBox.textContent = frame.queue && frame.queue.length ? frame.queue.join(' → ') : '∅';
 
       infoBox.innerHTML = `
-        <div><strong>${frame.title}</strong></div>
-        <div style="margin-top:6px;">${frame.message}</div>
+        <div><strong>${frameTitle}</strong></div>
+        <div style="margin-top:6px;">${frameMessage}</div>
         <div style="margin-top:8px;">${L('步驟', 'Step')}：${index + 1} / ${frames.length}</div>
         <div>${L('目前匹配大小', 'Matching size')}：${frame.data.matching.length}</div>
         <div>${L('左側頂點數', 'Left vertices')}：${frame.data.nLeft}</div>
