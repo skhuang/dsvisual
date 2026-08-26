@@ -127,6 +127,7 @@ const METHOD_GROUPS = [
             { id: 'graph-scc', title: 'Strongly Connected Components', file: 'graph_scc.cpp', visualizer: 'graph-scc', controls: 'graph-scc', codeDrawer: true },
             { id: 'graph-maxflow', title: 'Maximum Flow (Edmonds-Karp)', file: 'graph_maxflow.cpp', visualizer: 'graph-maxflow', controls: 'graph-maxflow', codeDrawer: true },
             { id: 'graph-euler', title: 'Euler Path / Circuit (Hierholzer)', file: 'graph_euler.cpp', visualizer: 'graph-euler', controls: 'graph-euler', codeDrawer: true },
+            { id: 'graph-hopcroft-karp', title: 'Hopcroft-Karp Bipartite Matching', file: 'graph_hopcroft_karp.cpp', visualizer: 'graph-hopcroft-karp', controls: 'graph-hopcroft-karp', codeDrawer: true },
         ],
     },
     {
