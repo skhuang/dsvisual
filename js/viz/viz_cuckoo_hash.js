@@ -36,7 +36,7 @@
 
         frames.push({
             ...cloneTables(table1, table2),
-            message: 'Ready to insert keys.',
+            message: '',
             activeTable: null,
             activeIndex: -1,
             kicked: null
@@ -203,15 +203,13 @@
         title.className = 'cuckoo-title';
         title.innerHTML = `
             <h2>Cuckoo Hashing</h2>
-            <div class="cuckoo-subtitle">
-                Two hash tables with collision kick-out
-            </div>
+  
         `;
 
         const status = document.createElement('div');
         status.className = 'cuckoo-status';
         status.textContent =
-            `Step ${frameIndex + 1} / ${totalFrames}: ${frame.message}`;
+            `Step ${frameIndex + 1} / ${totalFrames}`;
 
         const tables = document.createElement('div');
         tables.className = 'cuckoo-tables';
@@ -223,14 +221,7 @@
         const hashInfo = document.createElement('div');
         hashInfo.className = 'cuckoo-hash-info';
         hashInfo.innerHTML = `
-            <div>
-                <strong>hash1(key)</strong>
-                → Table 1
-            </div>
-            <div>
-                <strong>hash2(key)</strong>
-                → Table 2
-            </div>
+           
             <div>
                 <strong>Collision</strong>
                 → kick out existing key
@@ -252,6 +243,132 @@
 
         host.appendChild(wrap);
     }
+    function buildCuckooControls(
+        host,
+        frames,
+        getFrame,
+        setFrame
+    ) {
+        const controls = document.createElement('div');
+
+        controls.className = 'stepctl';
+
+        const first = document.createElement('button');
+        first.type = 'button';
+        first.dataset.action = 'first';
+        first.textContent = '⏮';
+
+        const back = document.createElement('button');
+        back.type = 'button';
+        back.dataset.action = 'back';
+        back.textContent = '◀';
+
+        const play = document.createElement('button');
+        play.type = 'button';
+        play.dataset.action = 'play';
+        play.textContent = '▶';
+
+        const step = document.createElement('button');
+        step.type = 'button';
+        step.dataset.action = 'step';
+        step.textContent = '▶';
+
+        const scrubber = document.createElement('input');
+        scrubber.type = 'range';
+        scrubber.className = 'stepctl-scrubber';
+        scrubber.min = '0';
+        scrubber.max = String(Math.max(0, frames.length - 1));
+        scrubber.step = '1';
+        scrubber.value = String(getFrame());
+
+        const speedLabel = document.createElement('span');
+        speedLabel.textContent = '速度';
+
+        const speed = document.createElement('input');
+        speed.type = 'range';
+        speed.className = 'stepctl-speed';
+        speed.min = '100';
+        speed.max = '1500';
+        speed.step = '100';
+        speed.value = '700';
+
+        const count = document.createElement('span');
+        count.className = 'stepctl-count';
+
+        function update() {
+            const current = getFrame();
+
+            scrubber.value = String(current);
+
+            count.textContent =
+                `步 ${current} / ${frames.length - 1}`;
+
+            back.disabled = current <= 0;
+            first.disabled = current <= 0;
+            step.disabled = current >= frames.length - 1;
+        }
+
+        first.addEventListener('click', () => {
+            setFrame(0);
+            update();
+        });
+
+        back.addEventListener('click', () => {
+            setFrame(getFrame() - 1);
+            update();
+        });
+
+        step.addEventListener('click', () => {
+            setFrame(getFrame() + 1);
+            update();
+        });
+
+        scrubber.addEventListener('input', () => {
+            setFrame(Number(scrubber.value));
+            update();
+        });
+
+        let timer = null;
+
+        play.addEventListener('click', () => {
+            if (timer !== null) {
+                clearInterval(timer);
+                timer = null;
+                play.textContent = '▶';
+                return;
+            }
+
+            play.textContent = '⏸';
+
+            timer = setInterval(() => {
+                if (getFrame() >= frames.length - 1) {
+                    clearInterval(timer);
+                    timer = null;
+                    play.textContent = '▶';
+                    update();
+                    return;
+                }
+
+                setFrame(getFrame() + 1);
+                update();
+            }, Number(speed.value));
+        });
+
+        controls.appendChild(first);
+        controls.appendChild(back);
+        controls.appendChild(play);
+        controls.appendChild(step);
+        controls.appendChild(scrubber);
+        controls.appendChild(speedLabel);
+        controls.appendChild(speed);
+        controls.appendChild(count);
+
+        host.appendChild(controls);
+
+        update();
+
+        return controls;
+    }
 
     function renderCuckooHash() {
         const kit = K();
@@ -265,32 +382,49 @@
         }
 
         const frames = createFrames(state.keys);
-
-        renderFrame(
-            host,
-            frames[state.frame],
-            state.frame,
-            frames.length
-        );
+        host.innerHTML = '';
+        const vizHost = document.createElement('div');
+        vizHost.className = 'cuckoo-viz-host';
 
         const controlsHost = document.createElement('div');
         controlsHost.className = 'cuckoo-controls-host';
 
+        host.appendChild(vizHost);
         host.appendChild(controlsHost);
+        renderFrame(
+            vizHost,
+            frames[state.frame],
+            state.frame,
+            frames.length
+        );
+        buildCuckooControls(
+            controlsHost,
+            frames,
 
-        if (kit.buildFrameControls) {
-            kit.buildFrameControls({
-                host: controlsHost,
-                getFrameCount: () => frames.length,
-                getFrame: () => state.frame,
-                setFrame: (index) => {
-                    state.frame = index;
+            () => state.frame,
 
-                    renderCuckooHash();
-                }
-            });
-        }
+            (index) => {
+                state.frame = Math.max(
+                    0,
+                    Math.min(
+                        frames.length - 1,
+                        index
+                    )
+                );
+
+
+                renderFrame(
+                    vizHost,
+                    frames[state.frame],
+                    state.frame,
+                    frames.length
+                );
+            }
+        );
     }
+
+        
+    
 
     const codeCuckooHash = `
 #include <string>
@@ -362,8 +496,9 @@ public:
         code: () => codeCuckooHash,
         layout: {
             host: 'dynamic',
-            codeDrawer: true
+            codeDrawer: false
         }
-    });
+    }
+);
 
 })(typeof window !== 'undefined' ? window : globalThis);

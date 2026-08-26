@@ -226,8 +226,9 @@ header p { color: rgba(255,255,255,0.72); font-size: 0.95rem; }
 }
 .method-section-grid {
     display: grid;
-    grid-template-columns: minmax(320px, 1.1fr) minmax(0, 0.9fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 16px;
+    align-items: start;
 }
 .method-section-visual {
     position: relative;
@@ -3768,3 +3769,135 @@ body.viz-focus .method-section-card.active .gw-logcol { max-height: none; min-he
 .lab-sample { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 .lab-actions { margin-top: 1rem; display: flex; gap: .5rem; flex-wrap: wrap; }
 .lab-actions [disabled], .lab-actions [aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+/* Cuckoo Hash visualization */
+.cuckoo-wrap {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 28px;
+    box-sizing: border-box;
+}
+
+.cuckoo-title {
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.cuckoo-title h2 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.cuckoo-subtitle {
+    margin-top: 6px;
+    color: var(--text-muted);
+    font-size: 10px;
+}
+
+.cuckoo-status {
+    margin: 2px 0;
+    padding: 2px 6px;
+    text-align: center;
+    border-radius: 8px;
+    background: var(--surface-muted);
+    font-weight: 600;
+}
+
+.cuckoo-hash-info {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    margin-top: 2px;
+    margin-bottom: 4px;
+    color: var(--text-main);
+}
+
+.cuckoo-hash-info > div {
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: var(--surface-muted);
+}
+
+.cuckoo-tables {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.cuckoo-table {
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    background: var(--card-bg);
+    box-shadow: var(--app-shadow-sm);
+}
+
+.cuckoo-table h3 {
+    margin: 0 0 2px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.cuckoo-table-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 5px;
+}
+
+.cuckoo-cell {
+    display: grid;
+    grid-template-columns: 42px 1fr;
+    align-items: center;
+    min-height: 24px;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    background: var(--surface-muted);
+    overflow: hidden;
+}
+
+.cuckoo-index {
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-right: 1px solid var(--card-border);
+}
+
+.cuckoo-value {
+    padding: 4px 8px;
+    font-weight: 600;
+    color: var(--text-main);
+}
+
+.cuckoo-active {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.18);
+}
+
+.cuckoo-kicked {
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 700;
+    background: var(--surface-muted);
+}
+
+.cuckoo-controls-host {
+    margin-top: 20px;
+}
+
+@media (max-width: 800px) {
+    .cuckoo-tables {
+        grid-template-columns: 1fr;
+    }
+
+    .cuckoo-wrap {
+        padding: 18px;
+    }
+}
