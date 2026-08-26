@@ -335,17 +335,17 @@
         queue: []
       },
 
-	{
-	  title: 'Step 6 — Augment path',
- 	 message: '翻轉增廣路徑後，舊匹配 U0-V0 被替換為 U1-V0 與 U0-V1。',
- 	 data: {
- 	   ...base,
- 	   matching: [[0, 1], [1, 0]]
- 	 },
- 	 pathEdges: [],
-  	layers: {},
- 	 queue: []
-	},
+  {
+    title: 'Step 6 — Augment path',
+    message: '翻轉增廣路徑後，舊匹配 U0-V0 被替換為 U1-V0 與 U0-V1。',
+    data: {
+      ...base,
+      matching: [[0, 1], [1, 0]]
+    },
+    pathEdges: [],
+    layers: {},
+    queue: []
+  },
 
       {
         title: 'Step 7 — Done',
@@ -506,7 +506,12 @@
     const infoBox = host.querySelector('.hk-info');
     const vcr = host.querySelector('.hk-vcr');
 
-    let frames = buildSampleFrames();
+    let frames =
+    global.GraphHopcroftKarpViz.generateFrames(
+      SAMPLE.nLeft,
+      SAMPLE.nRight,
+      SAMPLE.edges
+   ).frames;
 
     function paint(frame, index) {
       svgArea.innerHTML = renderSvgGraph(frame);
@@ -541,7 +546,12 @@
       host.querySelector('.hk-left').value = '2';
       host.querySelector('.hk-right').value = '2';
       host.querySelector('.hk-edges').value = '0-0,0-1,1-0';
-      frames = buildSampleFrames();
+      frames =
+    global.GraphHopcroftKarpViz.generateFrames(
+      SAMPLE.nLeft,
+      SAMPLE.nRight,
+      SAMPLE.edges
+    ).frames;
       mountControls();
     });
 
@@ -554,11 +564,12 @@
       const nRight = Number.isInteger(rightValue) && rightValue > 0 ? rightValue : 2;
       const edges = parseEdges(edgeText, nLeft, nRight);
 
-      frames = buildSingleFrame({
-        nLeft,
-        nRight,
-        edges
-      });
+      frames =
+    global.GraphHopcroftKarpViz.generateFrames(
+      nLeft,
+      nRight,
+      edges
+    ).frames;
 
       mountControls();
     });
