@@ -62,6 +62,7 @@
             'method.decision-tree-coins': '8-Coins Decision Tree',
             'method.tree-copy-equal': 'Tree COPY & EQUAL',
             'method.game-tree': 'Game Tree (Minimax / α-β)',
+            'method.tree-234': '2-3-4 Tree',
 
             // Methods — Graphs
             'method.graph':                 'Undirected Graph',
@@ -332,6 +333,7 @@
             'method.decision-tree-coins': '八枚硬幣決策樹',
             'method.tree-copy-equal': '二元樹 COPY 與 EQUAL',
             'method.game-tree': '賽局樹(Minimax / α-β 剪枝)',
+            'method.tree-234': '2-3-4 樹',
 
             // Methods — Graphs
             'method.graph':                 '無向圖',
