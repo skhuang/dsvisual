@@ -84,6 +84,7 @@ const mappings = {
     'search_rk.cpp': 'codeSearchRK',
     'search_strcompare.cpp': 'codeSearchStrCompare',
     'bloom_filter.cpp': 'codeBloomFilter',
+    'cuckoo_hash.cpp': 'codeCuckooHash',
     'skip_list.cpp': 'codeSkipList',
     'count_min_sketch.cpp': 'codeCountMinSketch',
     'search_zalgo.cpp': 'codeSearchZAlgo',
