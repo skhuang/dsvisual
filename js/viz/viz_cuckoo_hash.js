@@ -1,449 +1,369 @@
 (function (global) {
     const K = () => global.VizKit;
 
-    let _cuckooState = null;
+    let state = null;
 
     const TABLE_SIZE = 11;
-    const MAX_KICKS = TABLE_SIZE * 2;
 
-    function showStatus(msg, color) {
-        const el = document.getElementById('status-message');
-
-        if (el) {
-            el.textContent = msg;
-            el.style.color = color;
-        }
-    }
-
-    // First hash function
     function hash1(key) {
         let h = 0;
-
         for (const c of key) {
             h = (h * 31 + c.charCodeAt(0)) >>> 0;
         }
-
         return h % TABLE_SIZE;
     }
 
-    // Second hash function
     function hash2(key) {
-        let h = 5381;
-
+        let h = 7;
         for (const c of key) {
-            h = ((h * 33) ^ c.charCodeAt(0)) >>> 0;
+            h = (h * 37 + c.charCodeAt(0)) >>> 0;
         }
-
         return h % TABLE_SIZE;
     }
 
-    function createInitialState() {
+    function cloneTables(t1, t2) {
         return {
-            table1: new Array(TABLE_SIZE).fill(null),
-            table2: new Array(TABLE_SIZE).fill(null),
-            inputVal: 'cat',
-            frames: [],
-            currentFrame: 0,
-            message: ''
+            table1: [...t1],
+            table2: [...t2]
         };
     }
 
-    function cloneTable(table) {
-        return table.slice();
-    }
+    function createFrames(keys) {
+        const table1 = new Array(TABLE_SIZE).fill('');
+        const table2 = new Array(TABLE_SIZE).fill('');
 
-    function saveFrame(
-        state,
-        message,
-        activeTable,
-        activeIndex,
-        key
-    ) {
-        state.frames.push({
-            table1: cloneTable(state.table1),
-            table2: cloneTable(state.table2),
-            message,
-            activeTable,
-            activeIndex,
-            key
+        const frames = [];
+
+        frames.push({
+            ...cloneTables(table1, table2),
+            message: 'Ready to insert keys.',
+            activeTable: null,
+            activeIndex: -1,
+            kicked: null
         });
-    }
 
-    function cuckooInsert(state, key) {
-        state.frames = [];
-        state.currentFrame = 0;
+        for (const key of keys) {
+            let current = key;
+            let table = 1;
 
-        if (!key) {
-            state.message = 'Enter a key.';
-            return false;
-        }
+            frames.push({
+                ...cloneTables(table1, table2),
+                message: `Insert "${key}"`,
+                activeTable: table,
+                activeIndex: hash1(key),
+                kicked: null
+            });
 
-        let currentKey = key;
-        let tableNumber = 1;
+            let inserted = false;
 
-        const visited = new Set();
+            for (let step = 0; step < TABLE_SIZE * 2; step++) {
+                if (table === 1) {
+                    const pos = hash1(current);
 
-        saveFrame(
-            state,
-            'Start inserting "' + key + '"',
-            null,
-            -1,
-            key
-        );
+                    frames.push({
+                        ...cloneTables(table1, table2),
+                        message: `hash1("${current}") = ${pos}`,
+                        activeTable: 1,
+                        activeIndex: pos,
+                        kicked: null
+                    });
 
-        for (let kick = 0; kick < MAX_KICKS; kick++) {
-            const position =
-                tableNumber === 1
-                    ? hash1(currentKey)
-                    : hash2(currentKey);
+                    if (table1[pos] === '') {
+                        table1[pos] = current;
 
-            const stateKey =
-                tableNumber +
-                ':' +
-                position +
-                ':' +
-                currentKey;
+                        frames.push({
+                            ...cloneTables(table1, table2),
+                            message: `"${current}" inserted into Table 1[${pos}]`,
+                            activeTable: 1,
+                            activeIndex: pos,
+                            kicked: null
+                        });
 
-            if (visited.has(stateKey)) {
-                saveFrame(
-                    state,
-                    'Cycle detected. Rehash required.',
-                    tableNumber,
-                    position,
-                    currentKey
-                );
+                        inserted = true;
+                        break;
+                    }
 
-                state.message =
-                    'Cycle detected. Rehash required.';
+                    const old = table1[pos];
 
-                return false;
+                    table1[pos] = current;
+                    current = old;
+
+                    frames.push({
+                        ...cloneTables(table1, table2),
+                        message: `Collision! "${current}" was kicked out from Table 1[${pos}]`,
+                        activeTable: 1,
+                        activeIndex: pos,
+                        kicked: current
+                    });
+
+                    table = 2;
+                } else {
+                    const pos = hash2(current);
+
+                    frames.push({
+                        ...cloneTables(table1, table2),
+                        message: `hash2("${current}") = ${pos}`,
+                        activeTable: 2,
+                        activeIndex: pos,
+                        kicked: current
+                    });
+
+                    if (table2[pos] === '') {
+                        table2[pos] = current;
+
+                        frames.push({
+                            ...cloneTables(table1, table2),
+                            message: `"${current}" inserted into Table 2[${pos}]`,
+                            activeTable: 2,
+                            activeIndex: pos,
+                            kicked: null
+                        });
+
+                        inserted = true;
+                        break;
+                    }
+
+                    const old = table2[pos];
+
+                    table2[pos] = current;
+                    current = old;
+
+                    frames.push({
+                        ...cloneTables(table1, table2),
+                        message: `Collision! "${current}" was kicked out from Table 2[${pos}]`,
+                        activeTable: 2,
+                        activeIndex: pos,
+                        kicked: current
+                    });
+
+                    table = 1;
+                }
             }
 
-            visited.add(stateKey);
+            if (!inserted) {
+                frames.push({
+                    ...cloneTables(table1, table2),
+                    message: `Cycle detected while inserting "${key}". Rehash required.`,
+                    activeTable: null,
+                    activeIndex: -1,
+                    kicked: current
+                });
 
-            saveFrame(
-                state,
-                'h' +
-                    tableNumber +
-                    '("' +
-                    currentKey +
-                    '") = ' +
-                    position,
-                tableNumber,
-                position,
-                currentKey
-            );
-
-            const table =
-                tableNumber === 1
-                    ? state.table1
-                    : state.table2;
-
-            // Empty position
-            if (table[position] === null) {
-                table[position] = currentKey;
-
-                saveFrame(
-                    state,
-                    '"' +
-                        currentKey +
-                        '" inserted into Table ' +
-                        tableNumber +
-                        '[' +
-                        position +
-                        ']',
-                    tableNumber,
-                    position,
-                    currentKey
-                );
-
-                state.message =
-                    '"' +
-                    key +
-                    '" inserted successfully.';
-
-                return true;
+                break;
             }
-
-            // Collision -> kick out existing key
-            const kicked = table[position];
-
-            table[position] = currentKey;
-
-            saveFrame(
-                state,
-                'Collision! "' +
-                    kicked +
-                    '" is kicked out by "' +
-                    currentKey +
-                    '"',
-                tableNumber,
-                position,
-                currentKey
-            );
-
-            currentKey = kicked;
-
-            // Switch to the other table
-            tableNumber =
-                tableNumber === 1 ? 2 : 1;
-
-            saveFrame(
-                state,
-                '"' +
-                    currentKey +
-                    '" moves to Table ' +
-                    tableNumber,
-                tableNumber,
-                -1,
-                currentKey
-            );
         }
 
-        saveFrame(
-            state,
-            'Maximum kicks reached. Rehash required.',
-            null,
-            -1,
-            currentKey
-        );
-
-        state.message =
-            'Maximum kicks reached. Rehash required.';
-
-        return false;
+        return frames;
     }
 
-    function renderTable(
-        table,
-        tableNumber,
-        activeTable,
-        activeIndex
-    ) {
-        let html =
-            '<div class="cuckoo-table">' +
-            '<h3>Table ' +
-            tableNumber +
-            '</h3>' +
-            '<div class="cuckoo-grid">';
+    function renderTable(table, tableNumber, frame) {
+        let html = `
+            <div class="cuckoo-table">
+                <h3>Hash Table ${tableNumber}</h3>
+                <div class="cuckoo-table-grid">
+        `;
 
         for (let i = 0; i < TABLE_SIZE; i++) {
-            const isActive =
-                activeTable === tableNumber &&
-                activeIndex === i;
+            const value = table[i] || '';
 
-            const value =
-                table[i] === null
-                    ? ''
-                    : table[i];
+            let classes = 'cuckoo-cell';
 
-            html +=
-                '<div class="cuckoo-cell' +
-                (isActive
-                    ? ' cuckoo-active'
-                    : '') +
-                '">' +
-                '<span class="cuckoo-index">' +
-                i +
-                '</span>' +
-                '<span class="cuckoo-value">' +
-                value +
-                '</span>' +
-                '</div>';
+            if (
+                frame.activeTable === tableNumber &&
+                frame.activeIndex === i
+            ) {
+                classes += ' cuckoo-active';
+            }
+
+            html += `
+                <div class="${classes}">
+                    <div class="cuckoo-index">${i}</div>
+                    <div class="cuckoo-value">
+                        ${value || '&nbsp;'}
+                    </div>
+                </div>
+            `;
         }
 
-        html +=
-            '</div>' +
-            '</div>';
+        html += `
+                </div>
+            </div>
+        `;
 
         return html;
     }
 
-    function renderFrame() {
-        if (!_cuckooState) {
-            _cuckooState =
-                createInitialState();
-        }
-
-        const host =
-            K().acquireDynamicVizHost();
-
+    function renderFrame(host, frame, frameIndex, totalFrames) {
         host.innerHTML = '';
 
-        const frame =
-            _cuckooState.frames[
-                _cuckooState.currentFrame
-            ];
+        const wrap = document.createElement('div');
+        wrap.className = 'cuckoo-wrap';
 
-        const wrap =
-            document.createElement('div');
+        const title = document.createElement('div');
+        title.className = 'cuckoo-title';
+        title.innerHTML = `
+            <h2>Cuckoo Hashing</h2>
+            <div class="cuckoo-subtitle">
+                Two hash tables with collision kick-out
+            </div>
+        `;
 
-        wrap.className =
-            'cuckoo-wrap';
+        const status = document.createElement('div');
+        status.className = 'cuckoo-status';
+        status.textContent =
+            `Step ${frameIndex + 1} / ${totalFrames}: ${frame.message}`;
 
-        const table1 = frame
-            ? frame.table1
-            : _cuckooState.table1;
+        const tables = document.createElement('div');
+        tables.className = 'cuckoo-tables';
 
-        const table2 = frame
-            ? frame.table2
-            : _cuckooState.table2;
+        tables.innerHTML =
+            renderTable(frame.table1, 1, frame) +
+            renderTable(frame.table2, 2, frame);
 
-        const activeTable =
-            frame
-                ? frame.activeTable
-                : null;
+        const hashInfo = document.createElement('div');
+        hashInfo.className = 'cuckoo-hash-info';
+        hashInfo.innerHTML = `
+            <div>
+                <strong>hash1(key)</strong>
+                → Table 1
+            </div>
+            <div>
+                <strong>hash2(key)</strong>
+                → Table 2
+            </div>
+            <div>
+                <strong>Collision</strong>
+                → kick out existing key
+            </div>
+        `;
 
-        const activeIndex =
-            frame
-                ? frame.activeIndex
-                : -1;
+        if (frame.kicked) {
+            const kicked = document.createElement('div');
+            kicked.className = 'cuckoo-kicked';
+            kicked.textContent =
+                `Kicked out: ${frame.kicked}`;
+            wrap.appendChild(kicked);
+        }
 
-        wrap.innerHTML =
-            '<div class="cuckoo-title">' +
-            '<h2>Cuckoo Hashing</h2>' +
-            '<p>' +
-            'Two hash tables with two hash functions' +
-            '</p>' +
-            '</div>' +
-
-            '<div class="cuckoo-hashes">' +
-            '<div>' +
-            '<strong>h1(key)</strong>' +
-            ' → Table 1' +
-            '</div>' +
-
-            '<div>' +
-            '<strong>h2(key)</strong>' +
-            ' → Table 2' +
-            '</div>' +
-            '</div>' +
-
-            '<div class="cuckoo-tables">' +
-            renderTable(
-                table1,
-                1,
-                activeTable,
-                activeIndex
-            ) +
-            renderTable(
-                table2,
-                2,
-                activeTable,
-                activeIndex
-            ) +
-            '</div>' +
-
-            '<div class="cuckoo-message">' +
-            (
-                frame
-                    ? frame.message
-                    : 'Ready.'
-            ) +
-            '</div>' +
-
-            '<div class="cuckoo-controls">' +
-            '<input type="text" data-cuckoo-input>' +
-            '<button ' +
-            'type="button" ' +
-            'data-action="cuckoo-insert">' +
-            'Insert' +
-            '</button>' +
-            '<button ' +
-            'type="button" ' +
-            'data-action="cuckoo-reset">' +
-            'Reset' +
-            '</button>' +
-            '</div>';
+        wrap.appendChild(title);
+        wrap.appendChild(status);
+        wrap.appendChild(hashInfo);
+        wrap.appendChild(tables);
 
         host.appendChild(wrap);
-
-        const input =
-            wrap.querySelector(
-                '[data-cuckoo-input]'
-            );
-
-        input.value =
-            _cuckooState.inputVal;
-
-        input.addEventListener(
-            'input',
-            () => {
-                _cuckooState.inputVal =
-                    input.value.trim();
-            }
-        );
-
-        wrap
-            .querySelector(
-                '[data-action="cuckoo-insert"]'
-            )
-            .onclick = () => {
-                const key =
-                    input.value.trim();
-
-                if (!key) {
-                    showStatus(
-                        'Enter a key.',
-                        '#f87171'
-                    );
-
-                    return;
-                }
-
-                cuckooInsert(
-                    _cuckooState,
-                    key
-                );
-
-                _cuckooState.inputVal = '';
-
-                renderFrame();
-
-                showStatus(
-                    _cuckooState.message,
-                    '#34d399'
-                );
-            };
-
-        wrap
-            .querySelector(
-                '[data-action="cuckoo-reset"]'
-            )
-            .onclick = () => {
-                _cuckooState =
-                    createInitialState();
-
-                renderFrame();
-
-                showStatus(
-                    'Cuckoo Hashing reset.',
-                    '#60a5fa'
-                );
-            };
     }
 
     function renderCuckooHash() {
-        if (!_cuckooState) {
-            _cuckooState =
-                createInitialState();
+        const kit = K();
+        const host = kit.acquireDynamicVizHost();
+
+        if (!state) {
+            state = {
+                keys: ['cat', 'dog', 'bird', 'fish'],
+                frame: 0
+            };
         }
 
-        renderFrame();
+        const frames = createFrames(state.keys);
+
+        renderFrame(
+            host,
+            frames[state.frame],
+            state.frame,
+            frames.length
+        );
+
+        const controlsHost = document.createElement('div');
+        controlsHost.className = 'cuckoo-controls-host';
+
+        host.appendChild(controlsHost);
+
+        if (kit.buildFrameControls) {
+            kit.buildFrameControls({
+                host: controlsHost,
+                getFrameCount: () => frames.length,
+                getFrame: () => state.frame,
+                setFrame: (index) => {
+                    state.frame = index;
+
+                    renderCuckooHash();
+                }
+            });
+        }
     }
 
-    global.VizRegistry.attach(
-        'cuckoo-hash',
+    const codeCuckooHash = `
+#include <string>
+#include <vector>
+#include <functional>
+#include <utility>
+
+class CuckooHash
+{
+private:
+    static constexpr int TABLE_SIZE = 11;
+
+    std::vector<std::string> table1;
+    std::vector<std::string> table2;
+
+    int hash1(const std::string& key) const
+    {
+        return static_cast<int>(
+            std::hash<std::string>{}(key) % TABLE_SIZE
+        );
+    }
+
+    int hash2(const std::string& key) const
+    {
+        std::size_t h = std::hash<std::string>{}(key);
+        return static_cast<int>((h / TABLE_SIZE) % TABLE_SIZE);
+    }
+
+public:
+    CuckooHash()
+        : table1(TABLE_SIZE), table2(TABLE_SIZE)
+    {
+    }
+
+    bool insert(const std::string& key)
+    {
+        std::string current = key;
+
+        for (int step = 0; step < TABLE_SIZE * 2; ++step)
         {
-            render: renderCuckooHash,
-            code: () => codeCuckooHash,
-            layout: {
-                host: 'dynamic'
+            int pos1 = hash1(current);
+
+            if (table1[pos1].empty())
+            {
+                table1[pos1] = current;
+                return true;
             }
+
+            std::swap(table1[pos1], current);
+
+            int pos2 = hash2(current);
+
+            if (table2[pos2].empty())
+            {
+                table2[pos2] = current;
+                return true;
+            }
+
+            std::swap(table2[pos2], current);
         }
-    );
-})(
-    typeof window !== 'undefined'
-        ? window
-        : globalThis
-);
+
+        return false;
+    }
+};
+`;
+
+    global.VizRegistry.attach('cuckoo-hash', {
+        render: renderCuckooHash,
+        code: () => codeCuckooHash,
+        layout: {
+            host: 'dynamic',
+            codeDrawer: true
+        }
+    });
+
+})(typeof window !== 'undefined' ? window : globalThis);
