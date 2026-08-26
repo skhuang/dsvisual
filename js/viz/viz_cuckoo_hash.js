@@ -36,7 +36,7 @@
 
         frames.push({
             ...cloneTables(table1, table2),
-            message: '',
+            message: 'Ready to insert keys.',
             activeTable: null,
             activeIndex: -1,
             kicked: null
@@ -209,7 +209,7 @@
         const status = document.createElement('div');
         status.className = 'cuckoo-status';
         status.textContent =
-            `Step ${frameIndex + 1} / ${totalFrames}`;
+            `Step ${frameIndex + 1} / ${totalFrames}: ${frame.message}`;
 
         const tables = document.createElement('div');
         tables.className = 'cuckoo-tables';
@@ -221,7 +221,9 @@
         const hashInfo = document.createElement('div');
         hashInfo.className = 'cuckoo-hash-info';
         hashInfo.innerHTML = `
-           
+               <div><strong>hash1(key)</strong> → Table 1</div>
+               <div><strong>hash2(key)</strong> → Table 2</div>
+               <div>Collision<br>→ kick out existing key</div>
             <div>
                 <strong>Collision</strong>
                 → kick out existing key
