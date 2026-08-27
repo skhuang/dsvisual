@@ -560,6 +560,21 @@ const descDB = {
             <span class="badge space">Space: O(1) auxiliary</span>
         </div>
     `,
+    'manacher': `
+        <h3>Manacher's Algorithm — Longest Palindromic Substring（最長回文子字串）</h3>
+        <p><strong>EN.</strong> Manacher's algorithm finds the longest palindromic substring in linear time. Separators unify odd- and even-length palindromes, while the current center and right boundary let a position reuse the radius already known at its mirror.</p>
+        <p><strong>中文。</strong> Manacher 演算法在線性時間內找出最長回文子字串。分隔符號讓奇數與偶數長度的回文使用相同規則；目前中心與右界則讓新位置可以重用鏡像位置已知的半徑。</p>
+        <hr>
+        <ul>
+            <li><strong>Transformed string / 轉換字串：</strong>insert a separator between every pair of characters so every palindrome has one explicit center；在每兩個字元間加入分隔符號，讓每個回文都有明確中心。</li>
+            <li><strong>Mirror reuse / 鏡像重用：</strong>when <code>i &lt; R</code>, initialize <code>P[i] = min(R-i, P[2C-i])</code> instead of expanding from zero；位於右界內時，先用鏡像半徑初始化。</li>
+            <li><strong>Invariant / 不變量：</strong><code>R = C + P[C]</code> is the farthest palindrome boundary confirmed so far；<code>R</code> 永遠是目前已確認的最右回文邊界。</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(n)</span>
+            <span class="badge space">Space: O(n)</span>
+        </div>
+    `,
     'sparse-table-rmq': `
         <h3>Sparse Table — Range Minimum Query (稀疏表 / 區間最小值查詢)</h3>
         <p><strong>EN.</strong> A static (build-once, no updates) structure that precomputes the minimum of every power-of-two-length window via doubling, then answers any range-minimum query in O(1) by overlapping two such windows.</p>

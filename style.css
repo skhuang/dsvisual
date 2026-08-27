@@ -3722,6 +3722,38 @@ body.viz-focus .method-section-card.active .gw-logcol { max-height: none; min-he
 
 /* Graph traversal workbench (graph-traversal): dual BFS|DFS panes, one shared VCR. */
 .gw-pane-info { font-size: 0.8rem; color: #94a3b8; font-family: ui-monospace, monospace; margin-top: 0.3rem; }
+
+/* Manacher longest-palindromic-substring workbench. */
+.man-wrap { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.man-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+.man-input-label { display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
+.man-input { min-width: min(320px, 70vw); padding: 6px 9px; border: 1px solid var(--card-border); border-radius: 7px; background: var(--card-bg); color: var(--text-main); font-family: 'Fira Code', ui-monospace, monospace; }
+.man-stage { display: flex; flex-direction: column; gap: 9px; min-width: 0; }
+.man-result { padding: 8px 10px; border: 1px solid rgba(34, 197, 94, 0.45); border-radius: 8px; background: rgba(34, 197, 94, 0.10); color: var(--text-main); font-weight: 800; }
+.man-scroll { max-width: 100%; overflow-x: auto; padding-bottom: 5px; }
+.man-board { width: max-content; min-width: 100%; padding: 8px; border: 1px solid var(--card-border); border-radius: 9px; background: var(--surface-muted); }
+.man-row { display: flex; align-items: center; gap: 4px; min-height: 32px; }
+.man-row-label { position: sticky; left: 0; z-index: 2; flex: 0 0 88px; padding: 3px 7px; background: var(--surface-muted); color: var(--text-subtle); font-family: 'Fira Code', ui-monospace, monospace; font-size: 0.75rem; font-weight: 800; }
+.man-cell, .man-index, .man-radius, .man-marker { box-sizing: border-box; flex: 0 0 38px; width: 38px; text-align: center; font-family: 'Fira Code', ui-monospace, monospace; }
+.man-cell { height: 34px; line-height: 30px; border: 2px solid var(--card-border); border-radius: 7px; background: var(--card-bg); color: var(--text-main); font-weight: 800; transition: background 120ms ease, border-color 120ms ease; }
+.man-cell.structural { color: var(--text-subtle); background: rgba(148, 163, 184, 0.08); }
+.man-cell.in-best { box-shadow: inset 0 -4px 0 rgba(34, 197, 94, 0.55); }
+.man-cell.in-current { background: rgba(245, 158, 11, 0.13); }
+.man-cell.mirror { border-color: #8b5cf6; }
+.man-cell.current { border-color: #f59e0b; box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18); }
+.man-cell.comparing { border-color: #ef4444; background: rgba(239, 68, 68, 0.14); }
+.man-index { color: var(--text-subtle); font-size: 0.69rem; }
+.man-radius { height: 28px; line-height: 26px; border-radius: 5px; color: var(--text-main); background: rgba(59, 130, 246, 0.10); font-weight: 800; }
+.man-radius.current { background: #f59e0b; color: #111827; }
+.man-marker { min-height: 24px; color: #f59e0b; font-size: 0.68rem; font-weight: 900; }
+.man-message { min-height: 2.5em; color: var(--text-subtle); font-size: 0.88rem; }
+.man-legend { display: flex; flex-wrap: wrap; gap: 11px; color: var(--text-subtle); font-size: 0.76rem; }
+.man-legend span { display: inline-flex; align-items: center; gap: 4px; }
+.man-swatch { display: inline-block; width: 11px; height: 11px; border: 2px solid; border-radius: 3px; }
+.man-swatch.current { border-color: #f59e0b; }
+.man-swatch.mirror { border-color: #8b5cf6; }
+.man-swatch.comparing { border-color: #ef4444; background: rgba(239, 68, 68, 0.14); }
+.man-swatch.best { border-color: #22c55e; background: rgba(34, 197, 94, 0.14); }
 /* Dual-pane traversal: give each pane's stage a width so the viewBox-only SVG
    doesn't collapse to 0 (single-pane gets width from .gw-struct-grid .gw-stage). */
 .graph-dual-pane .gw-stage { width: 100%; }

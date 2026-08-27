@@ -186,6 +186,7 @@ const METHOD_GROUPS = [
             { id: 'search-rk', title: 'Rabin-Karp', file: 'search_rk.cpp', visualizer: 'string-search', controls: 'string-search', codeDrawer: true },
             { id: 'search-strcompare', title: 'String Matching Compared', file: 'search_strcompare.cpp', visualizer: 'string-compare', controls: 'string-compare', codeDrawer: true },
             { id: 'search-zalgo', title: 'Z-Algorithm', file: 'search_zalgo.cpp', visualizer: 'string-search', controls: 'string-search', codeDrawer: true },
+            { id: 'manacher', title: "Manacher's Algorithm", file: 'manacher.cpp', visualizer: 'manacher', controls: 'manacher', codeDrawer: true },
             { id: 'search-aho', title: 'Aho-Corasick', file: 'search_aho.cpp', visualizer: 'aho-corasick', controls: 'aho-corasick', codeDrawer: true },
             { id: 'search-fibonacci', title: 'Fibonacci Search', file: 'search_fibonacci.cpp', visualizer: 'fibsearch', controls: 'fibsearch', codeDrawer: true },
             { id: 'search-interpolation', title: 'Interpolation Search', file: 'search_interpolation.cpp', visualizer: 'interpsearch', controls: 'interpsearch', codeDrawer: true },
