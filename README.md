@@ -148,6 +148,7 @@ Every entry below is a live, step-by-step visualizer, grouped as in the app's na
 | Boyer-Moore | Bad-character / good-suffix skips |
 | Rabin-Karp | Rolling-hash substring search |
 | Z-Algorithm | Z-array prefix matching |
+| Manacher's Algorithm | Linear-time longest palindromic substring — *student contribution* |
 | String Matching Compared | Side-by-side of the matching algorithms |
 | Aho-Corasick | Multi-pattern trie + failure links |
 | Sparse Table (RMQ) | O(n log n) doubling build, O(1) range-minimum query — *student contribution* |

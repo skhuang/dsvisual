@@ -89,6 +89,7 @@ const mappings = {
     'count_min_sketch.cpp': 'codeCountMinSketch',
     'search_zalgo.cpp': 'codeSearchZAlgo',
     'search_aho.cpp': 'codeSearchAho',
+    'manacher.cpp': 'codeManacher',
     'tree_segment.cpp': 'codeTreeSegment',
     'tree_fenwick.cpp': 'codeTreeFenwick',
     'tree_persistent_segment.cpp': 'codeTreePersistentSegment',
