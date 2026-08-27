@@ -2471,3 +2471,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     applyHashRoute();
 });
+
+// 強制將 suffix-array 註冊進選單
+if (typeof METHOD_GROUPS !== 'undefined') {
+  if (Array.isArray(METHOD_GROUPS)) {
+    METHOD_GROUPS.push({
+      groupLabel: { zh: '字串演算法', en: 'String Algorithms' },
+      items: ['suffix-array'],
+      methods: [{ id: 'suffix-array', label: { zh: '後綴陣列 (Suffix Array + LCP)', en: 'Suffix Array + LCP' } }]
+    });
+  } else if (typeof METHOD_GROUPS === 'object') {
+    METHOD_GROUPS['suffix-array'] = { zh: '後綴陣列 (Suffix Array + LCP)', en: 'Suffix Array + LCP' };
+  }
+}
