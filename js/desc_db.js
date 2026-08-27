@@ -695,6 +695,24 @@ const descDB = {
             <span class="badge exception">Strict Clustered Overload: O(N)</span>
         </div>
     `,
+    'cuckoo-hash': `
+        <h3>Cuckoo Hashing — 雙雜湊法</h3>
+        <p><strong>EN.</strong> Cuckoo Hashing is a hash table technique that uses two hash functions and two tables. Each key has two possible positions, one in each table. When a collision occurs, the existing key is kicked out and moved to its alternative position.</p>
+        <p><strong>中文。</strong> Cuckoo Hashing 使用兩個 hash function 與兩個 hash table。每個 key 都有兩個可能的位置，分別位於兩張表中。發生 collision 時，會將原本的 key「踢出」，再把它移動到另一個 hash function 所決定的位置。</p>
+        <hr>
+        <ul>
+            <li><strong>Two Hash Functions / 兩個雜湊函式：</strong> <code>hash1(key)</code> 決定第一張表的位置，<code>hash2(key)</code> 決定第二張表的位置。</li>
+            <li><strong>Kick-out / 踢出：</strong> When the target position is occupied, the new key replaces the existing key, and the displaced key is moved to its alternative position. 當目標位置已被占用時，新 key 取代原本的 key，被踢出的 key 再移動到另一張表。</li>
+            <li><strong>Collision Handling / 碰撞處理：</strong> Unlike chaining or linear probing, Cuckoo Hashing moves existing elements instead of searching through a sequence of occupied slots. 不同於 Separate Chaining 或 Linear Probing，Cuckoo Hashing 不建立鏈結串列，也不只是一直往下一格找，而是移動已存在的元素。</li>
+            <li><strong>Cycle Detection / 週期偵測：</strong> If repeated kick-outs form a cycle, the insertion cannot finish normally and the table needs to be rebuilt with new hash functions. 若連續踢出形成 cycle，代表目前的 hash function 配置無法完成插入，需要重新建立 hash table。</li>
+            <li><strong>Teaching Value / 教學重點：</strong> The visualization makes the two candidate positions and the kick-out process explicit. 此視覺化主要讓使用者直接看到兩個候選位置，以及 collision 發生後的 kick-out 過程。</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Expected Insert/Search: O(1)</span>
+            <span class="badge exception">Insertion may trigger repeated kick-outs</span>
+            <span class="badge space">Space: O(N)</span>
+        </div>
+    `,
     'hash-bucket': `
         <h3>Hash Table (Closed Addressing w/ N-Buckets)</h3>
         <p>A fascinating structural hybrid mimicking physical hardware block transfers.</p>
