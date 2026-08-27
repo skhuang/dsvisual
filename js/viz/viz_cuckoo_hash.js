@@ -7,17 +7,21 @@
 
     function hash1(key) {
         let h = 0;
+
         for (const c of key) {
             h = (h * 31 + c.charCodeAt(0)) >>> 0;
         }
+
         return h % TABLE_SIZE;
     }
 
     function hash2(key) {
         let h = 7;
+
         for (const c of key) {
             h = (h * 37 + c.charCodeAt(0)) >>> 0;
         }
+
         return h % TABLE_SIZE;
     }
 
@@ -73,7 +77,8 @@
 
                         frames.push({
                             ...cloneTables(table1, table2),
-                            message: `"${current}" inserted into Table 1[${pos}]`,
+                            message:
+                                `"${current}" inserted into Table 1[${pos}]`,
                             activeTable: 1,
                             activeIndex: pos,
                             kicked: null
@@ -90,7 +95,8 @@
 
                     frames.push({
                         ...cloneTables(table1, table2),
-                        message: `Collision! "${current}" was kicked out from Table 1[${pos}]`,
+                        message:
+                            `Collision! "${current}" was kicked out from Table 1[${pos}]`,
                         activeTable: 1,
                         activeIndex: pos,
                         kicked: current
@@ -113,7 +119,8 @@
 
                         frames.push({
                             ...cloneTables(table1, table2),
-                            message: `"${current}" inserted into Table 2[${pos}]`,
+                            message:
+                                `"${current}" inserted into Table 2[${pos}]`,
                             activeTable: 2,
                             activeIndex: pos,
                             kicked: null
@@ -130,7 +137,8 @@
 
                     frames.push({
                         ...cloneTables(table1, table2),
-                        message: `Collision! "${current}" was kicked out from Table 2[${pos}]`,
+                        message:
+                            `Collision! "${current}" was kicked out from Table 2[${pos}]`,
                         activeTable: 2,
                         activeIndex: pos,
                         kicked: current
@@ -143,7 +151,8 @@
             if (!inserted) {
                 frames.push({
                     ...cloneTables(table1, table2),
-                    message: `Cycle detected while inserting "${key}". Rehash required.`,
+                    message:
+                        `Cycle detected while inserting "${key}". Rehash required.`,
                     activeTable: null,
                     activeIndex: -1,
                     kicked: current
@@ -201,13 +210,14 @@
 
         const title = document.createElement('div');
         title.className = 'cuckoo-title';
+
         title.innerHTML = `
             <h2>Cuckoo Hashing</h2>
-  
         `;
 
         const status = document.createElement('div');
         status.className = 'cuckoo-status';
+
         status.textContent =
             `Step ${frameIndex + 1} / ${totalFrames}: ${frame.message}`;
 
@@ -220,10 +230,16 @@
 
         const hashInfo = document.createElement('div');
         hashInfo.className = 'cuckoo-hash-info';
+
         hashInfo.innerHTML = `
-               <div><strong>hash1(key)</strong> → Table 1</div>
-               <div><strong>hash2(key)</strong> → Table 2</div>
-               <div>Collision<br>→ kick out existing key</div>
+            <div>
+                <strong>hash1(key)</strong> → Table 1
+            </div>
+
+            <div>
+                <strong>hash2(key)</strong> → Table 2
+            </div>
+
             <div>
                 <strong>Collision</strong>
                 → kick out existing key
@@ -232,9 +248,12 @@
 
         if (frame.kicked) {
             const kicked = document.createElement('div');
+
             kicked.className = 'cuckoo-kicked';
+
             kicked.textContent =
                 `Kicked out: ${frame.kicked}`;
+
             wrap.appendChild(kicked);
         }
 
@@ -245,136 +264,131 @@
 
         host.appendChild(wrap);
     }
-    function buildCuckooControls(
-        host,
-        frames,
-        getFrame,
-        setFrame
-    ) {
-        const controls = document.createElement('div');
+    function loadExamples(methodId) {
+        try {
+            return ExamplesStore.load(localStorage, methodId);
+        } catch (e) {
+            return [];
+        }
+    }
+    function buildExamplesSelect(methodId, defaultText) {
+        const lang =
+            (global.I18N && I18N.getCurrentLanguage)
+                ? I18N.getCurrentLanguage()
+                : 'en';
 
-        controls.className = 'stepctl';
+        const escAttr = (s) =>
+            String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;');
 
-        const first = document.createElement('button');
-        first.type = 'button';
-        first.dataset.action = 'first';
-        first.textContent = '⏮';
+        const escText = (s) =>
+            String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;');
 
-        const back = document.createElement('button');
-        back.type = 'button';
-        back.dataset.action = 'back';
-        back.textContent = '◀';
+        const trunc = (s) => {
+            s = String(s);
+            return s.length > 24
+                ? s.slice(0, 24) + '…'
+                : s;
+        };
 
-        const play = document.createElement('button');
-        play.type = 'button';
-        play.dataset.action = 'play';
-        play.textContent = '▶';
+        const placeholder =
+            lang === 'zh' ? '範例…' : 'Examples…';
 
-        const step = document.createElement('button');
-        step.type = 'button';
-        step.dataset.action = 'step';
-        step.textContent = '▶';
+        const defLabel =
+            lang === 'zh' ? '預設' : 'Default';
 
-        const scrubber = document.createElement('input');
-        scrubber.type = 'range';
-        scrubber.className = 'stepctl-scrubber';
-        scrubber.min = '0';
-        scrubber.max = String(Math.max(0, frames.length - 1));
-        scrubber.step = '1';
-        scrubber.value = String(getFrame());
+        let h =
+            '<select class="ex-select" data-method="' +
+            escAttr(methodId) +
+            '">';
 
-        const speedLabel = document.createElement('span');
-        speedLabel.textContent = '速度';
+        h +=
+            '<option value="">' +
+            placeholder +
+            '</option>';
 
-        const speed = document.createElement('input');
-        speed.type = 'range';
-        speed.className = 'stepctl-speed';
-        speed.min = '100';
-        speed.max = '1500';
-        speed.step = '100';
-        speed.value = '700';
+        h +=
+            '<option value="' +
+            escAttr(defaultText) +
+            '">' +
+            defLabel +
+            '</option>';
 
-        const count = document.createElement('span');
-        count.className = 'stepctl-count';
+        loadExamples(methodId).forEach((e) => {
+            if (e.text === defaultText) return;
 
-        function update() {
-            const current = getFrame();
+            h +=
+                '<option value="' +
+                escAttr(e.text) +
+                '">' +
+                escText(trunc(e.text)) +
+                '</option>';
+        });
 
-            scrubber.value = String(current);
+        h += '</select>';
 
-            count.textContent =
-                `步 ${current} / ${frames.length - 1}`;
+        return h;
+    }
+    function randomCuckooKeys(difficulty) {
+        const words = [
+            'cat',
+            'dog',
+            'bird',
+            'fish',
+            'lion',
+            'bear',
+            'wolf',
+            'fox',
+            'deer',
+            'frog',
+            'duck',
+            'goat'
+        ];
 
-            back.disabled = current <= 0;
-            first.disabled = current <= 0;
-            step.disabled = current >= frames.length - 1;
+        let count;
+
+        switch (difficulty) {
+            case 'edge':
+                count = 1;
+                break;
+
+            case 'special':
+                count = 6;
+                break;
+
+            case 'large':
+                count = 8;
+                break;
+
+            default:
+                count = 4;
+                break;
         }
 
-        first.addEventListener('click', () => {
-            setFrame(0);
-            update();
-        });
+        const shuffled = [...words];
 
-        back.addEventListener('click', () => {
-            setFrame(getFrame() - 1);
-            update();
-        });
+        for (let i = shuffled.length - 1; i > 0; --i) {
+            const j = Math.floor(Math.random() * (i + 1));
 
-        step.addEventListener('click', () => {
-            setFrame(getFrame() + 1);
-            update();
-        });
+            [shuffled[i], shuffled[j]] =
+                [shuffled[j], shuffled[i]];
+        }
 
-        scrubber.addEventListener('input', () => {
-            setFrame(Number(scrubber.value));
-            update();
-        });
-
-        let timer = null;
-
-        play.addEventListener('click', () => {
-            if (timer !== null) {
-                clearInterval(timer);
-                timer = null;
-                play.textContent = '▶';
-                return;
-            }
-
-            play.textContent = '⏸';
-
-            timer = setInterval(() => {
-                if (getFrame() >= frames.length - 1) {
-                    clearInterval(timer);
-                    timer = null;
-                    play.textContent = '▶';
-                    update();
-                    return;
-                }
-
-                setFrame(getFrame() + 1);
-                update();
-            }, Number(speed.value));
-        });
-
-        controls.appendChild(first);
-        controls.appendChild(back);
-        controls.appendChild(play);
-        controls.appendChild(step);
-        controls.appendChild(scrubber);
-        controls.appendChild(speedLabel);
-        controls.appendChild(speed);
-        controls.appendChild(count);
-
-        host.appendChild(controls);
-
-        update();
-
-        return controls;
+        return shuffled.slice(0, count);
     }
 
     function renderCuckooHash() {
         const kit = K();
         const host = kit.acquireDynamicVizHost();
+
+        const methodId = 'cuckoo-hash';
+        const defaultText = 'cat,dog,bird,fish';
+
+
+
 
         if (!state) {
             state = {
@@ -384,49 +398,95 @@
         }
 
         const frames = createFrames(state.keys);
+
         host.innerHTML = '';
+
         const vizHost = document.createElement('div');
         vizHost.className = 'cuckoo-viz-host';
 
         const controlsHost = document.createElement('div');
         controlsHost.className = 'cuckoo-controls-host';
-
         host.appendChild(vizHost);
         host.appendChild(controlsHost);
-        renderFrame(
-            vizHost,
+
+
+
+        const randomButton = document.createElement('button');
+
+        randomButton.type = 'button';
+        randomButton.className = 'rand-btn';
+        randomButton.title = 'Random';
+        randomButton.textContent = '🎲';
+
+
+
+        randomButton.onclick = () => {
+            const difficulty =
+                global.VizKit &&
+                global.VizKit.getInputDifficulty
+                    ? global.VizKit.getInputDifficulty()
+                    : 'normal';
+
+            state.keys = randomCuckooKeys(difficulty);
+            state.frame = 0;
+            console.log('Cuckoo random keys:', state.keys);
+
+            renderCuckooHash();
+        };
+
+
+
+        const paint = (frame, index) => {
+            state.frame = index;
+
+            renderFrame(
+                vizHost,
+                frame,
+                index,
+                frames.length
+            );
+        };
+
+        paint(
             frames[state.frame],
-            state.frame,
-            frames.length
+            state.frame
         );
-        buildCuckooControls(
-            controlsHost,
+
+        const frameControls = K().buildFrameControls(
             frames,
-
-            () => state.frame,
-
-            (index) => {
-                state.frame = Math.max(
-                    0,
-                    Math.min(
-                        frames.length - 1,
-                        index
-                    )
-                );
-
-
-                renderFrame(
-                    vizHost,
-                    frames[state.frame],
-                    state.frame,
-                    frames.length
-                );
+            paint,
+            {
+                runIntervalMs: 700
             }
         );
-    }
 
-        
-    
+        frameControls.prepend(randomButton);
+
+        const examplesHost = document.createElement('div');
+        examplesHost.innerHTML =
+            buildExamplesSelect(methodId, defaultText);
+
+        controlsHost.appendChild(examplesHost);
+        controlsHost.appendChild(frameControls);
+        const ex = examplesHost.querySelector('.ex-select');
+
+        if (ex) {
+            ex.addEventListener('change', (e) => {
+                if (!e.target.value) return;
+
+                state.keys = e.target.value
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter(Boolean);
+
+                state.frame = 0;
+
+                renderCuckooHash();
+            });
+        }
+
+
+    }
 
     const codeCuckooHash = `
 #include <string>
@@ -452,12 +512,16 @@ private:
     int hash2(const std::string& key) const
     {
         std::size_t h = std::hash<std::string>{}(key);
-        return static_cast<int>((h / TABLE_SIZE) % TABLE_SIZE);
+
+        return static_cast<int>(
+            (h / TABLE_SIZE) % TABLE_SIZE
+        );
     }
 
 public:
     CuckooHash()
-        : table1(TABLE_SIZE), table2(TABLE_SIZE)
+        : table1(TABLE_SIZE),
+          table2(TABLE_SIZE)
     {
     }
 
@@ -465,7 +529,9 @@ public:
     {
         std::string current = key;
 
-        for (int step = 0; step < TABLE_SIZE * 2; ++step)
+        for (int step = 0;
+             step < TABLE_SIZE * 2;
+             ++step)
         {
             int pos1 = hash1(current);
 
@@ -500,7 +566,6 @@ public:
             host: 'dynamic',
             codeDrawer: false
         }
-    }
-);
+    });
 
 })(typeof window !== 'undefined' ? window : globalThis);
