@@ -5595,6 +5595,50 @@ int main() {
 }
 `;
 
+const codeCuckooHash = `#include <array>
+#include <iostream>
+using namespace std;
+
+// Each key has exactly two candidate positions.  On collision, evict the
+// resident key and move it to its position in the other table.
+class CuckooHash {
+    static constexpr int M = 11;
+    array<int, M> t1{}, t2{};
+    array<bool, M> used1{}, used2{};
+
+    int h1(int x) const { return (x % M + M) % M; }
+    int h2(int x) const { return ((x * 7 + 3) % M + M) % M; }
+
+public:
+    bool contains(int x) const {
+        return used1[h1(x)] && t1[h1(x)] == x ||
+               used2[h2(x)] && t2[h2(x)] == x;
+    }
+
+    bool insert(int x) {
+        if (contains(x)) return true;
+        bool first = true;
+        for (int kick = 0; kick < 2 * M; ++kick) {
+            int i = first ? h1(x) : h2(x);
+            auto& table = first ? t1 : t2;
+            auto& used = first ? used1 : used2;
+            if (!used[i]) { table[i] = x; used[i] = true; return true; }
+            swap(x, table[i]);       // kick the old key out
+            first = !first;          // and try its other home
+        }
+        return false; // cycle: production code would grow and rehash here
+    }
+};
+
+int main() {
+    CuckooHash table;
+    for (int x : {1, 12, 23}) {
+        if (!table.insert(x)) cout << "rehash needed\\n";
+    }
+    cout << boolalpha << table.contains(12) << '\\n';
+}
+`;
+
 const codeSkipList = `#include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -8248,6 +8292,7 @@ const CODE_DB = {
     "search_rk.cpp": codeSearchRK,
     "search_strcompare.cpp": codeSearchStrCompare,
     "bloom_filter.cpp": codeBloomFilter,
+    "hash_cuckoo.cpp": codeCuckooHash,
     "skip_list.cpp": codeSkipList,
     "count_min_sketch.cpp": codeCountMinSketch,
     "search_zalgo.cpp": codeSearchZAlgo,

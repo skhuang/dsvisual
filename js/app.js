@@ -137,6 +137,7 @@ const METHOD_GROUPS = [
             { id: 'hash-chain', title: 'Hash Chaining', file: 'hash_chaining.cpp', visualizer: 'hash', controls: 'hash' },
             { id: 'hash-open', title: 'Open Addressing', file: 'hash_open_address.cpp', visualizer: 'hash', controls: 'hash' },
             { id: 'hash-bucket', title: 'Bucketing', file: 'hash_bucket.cpp', visualizer: 'hash', controls: 'hash' },
+            { id: 'hash-cuckoo', title: 'Cuckoo Hashing', file: 'hash_cuckoo.cpp', visualizer: 'cuckoo', controls: 'cuckoo', codeDrawer: true },
             { id: 'bloom-filter', title: 'Bloom Filter', file: 'bloom_filter.cpp', visualizer: 'bloom', controls: 'bloom' },
             { id: 'skip-list', title: 'Skip List', file: 'skip_list.cpp', visualizer: 'skiplist', controls: 'skiplist' },
             { id: 'count-min-sketch', title: 'Count-Min Sketch', file: 'count_min_sketch.cpp', visualizer: 'cms', controls: 'cms' },
@@ -342,6 +343,7 @@ function getCodeForMethod(methodId) {
         'hash-chain': codeHashChain,
         'hash-open': codeHashOpen,
         'hash-bucket': codeHashBucket,
+        'hash-cuckoo': codeCuckooHash,
         'bloom-filter': codeBloomFilter,
         'skip-list': codeSkipList,
         'count-min-sketch': codeCountMinSketch,
@@ -1842,6 +1844,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'count-min-sketch') {
             codeTitle.textContent = 'count_min_sketch.cpp';
             codeDisplay.textContent = codeCountMinSketch;
+        }
+        else if (currentMode === 'hash-cuckoo') {
+            codeTitle.textContent = 'hash_cuckoo.cpp';
+            codeDisplay.textContent = codeCuckooHash;
         }
         else if (currentMode.includes('hash-')) {
             hashActions.classList.remove('hidden');
