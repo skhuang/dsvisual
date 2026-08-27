@@ -104,6 +104,7 @@ Every entry below is a live, step-by-step visualizer, grouped as in the app's na
 | Hash Chaining | Separate-chaining hash table |
 | Open Addressing | Linear/quadratic probing |
 | Bucketing | Bucket hashing |
+| HyperLogLog | Probabilistic distinct-count estimation with hash registers — *student contribution* |
 | Bloom Filter | Probabilistic set membership with k hashes |
 | Skip List | Randomized layered linked list |
 | Count-Min Sketch | Sublinear frequency estimation |

@@ -5595,6 +5595,53 @@ int main() {
 }
 `;
 
+const codeHyperLogLog = `#include <algorithm>
+#include <array>
+#include <cmath>
+#include <cstdint>
+#include <iostream>
+#include <string>
+using namespace std;
+
+// HyperLogLog stores only one small rank register per hash bucket, then uses
+// the harmonic mean of those ranks to estimate distinct-item cardinality.
+class HyperLogLog {
+    static constexpr int P = 4;
+    static constexpr int M = 1 << P;
+    array<unsigned char, M> reg{};
+
+    uint32_t hash(const string& s) const { // FNV-1a
+        uint32_t h = 2166136261u;
+        for (unsigned char c : s) { h ^= c; h *= 16777619u; }
+        return h;
+    }
+
+public:
+    void add(const string& value) {
+        uint32_t h = hash(value);
+        int bucket = h & (M - 1);
+        uint32_t rest = h >> P;
+        int rank = 1;
+        while ((rest & 1u) == 0 && rank < 32 - P) { ++rank; rest >>= 1; }
+        reg[bucket] = max<int>(reg[bucket], rank);
+    }
+
+    double estimate() const {
+        double inverseSum = 0.0; int zeroes = 0;
+        for (int r : reg) { inverseSum += pow(2.0, -r); if (r == 0) ++zeroes; }
+        double e = 0.673 * M * M / inverseSum;
+        if (e <= 2.5 * M && zeroes) e = M * log(double(M) / zeroes);
+        return e;
+    }
+};
+
+int main() {
+    HyperLogLog hll;
+    for (const string& s : {"cat", "dog", "cat", "bird"}) hll.add(s);
+    cout << "estimated distinct values: " << hll.estimate() << '\\n';
+}
+`;
+
 const codeSkipList = `#include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -8248,6 +8295,7 @@ const CODE_DB = {
     "search_rk.cpp": codeSearchRK,
     "search_strcompare.cpp": codeSearchStrCompare,
     "bloom_filter.cpp": codeBloomFilter,
+    "hyperloglog.cpp": codeHyperLogLog,
     "skip_list.cpp": codeSkipList,
     "count_min_sketch.cpp": codeCountMinSketch,
     "search_zalgo.cpp": codeSearchZAlgo,
