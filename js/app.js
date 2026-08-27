@@ -127,6 +127,7 @@ const METHOD_GROUPS = [
             { id: 'graph-scc', title: 'Strongly Connected Components', file: 'graph_scc.cpp', visualizer: 'graph-scc', controls: 'graph-scc', codeDrawer: true },
             { id: 'graph-maxflow', title: 'Maximum Flow (Edmonds-Karp)', file: 'graph_maxflow.cpp', visualizer: 'graph-maxflow', controls: 'graph-maxflow', codeDrawer: true },
             { id: 'graph-euler', title: 'Euler Path / Circuit (Hierholzer)', file: 'graph_euler.cpp', visualizer: 'graph-euler', controls: 'graph-euler', codeDrawer: true },
+            { id: 'graph-hopcroft-karp', title: 'Hopcroft-Karp Bipartite Matching', file: 'graph_hopcroft_karp.cpp', visualizer: 'graph-hopcroft-karp', controls: 'graph-hopcroft-karp', codeDrawer: true },
         ],
     },
     {
@@ -186,6 +187,7 @@ const METHOD_GROUPS = [
             { id: 'search-rk', title: 'Rabin-Karp', file: 'search_rk.cpp', visualizer: 'string-search', controls: 'string-search', codeDrawer: true },
             { id: 'search-strcompare', title: 'String Matching Compared', file: 'search_strcompare.cpp', visualizer: 'string-compare', controls: 'string-compare', codeDrawer: true },
             { id: 'search-zalgo', title: 'Z-Algorithm', file: 'search_zalgo.cpp', visualizer: 'string-search', controls: 'string-search', codeDrawer: true },
+            { id: 'manacher', title: "Manacher's Algorithm", file: 'manacher.cpp', visualizer: 'manacher', controls: 'manacher', codeDrawer: true },
             { id: 'search-aho', title: 'Aho-Corasick', file: 'search_aho.cpp', visualizer: 'aho-corasick', controls: 'aho-corasick', codeDrawer: true },
             { id: 'search-fibonacci', title: 'Fibonacci Search', file: 'search_fibonacci.cpp', visualizer: 'fibsearch', controls: 'fibsearch', codeDrawer: true },
             { id: 'search-interpolation', title: 'Interpolation Search', file: 'search_interpolation.cpp', visualizer: 'interpsearch', controls: 'interpsearch', codeDrawer: true },

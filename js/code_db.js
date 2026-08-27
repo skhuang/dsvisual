@@ -2132,6 +2132,290 @@ int main() {
 }
 `;
 
+const codeGraphHopcroftKarp = `#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+class HopcroftKarp {
+private:
+    int nLeft;
+    int nRight;
+
+    vector<vector<int>> adj;
+
+    // pairU[u] = Uu currently matched with which V
+    // pairV[v] = Vv currently matched with which U
+    // -1 means FREE
+    vector<int> pairU;
+    vector<int> pairV;
+
+    // BFS layer of every U vertex
+    vector<int> dist;
+
+    const int INF = 1000000000;
+
+    // Length of the shortest augmenting path
+    // found by the current BFS phase
+    int shortestPath;
+
+public:
+    HopcroftKarp(int leftSize, int rightSize) {
+        nLeft = leftSize;
+        nRight = rightSize;
+
+        adj.resize(nLeft);
+
+        pairU.resize(nLeft, -1);
+        pairV.resize(nRight, -1);
+
+        dist.resize(nLeft, INF);
+
+        shortestPath = INF;
+    }
+
+    void addEdge(int u, int v) {
+        if (u >= 0 && u < nLeft &&
+            v >= 0 && v < nRight) {
+
+            adj[u].push_back(v);
+        }
+    }
+
+    void printGraph() {
+        cout << "Bipartite Graph" << endl;
+
+        for (int u = 0; u < nLeft; u++) {
+
+            cout << "U" << u << ": ";
+
+            for (int v : adj[u]) {
+                cout << "V" << v << " ";
+            }
+
+            cout << endl;
+        }
+    }
+
+    void printMatching() {
+        cout << endl;
+        cout << "Current Matching" << endl;
+
+        for (int u = 0; u < nLeft; u++) {
+
+            cout << "U" << u << " -> ";
+
+            if (pairU[u] == -1) {
+                cout << "FREE";
+            }
+            else {
+                cout << "V" << pairU[u];
+            }
+
+            cout << endl;
+        }
+    }
+
+    void printDistances() {
+        cout << endl;
+        cout << "BFS Layers" << endl;
+
+        for (int u = 0; u < nLeft; u++) {
+
+            cout << "U" << u << ": ";
+
+            if (dist[u] == INF) {
+                cout << "INF";
+            }
+            else {
+                cout << dist[u];
+            }
+
+            cout << endl;
+        }
+    }
+
+    bool bfs() {
+
+        queue<int> q;
+
+        shortestPath = INF;
+
+        // All unmatched U vertices become BFS starting points
+        for (int u = 0; u < nLeft; u++) {
+
+            if (pairU[u] == -1) {
+                dist[u] = 0;
+                q.push(u);
+            }
+            else {
+                dist[u] = INF;
+            }
+        }
+
+        while (!q.empty()) {
+
+            int u = q.front();
+            q.pop();
+
+            // No need to search deeper than the current
+            // shortest augmenting path.
+            if (dist[u] + 1 > shortestPath) {
+                continue;
+            }
+
+            for (int v : adj[u]) {
+
+                int matchedU = pairV[v];
+
+                // V is FREE.
+                // An augmenting path can end here.
+                if (matchedU == -1) {
+
+                    shortestPath =
+                        min(shortestPath, dist[u] + 1);
+                }
+
+                // V is already matched.
+                // Follow the matched edge back to another U.
+                else if (
+                    dist[matchedU] == INF &&
+                    dist[u] + 1 < shortestPath
+                ) {
+
+                    dist[matchedU] =
+                        dist[u] + 1;
+
+                    q.push(matchedU);
+                }
+            }
+        }
+
+        return shortestPath != INF;
+    }
+
+    bool dfs(int u) {
+
+        for (int v : adj[u]) {
+
+            int matchedU = pairV[v];
+
+            // Case 1:
+            // V is FREE and this path has exactly the
+            // shortest length found by BFS.
+            if (
+                matchedU == -1 &&
+                dist[u] + 1 == shortestPath
+            ) {
+
+                pairU[u] = v;
+                pairV[v] = u;
+
+                return true;
+            }
+
+            // Case 2:
+            // V is already matched.
+            // Continue only if the matched U is exactly
+            // one BFS layer deeper.
+            if (
+                matchedU != -1 &&
+                dist[matchedU] == dist[u] + 1
+            ) {
+
+                if (dfs(matchedU)) {
+
+                    pairU[u] = v;
+                    pairV[v] = u;
+
+                    return true;
+                }
+            }
+        }
+
+        // No augmenting path through U in this BFS phase.
+        dist[u] = INF;
+
+        return false;
+    }
+
+    int maximumMatching() {
+
+        int matching = 0;
+        int phase = 1;
+
+        while (bfs()) {
+
+            cout << endl;
+            cout << "========== BFS Phase "
+                 << phase
+                 << " =========="
+                 << endl;
+
+            cout << "Shortest augmenting path length = "
+                 << shortestPath
+                 << endl;
+
+            printDistances();
+
+            // Try DFS from every currently FREE U.
+            for (int u = 0; u < nLeft; u++) {
+
+                if (pairU[u] == -1) {
+
+                    if (dfs(u)) {
+
+                        matching++;
+
+                        cout << endl;
+                        cout << "Augment from U"
+                             << u
+                             << endl;
+
+                        cout << "Matching size = "
+                             << matching
+                             << endl;
+                    }
+                }
+            }
+
+            printMatching();
+
+            phase++;
+        }
+
+        return matching;
+    }
+};
+
+int main() {
+
+    HopcroftKarp hk(2, 2);
+
+    hk.addEdge(0, 0);
+    hk.addEdge(0, 1);
+
+    hk.addEdge(1, 0);
+
+    hk.printGraph();
+
+    hk.printMatching();
+
+    int result = hk.maximumMatching();
+
+    cout << endl;
+    cout << "============================" << endl;
+
+    cout << "Maximum Matching = "
+         << result
+         << endl;
+
+    hk.printMatching();
+
+    return 0;
+}`;
+
 const codeListArray = `#include <iostream>
 using namespace std;
 
@@ -5666,6 +5950,67 @@ int main() {
 }
 `;
 
+const codeManacher = `#include <algorithm>
+#include <string>
+#include <vector>
+
+struct ManacherResult {
+    std::vector<int> radius;
+    int start;
+    int length;
+};
+
+ManacherResult manacher(const std::string& text) {
+    // Negative values are structural tokens; byte values are non-negative.
+    // This avoids collisions when the input itself contains '^', '#', or '\$'.
+    constexpr int START = -3;
+    constexpr int SEPARATOR = -2;
+    constexpr int END = -1;
+
+    std::vector<int> transformed{START, SEPARATOR};
+    for (unsigned char ch : text) {
+        transformed.push_back(static_cast<int>(ch));
+        transformed.push_back(SEPARATOR);
+    }
+    transformed.push_back(END);
+
+    std::vector<int> radius(transformed.size(), 0);
+    int center = 0;
+    int right = 0;
+    int bestCenter = 0;
+    int bestRadius = 0;
+
+    for (int i = 1; i + 1 < static_cast<int>(transformed.size()); ++i) {
+        const int mirror = 2 * center - i;
+        if (i < right && mirror >= 0) {
+            radius[i] = std::min(right - i, radius[mirror]);
+        }
+
+        while (transformed[i - radius[i] - 1] ==
+               transformed[i + radius[i] + 1]) {
+            ++radius[i];
+        }
+
+        if (i + radius[i] > right) {
+            center = i;
+            right = i + radius[i];
+        }
+        if (radius[i] > bestRadius) {
+            bestCenter = i;
+            bestRadius = radius[i];
+        }
+    }
+
+    const int start = (bestCenter - bestRadius) / 2;
+    return {radius, start, bestRadius};
+}
+
+std::string longestPalindromicSubstring(const std::string& text) {
+    const ManacherResult result = manacher(text);
+    return text.substr(result.start, result.length);
+}
+`;
+
 const codeTreeSegment = `#include <iostream>
 #include <vector>
 using namespace std;
@@ -7922,6 +8267,7 @@ const CODE_DB = {
     "graph_scc.cpp": codeGraphScc,
     "graph_maxflow.cpp": codeGraphMaxFlow,
     "graph_euler.cpp": codeGraphEuler,
+    "graph_hopcroft_karp.cpp": codeGraphHopcroftKarp,
     "list_array.cpp": codeListArray,
     "list_linked.cpp": codeListLinked,
     "hash_chaining.cpp": codeHashChain,
@@ -7971,6 +8317,7 @@ const CODE_DB = {
     "count_min_sketch.cpp": codeCountMinSketch,
     "search_zalgo.cpp": codeSearchZAlgo,
     "search_aho.cpp": codeSearchAho,
+    "manacher.cpp": codeManacher,
     "tree_segment.cpp": codeTreeSegment,
     "tree_fenwick.cpp": codeTreeFenwick,
     "tree_persistent_segment.cpp": codeTreePersistentSegment,
