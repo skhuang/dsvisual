@@ -40,6 +40,7 @@ const mappings = {
     'graph_scc.cpp': 'codeGraphScc',
     'graph_maxflow.cpp': 'codeGraphMaxFlow',
     'graph_euler.cpp': 'codeGraphEuler',
+    'graph_hopcroft_karp.cpp': 'codeGraphHopcroftKarp',
     'list_array.cpp': 'codeListArray',
     'list_linked.cpp': 'codeListLinked',
     'hash_chaining.cpp': 'codeHashChain',

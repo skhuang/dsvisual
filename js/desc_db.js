@@ -315,6 +315,81 @@ const descDB = {
             <span class="badge space">Space: O(V&sup2;) in this matrix demo</span>
         </div>
     `,
+'graph-hopcroft-karp': `
+  <h3>Hopcroft-Karp Bipartite Maximum Matching / 二分圖最大匹配</h3>
+
+  <p>
+    <strong>EN.</strong>
+    Hopcroft-Karp finds a maximum matching in a bipartite graph.
+    Instead of finding only one augmenting path at a time, it uses
+    <strong>BFS</strong> to build layers of shortest augmenting paths
+    and then uses <strong>DFS</strong> to augment along multiple paths
+    in the same phase.
+  </p>
+
+  <p>
+    <strong>中文。</strong>
+    Hopcroft-Karp 演算法用於求解二分圖最大匹配。
+    演算法先透過 <strong>BFS</strong> 建立最短增廣路徑的分層，
+    再利用 <strong>DFS</strong> 沿著分層結果尋找並增廣多條路徑，
+    因此相較於一次只尋找一條增廣路徑的方法更有效率。
+  </p>
+
+  <hr>
+
+  <ul>
+    <li>
+      <strong>Bipartite graph / 二分圖：</strong>
+      vertices are separated into left set U and right set V,
+      and every edge connects one vertex in U to one vertex in V.
+    </li>
+
+    <li>
+      <strong>Matching / 匹配：</strong>
+      a set of edges in which no two selected edges share an endpoint.
+      The visualization highlights currently matched edges separately
+      from unmatched edges.
+    </li>
+
+    <li>
+      <strong>BFS layering / BFS 分層：</strong>
+      BFS starts from all unmatched vertices on the left side and
+      determines the distance to the shortest possible augmenting paths.
+      The displayed <code>dist</code> values show these layers.
+    </li>
+
+    <li>
+      <strong>DFS augmentation / DFS 增廣：</strong>
+      DFS follows only edges consistent with the BFS layers and searches
+      for augmenting paths. When one is found, matched and unmatched edges
+      along that path are flipped.
+    </li>
+
+    <li>
+      <strong>VCR visualization / 逐步視覺化：</strong>
+      use the step controls to inspect BFS phases, DFS edge exploration,
+      augmenting paths, queue state, layer distances, and matching updates.
+    </li>
+
+    <li>
+      <strong>Input / 輸入：</strong>
+      supports custom sizes for U and V and edge-list input such as
+      <code>0-0,0-1,1-2</code>. Normal and Challenge presets demonstrate
+      different levels of augmenting-path complexity.
+    </li>
+
+    <li>
+      <strong>Chapter 6 use / 課程對應：</strong>
+      Graph Algorithms — bipartite matching, assignment problems,
+      scheduling, and resource allocation.
+    </li>
+  </ul>
+
+  <div class="complexities">
+    <span class="badge time">Time: O(E&radic;V)</span>
+    <span class="badge space">Space: O(V + E)</span>
+  </div>
+`,
     'tree-persistent-segment': `
         <h3>Persistent Segment Tree — Path Copying / 可持久化線段樹</h3>
         <p><strong>EN.</strong> A persistent segment tree keeps every past version of the structure reachable and unchanged after an update, by never mutating an existing node — each update allocates only the O(log n) nodes on the root-to-leaf path and reuses every other subtree by reference. <strong>中文。</strong>可持久化線段樹讓每一次更新後，過去所有版本都仍然可完整查詢且不被改變——做法是「絕不修改既有節點」：每次更新只新配置根到葉路徑上的 O(log n) 個節點，其餘子樹直接沿用舊版本的參照。</p>
