@@ -137,6 +137,7 @@ const METHOD_GROUPS = [
             { id: 'hash-chain', title: 'Hash Chaining', file: 'hash_chaining.cpp', visualizer: 'hash', controls: 'hash' },
             { id: 'hash-open', title: 'Open Addressing', file: 'hash_open_address.cpp', visualizer: 'hash', controls: 'hash' },
             { id: 'hash-bucket', title: 'Bucketing', file: 'hash_bucket.cpp', visualizer: 'hash', controls: 'hash' },
+            { id: 'hyperloglog', title: 'HyperLogLog', file: 'hyperloglog.cpp', visualizer: 'hyperloglog', controls: 'hyperloglog', codeDrawer: true },
             { id: 'bloom-filter', title: 'Bloom Filter', file: 'bloom_filter.cpp', visualizer: 'bloom', controls: 'bloom' },
             { id: 'skip-list', title: 'Skip List', file: 'skip_list.cpp', visualizer: 'skiplist', controls: 'skiplist' },
             { id: 'count-min-sketch', title: 'Count-Min Sketch', file: 'count_min_sketch.cpp', visualizer: 'cms', controls: 'cms' },
@@ -342,6 +343,7 @@ function getCodeForMethod(methodId) {
         'hash-chain': codeHashChain,
         'hash-open': codeHashOpen,
         'hash-bucket': codeHashBucket,
+        hyperloglog: codeHyperLogLog,
         'bloom-filter': codeBloomFilter,
         'skip-list': codeSkipList,
         'count-min-sketch': codeCountMinSketch,
@@ -1834,6 +1836,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'bloom-filter') {
             codeTitle.textContent = 'bloom_filter.cpp';
             codeDisplay.textContent = codeBloomFilter;
+        }
+        else if (currentMode === 'hyperloglog') {
+            codeTitle.textContent = 'hyperloglog.cpp';
+            codeDisplay.textContent = codeHyperLogLog;
         }
         else if (currentMode === 'skip-list') {
             codeTitle.textContent = 'skip_list.cpp';

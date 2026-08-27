@@ -3804,3 +3804,19 @@ body.viz-focus .method-section-card.active .gw-logcol { max-height: none; min-he
 .lab-sample { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
 .lab-actions { margin-top: 1rem; display: flex; gap: .5rem; flex-wrap: wrap; }
 .lab-actions [disabled], .lab-actions [aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+
+/* HyperLogLog: the 16 registers expose the sketch behind approximate cardinality. */
+.hll-wrap { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.hll-explain, .hll-message { color: var(--text-subtle); font-size: .88rem; }
+.hll-registers { display: grid; grid-template-columns: repeat(8, minmax(54px, 1fr)); gap: 7px; }
+.hll-cell { padding: 7px; border: 1px solid var(--card-border); border-radius: 7px; background: var(--surface-muted); text-align: center; font-family: 'Fira Code', ui-monospace, monospace; }
+.hll-cell span { display: block; color: var(--text-subtle); font-size: .7rem; }
+.hll-cell strong { color: var(--text-main); font-size: 1.05rem; }
+.hll-cell.hll-active { border-color: #8b5cf6; background: rgba(139, 92, 246, .14); box-shadow: 0 0 0 2px rgba(139, 92, 246, .15); }
+.hll-stats, .hll-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.hll-stats span { padding: 5px 8px; border-radius: 6px; background: rgba(59, 130, 246, .10); color: var(--text-subtle); font-size: .84rem; }
+.hll-stats strong { color: var(--text-main); }
+.hll-controls label { display: inline-flex; align-items: center; gap: 5px; color: var(--text-subtle); font-size: .88rem; }
+.hll-controls input { width: 150px; padding: 6px 8px; border: 1px solid var(--card-border); border-radius: 6px; background: var(--card-bg); color: var(--text-main); }
+.hll-message { min-height: 2.2em; padding: 8px 10px; border-left: 3px solid #8b5cf6; background: rgba(139, 92, 246, .08); border-radius: 4px; }
+@media (max-width: 620px) { .hll-registers { grid-template-columns: repeat(4, minmax(54px, 1fr)); } }
