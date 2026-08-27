@@ -79,7 +79,20 @@
           hi[idx] = 'group' + gi;
         }
       });
-      medians.forEach((m) => { const idx = a.indexOf(m); if (idx >= 0) hi[idx] = 'median'; });
+
+      // 修正：僅在該 group 的索引範圍內標記中位數，避免重複值時標到範圍外
+      groups.forEach((g, gi) => {
+        const s = g.slice().sort((x, y) => x - y);
+        const m = s[Math.floor(s.length / 2)];
+        const groupStart = l + gi * 5;
+        for (let j = 0; j < g.length; j++) {
+          if (a[groupStart + j] === m) {
+            hi[groupStart + j] = 'median';
+            break;
+          }
+        }
+      });
+
       snap(hi, { zh: '分組取中位數 (每組最多5個)', en: 'Group into 5s and take medians' });
 
       const med = medians.slice().sort((x,y)=>x-y)[Math.floor(medians.length/2)];
