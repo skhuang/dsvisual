@@ -1,26 +1,29 @@
 #include <vector>
 #include <algorithm>
 
-// 尋找陣列 A 在 [l, r] 範圍內的第 k 小元素 (1-based index)
+// 尋找陣列 arr 在 [l, r] 範圍內的第 k 小元素 (1-based index)
 int quickSelect(std::vector<int>& arr, int l, int r, int k) {
     if (k > 0 && k <= r - l + 1) {
         int n = r - l + 1;
-        std::vector<int> median((n + 4) / 5);
+        int groupCount = (n + 4) / 5; // 總組數（包含不滿 5 個元素的餘數組）
+        std::vector<int> median(groupCount);
+        
         int i;
         for (i = 0; i < n / 5; i++) {
             std::sort(arr.begin() + l + i * 5, arr.begin() + l + i * 5 + 5);
             median[i] = arr[l + i * 5 + 2];
         }
+        // 處理不足 5 個元素的餘數組
         if (i * 5 < n) {
             std::sort(arr.begin() + l + i * 5, arr.begin() + l + n);
             median[i] = arr[l + i * 5 + (n - i * 5) / 2];
+            i++; // 算入餘數組後，實際組數為 i + 1
         }
 
-        // 遞迴尋找中位數的中位數 (Median-of-Medians) 作為 Pivot
-        int medOfMed = (i == 1) ? median[0] : quickSelect(median, 0, i - 1, i / 2);
+        // 正確使用實際總組數 i 尋找中位數的中位數 (Median-of-Medians)
+        int medOfMed = (i == 1) ? median[0] : quickSelect(median, 0, i - 1, (i + 1) / 2);
 
         // Partition 過程
-        int pos = l;
         for (int j = l; j <= r; j++) {
             if (arr[j] == medOfMed) {
                 std::swap(arr[j], arr[r]);
@@ -47,4 +50,3 @@ int quickSelect(std::vector<int>& arr, int l, int r, int k) {
     }
     return -1;
 }
-
