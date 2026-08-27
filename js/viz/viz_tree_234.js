@@ -223,7 +223,16 @@
   }
 
   VizRegistry.attach(methodId, {
-    layout(container) {
+    code() {
+      return (window.CODE_DB && window.CODE_DB['tree_234.cpp']) || '';
+    },
+
+    render() {
+      // renderAll() calls render() with no argument; every dynamic viz must
+      // acquire its own host and inject its own layout (cf. viz_fenwick.js).
+      const container = (window.VizKit && VizKit.acquireDynamicVizHost)
+        ? VizKit.acquireDynamicVizHost()
+        : document.getElementById('dynamic-viz-host');
       container.innerHTML = `
         <div class="control-row">
           <label>Keys:</label>
@@ -236,13 +245,7 @@
           <svg id="tree234-svg" width="900" height="400"></svg>
         </div>
       `;
-    },
 
-    code() {
-      return (window.CODE_DB && window.CODE_DB['tree_234.cpp']) || '';
-    },
-
-    render(container) {
       const inputEl = container.querySelector('#tree234-input');
       const buildBtn = container.querySelector('#tree234-build-btn');
       const statusEl = container.querySelector('#tree234-status');
@@ -258,8 +261,10 @@
 
       function paint(frame) {
         if (!frame) return;
-        const lang = VizKit?.langOf ? VizKit.langOf() : 'en';
-        statusEl.textContent = lang === 'zh' ? frame.msgZh : frame.msgEn;
+        // VizKit.langOf takes a { zh, en } pair and returns the localized string.
+        statusEl.textContent = (window.VizKit && VizKit.langOf)
+          ? VizKit.langOf({ zh: frame.msgZh, en: frame.msgEn })
+          : frame.msgEn;
         const layout = calculatePositions(frame.tree.root, 0, { x: 50 }, 80, 25);
         renderTreeSVG(layout, svg, frame.activeKeys);
       }
