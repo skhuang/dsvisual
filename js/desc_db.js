@@ -315,6 +315,98 @@ const descDB = {
             <span class="badge space">Space: O(V&sup2;) in this matrix demo</span>
         </div>
     `,
+'graph-hopcroft-karp': `
+  <h3>Hopcroft-Karp Bipartite Maximum Matching / 二分圖最大匹配</h3>
+
+  <p>
+    <strong>EN.</strong>
+    Hopcroft-Karp finds a maximum matching in a bipartite graph.
+    Instead of finding only one augmenting path at a time, it uses
+    <strong>BFS</strong> to build layers of shortest augmenting paths
+    and then uses <strong>DFS</strong> to augment along multiple paths
+    in the same phase.
+  </p>
+
+  <p>
+    <strong>中文。</strong>
+    Hopcroft-Karp 演算法用於求解二分圖最大匹配。
+    演算法先透過 <strong>BFS</strong> 建立最短增廣路徑的分層，
+    再利用 <strong>DFS</strong> 沿著分層結果尋找並增廣多條路徑，
+    因此相較於一次只尋找一條增廣路徑的方法更有效率。
+  </p>
+
+  <hr>
+
+  <ul>
+    <li>
+      <strong>Bipartite graph / 二分圖：</strong>
+      vertices are separated into left set U and right set V,
+      and every edge connects one vertex in U to one vertex in V.
+    </li>
+
+    <li>
+      <strong>Matching / 匹配：</strong>
+      a set of edges in which no two selected edges share an endpoint.
+      The visualization highlights currently matched edges separately
+      from unmatched edges.
+    </li>
+
+    <li>
+      <strong>BFS layering / BFS 分層：</strong>
+      BFS starts from all unmatched vertices on the left side and
+      determines the distance to the shortest possible augmenting paths.
+      The displayed <code>dist</code> values show these layers.
+    </li>
+
+    <li>
+      <strong>DFS augmentation / DFS 增廣：</strong>
+      DFS follows only edges consistent with the BFS layers and searches
+      for augmenting paths. When one is found, matched and unmatched edges
+      along that path are flipped.
+    </li>
+
+    <li>
+      <strong>VCR visualization / 逐步視覺化：</strong>
+      use the step controls to inspect BFS phases, DFS edge exploration,
+      augmenting paths, queue state, layer distances, and matching updates.
+    </li>
+
+    <li>
+      <strong>Input / 輸入：</strong>
+      supports custom sizes for U and V and edge-list input such as
+      <code>0-0,0-1,1-2</code>. Normal and Challenge presets demonstrate
+      different levels of augmenting-path complexity.
+    </li>
+
+    <li>
+      <strong>Chapter 6 use / 課程對應：</strong>
+      Graph Algorithms — bipartite matching, assignment problems,
+      scheduling, and resource allocation.
+    </li>
+  </ul>
+
+  <div class="complexities">
+    <span class="badge time">Time: O(E&radic;V)</span>
+    <span class="badge space">Space: O(V + E)</span>
+  </div>
+`,
+    'tree-persistent-segment': `
+        <h3>Persistent Segment Tree — Path Copying / 可持久化線段樹</h3>
+        <p><strong>EN.</strong> A persistent segment tree keeps every past version of the structure reachable and unchanged after an update, by never mutating an existing node — each update allocates only the O(log n) nodes on the root-to-leaf path and reuses every other subtree by reference. <strong>中文。</strong>可持久化線段樹讓每一次更新後，過去所有版本都仍然可完整查詢且不被改變——做法是「絕不修改既有節點」：每次更新只新配置根到葉路徑上的 O(log n) 個節點，其餘子樹直接沿用舊版本的參照。</p>
+        <hr>
+        <ul>
+            <li><strong>Path copying / 路徑複製：</strong> descending from the root, only nodes on the path to the updated leaf are cloned; the untouched sibling subtree at every level is shared with the previous version, not copied. 由根往下走訪時，只有通往被更新葉節點路徑上的節點會被複製；沿途另一側未受影響的子樹則與前一版本共用，不會被複製。</li>
+            <li><strong>Space per version / 每版空間：</strong> O(log n) new nodes per update instead of O(n) for a full array copy — the whole point of persistence over "just keep every snapshot". 每次更新只需 O(log n) 個新節點，遠比完整複製整個陣列的 O(n) 便宜——這正是「持久化」相對於「保留每份完整快照」的優勢所在。</li>
+            <li><strong>Version isolation / 版本隔離：</strong> because old nodes are never mutated, querying an old root after many later updates returns exactly the answer it always would have — this is the invariant the animation checks explicitly (query v0 after v1, v2 exist). 由於舊節點永不被修改，即使之後又發生了許多次更新，查詢舊的根節點永遠得到和當初一樣的答案——這正是本動畫特別驗證的不變量（在 v1、v2 都已建立後，仍查詢 v0）。</li>
+            <li><strong>Structural sharing / 結構共用：</strong> different versions' trees overlap — the same physical node can be reachable from multiple roots at once, which is why total node count grows by O(log n) per version, not O(n). 不同版本的樹會互相重疊——同一個實體節點可以同時被多個版本的根節點參照到，這也是為什麼總節點數每個版本只增加 O(log n) 而非 O(n)。</li>
+            <li><strong>Relation to Segment Tree / 與線段樹的關係：</strong> the shape (which range each node covers) is identical to the ordinary segment tree in this chapter — persistence only changes how updates allocate nodes, not the query algorithm. 每個節點所涵蓋的範圍與本章一般線段樹完全相同——持久化只改變更新時如何配置節點，查詢演算法本身不變。</li>
+            <li><strong>Applications / 應用：</strong> version-controlled documents, "query the array as of time T", offline k-th-smallest-in-range (persistent segment tree over sorted values), functional-programming immutable data structures.</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Time: O(log n) per update / query</span>
+            <span class="badge space">Space: O(log n) new nodes per version, O(n) for the first</span>
+        </div>
+    `,
     'graph-euler': `
         <h3>Euler Path / Circuit — Hierholzer / 尤拉路徑與迴路</h3>
         <p><strong>EN.</strong> An Euler trail walks <em>every edge exactly once</em>; if it also returns to its starting vertex it is an Euler circuit. This is the problem that started graph theory: Euler's 1736 answer to the seven bridges of Konigsberg. <strong>中文。</strong>尤拉路徑是「每條邊恰好走一次」的走訪；若還能回到起點就是尤拉迴路。這正是圖論的起點——尤拉 1736 年對柯尼斯堡七橋問題的解答。</p>
@@ -466,6 +558,22 @@ const descDB = {
             <span class="badge time">Avg Time: O(N)</span>
             <span class="badge time">Worst Time: O(N)</span>
             <span class="badge space">Space: O(1) auxiliary</span>
+        </div>
+    `,
+    'sparse-table-rmq': `
+        <h3>Sparse Table — Range Minimum Query (稀疏表 / 區間最小值查詢)</h3>
+        <p><strong>EN.</strong> A static (build-once, no updates) structure that precomputes the minimum of every power-of-two-length window via doubling, then answers any range-minimum query in O(1) by overlapping two such windows.</p>
+        <p><strong>中文。</strong> 一種靜態（建好後不支援更新）的資料結構，利用倍增法預先算出所有「長度為 2 的冪」的區間最小值，查詢時用兩個可重疊的視窗覆蓋任意區間，即可在 O(1) 時間內得到答案。</p>
+        <hr>
+        <ul>
+            <li><strong>Core Mechanism / 核心機制：</strong> st[k][i] = min of a[i .. i+2^k-1], built as st[k][i] = min(st[k-1][i], st[k-1][i+2^(k-1)]) — combining two half-length windows. 以 st[k][i] 表示從 i 開始、長度 2^k 的區間最小值，由兩個長度減半的子區間合併而來。</li>
+            <li><strong>O(1) Query / 常數時間查詢：</strong> For range [l, r] of length len, let k = floor(log2(len)); the answer is min(st[k][l], st[k][r-2^k+1]) — the two windows may overlap, which is harmless for an idempotent operator like min. 查詢 [l, r] 時取 k = floor(log2(len))，答案即 min(st[k][l], st[k][r-2^k+1])；兩視窗允許重疊，對 min 這類冪等運算不影響正確性。</li>
+            <li><strong>Trade-off / 取捨：</strong> No point updates (unlike a Segment Tree or Fenwick Tree) — any change requires an O(n log n) rebuild. Best suited for static arrays with many range-min/max/gcd queries. 不支援單點更新（不同於線段樹、樹狀陣列），資料變動需整體以 O(n log n) 重建；適合資料不變、但要大量查詢區間最小值/最大值/gcd 的情境。</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Build Time: O(N log N)</span>
+            <span class="badge time">Query Time: O(1)</span>
+            <span class="badge space">Space: O(N log N)</span>
         </div>
     `,
     'sort-bubble': `
@@ -983,11 +1091,26 @@ const descDB = {
             <span class="badge space">Space: O(N)</span>
         </div>
     `,
+    'tree-234': `
+        <h3>2-3-4 Tree (4-way Search Tree)</h3>
+        <p><strong>EN.</strong> A self-balancing multiway search tree where every internal node contains 1, 2, or 3 keys and has 2, 3, or 4 children. <strong>中文。</strong> 自平衡多路搜尋樹（4 階 B-Tree），每個內部節點包含 1 至 3 個鍵值以及 2 至 4 個子節點。</p>
+        <hr>
+        <ul>
+            <li><strong>Proactive Top-Down Splitting / 預先分裂：</strong> During insertion, whenever a 4-node (3 keys) is encountered along the path from root to leaf, it is immediately split by promoting its middle key to the parent. 插入過程中，只要在向下搜尋路徑上遇到滿的 4-節點，便立即將中間鍵值提升至父節點進行分裂。</li>
+            <li><strong>Single-Pass Insertion / 單次走訪：</strong> Preemptive splitting ensures that the parent of the target leaf always has room, preventing cascading upward splits and guaranteeing O(log N) insertion. 預先分裂保證了父節點一定有空間容納提升的鍵值，避免了向上級聯分裂的開銷。</li>
+            <li><strong>Red-Black Tree Equivalence / 與紅黑樹的等價性：</strong> 2-3-4 Trees are structurally isomorphic to Red-Black Trees, where 3-nodes and 4-nodes are represented by clusters of black and red nodes. 2-3-4 樹在結構上與紅黑樹等價，其 3-節點與 4-節點可對應到紅黑樹中的紅色連結。</li>
+        </ul>
+        <div class="complexities">
+            <span class="badge time">Search: O(log N)</span>
+            <span class="badge time">Insert: O(log N)</span>
+            <span class="badge space">Space: O(N)</span>
+        </div>
+    `,
     'tree-expression': `
         <h3>Expression Tree</h3>
         <p>Build a binary expression tree from a postfix expression using a stack of subtrees, then evaluate it bottom-up.</p>
         <hr>
-        <ul>
+        <ul> 
             <li><strong>Operand:</strong> push a leaf node onto the subtree stack</li>
             <li><strong>Operator:</strong> pop two subtrees, make them the children of a new node, push it</li>
             <li><strong>Evaluate:</strong> recurse — leaves are values, internal nodes apply their operator</li>
