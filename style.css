@@ -1869,7 +1869,11 @@ pre.code-panel-body[class*="language-"] {
 .bloom-cell.bloom-on { background: #dbeafe; border-color: #3b82f6; font-weight: 700; }
 .bloom-cell.bloom-hit { background: #fde68a; border-color: #f59e0b; }
 .bloom-cell.bloom-miss { background: #fecaca; border-color: #ef4444; }
+.bloom-cell.bloom-probe { outline: 2px solid #7c3aed; outline-offset: 1px; }
 .bloom-hashes { font-family: monospace; font-size: 13px; color: #475569; min-height: 1.2em; }
+.bloom-note { font-size: 13px; color: #334155; min-height: 1.2em; text-align: center; }
+.bloom-note.bloom-note-fp { color: #b45309; font-weight: 700; }
+.bloom-steps { width: 100%; }
 .bloom-items { font-size: 13px; color: #475569; }
 .bloom-controls { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
 
