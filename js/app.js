@@ -74,6 +74,7 @@ const METHOD_GROUPS = [
         methods: [
             { id: 'tree-bst', title: 'Binary Search Tree', file: 'tree_bst.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'tree-avl', title: 'AVL Tree', file: 'tree_avl.cpp', visualizer: 'avltree', controls: 'avltree', codeDrawer: true },
+            { id: 'tree-treap', title: 'Treap (Cartesian Tree)', file: 'tree_treap.cpp', visualizer: 'treap', controls: 'treap', codeDrawer: true },
             { id: 'tree-rb', title: 'Red-Black Tree', file: 'tree_rb.cpp', visualizer: 'rbtree', controls: 'rbtree', codeDrawer: true },
             { id: 'tree-splay', title: 'Splay Tree', file: 'tree_splay.cpp', visualizer: 'tree', controls: 'tree' },
             { id: 'tree-trie', title: 'Trie', file: 'tree_trie.cpp', visualizer: 'trie', controls: 'trie', codeDrawer: true },
@@ -292,6 +293,7 @@ function getCodeForMethod(methodId) {
         'list-equivalence': codeListEquivalence,
         'tree-bst': codeTreeBST,
         'tree-avl': codeTreeAVL,
+        'tree-treap': (typeof codeTreeTreap !== 'undefined' ? codeTreeTreap : ''),
         'tree-rb': codeTreeRB,
         'tree-splay': codeTreeSplay,
         'tree-trie': codeTreeTrie,
@@ -1659,6 +1661,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (currentMode === 'tree-avl') {
             // Rendered by renderTreeAVL() into the dynamic viz host.
             codeTitle.textContent = 'tree_avl.cpp'; codeDisplay.textContent = codeTreeAVL;
+        }
+        else if (currentMode === 'tree-treap') {
+            // Rendered by renderTreeTreap() into the dynamic viz host.
+            codeTitle.textContent = 'tree_treap.cpp'; codeDisplay.textContent = (typeof codeTreeTreap !== 'undefined' ? codeTreeTreap : '');
         }
         else if (['tree-radix', 'tree-ternary'].includes(currentMode)) {
             advTreeContainer.classList.remove('hidden'); textTreeActions.classList.remove('hidden');

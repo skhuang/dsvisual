@@ -407,6 +407,127 @@
       });
   }
 
+  // ===== Treap（樹堆旋轉觀測站，parallel copy of the AVL observatory） =====
+  let _treapState = null;
+  function renderTreeTreap() {
+      const host = K().acquireDynamicVizHost();
+      const langOf = K().langOf;
+      const showStatus = K().showStatus;
+      host.innerHTML =
+          '<div class="treapviz" data-testid="treapviz">' +
+              '<div class="treapviz-toolbar">' +
+                  '<div class="treapviz-field">' +
+                      '<input type="number" class="treapviz-input" data-testid="treapviz-input" placeholder="' + langOf({ zh: '鍵值', en: 'Key' }) + '" aria-label="' + langOf({ zh: '鍵值', en: 'Key' }) + '">' +
+                      '<button type="button" class="btn primary treapviz-insert" data-testid="treapviz-insert">' + langOf({ zh: '插入', en: 'Insert' }) + '</button>' +
+                      '<button type="button" class="btn secondary treapviz-delete" data-testid="treapviz-delete">' + langOf({ zh: '刪除', en: 'Delete' }) + '</button>' +
+                      '<button type="button" class="btn exception treapviz-clear" data-testid="treapviz-clear">' + langOf({ zh: '清空', en: 'Clear' }) + '</button>' +
+                  '</div>' +
+                  '<div class="treapviz-presets" data-testid="treapviz-presets"><span class="lbl">' + langOf({ zh: '劇本', en: 'Scenarios' }) + '</span></div>' +
+                  '<span class="treapviz-hint">' + langOf({ zh: '點節點可把鍵值帶入輸入框；← → 鍵逐步前進 / 倒帶，空白鍵播放 / 暫停', en: 'Click a node to load its key; ← → step forward / back, Space to play / pause' }) + '</span>' +
+              '</div>' +
+              '<div class="treapviz-workbench">' +
+                  '<div class="treapviz-stagecol">' +
+                      '<div class="treapviz-stepdesc" data-testid="treapviz-desc"></div>' +
+                      '<div class="treapviz-stage" data-testid="treapviz-stage"></div>' +
+                      '<div class="treapviz-transport" data-testid="treapviz-transport"></div>' +
+                      '<div class="treapviz-legend">' +
+                          '<span><i class="lbf"></i>' + langOf({ zh: '節點下方＝priority', en: 'Number below node = priority' }) + '</span>' +
+                          '<span><i class="lh"></i>' + langOf({ zh: '本步驟主角（旋轉樞紐）', en: "This step's focus (rotation pivot)" }) + '</span>' +
+                          '<span><i class="lbe"></i>' + langOf({ zh: 'β 子樹（旋轉時換邊的那包）', en: 'β subtree (the bundle that switches sides on rotation)' }) + '</span>' +
+                      '</div>' +
+                  '</div>' +
+                  '<aside class="treapviz-logcol">' +
+                      '<h4>' + langOf({ zh: '步驟紀錄', en: 'Step Log' }) + '</h4>' +
+                      '<div class="treapviz-steplog" data-testid="treapviz-log"></div>' +
+                  '</aside>' +
+              '</div>' +
+          '</div>';
+
+      const input = host.querySelector('.treapviz-input');
+      const stage = new TreapViz.Stage(host.querySelector('.treapviz-stage'), {
+          emptyText: { zh: '空樹 —— 插入一個值，或載入一個劇本', en: 'Empty tree — insert a value, or load a scenario' },
+          sub: true,
+      });
+      stage.onNodeClick = (key) => { input.value = key; };
+
+      const attachCfg = {
+          stage,
+          descEl: host.querySelector('[data-testid="treapviz-desc"]'),
+          logEl: host.querySelector('[data-testid="treapviz-log"]'),
+          transportEl: host.querySelector('[data-testid="treapviz-transport"]'),
+      };
+      if (!_treapState) {
+          const tree = new TreapViz.TreapTree();
+          _treapState = { tree, hist: new TreapViz.History(Object.assign({ tree }, attachCfg)) };
+      } else {
+          _treapState.hist.attach(attachCfg);
+      }
+
+      function treapReset() {
+          _treapState.tree = new TreapViz.TreapTree();
+          _treapState.hist.tree = _treapState.tree;
+          _treapState.hist.reset();
+      }
+      function treapInsert(v, opt) {
+          if (!Number.isFinite(v)) { showStatus(langOf({ zh: '先輸入一個整數', en: 'Enter an integer first' }), '#fbbf24'); return false; }
+          v = Math.round(v);
+          if (_treapState.tree.size() >= 63) { showStatus(langOf({ zh: '節點太多了（上限 63），先刪一些吧', en: 'Too many nodes (max 63) — delete some first' }), '#fbbf24'); return false; }
+          if (_treapState.tree.find(v)) { showStatus(langOf({ zh: v + ' 已經在樹裡了', en: v + ' is already in the tree' }), '#fbbf24'); return false; }
+          _treapState.hist.runOp({ zh: '插入 ' + v, en: 'Insert ' + v }, () => _treapState.tree.insert(v), opt);
+          return true;
+      }
+      function treapDelete(v, opt) {
+          if (!Number.isFinite(v)) { showStatus(langOf({ zh: '先輸入一個整數', en: 'Enter an integer first' }), '#fbbf24'); return false; }
+          v = Math.round(v);
+          if (!_treapState.tree.find(v)) { showStatus(langOf({ zh: '樹裡沒有 ' + v, en: v + " isn't in the tree" }), '#fbbf24'); return false; }
+          _treapState.hist.runOp({ zh: '刪除 ' + v, en: 'Delete ' + v }, () => _treapState.tree.delete(v), opt);
+          return true;
+      }
+
+      function randKey() {
+          const t = _treapState.tree;
+          let k = 1 + Math.floor(Math.random() * 99);
+          for (let i = 0; i < 40 && t.find(k); i++) k = 1 + Math.floor(Math.random() * 99);
+          return k;
+      }
+
+      host.querySelector('.treapviz-insert').addEventListener('click', () => { if (treapInsert(+input.value)) input.value = randKey(); });
+      host.querySelector('.treapviz-delete').addEventListener('click', () => { if (treapDelete(+input.value)) input.value = randKey(); });
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { if (treapInsert(+input.value)) input.value = randKey(); } });
+      host.querySelector('.treapviz-clear').addEventListener('click', () => { treapReset(); input.value = randKey(); showStatus(langOf({ zh: '清空了', en: 'Cleared' }), '#94a3b8'); });
+      input.value = randKey();
+
+      const presetsEl = host.querySelector('[data-testid="treapviz-presets"]');
+      TreapViz.PRESETS.forEach((p) => {
+          const b = document.createElement('button');
+          b.type = 'button'; b.className = 'treapviz-preset'; b.dataset.preset = p.id;
+          b.textContent = langOf(p.name);
+          const tip = langOf(p.tip || { zh: '', en: '' });
+          if (tip) b.title = tip;
+          b.addEventListener('click', () => {
+              treapReset();
+              for (const s of p.seed()) treapInsert2(s, { play: false });
+              if (p.final) {
+                  const ready = _treapState.hist.steps.length - 1;
+                  if (p.final.op === 'insert') treapInsert2({ key: p.final.v, priority: p.final.priority }, { play: false });
+                  else treapDelete(p.final.v, { play: false });
+                  _treapState.hist.goTo(ready, false);
+              } else {
+                  _treapState.hist.goTo(0, false);
+              }
+              const zhTip = (p.tip && p.tip.zh) || '', enTip = (p.tip && p.tip.en) || '';
+              showStatus(langOf({ zh: (zhTip ? zhTip + '。' : '') + '劇本已載入，按 ▶ 開始播放', en: (enTip ? enTip + '. ' : '') + 'Scenario loaded — press ▶ to play' }), '#94a3b8');
+          });
+          presetsEl.appendChild(b);
+      });
+
+      // Preset seeds carry {key, priority?} objects (priority set only for the
+      // deterministic rotation demos) — this wraps tree.insert to pass both.
+      function treapInsert2(s, opt) {
+          _treapState.hist.runOp({ zh: '插入 ' + s.key, en: 'Insert ' + s.key }, () => _treapState.tree.insert(s.key, s.priority), opt);
+      }
+  }
+
   function onModeSwitch(mode) {
       if (_rbState) _rbState.hist.pause(); // stop RB playback when leaving/re-entering the mode
       if (_avlState) _avlState.hist.pause(); // stop AVL playback when leaving/re-entering the mode
@@ -540,10 +661,19 @@
           else if (e.key === 'ArrowLeft') { e.preventDefault(); h.pause(); h.goTo(h.cursor - 1); }
           else if (e.key === ' ') { e.preventDefault(); h.playing ? h.pause() : h.play(); }
       });
+      document.addEventListener('keydown', (e) => {
+          if (C().getMode() !== 'tree-treap' || !_treapState) return;
+          if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+          const h = _treapState.hist;
+           if (e.key === 'ArrowRight') { e.preventDefault(); h.pause(); h.goTo(h.cursor + 1); }
+          else if (e.key === 'ArrowLeft') { e.preventDefault(); h.pause(); h.goTo(h.cursor - 1); }
+           else if (e.key === ' ') { e.preventDefault(); h.playing ? h.pause() : h.play(); }
+      });
   }
 
   R().attach('tree-bst', { render: renderTree, code: () => codeTreeBST, layout: null });
   R().attach('tree-avl', { render: renderTreeAVL, code: () => codeTreeAVL, layout: { host: 'dynamic' } });
+  R().attach('tree-treap', { render: renderTreeTreap, code: () => (typeof codeTreeTreap !== 'undefined' ? codeTreeTreap : ''), layout: { host: 'dynamic' } });
   R().attach('tree-rb', { render: renderTreeRB, code: () => codeTreeRB, layout: { host: 'dynamic' } });
   R().attach('tree-splay', { render: renderTree, code: () => codeTreeSplay, layout: null });
   R().attach('tree-radix', { render: renderAdvTrees, code: () => codeTreeRadix, layout: null });
