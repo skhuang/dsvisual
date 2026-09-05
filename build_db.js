@@ -16,6 +16,7 @@ const mappings = {
     'sort_shaker.cpp': 'codeSortShaker',
     'tree_bst.cpp': 'codeTreeBST',
     'tree_avl.cpp': 'codeTreeAVL',
+    'tree_treap.cpp': 'codeTreeTreap',
     'tree_rb.cpp': 'codeTreeRB',
     'tree_splay.cpp': 'codeTreeSplay',
     'tree_dsu.cpp':        'codeTreeDSU',

@@ -673,7 +673,7 @@
 
   R().attach('tree-bst', { render: renderTree, code: () => codeTreeBST, layout: null });
   R().attach('tree-avl', { render: renderTreeAVL, code: () => codeTreeAVL, layout: { host: 'dynamic' } });
-  R().attach('tree-treap', { render: renderTreeTreap, code: () => codeTreeTreap, layout: { host: 'dynamic' } });
+  R().attach('tree-treap', { render: renderTreeTreap, code: () => (typeof codeTreeTreap !== 'undefined' ? codeTreeTreap : ''), layout: { host: 'dynamic' } });
   R().attach('tree-rb', { render: renderTreeRB, code: () => codeTreeRB, layout: { host: 'dynamic' } });
   R().attach('tree-splay', { render: renderTree, code: () => codeTreeSplay, layout: null });
   R().attach('tree-radix', { render: renderAdvTrees, code: () => codeTreeRadix, layout: null });

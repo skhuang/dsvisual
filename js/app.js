@@ -288,7 +288,7 @@ function getCodeForMethod(methodId) {
         'list-equivalence': codeListEquivalence,
         'tree-bst': codeTreeBST,
         'tree-avl': codeTreeAVL,
-        'tree-treap': codeTreeTreap,
+        'tree-treap': (typeof codeTreeTreap !== 'undefined' ? codeTreeTreap : ''),
         'tree-rb': codeTreeRB,
         'tree-splay': codeTreeSplay,
         'tree-trie': codeTreeTrie,
@@ -1659,7 +1659,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else if (currentMode === 'tree-treap') {
             // Rendered by renderTreeTreap() into the dynamic viz host.
-            codeTitle.textContent = 'tree_treap.cpp'; codeDisplay.textContent = codeTreeTreap;
+            codeTitle.textContent = 'tree_treap.cpp'; codeDisplay.textContent = (typeof codeTreeTreap !== 'undefined' ? codeTreeTreap : '');
         }
         else if (['tree-radix', 'tree-ternary'].includes(currentMode)) {
             advTreeContainer.classList.remove('hidden'); textTreeActions.classList.remove('hidden');

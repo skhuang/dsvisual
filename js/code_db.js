@@ -791,8 +791,7 @@ int main() {
     treap.insert(70); // 隨機 priority 可能觸發旋轉
     treap.remove(30);
     return 0;
-}
-`;
+}`;
 
 const codeTreeRB = `#include <iostream>
 using namespace std;
@@ -7768,6 +7767,7 @@ const CODE_DB = {
     "sort_shaker.cpp": codeSortShaker,
     "tree_bst.cpp": codeTreeBST,
     "tree_avl.cpp": codeTreeAVL,
+    "tree_treap.cpp": codeTreeTreap,
     "tree_rb.cpp": codeTreeRB,
     "tree_splay.cpp": codeTreeSplay,
     "tree_dsu.cpp": codeTreeDSU,
